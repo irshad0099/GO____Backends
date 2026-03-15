@@ -1,0 +1,371 @@
+2026-02-19 00:56:14 [ERROR]: ApiError is not defined
+ReferenceError: ApiError is not defined
+    at notFoundHandler (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/errors/globalErrorHandler.js:48:19)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at logger (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\morgan\index.js:144:5)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+2026-02-19 01:01:21 [ERROR]: Can't find POST /auth/signup on this server
+Error: Can't find POST /auth/signup on this server
+    at notFoundHandler (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/errors/globalErrorHandler.js:44:19)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at logger (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\morgan\index.js:144:5)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+2026-02-19 01:01:54 [ERROR]: Can't find POST /auth/signup on this server
+Error: Can't find POST /auth/signup on this server
+    at notFoundHandler (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/errors/globalErrorHandler.js:44:19)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at logger (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\morgan\index.js:144:5)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+2026-02-19 01:04:26 [ERROR]: Can't find POST /auth/signup on this server
+Error: Can't find POST /auth/signup on this server
+    at notFoundHandler (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/errors/globalErrorHandler.js:44:19)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at logger (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\morgan\index.js:144:5)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+2026-02-19 01:05:15 [ERROR]: Can't find POST /api/auth/signup on this server
+Error: Can't find POST /api/auth/signup on this server
+    at notFoundHandler (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/errors/globalErrorHandler.js:44:19)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at logger (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\morgan\index.js:144:5)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+2026-02-19 01:05:42 [ERROR]: Can't find POST /api/auth/signup on this server
+Error: Can't find POST /api/auth/signup on this server
+    at notFoundHandler (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/errors/globalErrorHandler.js:44:19)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at logger (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\morgan\index.js:144:5)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+2026-02-19 01:53:05 [ERROR]: Database query error:
+2026-02-19 01:53:05 [ERROR]: Find user by phone repository error: Cannot read properties of null (reading 'query')
+TypeError: Cannot read properties of null (reading 'query')
+    at Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:38:44)
+    at Module.findUserByPhone (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/users/repositories/user.repository.js:6:33)
+    at Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:12:45)
+    at signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:42)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\route.js:157:13)
+    at file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/validation.middleware.js:12:20
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-02-19 01:53:05 [ERROR]: Signup service error: Cannot read properties of null (reading 'query')
+TypeError: Cannot read properties of null (reading 'query')
+    at Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:38:44)
+    at Module.findUserByPhone (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/users/repositories/user.repository.js:6:33)
+    at Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:12:45)
+    at signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:42)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\route.js:157:13)
+    at file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/validation.middleware.js:12:20
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-02-19 01:58:00 [ERROR]: Database query error:
+2026-02-19 01:58:00 [ERROR]: Find user by phone repository error: column "profile_picture" does not exist
+error: column "profile_picture" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findUserByPhone (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/users/repositories/user.repository.js:6:24)
+    at async Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:12:30)
+    at async signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:24)
+2026-02-19 01:58:00 [ERROR]: Signup service error: column "profile_picture" does not exist
+error: column "profile_picture" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findUserByPhone (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/users/repositories/user.repository.js:6:24)
+    at async Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:12:30)
+    at async signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:24)
+2026-02-19 02:04:48 [ERROR]: Database query error:
+2026-02-19 02:04:48 [ERROR]: Database query error:
+2026-02-19 02:04:48 [ERROR]: Database query error:
+2026-02-19 02:04:48 [ERROR]: Database query error:
+2026-02-19 02:04:49 [ERROR]: Database query error:
+2026-02-19 02:20:07 [ERROR]: Database query error:
+2026-02-19 02:20:07 [ERROR]: Find user by phone repository error: column "profile_picture" does not exist
+error: column "profile_picture" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findUserByPhone (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/users/repositories/user.repository.js:6:24)
+    at async Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:12:30)
+    at async signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:24)
+2026-02-19 02:20:07 [ERROR]: Signup service error: column "profile_picture" does not exist
+error: column "profile_picture" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findUserByPhone (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/users/repositories/user.repository.js:6:24)
+    at async Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:12:30)
+    at async signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:24)
+2026-02-19 02:23:18 [ERROR]: Database query error:
+2026-02-19 02:23:18 [ERROR]: Find user by phone repository error: column "last_login" does not exist
+error: column "last_login" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findUserByPhone (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/users/repositories/user.repository.js:6:24)
+    at async Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:12:30)
+    at async signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:24)
+2026-02-19 02:23:18 [ERROR]: Signup service error: column "last_login" does not exist
+error: column "last_login" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findUserByPhone (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/users/repositories/user.repository.js:6:24)
+    at async Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:12:30)
+    at async signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:24)
+2026-02-19 02:28:31 [ERROR]: Signin service error: User not found. Please sign up first. not found
+NotFoundError: User not found. Please sign up first. not found
+    at Module.signin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:106:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async signin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:49:24)
+2026-02-19 02:39:47 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at Function.handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:186:3)
+    at router (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+2026-02-19 02:40:55 [ERROR]: Signup service error: User already exists with this phone number
+ConflictError: User already exists with this phone number
+    at Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:14:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:24)
+2026-02-19 02:41:07 [ERROR]: Signup service error: User already exists with this phone number
+ConflictError: User already exists with this phone number
+    at Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:14:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:24)
+2026-02-19 02:41:31 [ERROR]: Signup service error: User already exists with this phone number
+ConflictError: User already exists with this phone number
+    at Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:14:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:24)
+2026-02-19 02:44:34 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at Function.handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:186:3)
+    at router (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+2026-02-19 02:47:04 [ERROR]: Authentication failed: Invalid token
+AuthError: Invalid token
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:46:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:15:25)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at Function.handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:186:3)
+    at router (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+2026-02-19 02:47:42 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at Function.handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:186:3)
+    at router (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+2026-02-19 02:47:49 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at Function.handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:186:3)
+    at router (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+2026-02-19 02:49:51 [ERROR]: Find wallet by user ID repository error: Cannot read properties of null (reading 'query')
+TypeError: Cannot read properties of null (reading 'query')
+    at Module.findWalletByUserId (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/wallet/repositories/wallet.repository.js:6:35)
+    at Module.getUserWallet (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/users/services/userService.js:140:39)
+    at getWalletBalance (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/users/controllers/userController.js:73:42)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:295:15
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+2026-02-19 02:49:51 [ERROR]: Get user wallet service error: Cannot read properties of null (reading 'query')
+TypeError: Cannot read properties of null (reading 'query')
+    at Module.findWalletByUserId (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/wallet/repositories/wallet.repository.js:6:35)
+    at Module.getUserWallet (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/users/services/userService.js:140:39)
+    at getWalletBalance (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/users/controllers/userController.js:73:42)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:295:15
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+2026-02-25 23:48:48 [ERROR]: Signin service error: User not found. Please sign up first. not found
+NotFoundError: User not found. Please sign up first. not found
+    at Module.signin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:106:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async signin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:49:24)
+2026-02-25 23:51:49 [ERROR]: Signup service error: User already exists with this phone number
+ConflictError: User already exists with this phone number
+    at Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:14:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:24)
+2026-02-25 23:52:18 [ERROR]: Signup service error: User already exists with this phone number
+ConflictError: User already exists with this phone number
+    at Module.signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:14:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async signup (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:8:24)
+2026-02-26 00:07:36 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:15:25)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:295:15
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+2026-02-26 00:08:22 [ERROR]: Refresh token service error: Invalid refresh token
+AuthError: Invalid refresh token
+    at Module.refreshToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:196:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async refreshToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:103:24)
+2026-02-26 00:18:08 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:15:25)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:295:15
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+2026-02-26 00:21:21 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:15:25)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:295:15
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+2026-02-26 20:44:39 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:15:25)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at Function.handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:186:3)
+    at router (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+2026-02-26 20:46:05 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:15:25)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at Function.handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:186:3)
+    at router (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+2026-02-26 20:46:06 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:15:25)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:342:13)
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:297:9
+    at processParams (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:291:5)
+    at Function.handle (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:186:3)
+    at router (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\router\lib\layer.js:152:17)
+2026-02-26 20:54:39 [ERROR]: Request ride service error: You already have an active ride
+ConflictError: You already have an active ride
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:14:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-03-12 00:30:32 [ERROR]: Database query error:
+2026-03-12 00:30:32 [ERROR]: Database query error:
+2026-03-12 00:30:32 [ERROR]: Database query error:
+2026-03-12 00:30:32 [ERROR]: Database query error:
+2026-03-12 00:30:32 [ERROR]: Database query error:
+2026-03-12 00:30:32 [ERROR]: Database query error:
+2026-03-12 00:30:32 [ERROR]: Database query error:
+2026-03-12 00:32:38 [ERROR]: Database query error:
+2026-03-12 00:32:38 [ERROR]: Database query error:
+2026-03-12 00:32:39 [ERROR]: Database query error:
+2026-03-12 00:32:39 [ERROR]: Database query error:
+2026-03-12 00:32:39 [ERROR]: Database query error:
+2026-03-12 00:32:39 [ERROR]: Database query error:
+2026-03-12 00:32:39 [ERROR]: Database query error:
+2026-03-12 00:34:18 [ERROR]: Database query error:
+2026-03-12 00:34:18 [ERROR]: Database query error:
+2026-03-12 00:34:18 [ERROR]: Database query error:
+2026-03-12 00:34:18 [ERROR]: Database query error:
+2026-03-12 00:34:19 [ERROR]: Database query error:
+2026-03-12 00:34:19 [ERROR]: Database query error:
+2026-03-12 00:34:19 [ERROR]: Database query error:

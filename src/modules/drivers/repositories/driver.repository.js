@@ -1,0 +1,257 @@
+import { db } from '../../../infrastructure/database/postgres.js';
+import logger from '../../../core/logger/logger.js';
+
+export const findDriverByUserId = async (userId) => {
+    try {
+        const result = await db.query(
+            `SELECT d.*, u.phone_number, u.email, u.full_name, u.profile_picture
+             FROM drivers d
+             JOIN users u ON d.user_id = u.id
+             WHERE d.user_id = $1`,
+            [userId]
+        );
+        return result.rows[0];
+    } catch (error) {
+        logger.error('Find driver by user ID repository error:', error);
+        throw error;
+    }
+};
+
+export const findDriverByVehicleNumber = async (vehicleNumber) => {
+    try {
+        const result = await db.query(
+            `SELECT * FROM drivers WHERE vehicle_number = $1`,
+            [vehicleNumber]
+        );
+        return result.rows[0];
+    } catch (error) {
+        logger.error('Find driver by vehicle number repository error:', error);
+        throw error;
+    }
+};
+
+export const findDriverById = async (id) => {
+    try {
+        const result = await db.query(
+            `SELECT d.*, u.phone_number, u.email, u.full_name, u.profile_picture
+             FROM drivers d
+             JOIN users u ON d.user_id = u.id
+             WHERE d.id = $1`,
+            [id]
+        );
+        return result.rows[0];
+    } catch (error) {
+        logger.error('Find driver by ID repository error:', error);
+        throw error;
+    }
+};
+
+export const createDriver = async (driverData) => {
+    try {
+        const {
+            userId,
+            vehicleType,
+            vehicleNumber,
+            vehicleModel,
+            vehicleColor,
+            licenseNumber,
+            licenseExpiry
+        } = driverData;
+
+        const result = await db.query(
+            `INSERT INTO drivers 
+             (user_id, vehicle_type, vehicle_number, vehicle_model, 
+              vehicle_color, license_number, license_expiry)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)
+             RETURNING *`,
+            [userId, vehicleType, vehicleNumber, vehicleModel, vehicleColor, licenseNumber, licenseExpiry]
+        );
+
+        return result.rows[0];
+    } catch (error) {
+        logger.error('Create driver repository error:', error);
+        throw error;
+    }
+};
+
+export const updateDriver = async (id, updates) => {
+    try {
+        const setClause = [];
+        const values = [];
+        let paramIndex = 1;
+
+        Object.entries(updates).forEach(([key, value]) => {
+            if (value !== undefined) {
+                setClause.push(`${key} = $${paramIndex}`);
+                values.push(value);
+                paramIndex++;
+            }
+        });
+
+        if (setClause.length === 0) {
+            return await findDriverById(id);
+        }
+
+        values.push(id);
+        const query = `
+            UPDATE drivers 
+            SET ${setClause.join(', ')}, updated_at = NOW()
+            WHERE id = $${paramIndex}
+            RETURNING *
+        `;
+
+        const result = await db.query(query, values);
+        return result.rows[0];
+    } catch (error) {
+        logger.error('Update driver repository error:', error);
+        throw error;
+    }
+};
+
+export const verifyDriver = async (id) => {
+    try {
+        const result = await db.query(
+            `UPDATE drivers 
+             SET is_verified = true, verified_at = NOW(), updated_at = NOW()
+             WHERE id = $1
+             RETURNING *`,
+            [id]
+        );
+        return result.rows[0];
+    } catch (error) {
+        logger.error('Verify driver repository error:', error);
+        throw error;
+    }
+};
+
+export const findAvailableDrivers = async (vehicleType, latitude, longitude, radiusKm = 5) => {
+    try {
+        // Haversine formula to find nearby drivers
+        const result = await db.query(
+            `SELECT d.*, 
+                    (6371 * acos(cos(radians($1)) * cos(radians(d.current_latitude)) * 
+                    cos(radians(d.current_longitude) - radians($2)) + 
+                    sin(radians($1)) * sin(radians(d.current_latitude)))) AS distance
+             FROM drivers d
+             WHERE d.vehicle_type = $3
+               AND d.is_verified = true
+               AND d.is_available = true
+               AND d.is_on_duty = false
+               AND d.current_latitude IS NOT NULL
+               AND d.current_longitude IS NOT NULL
+             HAVING distance <= $4
+             ORDER BY distance
+             LIMIT 10`,
+            [latitude, longitude, vehicleType, radiusKm]
+        );
+
+        return result.rows;
+    } catch (error) {
+        logger.error('Find available drivers repository error:', error);
+        throw error;
+    }
+};
+
+export const getDriverEarnings = async (driverId, startDate, endDate) => {
+    try {
+        const result = await db.query(
+            `SELECT 
+                COUNT(*) as total_rides,
+                COALESCE(SUM(actual_fare), 0) as total_earnings,
+                COALESCE(AVG(actual_fare), 0) as avg_fare
+             FROM rides
+             WHERE driver_id = $1
+               AND status = 'completed'
+               AND completed_at BETWEEN $2 AND $3`,
+            [driverId, startDate, endDate]
+        );
+
+        const breakdown = await db.query(
+            `SELECT 
+                DATE(completed_at) as date,
+                COUNT(*) as rides,
+                COALESCE(SUM(actual_fare), 0) as earnings
+             FROM rides
+             WHERE driver_id = $1
+               AND status = 'completed'
+               AND completed_at BETWEEN $2 AND $3
+             GROUP BY DATE(completed_at)
+             ORDER BY date`,
+            [driverId, startDate, endDate]
+        );
+
+        return {
+            total: parseFloat(result.rows[0].total_earnings),
+            rides: parseInt(result.rows[0].total_rides),
+            avgFare: parseFloat(result.rows[0].avg_fare),
+            breakdown: breakdown.rows
+        };
+    } catch (error) {
+        logger.error('Get driver earnings repository error:', error);
+        throw error;
+    }
+};
+
+
+// ========== NEW REPOSITORY FUNCTIONS (Scoring & Metrics) ==========
+
+export const findDriverScore = async (driverId) => {
+    try {
+        const result = await db.query(
+            `SELECT * FROM driver_score WHERE driver_id = $1`,
+            [driverId]
+        );
+        return result.rows[0];
+    } catch (error) {
+        logger.error('Find driver score repository error:', error);
+        throw error;
+    }
+};
+
+export const getDriverCityRank = async (driverId, city) => {
+    try {
+        const result = await db.query(
+            `SELECT COUNT(*) + 1 as rank
+             FROM driver_score ds
+             JOIN drivers d ON ds.driver_id = d.id
+             WHERE d.city = $1 AND ds.score_total > (SELECT score_total FROM driver_score WHERE driver_id = $2)`,
+            [city, driverId]
+        );
+        return result.rows[0]?.rank || 1;
+    } catch (error) {
+        logger.error('Get driver city rank repository error:', error);
+        throw error;
+    }
+};
+
+export const getWeeklyPosition = async (driverId) => {
+    try {
+        // Weekly position based on total rides (you may change to weekly earnings if needed)
+        const result = await db.query(
+            `SELECT COUNT(*) + 1 as position
+             FROM drivers
+             WHERE total_rides > (SELECT total_rides FROM drivers WHERE id = $1)`,
+            [driverId]
+        );
+        return result.rows[0]?.position || 1;
+    } catch (error) {
+        logger.error('Get weekly position repository error:', error);
+        throw error;
+    }
+};
+
+export const getDriverDailyMetrics = async (driverId, days = 7) => {
+    try {
+        const result = await db.query(
+            `SELECT * FROM driver_metrics_daily 
+             WHERE driver_id = $1 
+             AND date >= CURRENT_DATE - INTERVAL '${days} days'
+             ORDER BY date DESC`,
+            [driverId]
+        );
+        return result.rows;
+    } catch (error) {
+        logger.error('Get driver daily metrics repository error:', error);
+        throw error;
+    }
+};

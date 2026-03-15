@@ -25,7 +25,7 @@ import {
 } from '../validators/walletValidator.js';
 
 // ─── Middlewares ──────────────────────────────────────────────────────────────
-import { authenticate }             from '../../../middlewares/authMiddleware.js';
+import { authenticate }             from '../../../core/middleware/auth.middleware';
 import { requireRole }              from '../../../middlewares/roleMiddleware.js';
 import {
     walletRechargeLimiter,

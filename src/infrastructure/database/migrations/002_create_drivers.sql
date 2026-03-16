@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS drivers (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     vehicle_type VARCHAR(50) NOT NULL CHECK (vehicle_type IN ('bike', 'auto', 'car')),
     vehicle_number VARCHAR(20) UNIQUE NOT NULL,
     vehicle_model VARCHAR(100),

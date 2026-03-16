@@ -227,13 +227,13 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             });
         }
 
-        if (status === 'driver_arrived') {
-            additionalFields.driver_arrived_at = new Date();
-        }
+        // if (status === 'driver_arrived') {
+        //     additionalFields.driver_arrived_at = new Date();
+        // }
 
-        if (status === 'in_progress') {
-            additionalFields.started_at = new Date();
-        }
+        // if (status === 'in_progress') {
+        //     additionalFields.started_at = new Date();
+        // }
 
         // Update ride status
         const updatedRide = await rideRepo.updateRideStatus(rideId, status, additionalFields);

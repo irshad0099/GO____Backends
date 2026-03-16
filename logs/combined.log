@@ -576,3 +576,100 @@ ConflictError: You already have an active ride
 2026-03-15 03:52:41 [INFO]: ✅ PostgreSQL connected successfully
 2026-03-15 03:53:45 [INFO]: ✅ PostgreSQL connected successfully
 2026-03-15 04:12:35 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 01:52:54 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 01:52:54 [ERROR]: Database query error:
+2026-03-17 01:52:54 [ERROR]: Database query error:
+2026-03-17 01:52:54 [ERROR]: Database query error:
+2026-03-17 01:52:54 [ERROR]: Database query error:
+2026-03-17 01:52:54 [ERROR]: Database query error:
+2026-03-17 01:52:54 [ERROR]: Database query error:
+2026-03-17 01:52:54 [ERROR]: Database query error:
+2026-03-17 01:52:55 [INFO]: PostgreSQL disconnected
+2026-03-17 01:57:01 [ERROR]: ❌ PostgreSQL connection failed: database "go_app" does not exist
+error: database "go_app" does not exist
+    at D:\Akash_Personal\GO____Backends\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Database.connect (file:///D:/Akash_Personal/GO____Backends/src/infrastructure/database/postgres.js:35:28)
+    at async runMigrations (file:///D:/Akash_Personal/GO____Backends/scripts/migrate.js:14:9)
+2026-03-17 01:57:44 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 01:57:44 [ERROR]: Database query error:
+2026-03-17 01:57:44 [INFO]: PostgreSQL disconnected
+2026-03-17 01:58:23 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 01:58:23 [INFO]: PostgreSQL disconnected
+2026-03-17 01:58:36 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:01:49 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:01:53 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:02:37 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:04:02 [INFO]: [SMS to 9540594976]: Your OTP for Ride Sharing app is: 290557. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-03-17 02:04:02 [INFO]: OTP sent successfully to 9540594976 for purpose: signup
+2026-03-17 02:05:00 [INFO]: OTP verified successfully for 9540594976
+2026-03-17 02:05:00 [ERROR]: Verify signup service error: role is not defined
+ReferenceError: role is not defined
+    at Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:43:64)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:29:24)
+2026-03-17 02:05:33 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:05:57 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/otpService.js:47:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:40:9)
+    at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:29:24)
+2026-03-17 02:05:57 [ERROR]: Verify signup service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/otpService.js:47:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:40:9)
+    at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:29:24)
+2026-03-17 02:06:13 [INFO]: [SMS to 9540594976]: Your OTP for Ride Sharing app is: 445301. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-03-17 02:06:13 [INFO]: OTP sent successfully to 9540594976 for purpose: signup
+2026-03-17 02:06:30 [INFO]: OTP verified successfully for 9540594976
+2026-03-17 02:06:31 [INFO]: User signed up successfully:
+2026-03-17 02:06:50 [ERROR]: Signup service error: User already exists with this phone number with same role
+ConflictError: User already exists with this phone number with same role
+    at Module.signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:14:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:8:24)
+2026-03-17 02:06:56 [INFO]: [SMS to 9540594976]: Your OTP for Ride Sharing app is: 439717. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-03-17 02:06:56 [INFO]: OTP sent successfully to 9540594976 for purpose: signup
+2026-03-17 02:07:05 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:07:32 [INFO]: OTP verified successfully for 9540594976
+2026-03-17 02:07:32 [INFO]: User signed up successfully:
+2026-03-17 02:07:39 [ERROR]: Signup service error: User already exists with this phone number with same role
+ConflictError: User already exists with this phone number with same role
+    at Module.signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:14:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:8:24)
+2026-03-17 02:07:46 [ERROR]: Signup service error: User already exists with this phone number with same role
+ConflictError: User already exists with this phone number with same role
+    at Module.signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:14:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:8:24)
+2026-03-17 02:08:33 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:08:39 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:08:46 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:08:48 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:08:52 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:08:55 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:09:06 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:09:09 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:09:12 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:09:29 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:09:34 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:09:53 [ERROR]: Signin service error: User not found. Please sign up first. not found
+NotFoundError: User not found. Please sign up first. not found
+    at Module.signin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:107:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:51:24)
+2026-03-17 02:10:17 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:10:26 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:10:32 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:11:07 [INFO]: [SMS to 9540594976]: Your OTP for Ride Sharing app is: 682374. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-03-17 02:11:07 [INFO]: OTP sent successfully to 9540594976 for purpose: signin
+2026-03-17 02:11:46 [INFO]: OTP verified successfully for 9540594976
+2026-03-17 02:11:46 [INFO]: User signed in successfully:
+2026-03-17 02:12:12 [INFO]: [SMS to 9540594976]: Your OTP for Ride Sharing app is: 824472. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-03-17 02:12:12 [INFO]: OTP sent successfully to 9540594976 for purpose: signin
+2026-03-17 02:12:37 [INFO]: OTP verified successfully for 9540594976
+2026-03-17 02:12:37 [INFO]: User signed in successfully:
+2026-03-17 02:12:52 [INFO]: PostgreSQL disconnected

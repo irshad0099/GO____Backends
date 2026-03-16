@@ -3,12 +3,13 @@ import logger from '../../../core/logger/logger.js';
 
 export const signup = async (req, res, next) => {
     try {
-        const { phone, email, fullName } = req.body;
+        const { phone, email, fullName,role="passenger" } = req.body;
         
         const result = await authService.signup({
             phone,
             email,
-            fullName
+            fullName,
+            role
         });
 
         res.status(200).json({
@@ -23,13 +24,14 @@ export const signup = async (req, res, next) => {
 
 export const verifySignup = async (req, res, next) => {
     try {
-        const { phone, otp, email, fullName } = req.body;
+        const { phone, otp, email, fullName,role } = req.body;
         
         const result = await authService.verifySignup({
             phone,
             otp,
             email,
-            fullName
+            fullName,
+            role
         });
 
         res.status(201).json({
@@ -44,9 +46,9 @@ export const verifySignup = async (req, res, next) => {
 
 export const signin = async (req, res, next) => {
     try {
-        const { phone } = req.body;
+        const { phone,role } = req.body;
         
-        const result = await authService.signin(phone);
+        const result = await authService.signin(phone,role);
 
         res.status(200).json({
             success: true,
@@ -60,12 +62,13 @@ export const signin = async (req, res, next) => {
 
 export const verifySignin = async (req, res, next) => {
     try {
-        const { phone, otp } = req.body;
+        const { phone, otp,role } = req.body;
         const { ip, userAgent } = req;
         
         const result = await authService.verifySignin({
             phone,
             otp,
+            role,
             ipAddress: ip,
             userAgent
         });

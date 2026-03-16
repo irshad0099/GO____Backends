@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS rides (
     id SERIAL PRIMARY KEY,
     ride_number VARCHAR(50) UNIQUE NOT NULL,
-    passenger_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    passenger_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     driver_id INTEGER REFERENCES drivers(id),
     vehicle_type VARCHAR(50) NOT NULL CHECK (vehicle_type IN ('bike', 'auto', 'car')),
     

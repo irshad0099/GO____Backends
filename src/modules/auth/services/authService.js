@@ -6,18 +6,18 @@ import * as sessionRepo from '../repositories/sessionRepository.js';
 import { ApiError, ConflictError, NotFoundError, AuthError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 
-export const signup = async ({ phone, email, fullName }) => {
+export const signup = async ({ phone, email, fullName ,role}) => {
     try {
         // Check if user exists
-        const existingUser = await userRepo.findUserByPhone(phone);
+        const existingUser = await userRepo.findUserByPhoneAndRole(phone,role);
         if (existingUser) {
-            throw new ConflictError('User already exists with this phone number');
+            throw new ConflictError('User already exists with this phone number with same role');
         }
 
         if (email) {
-            const existingEmail = await userRepo.findUserByEmail(email);
+            const existingEmail = await userRepo.findUserByEmailAndRole(email,role);
             if (existingEmail) {
-                throw new ConflictError('Email already registered');
+                throw new ConflictError('Email already registered wigth same role');
             }
         }
 
@@ -34,13 +34,13 @@ export const signup = async ({ phone, email, fullName }) => {
     }
 };
 
-export const verifySignup = async ({ phone, otp, email, fullName }) => {
+export const verifySignup = async ({ phone, otp, email, fullName,role }) => {
     try {
         // Verify OTP
         await otpService.verifyOTP(phone, otp, 'signup');
 
         // Check if user already exists (might have been created in another request)
-        let user = await userRepo.findUserByPhone(phone);
+        let user = await userRepo.findUserByPhoneAndRole(phone,role);
         
         if (user) {
             if (user.is_verified) {
@@ -60,7 +60,8 @@ export const verifySignup = async ({ phone, otp, email, fullName }) => {
                 phone_number: phone,
                 email,
                 full_name: fullName,
-                is_verified: true
+                is_verified: true,
+                role
             });
         }
 
@@ -75,7 +76,7 @@ export const verifySignup = async ({ phone, otp, email, fullName }) => {
             deviceId: null,
             deviceType: null,
             ipAddress: null,
-            userAgent: null
+            userAgent: null,
         });
 
         logger.info('User signed up successfully:', { userId: user.id, phone });
@@ -98,10 +99,10 @@ export const verifySignup = async ({ phone, otp, email, fullName }) => {
     }
 };
 
-export const signin = async (phone) => {
+export const signin = async (phone,role) => {
     try {
         // Check if user exists
-        const user = await userRepo.findUserByPhone(phone);
+        const user = await userRepo.findUserByPhoneAndRole(phone,role);
         if (!user) {
             throw new NotFoundError('User not found. Please sign up first.');
         }
@@ -120,13 +121,13 @@ export const signin = async (phone) => {
     }
 };
 
-export const verifySignin = async ({ phone, otp, ipAddress, userAgent }) => {
+export const verifySignin = async ({ phone, otp, ipAddress, userAgent,role }) => {
     try {
         // Verify OTP
         await otpService.verifyOTP(phone, otp, 'signin');
 
         // Get user
-        const user = await userRepo.findUserByPhone(phone);
+        const user = await userRepo.findUserByPhoneAndRole(phone,role);
         if (!user) {
             throw new NotFoundError('User not found');
         }

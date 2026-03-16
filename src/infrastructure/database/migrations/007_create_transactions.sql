@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL PRIMARY KEY,
     transaction_number VARCHAR(50) UNIQUE NOT NULL,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     wallet_id INTEGER REFERENCES wallets(id),
     ride_id INTEGER REFERENCES rides(id),
     

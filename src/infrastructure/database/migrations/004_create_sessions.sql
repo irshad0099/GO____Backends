@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS sessions (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     refresh_token TEXT UNIQUE NOT NULL,
     access_token TEXT,
     device_id VARCHAR(255),

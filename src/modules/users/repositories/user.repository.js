@@ -17,6 +17,22 @@ export const findUserByPhone = async (phone) => {
     }
 };
 
+export const findUserByPhoneAndRole = async (phone,role) => {
+    try {
+        const result = await db.query(
+            `SELECT id, phone_number, email, full_name, profile_picture, 
+                    role, is_verified, is_active, last_login, created_at, updated_at
+             FROM users 
+             WHERE phone_number = $1 AND role = $2`,
+            [phone, role]
+        );
+        return result.rows[0];
+    } catch (error) {
+        logger.error('Find user by phone and role repository error:', error);
+        throw error;
+    }
+};
+
 export const findUserByEmail = async (email) => {
     try {
         const result = await db.query(
@@ -33,6 +49,21 @@ export const findUserByEmail = async (email) => {
     }
 };
 
+export const findUserByEmailAndRole = async (email, role) => {
+    try {
+        const result = await db.query(
+            `SELECT id, phone_number, email, full_name, profile_picture, 
+                    role, is_verified, is_active, last_login, created_at, updated_at
+             FROM users 
+             WHERE email = $1 AND role = $2`,
+            [email, role]
+        );
+        return result.rows[0];
+    } catch (error) {
+        logger.error('Find user by email repository error:', error);
+        throw error;
+    }
+};
 export const findUserById = async (id) => {
     try {
         const result = await db.query(

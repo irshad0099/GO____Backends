@@ -28,11 +28,20 @@ export const signupValidators = [
     body('fullName')
         .optional()
         .isString().withMessage('Full name must be a string')
-        .isLength({ min: 2, max: 100 }).withMessage('Full name must be between 2 and 100 characters')
+        .isLength({ min: 2, max: 100 }).withMessage('Full name must be between 2 and 100 characters'),
+    body('role')
+        .notEmpty().withMessage('Role is required')
+        .isIn(['passenger', 'driver', 'admin'])
+        .withMessage('Role must be passenger, driver or admin')
+
 ];
 
 export const signinValidators = [
-    validatePhone()
+    validatePhone(),
+    body('role')
+        .notEmpty().withMessage('Role is required')
+        .isIn(['passenger', 'driver', 'admin'])
+        .withMessage('Role must be passenger, driver or admin')
 ];
 
 export const verifySignupValidators = [
@@ -44,12 +53,21 @@ export const verifySignupValidators = [
     body('fullName')
         .optional()
         .isString().withMessage('Full name must be a string')
-        .isLength({ min: 2, max: 100 }).withMessage('Full name must be between 2 and 100 characters')
+        .isLength({ min: 2, max: 100 }).withMessage('Full name must be between 2 and 100 characters'),
+    body('role')
+        .notEmpty().withMessage('Role is required')
+        .isIn(['passenger', 'driver', 'admin'])
+        .withMessage('Role must be passenger, driver or admin')
 ];
 
 export const verifySigninValidators = [
     validatePhone(),
-    validateOTP()
+    validateOTP(),
+    body('role')
+        .notEmpty().withMessage('Role is required')
+        .isIn(['passenger', 'driver', 'admin'])
+        .withMessage('Role must be passenger, driver or admin')
+
 ];
 
 export const logoutValidators = [

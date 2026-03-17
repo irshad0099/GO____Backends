@@ -673,3 +673,6 @@ NotFoundError: User not found. Please sign up first. not found
 2026-03-17 02:12:37 [INFO]: OTP verified successfully for 9540594976
 2026-03-17 02:12:37 [INFO]: User signed in successfully:
 2026-03-17 02:12:52 [INFO]: PostgreSQL disconnected
+2026-03-17 22:33:55 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 22:38:08 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 22:38:13 [INFO]: ✅ PostgreSQL connected successfully

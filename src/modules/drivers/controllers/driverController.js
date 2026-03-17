@@ -18,6 +18,110 @@ export const register = async (req, res, next) => {
     }
 };
 
+
+// add aadhar - detail
+export const addAadharDetail = async (req, res, next) => {
+    try {
+
+        const userId = req.user.id;
+        const aadhaarData = req.body;
+
+        const aadhaar = await driverService.addAadharDetail(userId, aadhaarData);
+
+        res.status(201).json({
+            success: true,
+            message: "Aadhaar uploaded successfully. Pending verification.",
+            data: aadhaar
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// pan detail verification
+export const addPanDetail = async (req, res, next) => {
+    try {
+
+        const userId = req.user.id;
+        const panData = req.body;
+
+        const pan = await driverService.addPanDetail(userId, panData);
+
+        res.status(201).json({
+            success: true,
+            message: "PAN details uploaded successfully. Pending verification.",
+            data: pan
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+// bank detail verification
+export const addBankDetail = async (req, res, next) => {
+    try {
+
+        const userId = req.user.id;
+        const bankData = req.body;
+
+        const bank = await driverService.addBankDetail(userId, bankData);
+
+        res.status(201).json({
+            success: true,
+            message: "Bank details uploaded successfully. Pending verification.",
+            data: bank
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// license detail verification
+export const addLicenseDetail = async (req, res, next) => {
+  try {
+
+    const userId = req.user.id;
+    const licenseData = req.body;
+
+    const license = await driverService.addLicenseDetail(userId, licenseData);
+
+    res.status(201).json({
+      success: true,
+      message: "License details uploaded successfully. Pending verification.",
+      data: license
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// vehicle detail verification
+export const addVehicleDetail = async (req, res, next) => {
+  try {
+
+    const userId = req.user.id;
+    const vehicleData = req.body;
+
+    const vehicle = await driverService.addVehicleDetail(userId, vehicleData);
+
+    res.status(201).json({
+      success: true,
+      message: "Vehicle details uploaded successfully. Pending verification.",
+      data: vehicle
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getProfile = async (req, res, next) => {
     try {
         const userId = req.user.id;
@@ -172,3 +276,5 @@ export const getDailyMetrics = async (req, res, next) => {
         next(error);
     }
 };
+
+

@@ -17,6 +17,283 @@ export const findDriverByUserId = async (userId) => {
     }
 };
 
+
+export const insertAadhar = async (driverId, data) => {
+    try {
+        
+    
+    const query = `
+        INSERT INTO driver_aadhaar
+        (driver_id, aadhaar_name, aadhaar_number, aadhaar_front, aadhaar_back, consent_given)
+        VALUES ($1,$2,$3,$4,$5,$6)
+        RETURNING *
+    `;
+
+    const values = [
+        driverId,
+        data.aadhaar_name,
+        data.aadhaar_number,
+        data.aadhaar_front,
+        data.aadhaar_back,
+        data.consent_given
+    ];
+
+    const { rows } = await pool.query(query, values);
+
+    return rows[0];
+ } catch (error) {
+            logger.error('Insert Aadhaar repository error:', error);
+            throw error
+    }
+};
+
+export const getAadharByDriverId = async (driverId) => {
+    try {
+        
+    
+     const result = await db.query(
+            `SELECT * FROM driver_aadhaar WHERE driver_id = $1`,
+            [driverId]
+        );
+
+    return result.rows[0];
+ } catch (error) {
+            logger.error('Insert Aadhaar repository error:', error);
+            throw error
+    }
+};
+
+
+export const getPanByDriverId = async (driverId) => {
+        try{
+    const query = `
+        SELECT * FROM driver_pan
+        WHERE driver_id = $1
+    `;
+
+    const { rows } = await pool.query(query, [driverId]);
+
+    return rows[0];
+      } catch (error) {
+        logger.error('Getting Driver pan Detail repository error:', error);
+        throw error
+        }
+};
+
+
+export const insertPan = async (driverId, data) => {
+        try {
+       
+    const query = `
+        INSERT INTO driver_pan
+        (driver_id, pan_name, pan_number, pan_dob, pan_front)
+        VALUES ($1,$2,$3,$4,$5)
+        RETURNING *
+    `;
+
+    const values = [
+        driverId,
+        data.pan_name,
+        data.pan_number,
+        data.pan_dob,
+        data.pan_front
+    ];
+
+    const { rows } = await pool.query(query, values);
+
+    return rows[0];
+         
+        } catch (error) {
+        logger.error('Inserting Driver pan Detail repository error:', error);
+        throw error
+        }
+};
+
+export const getBankByDriverId = async (driverId) => {
+try{
+    const query = `
+        SELECT * FROM driver_bank
+        WHERE driver_id = $1
+    `;
+
+    const { rows } = await pool.query(query, [driverId]);
+
+    return rows[0];
+      } catch (error) {
+        logger.error('Getting Driver bank Detail repository error:', error);
+        throw error
+        }
+};
+
+
+export const insertBank = async (driverId, data) => {
+try{
+    const query = `
+        INSERT INTO driver_bank
+        (
+            driver_id,
+            account_holder_name,
+            account_number,
+            ifsc_code,
+            account_type,
+            bank_proof_document
+        )
+        VALUES ($1,$2,$3,$4,$5,$6)
+        RETURNING *
+    `;
+
+    const values = [
+        driverId,
+        data.account_holder_name,
+        data.account_number,
+        data.ifsc_code,
+        data.account_type,
+        data.bank_proof_document
+    ];
+
+    const { rows } = await pool.query(query, values);
+
+    return rows[0];
+      } catch (error) {
+        logger.error('Inserting Driver bank Detail repository error:', error);
+        throw error
+        }
+};
+
+
+export const getLicenseByDriverId = async (driverId) => {
+try{
+  const query = `
+    SELECT * FROM driver_license
+    WHERE driver_id = $1
+  `;
+
+  const { rows } = await pool.query(query, [driverId]);
+
+  return rows[0];
+} catch (error) {
+    logger.error('Getting Driver license Detail repository error:', error);
+    throw error
+}
+};
+
+
+export const insertLicense = async (driverId, data) => {
+    try{
+  const query = `
+    INSERT INTO driver_license
+    (
+      driver_id,
+      license_number,
+      license_name,
+      license_dob,
+      license_issue_date,
+      license_expiry_date,
+      license_front,
+      license_back
+    )
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+    RETURNING *
+  `;
+
+  const values = [
+    driverId,
+    data.license_number,
+    data.license_name,
+    data.license_dob,
+    data.license_issue_date,
+    data.license_expiry_date,
+    data.license_front,
+    data.license_back
+  ];
+
+  const { rows } = await pool.query(query, values);
+
+  return rows[0];
+} catch (error) {
+    logger.error('Inserting Driver license Detail repository error:', error);
+    throw error
+}
+};
+
+
+
+export const getVehicleByDriverId = async (driverId) => {
+try{
+  const query = `
+    SELECT * FROM driver_vehicle
+    WHERE driver_id = $1
+  `;
+
+  const { rows } = await pool.query(query, [driverId]);
+
+  return rows[0];
+  } catch (error) {
+            logger.error('Getting Driver vehicle Detail repository error:', error);
+            throw error
+    }
+};
+
+
+export const insertVehicle = async (driverId, data) => {
+    try {
+        
+    
+  const query = `
+    INSERT INTO driver_vehicle
+    (
+      driver_id,
+      rc_number,
+      vehicle_number,
+      owner_name,
+      rc_front,
+      rc_back,
+
+      policy_number,
+      insurance_provider,
+      insurance_front,
+      insurance_back,
+      insurance_valid_until,
+
+      permit_number,
+      permit_type,
+      permit_document,
+      permit_valid_until
+    )
+    VALUES
+    ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+    RETURNING *
+  `;
+
+  const values = [
+    driverId,
+    data.rc_number,
+    data.vehicle_number,
+    data.owner_name,
+    data.rc_front,
+    data.rc_back,
+
+    data.policy_number,
+    data.insurance_provider,
+    data.insurance_front,
+    data.insurance_back,
+    data.insurance_valid_until,
+
+    data.permit_number,
+    data.permit_type,
+    data.permit_document,
+    data.permit_valid_until
+  ];
+
+  const { rows } = await pool.query(query, values);
+
+  return rows[0];
+  } catch (error) {
+            logger.error('Inserting Driver vehicle Detail repository error:', error);
+            throw error
+    }
+};
+
 export const findDriverByVehicleNumber = async (vehicleNumber) => {
     try {
         const result = await db.query(
@@ -29,6 +306,7 @@ export const findDriverByVehicleNumber = async (vehicleNumber) => {
         throw error;
     }
 };
+
 
 export const findDriverById = async (id) => {
     try {

@@ -44,6 +44,139 @@ export const registerDriver = async (userId, driverData) => {
     }
 };
 
+
+export const addAadharDetail = async (userId, aadhaarData) => {
+    try {
+        
+  
+    const driver = await driverRepo.findDriverByUserId(userId);
+
+    if (!driver) {
+        throw new Error("Driver not found");
+    }
+
+      const existing = await driverRepo.getAadharByDriverId(driver.id);
+
+if (existing) {
+    throw new Error("Aadhaar already uploaded");
+}
+
+    const aadhaar = await driverRepo.insertAadhar(
+        driver.id,
+        aadhaarData
+    );
+
+    return aadhaar;
+}   catch (error) {
+        
+            logger.error('Add Aadhar detail service error:', error);
+            throw error;
+    }
+}
+
+
+export const addPanDetail = async (userId, panData) => {
+        try {
+            
+        
+    const driver = await driverRepo.findDriverByUserId(userId);
+
+    if (!driver) {
+        throw new Error("Driver not found");
+    }
+
+    const existingPan = await driverRepo.getPanByDriverId(driver.id);
+
+    if (existingPan) {
+        throw new Error("PAN already uploaded");
+    }
+
+    const pan = await driverRepo.insertPan(driver.id, panData);
+
+    return pan;
+    } catch (error) {
+             logger.error('Add pan detail service error:', error);
+        throw error;
+        }
+};
+
+
+
+
+export const addBankDetail = async (userId, bankData) => {
+        try {
+            
+         
+    const driver = await driverRepo.findDriverByUserId(userId);
+
+    if (!driver) {
+        throw new Error("Driver not found");
+    }
+
+    const existingBank = await driverRepo.getBankByDriverId(driver.id);
+
+    if (existingBank) {
+        throw new Error("Bank details already uploaded");
+    }
+
+    const bank = await driverRepo.insertBank(driver.id, bankData);
+
+    return bank;
+       } catch (error) {
+                logger.error('Add bank detail service error:', error);
+        throw error;    
+        }
+};
+
+
+export const addLicenseDetail = async (userId, licenseData) => {
+    try{
+  const driver = await driverRepo.findDriverByUserId(userId);
+
+  if (!driver) {
+    throw new Error("Driver not found");
+  }
+
+  const existingLicense = await driverRepo.getLicenseByDriverId(driver.id);
+
+  if (existingLicense) {
+    throw new Error("License already uploaded");
+  }
+
+  const license = await driverRepo.insertLicense(driver.id, licenseData);
+
+  return license;
+} catch (error) {
+    logger.error('Add license detail service error:', error);
+    throw error;
+}   
+};
+
+
+export const addVehicleDetail = async (userId, vehicleData) => {
+    try {
+   
+  const driver = await driverRepo.findDriverByUserId(userId);
+
+  if (!driver) {
+    throw new Error("Driver not found");
+  }
+
+  const existingVehicle = await driverRepo.getVehicleByDriverId(driver.id);
+
+  if (existingVehicle) {
+    throw new Error("Vehicle already uploaded");
+  }
+
+  const vehicle = await driverRepo.insertVehicle(driver.id, vehicleData);
+
+  return vehicle;
+       
+    } catch (error) {
+        logger.error('Add vehicle detail service error:', error);
+        throw error;
+    }
+};
 export const getDriverProfile = async (userId) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);

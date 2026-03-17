@@ -61,3 +61,135 @@ export const updateLocationValidators = [
         .notEmpty().withMessage('Longitude is required')
         .isFloat({ min: -180, max: 180 }).withMessage('Please enter a valid longitude')
 ];
+
+
+export const aadhaarUploadValidator = [
+  body("driver_id").notEmpty().withMessage("Driver ID is required"),
+
+  body("aadhaar_name")
+    .notEmpty()
+    .withMessage("Aadhaar name is required"),
+
+  body("aadhaar_number")
+    .isLength({ min: 12, max: 12 })
+    .withMessage("Aadhaar must be 12 digits"),
+
+  body("aadhaar_front")
+    .notEmpty()
+    .withMessage("Aadhaar front image required"),
+
+  body("aadhaar_back")
+    .notEmpty()
+    .withMessage("Aadhaar back image required"),
+
+  body("consent_given")
+    .equals("true")
+    .withMessage("Consent must be given")
+];
+
+
+
+export const panUploadValidator = [
+
+  body("driver_id")
+    .notEmpty()
+    .withMessage("Driver ID is required"),
+
+  body("pan_name")
+    .notEmpty()
+    .withMessage("PAN name is required"),
+
+  body("pan_number")
+    .notEmpty()
+    .withMessage("PAN number is required")
+    .isLength({ min: 10, max: 10 })
+    .withMessage("PAN must be 10 characters")
+    .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)
+    .withMessage("Invalid PAN format"),
+
+  body("pan_dob")
+    .notEmpty()
+    .withMessage("Date of birth is required")
+    .isISO8601()
+    .withMessage("DOB must be a valid date"),
+
+  body("pan_front")
+    .notEmpty()
+    .withMessage("PAN front image is required")
+
+];
+
+
+
+export const bankUploadValidator = [
+
+  body("account_holder_name")
+    .notEmpty()
+    .withMessage("Account holder name is required"),
+
+  body("account_number")
+    .notEmpty()
+    .withMessage("Account number is required")
+    .isLength({ min: 6, max: 18 })
+    .withMessage("Invalid account number"),
+
+  body("ifsc_code")
+    .notEmpty()
+    .withMessage("IFSC code is required")
+    .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/)
+    .withMessage("Invalid IFSC code"),
+
+  body("account_type")
+    .notEmpty()
+    .withMessage("Account type is required")
+    .isIn(["saving", "current"])
+    .withMessage("Account type must be saving or current"),
+
+  body("bank_proof_document")
+    .notEmpty()
+    .withMessage("Bank proof document is required")
+
+];
+
+
+
+
+export const licenseUploadValidator = [
+
+  body("license_number")
+    .notEmpty()
+    .withMessage("License number is required")
+    .isLength({ min: 5, max: 20 })
+    .withMessage("Invalid license number"),
+
+  body("license_name")
+    .notEmpty()
+    .withMessage("License name is required"),
+
+  body("license_dob")
+    .notEmpty()
+    .withMessage("DOB is required")
+    .isISO8601()
+    .withMessage("DOB must be a valid date"),
+
+  body("license_issue_date")
+    .notEmpty()
+    .withMessage("Issue date is required")
+    .isISO8601()
+    .withMessage("Issue date must be valid"),
+
+  body("license_expiry_date")
+    .notEmpty()
+    .withMessage("Expiry date is required")
+    .isISO8601()
+    .withMessage("Expiry date must be valid"),
+
+  body("license_front")
+    .notEmpty()
+    .withMessage("License front image is required"),
+
+  body("license_back")
+    .notEmpty()
+    .withMessage("License back image is required")
+
+];

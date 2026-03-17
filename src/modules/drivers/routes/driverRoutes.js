@@ -63,6 +63,51 @@ router.post(
     controller.register
 );
 
+// Driver Aadhar verification
+router.post(
+    '/add-aadhar',
+    authorize('driver'),
+    validate(validator.aadhaarUploadValidator),
+    controller.addAadharDetail
+);
+
+
+// Driver Pan verification
+router.post(
+    '/add-pancard',
+    authorize('driver'),
+    validate(validator.panUploadValidator),
+    controller.addPanDetail 
+);
+
+
+
+// Driver Bank verification
+router.post(
+    '/add-bankdetail',
+    authorize('driver'),
+    validate(validator.bankUploadValidator),
+    controller.addBankDetail  
+);
+
+
+
+// Driver License verification
+router.post(
+    '/add-license',
+    authorize('driver'),
+    validate(validator.licenseUploadValidator),
+    controller.addLicenseDetail  
+);
+
+// add vehicle detail
+router.post(
+    '/add-vehicle-details',
+    authorize('driver'),
+    validate(validator.licenseUploadValidator),
+    controller.addVehicleDetail   
+);
+
 router.get('/profile', controller.getProfile);
 router.put('/profile', controller.updateProfile);
 
@@ -73,6 +118,7 @@ router.put(
     controller.updateLocation
 );
 
+// online or offline
 router.patch(
     '/availability',
     controller.toggleAvailability

@@ -122,6 +122,31 @@ export const addVehicleDetail = async (req, res, next) => {
   }
 };
 
+
+// verify kyc
+export const verifyDriverDocument = async (req, res, next) => {
+  try {
+ const userId = req.user.id;
+    const { driver_id, document_type, status, rejected_reason } = req.body;
+
+    const result = await driverService.verifyDriverDocument(userId,{
+      driver_id,
+      document_type,
+      status,
+      rejected_reason
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Document verification updated",
+      data: result
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getProfile = async (req, res, next) => {
     try {
         const userId = req.user.id;

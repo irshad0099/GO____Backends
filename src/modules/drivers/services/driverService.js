@@ -177,6 +177,56 @@ export const addVehicleDetail = async (userId, vehicleData) => {
         throw error;
     }
 };
+
+
+export const verifyDriverDocument = async (userId,{
+  driver_id,
+  document_type,
+  status,
+  rejected_reason
+}) => {
+    try{
+  const driver = await driverRepo.findDriverByUserId(userId);
+
+  if (!driver) {
+    throw new Error("Driver not found");
+  }
+
+  const tableMap = {
+    aadhaar: "driver_aadhaar",
+    pan: "driver_pan",
+    bank: "driver_bank",
+    license: "driver_license",
+    vehicle: "driver_vehicle"
+  };
+
+  const tableName = tableMap[document_type];
+
+  if (!tableName) {
+    throw new Error("Invalid document type");
+  }
+
+  const result = await driverRepo.verifyDriverDocument(
+    tableName,
+    driver_id,
+    status,
+    rejected_reason
+  );
+
+  // optional: check if all docs verified
+  const allDocsVerified = await driverRepo.checkAllDocumentsVerified(driver_id);
+
+  if (allDocsVerified) {
+    await driverRepo.markDriverVerified(driver_id);
+  }
+
+  return result;
+}catch(error){
+  logger.error('driver KYC Update service error:', error);
+        throw error;
+    }
+};
+
 export const getDriverProfile = async (userId) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);

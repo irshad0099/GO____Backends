@@ -306,8 +306,79 @@ export const findDriverByVehicleNumber = async (vehicleNumber) => {
         throw error;
     }
 };
+export const verifyDriverDocument = async (
+  tableName,
+  driverId,
+  status,
+  rejectedReason
+) => {
+        try {
+          let status_value;     
+      switch (status){
+        case 0:
+             status_value = 'pending' 
+             break;
+        case 1:
+                status_value = 'verified' 
+                break;
+        case 2:
+                status_value = 'rejected'
+                break;
+        deafult:
+                throw new ApiError(400, 'Wrong status sent ')
+            
+        }
 
 
+  const query = `
+    UPDATE ${tableName}
+    SET
+      verification_status = $1,
+      verified_at = NOW(),
+      rejected_reason = $2
+    WHERE driver_id = $3
+    RETURNING *
+  `;
+
+  const values = [status_value, rejectedReason || null, driverId];
+
+  const { rows } = await pool.query(query, values);
+
+  return rows[0];
+   } catch (error) {
+          logger.error('Update KYC driver repository error:', error);
+        throw error;  
+        }
+};
+
+
+export const checkAllDocumentsVerified = async (driverId) => {
+    try{
+  const query = `
+    SELECT
+      (SELECT verification_status FROM driver_aadhaar WHERE driver_id = $1) AS aadhaar,
+      (SELECT verification_status FROM driver_pan WHERE driver_id = $1) AS pan,
+      (SELECT verification_status FROM driver_bank WHERE driver_id = $1) AS bank,
+      (SELECT verification_status FROM driver_license WHERE driver_id = $1) AS license,
+      (SELECT verification_status FROM driver_vehicle WHERE driver_id = $1) AS vehicle
+  `;
+
+  const { rows } = await pool.query(query, [driverId]);
+
+  const docs = rows[0];
+
+  return (
+    docs.aadhaar === "verified" &&
+    docs.pan === "verified" &&
+    docs.bank === "verified" &&
+    docs.license === "verified" &&
+    docs.vehicle === "verified"
+  );
+  } catch (error) {
+          logger.error('Checking KYC driver repository error:', error);
+        throw error;  
+        }
+};
 export const findDriverById = async (id) => {
     try {
         const result = await db.query(
@@ -323,6 +394,64 @@ export const findDriverById = async (id) => {
         throw error;
     }
 };
+
+
+export const markDriverVerified = async (driverId) => {
+    try{
+    const query2 = `SELECT
+      (SELECT verification_status FROM driver_aadhaar WHERE driver_id = $1) AS aadhaar,
+      (SELECT verification_status FROM driver_pan WHERE driver_id = $1) AS pan,
+      (SELECT verification_status FROM driver_bank WHERE driver_id = $1) AS bank,
+      (SELECT verification_status FROM driver_license WHERE driver_id = $1) AS license,
+      (SELECT verification_status FROM driver_vehicle WHERE driver_id = $1) AS vehicle
+  `;
+  
+    const { rows } = await pool.query(query2, [driverId]);
+
+  const docs = rows[0];
+
+  if(docs.aadhaar !== "verified" || docs.pan !== "verified" || docs.bank !== "verified" || docs.license !== "verified" || docs.vehicle !== "verified"){
+    throw new Error('All documents are not verified yet');
+  }
+
+  const query = `
+    UPDATE drivers
+    SET is_verified = true,
+        updated_at = NOW()
+    WHERE id = $1
+  `;
+
+  await pool.query(query, [driverId]);
+} catch (error) {
+        logger.error('mark driver kyc verified repository error:', error);
+        throw error;
+    }
+};
+
+
+
+export const getDriverDocument = async (driverId) => {
+  try {
+
+    const query = `
+      SELECT
+        (SELECT row_to_json(a) FROM driver_aadhaar a WHERE a.driver_id = $1) AS aadhaar,
+        (SELECT row_to_json(p) FROM driver_pan p WHERE p.driver_id = $1) AS pan,
+        (SELECT row_to_json(b) FROM driver_bank b WHERE b.driver_id = $1) AS bank,
+        (SELECT row_to_json(l) FROM driver_license l WHERE l.driver_id = $1) AS license,
+        (SELECT row_to_json(v) FROM driver_vehicle v WHERE v.driver_id = $1) AS vehicle
+    `;
+
+    const { rows } = await pool.query(query, [driverId]);
+
+    return rows[0];
+
+  } catch (error) {
+    logger.error('get driver kyc document repository error:', error);
+    throw error;
+  }
+};
+
 
 export const createDriver = async (driverData) => {
     try {

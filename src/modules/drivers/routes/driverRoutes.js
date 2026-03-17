@@ -108,6 +108,13 @@ router.post(
     controller.addVehicleDetail   
 );
 
+
+// verify kyc
+router.patch(
+    '/document/verify',
+    controller.verifyDriverDocument
+);
+
 router.get('/profile', controller.getProfile);
 router.put('/profile', controller.updateProfile);
 
@@ -117,6 +124,8 @@ router.put(
     validate(validator.updateLocationValidators),
     controller.updateLocation
 );
+
+
 
 // online or offline
 router.patch(

@@ -147,6 +147,25 @@ export const verifyDriverDocument = async (req, res, next) => {
   }
 };
 
+
+export const getDriverDocument = async (req, res, next) => {
+  try {
+ const userId = req.user.id;
+    const { driver_id } = req.body;
+
+    const result = await driverService.getDriverDocument(userId,driver_id);
+
+    res.status(200).json({
+      success: true,
+      message: "successfuly fetch document of driver",
+      data: result
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getProfile = async (req, res, next) => {
     try {
         const userId = req.user.id;

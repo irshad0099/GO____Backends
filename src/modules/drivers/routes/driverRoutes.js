@@ -115,6 +115,13 @@ router.patch(
     controller.verifyDriverDocument
 );
 
+
+router.get(
+    '/document',
+    controller.getDriverDocument
+);
+
+
 router.get('/profile', controller.getProfile);
 router.put('/profile', controller.updateProfile);
 

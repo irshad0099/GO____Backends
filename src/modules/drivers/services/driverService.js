@@ -227,6 +227,32 @@ export const verifyDriverDocument = async (userId,{
     }
 };
 
+
+
+
+
+export const getDriverDocument = async (userId,driver_id) => {
+    try{
+  const driver = await driverRepo.findDriverByUserId(userId);
+
+ if (!driver) {
+    throw new Error("Driver not found");
+  }
+
+  if (!tableName) {
+    throw new Error("Invalid document type");
+  }
+
+  const result = await driverRepo.getDriverDocument(  driver_id);
+
+
+  return result;
+}catch(error){
+  logger.error('driver KYC Update service error:', error);
+        throw error;
+    }
+};
+
 export const getDriverProfile = async (userId) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);

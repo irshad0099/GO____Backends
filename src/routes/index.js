@@ -3,6 +3,8 @@ import authRoutes from '../modules/auth/routes/authRoutes.js';
 import userRoutes from '../modules/users/routes/userRoutes.js';
 import driverRoutes from '../modules/drivers/routes/driverRoutes.js';
 import rideRoutes from '../modules/rides/routes/rideRoutes.js';
+import walletRoutes from '../modules/wallet/routes/walletRoutes.js';
+import subscriptionRoutes from '../modules/subscription/routes/subscriptionRoutes.js';
 
 const router = express.Router();
 
@@ -11,6 +13,8 @@ router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/drivers', driverRoutes);
 router.use('/rides', rideRoutes);
+router.use('/wallet', walletRoutes);
+router.use('/subscriptions', subscriptionRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
@@ -42,6 +46,8 @@ router.get('/', (req, res) => {
             users: '/users',
             drivers: '/drivers',
             rides: '/rides',
+            wallet: '/wallet',
+            subscriptions: '/subscriptions',
             health: '/health',
             test: '/test'
         }

@@ -1,4 +1,4 @@
-import rateLimit from 'express-rate-limit';
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import { ENV } from '../../config/envConfig.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -47,11 +47,10 @@ export const otpLimiter = rateLimit({
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Wallet recharge — 10 recharges per hour per user
-// Prevents abuse of payment gateway
 export const walletRechargeLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 10,
-    keyGenerator: (req) => `recharge_${req.user?.id || req.ip}`,
+    keyGenerator: (req) => `recharge_${req.user?.id || ipKeyGenerator(req)}`,
     message: {
         success: false,
         message: 'Too many recharge attempts. You can recharge up to 10 times per hour.'
@@ -61,11 +60,10 @@ export const walletRechargeLimiter = rateLimit({
 });
 
 // Ride payment — 30 per hour per user
-// High limit because rides can be frequent
 export const ridePaymentLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 30,
-    keyGenerator: (req) => `ride_pay_${req.user?.id || req.ip}`,
+    keyGenerator: (req) => `ride_pay_${req.user?.id || ipKeyGenerator(req)}`,
     message: {
         success: false,
         message: 'Too many payment requests. Please try again later.'
@@ -74,11 +72,11 @@ export const ridePaymentLimiter = rateLimit({
     legacyHeaders: false
 });
 
-// Withdrawal — max 3 per day per user (strict — real money leaving platform)
+// Withdrawal — max 3 per day per user
 export const withdrawalLimiter = rateLimit({
     windowMs: 24 * 60 * 60 * 1000, // 24 hours
     max: 3,
-    keyGenerator: (req) => `withdraw_${req.user?.id || req.ip}`,
+    keyGenerator: (req) => `withdraw_${req.user?.id || ipKeyGenerator(req)}`,
     skipSuccessfulRequests: false,
     message: {
         success: false,
@@ -92,7 +90,7 @@ export const withdrawalLimiter = rateLimit({
 export const refundLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 5,
-    keyGenerator: (req) => `refund_${req.user?.id || req.ip}`,
+    keyGenerator: (req) => `refund_${req.user?.id || ipKeyGenerator(req)}`,
     message: {
         success: false,
         message: 'Too many refund requests. Maximum 5 refunds per hour.'
@@ -105,7 +103,7 @@ export const refundLimiter = rateLimit({
 export const transferLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 5,
-    keyGenerator: (req) => `transfer_${req.user?.id || req.ip}`,
+    keyGenerator: (req) => `transfer_${req.user?.id || ipKeyGenerator(req)}`,
     message: {
         success: false,
         message: 'Too many transfer attempts. Maximum 5 transfers per hour.'
@@ -115,11 +113,10 @@ export const transferLimiter = rateLimit({
 });
 
 // Wallet balance/details check — 60 per minute
-// Lightweight endpoint, but still protect from scraping
 export const walletReadLimiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
     max: 60,
-    keyGenerator: (req) => `wallet_read_${req.user?.id || req.ip}`,
+    keyGenerator: (req) => `wallet_read_${req.user?.id || ipKeyGenerator(req)}`,
     message: {
         success: false,
         message: 'Too many requests. Please slow down.'
@@ -132,7 +129,7 @@ export const walletReadLimiter = rateLimit({
 export const transactionHistoryLimiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
     max: 30,
-    keyGenerator: (req) => `txn_history_${req.user?.id || req.ip}`,
+    keyGenerator: (req) => `txn_history_${req.user?.id || ipKeyGenerator(req)}`,
     message: {
         success: false,
         message: 'Too many requests for transaction history. Please try again shortly.'

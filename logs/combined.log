@@ -576,3 +576,76 @@ ConflictError: You already have an active ride
 2026-03-15 03:52:41 [INFO]: ✅ PostgreSQL connected successfully
 2026-03-15 03:53:45 [INFO]: ✅ PostgreSQL connected successfully
 2026-03-15 04:12:35 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:28:54 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:42:32 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:42:40 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:43:14 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:43:20 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:43:57 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:44:03 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:44:36 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:44:44 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:45:10 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:45:46 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:48:40 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:52:38 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:53:56 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:57:58 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:58:24 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:58:48 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:59:06 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 15:59:21 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 16:07:16 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 16:25:33 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 16:32:29 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 16:32:29 [ERROR]: Database query error:
+2026-03-15 16:32:29 [ERROR]: Database query error:
+2026-03-15 16:32:29 [ERROR]: Database query error:
+2026-03-15 16:32:29 [ERROR]: Database query error:
+2026-03-15 16:32:29 [ERROR]: Database query error:
+2026-03-15 16:32:29 [ERROR]: Database query error:
+2026-03-15 16:32:29 [ERROR]: Database query error:
+2026-03-15 16:32:30 [INFO]: PostgreSQL disconnected
+2026-03-15 16:35:32 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 19:35:02 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 20:47:52 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 20:52:27 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 21:03:13 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 21:06:00 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-15 21:06:13 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-16 01:10:40 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 00:58:09 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:09:57 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:10:44 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:10:47 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:17:35 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:20:59 [INFO]: PostgreSQL disconnected
+2026-03-17 02:21:09 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 02:21:09 [ERROR]: Database query error:
+2026-03-17 02:21:09 [ERROR]: Database query error:
+2026-03-17 02:21:09 [ERROR]: Database query error:
+2026-03-17 02:21:09 [ERROR]: Database query error:
+2026-03-17 02:21:09 [ERROR]: Database query error:
+2026-03-17 02:21:09 [ERROR]: Database query error:
+2026-03-17 02:21:09 [ERROR]: Database query error:
+2026-03-17 02:21:09 [ERROR]: Database query error:
+2026-03-17 02:21:10 [INFO]: PostgreSQL disconnected
+2026-03-17 13:52:03 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-17 14:01:23 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 00:14:47 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 00:16:29 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 00:16:42 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 00:16:57 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 00:17:12 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 00:17:24 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 00:17:53 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 00:18:14 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 00:18:35 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 00:19:24 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 00:20:02 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 01:07:38 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 01:08:15 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 01:08:23 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 01:08:36 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 01:08:42 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 01:09:08 [INFO]: ✅ PostgreSQL connected successfully

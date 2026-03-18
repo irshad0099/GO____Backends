@@ -104,7 +104,7 @@ router.post(
 router.post(
     '/add-vehicle-details',
     authorize('driver'),
-    validate(validator.licenseUploadValidator),
+    validate(validator.vehicleUploadValidator),
     controller.addVehicleDetail   
 );
 
@@ -117,7 +117,7 @@ router.patch(
 
 
 router.get(
-    '/document',
+    '/document/:driver_id',
     controller.getDriverDocument
 );
 

@@ -151,7 +151,7 @@ export const verifyDriverDocument = async (req, res, next) => {
 export const getDriverDocument = async (req, res, next) => {
   try {
  const userId = req.user.id;
-    const { driver_id } = req.body;
+    const { driver_id } = req.params;
 
     const result = await driverService.getDriverDocument(userId,driver_id);
 

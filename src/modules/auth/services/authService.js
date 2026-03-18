@@ -1,4 +1,5 @@
 import * as userRepo from '../../users/repositories/user.repository.js';
+import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as otpService from './otpService.js';
 import * as tokenService from './tokenService.js';
 
@@ -63,6 +64,14 @@ export const verifySignup = async ({ phone, otp, email, fullName,role }) => {
                 is_verified: true,
                 role
             });
+        }
+
+        // Ensure a driver profile exists for driver role users.
+        if (role === 'driver') {
+            const existingDriver = await driverRepo.findDriverByUserId(user.id);
+            if (!existingDriver) {
+                await driverRepo.createDriver({ userId: user.id });
+            }
         }
 
         // Generate tokens

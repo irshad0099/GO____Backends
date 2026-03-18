@@ -5,6 +5,7 @@ import *as rideCalculator from '../../../core/utils/rideCalculator.js';
 import { ApiError, NotFoundError, ConflictError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 import { ENV } from '../../../config/envConfig.js';   // ✅ sahi
+import { db } from '../../../infrastructure/database/postgres.js';
 
 export const requestRide = async (userId, rideData) => {
     try {

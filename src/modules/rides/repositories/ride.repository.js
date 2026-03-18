@@ -57,11 +57,12 @@ export const findRideById = async (rideId) => {
         const result = await db.query(
             `SELECT r.*, 
                     u.full_name as passenger_name, u.phone_number as passenger_phone,
-                    d.vehicle_type, d.vehicle_number, d.vehicle_model, d.vehicle_color,
+                    dv.vehicle_type, dv.vehicle_number, dv.vehicle_model, dv.vehicle_color,
                     du.full_name as driver_name, du.phone_number as driver_phone
              FROM rides r
              LEFT JOIN users u ON r.passenger_id = u.id
              LEFT JOIN drivers d ON r.driver_id = d.id
+             LEFT JOIN driver_vehicle dv ON d.id = dv.driver_id
              LEFT JOIN users du ON d.user_id = du.id
              WHERE r.id = $1`,
             [rideId]
@@ -127,13 +128,15 @@ export const findNearbyDrivers = async (vehicleType, latitude, longitude, radius
     try {
         const result = await db.query(
             `SELECT d.*, 
+                    dv.vehicle_type, dv.vehicle_number, dv.vehicle_model, dv.vehicle_color,
                     u.full_name, u.phone_number,
                     (6371 * acos(cos(radians($1)) * cos(radians(d.current_latitude)) * 
                     cos(radians(d.current_longitude) - radians($2)) + 
                     sin(radians($1)) * sin(radians(d.current_latitude)))) AS distance
              FROM drivers d
+             JOIN driver_vehicle dv ON d.id = dv.driver_id
              JOIN users u ON d.user_id = u.id
-             WHERE d.vehicle_type = $3
+             WHERE dv.vehicle_type = $3
                AND d.is_verified = true
                AND d.is_available = true
                AND d.is_on_duty = false
@@ -253,10 +256,11 @@ export const findRidesByPassenger = async (passengerId, { limit = 10, offset = 0
     try {
         let query = `
             SELECT r.*, 
-                   d.vehicle_type, d.vehicle_number,
+                   dv.vehicle_type, dv.vehicle_number,
                    u.full_name as driver_name, u.phone_number as driver_phone
             FROM rides r
             LEFT JOIN drivers d ON r.driver_id = d.id
+            LEFT JOIN driver_vehicle dv ON d.id = dv.driver_id
             LEFT JOIN users u ON d.user_id = u.id
             WHERE r.passenger_id = $1
         `;

@@ -810,3 +810,197 @@ NotFoundError: User not found. Please sign up first. not found
 2026-03-18 01:57:14 [INFO]: ✅ PostgreSQL connected successfully
 2026-03-18 01:57:18 [INFO]: ✅ PostgreSQL connected successfully
 2026-03-18 01:57:22 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-18 01:57:26 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 00:32:22 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 00:47:54 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 01:39:40 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 01:39:52 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 01:40:09 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 01:40:19 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 01:40:30 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 01:40:36 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 01:40:42 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 01:41:42 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 01:41:49 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 01:50:45 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 01:51:19 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 01:57:45 [INFO]: PostgreSQL disconnected
+2026-03-19 02:00:32 [ERROR]: ❌ PostgreSQL connection failed: database "go_app" does not exist
+error: database "go_app" does not exist
+    at D:\Akash_Personal\GO____Backends\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Database.connect (file:///D:/Akash_Personal/GO____Backends/src/infrastructure/database/postgres.js:35:28)
+    at async runMigrations (file:///D:/Akash_Personal/GO____Backends/scripts/migrate.js:14:9)
+2026-03-19 02:00:52 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:00:54 [INFO]: PostgreSQL disconnected
+2026-03-19 02:01:08 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:02:41 [INFO]: [SMS to 9540594976]: Your OTP for Ride Sharing app is: 166420. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-03-19 02:02:41 [INFO]: OTP sent successfully to 9540594976 for purpose: signup
+2026-03-19 02:03:15 [INFO]: OTP verified successfully for 9540594976
+2026-03-19 02:03:15 [INFO]: User signed up successfully:
+2026-03-19 02:09:37 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+    at D:\Akash_Personal\GO____Backends\node_modules\router\index.js:297:9
+    at processParams (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:582:12)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:291:5)
+    at Function.handle (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:186:3)
+    at router (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+2026-03-19 02:10:17 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+    at D:\Akash_Personal\GO____Backends\node_modules\router\index.js:297:9
+    at processParams (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:582:12)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:291:5)
+    at Function.handle (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:186:3)
+    at router (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+2026-03-19 02:11:23 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+    at D:\Akash_Personal\GO____Backends\node_modules\router\index.js:297:9
+    at processParams (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:582:12)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:291:5)
+    at Function.handle (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:186:3)
+    at router (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+2026-03-19 02:11:52 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:12:01 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+    at D:\Akash_Personal\GO____Backends\node_modules\router\index.js:297:9
+    at processParams (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:582:12)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:291:5)
+    at Function.handle (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:186:3)
+    at router (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+2026-03-19 02:12:37 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:12:41 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+    at D:\Akash_Personal\GO____Backends\node_modules\router\index.js:297:9
+    at processParams (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:582:12)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:291:5)
+    at Function.handle (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:186:3)
+    at router (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+2026-03-19 02:14:09 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:14:12 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:14:25 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:14:27 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:14:35 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:27:40 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:27:53 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:32:06 [ERROR]: Update KYC driver repository error: Wrong status sent 
+Error: Wrong status sent 
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:342:23)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:205:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:32:06 [ERROR]: driver KYC Update service error: Wrong status sent 
+Error: Wrong status sent 
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:342:23)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:205:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:32:28 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:32:33 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:32:36 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:32:38 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:32:43 [ERROR]: Update KYC driver repository error: Wrong status sent 
+Error: Wrong status sent 
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:342:23)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:205:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:32:43 [ERROR]: driver KYC Update service error: Wrong status sent 
+Error: Wrong status sent 
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:342:23)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:205:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:32:52 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:32:57 [ERROR]: Update KYC driver repository error: Wrong status sent 
+Error: Wrong status sent 
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:343:23)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:205:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:32:57 [ERROR]: driver KYC Update service error: Wrong status sent 
+Error: Wrong status sent 
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:343:23)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:205:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:34:01 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:34:04 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:34:54 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:34:58 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:35:33 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:35:43 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:35:45 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:37:45 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:37:47 [ERROR]: driver KYC Update service error: Unauthorized: Driver ID mismatch
+Error: Unauthorized: Driver ID mismatch
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:191:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:39:42 [ERROR]: driver KYC Update service error: Unauthorized: Driver ID mismatch
+Error: Unauthorized: Driver ID mismatch
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:191:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:40:00 [ERROR]: driver KYC Update service error: Unauthorized: Driver ID mismatch
+Error: Unauthorized: Driver ID mismatch
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:191:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:40:45 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:40:46 [ERROR]: Update KYC driver repository error: Rejected reason is required when status is rejected
+Error: Rejected reason is required when status is rejected
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:356:11)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:207:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:40:46 [ERROR]: driver KYC Update service error: Rejected reason is required when status is rejected
+Error: Rejected reason is required when status is rejected
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:356:11)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:207:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:43:37 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:43:55 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:45:22 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:45:48 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:47:50 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:48:10 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:48:37 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:51:14 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:51:17 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:51:20 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:51:26 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:51:57 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:52:00 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:52:08 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:52:12 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:52:18 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:52:20 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:52:22 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:52:24 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-19 02:52:26 [INFO]: ✅ PostgreSQL connected successfully

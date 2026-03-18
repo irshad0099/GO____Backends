@@ -420,3 +420,132 @@ NotFoundError: User not found. Please sign up first. not found
     at Module.signin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:107:19)
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
     at async signin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:51:24)
+2026-03-19 02:00:32 [ERROR]: ❌ PostgreSQL connection failed: database "go_app" does not exist
+error: database "go_app" does not exist
+    at D:\Akash_Personal\GO____Backends\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Database.connect (file:///D:/Akash_Personal/GO____Backends/src/infrastructure/database/postgres.js:35:28)
+    at async runMigrations (file:///D:/Akash_Personal/GO____Backends/scripts/migrate.js:14:9)
+2026-03-19 02:09:37 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+    at D:\Akash_Personal\GO____Backends\node_modules\router\index.js:297:9
+    at processParams (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:582:12)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:291:5)
+    at Function.handle (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:186:3)
+    at router (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+2026-03-19 02:10:17 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+    at D:\Akash_Personal\GO____Backends\node_modules\router\index.js:297:9
+    at processParams (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:582:12)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:291:5)
+    at Function.handle (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:186:3)
+    at router (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+2026-03-19 02:11:23 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+    at D:\Akash_Personal\GO____Backends\node_modules\router\index.js:297:9
+    at processParams (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:582:12)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:291:5)
+    at Function.handle (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:186:3)
+    at router (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+2026-03-19 02:12:01 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+    at D:\Akash_Personal\GO____Backends\node_modules\router\index.js:297:9
+    at processParams (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:582:12)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:291:5)
+    at Function.handle (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:186:3)
+    at router (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+2026-03-19 02:12:41 [ERROR]: Authentication failed: No token provided
+AuthError: No token provided
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:11:19)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+    at D:\Akash_Personal\GO____Backends\node_modules\router\index.js:297:9
+    at processParams (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:582:12)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:291:5)
+    at Function.handle (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:186:3)
+    at router (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:60:12)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at trimPrefix (D:\Akash_Personal\GO____Backends\node_modules\router\index.js:342:13)
+2026-03-19 02:32:06 [ERROR]: Update KYC driver repository error: Wrong status sent 
+Error: Wrong status sent 
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:342:23)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:205:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:32:06 [ERROR]: driver KYC Update service error: Wrong status sent 
+Error: Wrong status sent 
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:342:23)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:205:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:32:43 [ERROR]: Update KYC driver repository error: Wrong status sent 
+Error: Wrong status sent 
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:342:23)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:205:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:32:43 [ERROR]: driver KYC Update service error: Wrong status sent 
+Error: Wrong status sent 
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:342:23)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:205:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:32:57 [ERROR]: Update KYC driver repository error: Wrong status sent 
+Error: Wrong status sent 
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:343:23)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:205:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:32:57 [ERROR]: driver KYC Update service error: Wrong status sent 
+Error: Wrong status sent 
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:343:23)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:205:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:37:47 [ERROR]: driver KYC Update service error: Unauthorized: Driver ID mismatch
+Error: Unauthorized: Driver ID mismatch
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:191:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:39:42 [ERROR]: driver KYC Update service error: Unauthorized: Driver ID mismatch
+Error: Unauthorized: Driver ID mismatch
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:191:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:40:00 [ERROR]: driver KYC Update service error: Unauthorized: Driver ID mismatch
+Error: Unauthorized: Driver ID mismatch
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:191:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:40:46 [ERROR]: Update KYC driver repository error: Rejected reason is required when status is rejected
+Error: Rejected reason is required when status is rejected
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:356:11)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:207:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-19 02:40:46 [ERROR]: driver KYC Update service error: Rejected reason is required when status is rejected
+Error: Rejected reason is required when status is rejected
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/repositories/driver.repository.js:356:11)
+    at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:207:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)

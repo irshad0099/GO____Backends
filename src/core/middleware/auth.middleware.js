@@ -6,7 +6,7 @@ import logger from '../logger/logger.js';
 export const authenticate = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
-        
+        console.log(token," jejbvrfjk")
         if (!token) {
             throw new AuthError('No token provided', 401);
         }

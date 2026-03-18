@@ -1,6 +1,6 @@
 import * as driverRepo from '../repositories/driver.repository.js';
 import * as rideRepo from '../../rides/repositories/ride.repository.js';
-import { NotFoundError, ConflictError, ApiError } from '../../../core/errors/ApiError.js';
+import { NotFoundError, ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 import { appConfig } from '../../../config/app.config.js';
 
@@ -9,24 +9,20 @@ export const registerDriver = async (userId, driverData) => {
         // Check if already registered as driver
         const existingDriver = await driverRepo.findDriverByUserId(userId);
         if (existingDriver) {
-            throw new ConflictError('Already registered as a driver');
-        }
-
-        // Check vehicle number uniqueness
-        const existingVehicle = await driverRepo.findDriverByVehicleNumber(driverData.vehicleNumber);
-        if (existingVehicle) {
-            throw new ConflictError('Vehicle number already registered');
+            return {
+                id: existingDriver.id,
+                vehicleType: existingDriver.vehicle_type,
+                vehicleNumber: existingDriver.vehicle_number,
+                vehicleModel: existingDriver.vehicle_model,
+                vehicleColor: existingDriver.vehicle_color,
+                isVerified: existingDriver.is_verified,
+                status: existingDriver.is_verified ? 'verified' : 'pending_verification'
+            };
         }
 
         // Create driver profile
         const driver = await driverRepo.createDriver({
-            userId,
-            vehicleType: driverData.vehicleType,
-            vehicleNumber: driverData.vehicleNumber.toUpperCase(),
-            vehicleModel: driverData.vehicleModel,
-            vehicleColor: driverData.vehicleColor,
-            licenseNumber: driverData.licenseNumber.toUpperCase(),
-            licenseExpiry: driverData.licenseExpiry
+            userId
         });
 
         return {
@@ -44,29 +40,18 @@ export const registerDriver = async (userId, driverData) => {
     }
 };
 
-
 export const addAadharDetail = async (userId, aadhaarData) => {
     try {
-        
-  
-    const driver = await driverRepo.findDriverByUserId(userId);
+        const driver = await driverRepo.findDriverByUserId(userId);
 
-    if (!driver) {
-        throw new Error("Driver not found");
-    }
+        if (!driver) {
+            throw new NotFoundError('Driver profile');
+        }
 
-      const existing = await driverRepo.getAadharByDriverId(driver.id);
+        const aadhaar = await driverRepo.insertAadhar(driver.id, aadhaarData);
+        await driverRepo.updateDriver(driver.id, { is_verified: false });
 
-if (existing) {
-    throw new Error("Aadhaar already uploaded");
-}
-
-    const aadhaar = await driverRepo.insertAadhar(
-        driver.id,
-        aadhaarData
-    );
-
-    return aadhaar;
+        return aadhaar;
 }   catch (error) {
         
             logger.error('Add Aadhar detail service error:', error);
@@ -77,23 +62,16 @@ if (existing) {
 
 export const addPanDetail = async (userId, panData) => {
         try {
-            
-        
-    const driver = await driverRepo.findDriverByUserId(userId);
+        const driver = await driverRepo.findDriverByUserId(userId);
 
-    if (!driver) {
-        throw new Error("Driver not found");
-    }
+        if (!driver) {
+            throw new NotFoundError('Driver profile');
+        }
 
-    const existingPan = await driverRepo.getPanByDriverId(driver.id);
+        const pan = await driverRepo.insertPan(driver.id, panData);
+        await driverRepo.updateDriver(driver.id, { is_verified: false });
 
-    if (existingPan) {
-        throw new Error("PAN already uploaded");
-    }
-
-    const pan = await driverRepo.insertPan(driver.id, panData);
-
-    return pan;
+        return pan;
     } catch (error) {
              logger.error('Add pan detail service error:', error);
         throw error;
@@ -105,21 +83,14 @@ export const addPanDetail = async (userId, panData) => {
 
 export const addBankDetail = async (userId, bankData) => {
         try {
-            
-         
     const driver = await driverRepo.findDriverByUserId(userId);
 
     if (!driver) {
-        throw new Error("Driver not found");
-    }
-
-    const existingBank = await driverRepo.getBankByDriverId(driver.id);
-
-    if (existingBank) {
-        throw new Error("Bank details already uploaded");
+        throw new NotFoundError('Driver profile');
     }
 
     const bank = await driverRepo.insertBank(driver.id, bankData);
+    await driverRepo.updateDriver(driver.id, { is_verified: false });
 
     return bank;
        } catch (error) {
@@ -131,21 +102,16 @@ export const addBankDetail = async (userId, bankData) => {
 
 export const addLicenseDetail = async (userId, licenseData) => {
     try{
-  const driver = await driverRepo.findDriverByUserId(userId);
+        const driver = await driverRepo.findDriverByUserId(userId);
 
-  if (!driver) {
-    throw new Error("Driver not found");
-  }
+        if (!driver) {
+            throw new NotFoundError('Driver profile');
+        }
 
-  const existingLicense = await driverRepo.getLicenseByDriverId(driver.id);
+        const license = await driverRepo.insertLicense(driver.id, licenseData);
+        await driverRepo.updateDriver(driver.id, { is_verified: false });
 
-  if (existingLicense) {
-    throw new Error("License already uploaded");
-  }
-
-  const license = await driverRepo.insertLicense(driver.id, licenseData);
-
-  return license;
+        return license;
 } catch (error) {
     logger.error('Add license detail service error:', error);
     throw error;
@@ -155,22 +121,16 @@ export const addLicenseDetail = async (userId, licenseData) => {
 
 export const addVehicleDetail = async (userId, vehicleData) => {
     try {
-   
-  const driver = await driverRepo.findDriverByUserId(userId);
+        const driver = await driverRepo.findDriverByUserId(userId);
 
-  if (!driver) {
-    throw new Error("Driver not found");
-  }
+        if (!driver) {
+            throw new NotFoundError('Driver profile');
+        }
 
-  const existingVehicle = await driverRepo.getVehicleByDriverId(driver.id);
+        const vehicle = await driverRepo.insertVehicle(driver.id, vehicleData);
+        await driverRepo.updateDriver(driver.id, { is_verified: false });
 
-  if (existingVehicle) {
-    throw new Error("Vehicle already uploaded");
-  }
-
-  const vehicle = await driverRepo.insertVehicle(driver.id, vehicleData);
-
-  return vehicle;
+        return vehicle;
        
     } catch (error) {
         logger.error('Add vehicle detail service error:', error);
@@ -191,7 +151,9 @@ export const verifyDriverDocument = async (userId,{
   if (!driver) {
     throw new Error("Driver not found");
   }
-
+  if(driver.id !== parseInt(driver_id)) {
+    throw new Error("Unauthorized: Driver ID mismatch");
+  }
   const tableMap = {
     aadhaar: "driver_aadhaar",
     pan: "driver_pan",
@@ -213,6 +175,9 @@ export const verifyDriverDocument = async (userId,{
     rejected_reason
   );
 
+  if(!result) {
+    throw new Error("Document not found or driver not found or update failed");
+  }
   // optional: check if all docs verified
   const allDocsVerified = await driverRepo.checkAllDocumentsVerified(driver_id);
 
@@ -239,11 +204,7 @@ export const getDriverDocument = async (userId,driver_id) => {
     throw new Error("Driver not found");
   }
 
-  if (!tableName) {
-    throw new Error("Invalid document type");
-  }
-
-  const result = await driverRepo.getDriverDocument(  driver_id);
+    const result = await driverRepo.getDriverDocument(driver_id || driver.id);
 
 
   return result;
@@ -312,11 +273,20 @@ export const updateDriverProfile = async (userId, updates) => {
             return await getDriverProfile(userId);
         }
 
-        const updatedDriver = await driverRepo.updateDriver(driver.id, filteredUpdates);
+        const vehicleUpdates = {
+            vehicle_model: filteredUpdates.vehicleModel,
+            vehicle_color: filteredUpdates.vehicleColor
+        };
+
+        const updatedVehicle = await driverRepo.updateVehicleDetail(driver.id, vehicleUpdates);
+
+        if (!updatedVehicle) {
+            throw new NotFoundError('Vehicle details');
+        }
 
         return {
-            vehicleModel: updatedDriver.vehicle_model,
-            vehicleColor: updatedDriver.vehicle_color
+            vehicleModel: updatedVehicle.vehicle_model,
+            vehicleColor: updatedVehicle.vehicle_color
         };
     } catch (error) {
         logger.error('Update driver profile service error:', error);

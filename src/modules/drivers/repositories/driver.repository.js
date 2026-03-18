@@ -1,12 +1,17 @@
 import { db } from '../../../infrastructure/database/postgres.js';
+import { ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 
 export const findDriverByUserId = async (userId) => {
     try {
         const result = await db.query(
-            `SELECT d.*, u.phone_number, u.email, u.full_name, u.profile_picture
+            `SELECT d.*, u.phone_number, u.email, u.full_name, u.profile_picture,
+                    dv.vehicle_type, dv.vehicle_number, dv.vehicle_model, dv.vehicle_color,
+                    dl.license_number, dl.license_expiry_date AS license_expiry
              FROM drivers d
              JOIN users u ON d.user_id = u.id
+             LEFT JOIN driver_vehicle dv ON d.id = dv.driver_id
+             LEFT JOIN driver_license dl ON d.id = dl.driver_id
              WHERE d.user_id = $1`,
             [userId]
         );
@@ -26,6 +31,15 @@ export const insertAadhar = async (driverId, data) => {
         INSERT INTO driver_aadhaar
         (driver_id, aadhaar_name, aadhaar_number, aadhaar_front, aadhaar_back, consent_given)
         VALUES ($1,$2,$3,$4,$5,$6)
+        ON CONFLICT (driver_id) DO UPDATE SET
+            aadhaar_name = EXCLUDED.aadhaar_name,
+            aadhaar_number = EXCLUDED.aadhaar_number,
+            aadhaar_front = EXCLUDED.aadhaar_front,
+            aadhaar_back = EXCLUDED.aadhaar_back,
+            consent_given = EXCLUDED.consent_given,
+            verification_status = 'pending',
+            verified_at = NULL,
+            rejected_reason = NULL
         RETURNING *
     `;
 
@@ -38,7 +52,7 @@ export const insertAadhar = async (driverId, data) => {
         data.consent_given
     ];
 
-    const { rows } = await pool.query(query, values);
+    const { rows } = await db.query(query, values);
 
     return rows[0];
  } catch (error) {
@@ -71,7 +85,7 @@ export const getPanByDriverId = async (driverId) => {
         WHERE driver_id = $1
     `;
 
-    const { rows } = await pool.query(query, [driverId]);
+    const { rows } = await db.query(query, [driverId]);
 
     return rows[0];
       } catch (error) {
@@ -88,6 +102,14 @@ export const insertPan = async (driverId, data) => {
         INSERT INTO driver_pan
         (driver_id, pan_name, pan_number, pan_dob, pan_front)
         VALUES ($1,$2,$3,$4,$5)
+        ON CONFLICT (driver_id) DO UPDATE SET
+            pan_name = EXCLUDED.pan_name,
+            pan_number = EXCLUDED.pan_number,
+            pan_dob = EXCLUDED.pan_dob,
+            pan_front = EXCLUDED.pan_front,
+            verification_status = 'pending',
+            verified_at = NULL,
+            rejected_reason = NULL
         RETURNING *
     `;
 
@@ -99,7 +121,7 @@ export const insertPan = async (driverId, data) => {
         data.pan_front
     ];
 
-    const { rows } = await pool.query(query, values);
+    const { rows } = await db.query(query, values);
 
     return rows[0];
          
@@ -116,7 +138,7 @@ try{
         WHERE driver_id = $1
     `;
 
-    const { rows } = await pool.query(query, [driverId]);
+    const { rows } = await db.query(query, [driverId]);
 
     return rows[0];
       } catch (error) {
@@ -139,6 +161,15 @@ try{
             bank_proof_document
         )
         VALUES ($1,$2,$3,$4,$5,$6)
+        ON CONFLICT (driver_id) DO UPDATE SET
+            account_holder_name = EXCLUDED.account_holder_name,
+            account_number = EXCLUDED.account_number,
+            ifsc_code = EXCLUDED.ifsc_code,
+            account_type = EXCLUDED.account_type,
+            bank_proof_document = EXCLUDED.bank_proof_document,
+            verification_status = 'pending',
+            verified_at = NULL,
+            rejected_reason = NULL
         RETURNING *
     `;
 
@@ -151,7 +182,7 @@ try{
         data.bank_proof_document
     ];
 
-    const { rows } = await pool.query(query, values);
+    const { rows } = await db.query(query, values);
 
     return rows[0];
       } catch (error) {
@@ -168,7 +199,7 @@ try{
     WHERE driver_id = $1
   `;
 
-  const { rows } = await pool.query(query, [driverId]);
+    const { rows } = await db.query(query, [driverId]);
 
   return rows[0];
 } catch (error) {
@@ -193,6 +224,17 @@ export const insertLicense = async (driverId, data) => {
       license_back
     )
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+        ON CONFLICT (driver_id) DO UPDATE SET
+            license_number = EXCLUDED.license_number,
+            license_name = EXCLUDED.license_name,
+            license_dob = EXCLUDED.license_dob,
+            license_issue_date = EXCLUDED.license_issue_date,
+            license_expiry_date = EXCLUDED.license_expiry_date,
+            license_front = EXCLUDED.license_front,
+            license_back = EXCLUDED.license_back,
+            verification_status = 'pending',
+            verified_at = NULL,
+            rejected_reason = NULL
     RETURNING *
   `;
 
@@ -207,7 +249,7 @@ export const insertLicense = async (driverId, data) => {
     data.license_back
   ];
 
-  const { rows } = await pool.query(query, values);
+    const { rows } = await db.query(query, values);
 
   return rows[0];
 } catch (error) {
@@ -225,7 +267,7 @@ try{
     WHERE driver_id = $1
   `;
 
-  const { rows } = await pool.query(query, [driverId]);
+    const { rows } = await db.query(query, [driverId]);
 
   return rows[0];
   } catch (error) {
@@ -239,10 +281,13 @@ export const insertVehicle = async (driverId, data) => {
     try {
         
     
-  const query = `
+    const query = `
     INSERT INTO driver_vehicle
     (
       driver_id,
+            vehicle_type,
+            vehicle_model,
+            vehicle_color,
       rc_number,
       vehicle_number,
       owner_name,
@@ -261,31 +306,55 @@ export const insertVehicle = async (driverId, data) => {
       permit_valid_until
     )
     VALUES
-    ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+        ON CONFLICT (driver_id) DO UPDATE SET
+            vehicle_type = EXCLUDED.vehicle_type,
+            vehicle_model = EXCLUDED.vehicle_model,
+            vehicle_color = EXCLUDED.vehicle_color,
+            rc_number = EXCLUDED.rc_number,
+            vehicle_number = EXCLUDED.vehicle_number,
+            owner_name = EXCLUDED.owner_name,
+            rc_front = EXCLUDED.rc_front,
+            rc_back = EXCLUDED.rc_back,
+            policy_number = EXCLUDED.policy_number,
+            insurance_provider = EXCLUDED.insurance_provider,
+            insurance_front = EXCLUDED.insurance_front,
+            insurance_back = EXCLUDED.insurance_back,
+            insurance_valid_until = EXCLUDED.insurance_valid_until,
+            permit_number = EXCLUDED.permit_number,
+            permit_type = EXCLUDED.permit_type,
+            permit_document = EXCLUDED.permit_document,
+            permit_valid_until = EXCLUDED.permit_valid_until,
+            verification_status = 'pending',
+            verified_at = NULL,
+            rejected_reason = NULL
     RETURNING *
   `;
 
   const values = [
     driverId,
-    data.rc_number,
-    data.vehicle_number,
-    data.owner_name,
-    data.rc_front,
-    data.rc_back,
+        data.vehicle_type,
+        data.vehicle_model,
+        data.vehicle_color,
+        data.rc_number,
+        data.vehicle_number,
+        data.owner_name,
+        data.rc_front,
+        data.rc_back,
 
-    data.policy_number,
-    data.insurance_provider,
-    data.insurance_front,
-    data.insurance_back,
-    data.insurance_valid_until,
+        data.policy_number,
+        data.insurance_provider,
+        data.insurance_front,
+        data.insurance_back,
+        data.insurance_valid_until,
 
-    data.permit_number,
-    data.permit_type,
-    data.permit_document,
-    data.permit_valid_until
+        data.permit_number,
+        data.permit_type,
+        data.permit_document,
+        data.permit_valid_until
   ];
 
-  const { rows } = await pool.query(query, values);
+    const { rows } = await db.query(query, values);
 
   return rows[0];
   } catch (error) {
@@ -297,7 +366,10 @@ export const insertVehicle = async (driverId, data) => {
 export const findDriverByVehicleNumber = async (vehicleNumber) => {
     try {
         const result = await db.query(
-            `SELECT * FROM drivers WHERE vehicle_number = $1`,
+            `SELECT d.*
+             FROM drivers d
+             JOIN driver_vehicle dv ON d.id = dv.driver_id
+             WHERE dv.vehicle_number = $1`,
             [vehicleNumber]
         );
         return result.rows[0];
@@ -313,23 +385,34 @@ export const verifyDriverDocument = async (
   rejectedReason
 ) => {
         try {
-          let status_value;     
-      switch (status){
-        case 0:
-             status_value = 'pending' 
-             break;
-        case 1:
-                status_value = 'verified' 
-                break;
-        case 2:
-                status_value = 'rejected'
-                break;
-        deafult:
-                throw new ApiError(400, 'Wrong status sent ')
-            
-        }
+       console.log('Received status:', status);
+
+let status_value;
+
+switch (status) {
+  case 0:
+  case "0":
+    status_value = "pending";
+    break;
+
+  case 1:
+  case "1":
+    status_value = "verified";
+    break;
+
+  case 2:
+  case "2":
+    status_value = "rejected";
+    break;
+
+  default:
+    throw new ApiError(400, "Wrong status sent");
+}
 
 
+if(status_value === "rejected" && (!rejectedReason || rejectedReason.trim() === "")) {
+    throw new ApiError(400, "Rejected reason is required when status is rejected");
+}
   const query = `
     UPDATE ${tableName}
     SET
@@ -342,8 +425,8 @@ export const verifyDriverDocument = async (
 
   const values = [status_value, rejectedReason || null, driverId];
 
-  const { rows } = await pool.query(query, values);
-
+    const { rows } = await db.query(query, values);
+    console.log('Database update result:', rows[0]);
   return rows[0];
    } catch (error) {
           logger.error('Update KYC driver repository error:', error);
@@ -363,10 +446,12 @@ export const checkAllDocumentsVerified = async (driverId) => {
       (SELECT verification_status FROM driver_vehicle WHERE driver_id = $1) AS vehicle
   `;
 
-  const { rows } = await pool.query(query, [driverId]);
+    const { rows } = await db.query(query, [driverId]);
 
   const docs = rows[0];
-
+if (!docs.aadhaar || !docs.pan || !docs.bank || !docs.license || !docs.vehicle) {
+    throw new ApiError(400, 'All documents must be uploaded and verified before marking driver as verified');
+}
   return (
     docs.aadhaar === "verified" &&
     docs.pan === "verified" &&
@@ -382,9 +467,13 @@ export const checkAllDocumentsVerified = async (driverId) => {
 export const findDriverById = async (id) => {
     try {
         const result = await db.query(
-            `SELECT d.*, u.phone_number, u.email, u.full_name, u.profile_picture
+            `SELECT d.*, u.phone_number, u.email, u.full_name, u.profile_picture,
+                    dv.vehicle_type, dv.vehicle_number, dv.vehicle_model, dv.vehicle_color,
+                    dl.license_number, dl.license_expiry_date AS license_expiry
              FROM drivers d
              JOIN users u ON d.user_id = u.id
+             LEFT JOIN driver_vehicle dv ON d.id = dv.driver_id
+             LEFT JOIN driver_license dl ON d.id = dl.driver_id
              WHERE d.id = $1`,
             [id]
         );
@@ -398,21 +487,11 @@ export const findDriverById = async (id) => {
 
 export const markDriverVerified = async (driverId) => {
     try{
-    const query2 = `SELECT
-      (SELECT verification_status FROM driver_aadhaar WHERE driver_id = $1) AS aadhaar,
-      (SELECT verification_status FROM driver_pan WHERE driver_id = $1) AS pan,
-      (SELECT verification_status FROM driver_bank WHERE driver_id = $1) AS bank,
-      (SELECT verification_status FROM driver_license WHERE driver_id = $1) AS license,
-      (SELECT verification_status FROM driver_vehicle WHERE driver_id = $1) AS vehicle
-  `;
-  
-    const { rows } = await pool.query(query2, [driverId]);
+  const allVerified = await checkAllDocumentsVerified(driverId);
 
-  const docs = rows[0];
-
-  if(docs.aadhaar !== "verified" || docs.pan !== "verified" || docs.bank !== "verified" || docs.license !== "verified" || docs.vehicle !== "verified"){
-    throw new Error('All documents are not verified yet');
-  }
+if (!allVerified) {
+  throw new ApiError(400, "All documents are not verified yet");
+}
 
   const query = `
     UPDATE drivers
@@ -421,7 +500,7 @@ export const markDriverVerified = async (driverId) => {
     WHERE id = $1
   `;
 
-  await pool.query(query, [driverId]);
+    await db.query(query, [driverId]);
 } catch (error) {
         logger.error('mark driver kyc verified repository error:', error);
         throw error;
@@ -442,7 +521,7 @@ export const getDriverDocument = async (driverId) => {
         (SELECT row_to_json(v) FROM driver_vehicle v WHERE v.driver_id = $1) AS vehicle
     `;
 
-    const { rows } = await pool.query(query, [driverId]);
+    const { rows } = await db.query(query, [driverId]);
 
     return rows[0];
 
@@ -455,23 +534,14 @@ export const getDriverDocument = async (driverId) => {
 
 export const createDriver = async (driverData) => {
     try {
-        const {
-            userId,
-            vehicleType,
-            vehicleNumber,
-            vehicleModel,
-            vehicleColor,
-            licenseNumber,
-            licenseExpiry
-        } = driverData;
+        const { userId } = driverData;
 
         const result = await db.query(
             `INSERT INTO drivers 
-             (user_id, vehicle_type, vehicle_number, vehicle_model, 
-              vehicle_color, license_number, license_expiry)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)
+             (user_id)
+             VALUES ($1)
              RETURNING *`,
-            [userId, vehicleType, vehicleNumber, vehicleModel, vehicleColor, licenseNumber, licenseExpiry]
+            [userId]
         );
 
         return result.rows[0];
@@ -540,7 +610,8 @@ export const findAvailableDrivers = async (vehicleType, latitude, longitude, rad
                     cos(radians(d.current_longitude) - radians($2)) + 
                     sin(radians($1)) * sin(radians(d.current_latitude)))) AS distance
              FROM drivers d
-             WHERE d.vehicle_type = $3
+             JOIN driver_vehicle dv ON d.id = dv.driver_id
+             WHERE dv.vehicle_type = $3
                AND d.is_verified = true
                AND d.is_available = true
                AND d.is_on_duty = false

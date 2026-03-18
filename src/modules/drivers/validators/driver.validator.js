@@ -45,12 +45,7 @@ export const validateLicenseExpiry = () => {
 };
 
 export const driverRegistrationValidators = [
-    validateVehicleType(),
-    validateVehicleNumber(),
-    validateVehicleModel(),
-    validateVehicleColor(),
-    validateLicenseNumber(),
-    validateLicenseExpiry()
+  // Driver row is auto-created at signup for role=driver.
 ];
 
 export const updateLocationValidators = [
@@ -192,4 +187,67 @@ export const licenseUploadValidator = [
     .notEmpty()
     .withMessage("License back image is required")
 
+];
+
+export const vehicleUploadValidator = [
+
+
+  body("vehicle_type")
+    .notEmpty()
+    .withMessage("Vehicle type is required")
+    .isIn(["bike", "auto", "car"])
+    .withMessage("Vehicle type must be bike, auto, or car"),
+
+  body("vehicle_number")
+    .notEmpty()
+    .withMessage("Vehicle number is required")
+    .matches(/^[A-Z]{2}[0-9]{1,2}[A-Z]{1,2}[0-9]{4}$/)
+    .withMessage("Invalid vehicle number"),
+
+  body("vehicle_model")
+    .optional()
+    .isLength({ min: 2, max: 100 }),
+
+  body("vehicle_color")
+    .optional()
+    .isLength({ min: 2, max: 50 }),
+
+  // RC
+  body("rc_number")
+    .notEmpty()
+    .withMessage("RC number is required"),
+
+  body("owner_name")
+    .notEmpty()
+    .withMessage("Owner name is required"),
+
+  body("rc_front")
+    .notEmpty()
+    .withMessage("RC front required"),
+
+  body("rc_back")
+    .notEmpty()
+    .withMessage("RC back required"),
+
+  // Insurance (optional)
+  body("policy_number").optional(),
+  body("insurance_provider").optional(),
+
+  body("insurance_valid_until")
+    .optional()
+    .isISO8601()
+    .withMessage("Invalid insurance date"),
+
+  body("insurance_front").optional(),
+  body("insurance_back").optional(),
+
+  // Permit (optional)
+  body("permit_number").optional(),
+  body("permit_type").optional(),
+  body("permit_document").optional(),
+
+  body("permit_valid_until")
+    .optional()
+    .isISO8601()
+    .withMessage("Invalid permit date")
 ];

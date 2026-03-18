@@ -49,6 +49,7 @@ import * as controller from '../controllers/driverController.js';
 import { authenticate, authorize } from '../../../core/middleware/auth.middleware.js';
 import { validate } from '../../../core/middleware/validation.middleware.js';
 import * as validator from '../validators/driver.validator.js';
+import { s3Upload } from '../../../core/middleware/s3Upload.middleware.js';
 
 const router = express.Router();
 
@@ -104,7 +105,7 @@ router.post(
 router.post(
     '/add-vehicle-details',
     authorize('driver'),
-    validate(validator.licenseUploadValidator),
+    validate(validator.vehicleUploadValidator),
     controller.addVehicleDetail   
 );
 
@@ -117,7 +118,7 @@ router.patch(
 
 
 router.get(
-    '/document',
+    '/document/:driver_id',
     controller.getDriverDocument
 );
 
@@ -152,4 +153,10 @@ router.get('/score', authorize('driver'), controller.getDriverScore);
 router.get('/badge', authorize('driver'), controller.getDriverBadge);
 router.get('/metrics/daily', authorize('driver'), controller.getDailyMetrics);
 
+
+router.post(
+  "/kyc-upload",
+  s3Upload.single("file"),
+  controller.uploadFile
+);
 export default router;

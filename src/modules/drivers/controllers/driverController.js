@@ -151,7 +151,7 @@ export const verifyDriverDocument = async (req, res, next) => {
 export const getDriverDocument = async (req, res, next) => {
   try {
  const userId = req.user.id;
-    const { driver_id } = req.body;
+    const { driver_id } = req.params;
 
     const result = await driverService.getDriverDocument(userId,driver_id);
 
@@ -322,3 +322,27 @@ export const getDailyMetrics = async (req, res, next) => {
 };
 
 
+
+
+
+export const uploadFile = async (req, res, next) => {
+  try {
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "File is required"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "File uploaded successfully",
+      url: req.file.location
+    });
+
+  } catch (error) {
+    logger.error('File upload error:', error);
+    next(error);
+  }
+};

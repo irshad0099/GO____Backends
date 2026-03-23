@@ -7,6 +7,26 @@ import logger from '../../../core/logger/logger.js';
 import { ENV } from '../../../config/envConfig.js';   // ✅ sahi
 import { db } from '../../../infrastructure/database/postgres.js';
 
+const getRequestVelocityHint = (nearbyDriversCount) => {
+    // Placeholder for Redis/event-stream based demand velocity.
+    return Math.max(5, Math.round((Number(nearbyDriversCount) || 0) * 1.4));
+};
+
+const getDriverDailyRideCountByDriverId = async (driverId) => {
+    if (!driverId) return 1;
+
+    const result = await db.query(
+        `SELECT COUNT(*)::int AS total
+         FROM rides
+         WHERE driver_id = $1
+           AND status = 'completed'
+           AND DATE(completed_at) = CURRENT_DATE`,
+        [driverId]
+    );
+
+    return result.rows[0]?.total || 0;
+};
+
 export const requestRide = async (userId, rideData) => {
     try {
         // Check if user has active ride
@@ -29,7 +49,7 @@ export const requestRide = async (userId, rideData) => {
             rideData.vehicleType
         );
 
-        // Find nearby drivers for surge calculation
+        // Find nearby drivers for pricing signal
         const nearbyDrivers = await rideRepo.findNearbyDrivers(
             rideData.vehicleType,
             rideData.pickupLatitude,
@@ -37,20 +57,34 @@ export const requestRide = async (userId, rideData) => {
             ENV.DEFAULT_SEARCH_RADIUS_KM || 2.5
         );
 
-        // Calculate surge multiplier
-        const totalRequests = 10; // This should come from Redis/cache
-        const surgeMultiplier = rideCalculator.calculateSurgeMultiplier(
-            nearbyDrivers.length,
-            totalRequests
-        );
+        // Trusted pricing signals are computed by backend.
+        const totalRequests = 10;
+        const requestVelocity = getRequestVelocityHint(nearbyDrivers.length);
+        const availableDrivers = nearbyDrivers.length;
+        const pickupDistanceKm = availableDrivers > 0
+            ? Number(nearbyDrivers[0].distance || 0)
+            : 0;
 
-        // Calculate fare
-        const fare = rideCalculator.calculateRideFare(
-            rideData.vehicleType,
+        const goFare = rideCalculator.calculateGoMobilityFare({
+            vehicleType: rideData.vehicleType,
             distanceKm,
-            durationMinutes,
-            surgeMultiplier
-        );
+            estimatedDurationMinutes: durationMinutes,
+            actualDurationMinutes: durationMinutes,
+            waitedMinutes: 0,
+            pickupDistanceKm,
+            driverDailyRideCount: 1,
+            rideRequests: totalRequests,
+            availableDrivers,
+            requestVelocity
+        });
+
+        const fare = {
+            baseFare: goFare.passenger.baseFare,
+            distanceFare: goFare.passenger.distanceFare,
+            timeFare: durationMinutes,
+            surgeMultiplier: goFare.passenger.surgeMultiplier,
+            estimatedFare: goFare.passenger.estimatedFare
+        };
 
         // Generate ride number
         const rideNumber = rideCalculator.generateRideNumber();
@@ -90,6 +124,9 @@ export const requestRide = async (userId, rideData) => {
             durationMinutes: ride.duration_minutes,
             estimatedFare: ride.estimated_fare,
             surgeMultiplier: ride.surge_multiplier,
+                passengerFareBreakdown: goFare.passenger,
+                driverEarningBreakdown: goFare.driver,
+                pricingSignals: goFare.signals,
             status: ride.status,
             requestedAt: ride.requested_at,
             nearbyDrivers: nearbyDrivers.length,
@@ -388,6 +425,65 @@ export const rateRide = async (userId, rideId, rating, review) => {
         };
     } catch (error) {
         logger.error('Rate ride service error:', error);
+        throw error;
+    }
+};
+
+export const calculateFare = async (fareData) => {
+    try {
+        const {
+            vehicleType,
+            distanceKm,
+            durationMinutes,
+            actualDurationMinutes,
+            waitedMinutes,
+            pickupLatitude,
+            pickupLongitude,
+            allowSignalOverride = false,
+            debugSignals = {}
+        } = fareData;
+
+        const nearbyDrivers = await rideRepo.findNearbyDrivers(
+            vehicleType,
+            Number(pickupLatitude) || 0,
+            Number(pickupLongitude) || 0,
+            ENV.DEFAULT_SEARCH_RADIUS_KM || 2.5
+        );
+
+        const availableDrivers = nearbyDrivers.length;
+        const pickupDistanceKm = availableDrivers > 0
+            ? Number(nearbyDrivers[0].distance || 0)
+            : 0;
+        const selectedDriverId = availableDrivers > 0 ? nearbyDrivers[0].id : null;
+        const driverDailyRideCount = await getDriverDailyRideCountByDriverId(selectedDriverId);
+
+        let rideRequests = 10;
+        let requestVelocity = getRequestVelocityHint(availableDrivers);
+
+        const isDebugOverrideEnabled = ENV.ALLOW_PRICING_SIGNAL_OVERRIDE === 'true' && allowSignalOverride;
+        if (isDebugOverrideEnabled) {
+            if (typeof debugSignals.rideRequests === 'number') {
+                rideRequests = debugSignals.rideRequests;
+            }
+            if (typeof debugSignals.requestVelocity === 'number') {
+                requestVelocity = debugSignals.requestVelocity;
+            }
+        }
+
+        return rideCalculator.calculateGoMobilityFare({
+            vehicleType,
+            distanceKm,
+            estimatedDurationMinutes: durationMinutes,
+            actualDurationMinutes: actualDurationMinutes ?? durationMinutes,
+            waitedMinutes: waitedMinutes ?? 0,
+            pickupDistanceKm,
+            driverDailyRideCount,
+            rideRequests,
+            availableDrivers,
+            requestVelocity
+        });
+    } catch (error) {
+        logger.error('Calculate fare service error:', error);
         throw error;
     }
 };

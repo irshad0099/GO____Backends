@@ -549,3 +549,35 @@ Error: Rejected reason is required when status is rejected
     at Module.verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/services/driverService.js:207:35)
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
     at async verifyDriverDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/drivers/controllers/driverController.js:132:20)
+2026-03-24 03:28:53 [ERROR]: Verify signin service error: User not found not found
+NotFoundError: User not found not found
+    at Module.verifySignin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:141:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifySignin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:68:24)
+2026-03-24 03:29:16 [ERROR]: Signin service error: User not found. Please sign up first. not found
+NotFoundError: User not found. Please sign up first. not found
+    at Module.signin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:116:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:51:24)
+2026-03-24 03:29:51 [ERROR]: Signin service error: User not found. Please sign up first. not found
+NotFoundError: User not found. Please sign up first. not found
+    at Module.signin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:116:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:51:24)
+2026-03-24 03:29:59 [ERROR]: Verify signup service error: User already exists and verified
+ConflictError: User already exists and verified
+    at Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:48:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:29:24)
+2026-03-24 03:30:06 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/otpService.js:47:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:41:9)
+    at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:29:24)
+2026-03-24 03:30:06 [ERROR]: Verify signup service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/otpService.js:47:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:41:9)
+    at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:29:24)

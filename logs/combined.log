@@ -1045,3 +1045,49 @@ Error: Rejected reason is required when status is rejected
 2026-03-19 03:30:52 [INFO]: ✅ PostgreSQL connected successfully
 2026-03-19 03:31:08 [INFO]: ✅ PostgreSQL connected successfully
 2026-03-19 03:31:30 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-24 02:37:10 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-24 03:08:02 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-24 03:11:47 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-24 03:13:47 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-24 03:14:45 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-24 03:18:04 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-24 03:18:14 [INFO]: ✅ PostgreSQL connected successfully
+2026-03-24 03:28:35 [INFO]: [SMS to 9540594976]: Your OTP for Ride Sharing app is: 501699. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-03-24 03:28:35 [INFO]: OTP sent successfully to 9540594976 for purpose: signin
+2026-03-24 03:28:53 [INFO]: OTP verified successfully for 9540594976
+2026-03-24 03:28:53 [ERROR]: Verify signin service error: User not found not found
+NotFoundError: User not found not found
+    at Module.verifySignin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:141:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifySignin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:68:24)
+2026-03-24 03:29:16 [ERROR]: Signin service error: User not found. Please sign up first. not found
+NotFoundError: User not found. Please sign up first. not found
+    at Module.signin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:116:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:51:24)
+2026-03-24 03:29:37 [INFO]: [SMS to 9540594976]: Your OTP for Ride Sharing app is: 361382. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-03-24 03:29:37 [INFO]: OTP sent successfully to 9540594976 for purpose: signup
+2026-03-24 03:29:51 [ERROR]: Signin service error: User not found. Please sign up first. not found
+NotFoundError: User not found. Please sign up first. not found
+    at Module.signin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:116:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:51:24)
+2026-03-24 03:29:59 [INFO]: OTP verified successfully for 9540594976
+2026-03-24 03:29:59 [ERROR]: Verify signup service error: User already exists and verified
+ConflictError: User already exists and verified
+    at Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:48:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:29:24)
+2026-03-24 03:30:06 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/otpService.js:47:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:41:9)
+    at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:29:24)
+2026-03-24 03:30:06 [ERROR]: Verify signup service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/otpService.js:47:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:41:9)
+    at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:29:24)
+2026-03-24 03:38:09 [INFO]: PostgreSQL disconnected

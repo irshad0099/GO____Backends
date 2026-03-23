@@ -160,13 +160,28 @@ export const rateRide = async (req, res, next) => {
 
 export const calculateFare = async (req, res, next) => {
     try {
-        const { vehicleType, distanceKm, durationMinutes, surgeMultiplier } = req.body;
+        const {
+            vehicleType,
+            distanceKm,
+            durationMinutes,
+            actualDurationMinutes,
+            waitedMinutes,
+            pickupLatitude,
+            pickupLongitude,
+            allowSignalOverride,
+            debugSignals
+        } = req.body;
         
         const fare = await rideService.calculateFare({
             vehicleType,
             distanceKm,
             durationMinutes,
-            surgeMultiplier
+            actualDurationMinutes,
+            waitedMinutes,
+            pickupLatitude,
+            pickupLongitude,
+            allowSignalOverride,
+            debugSignals
         });
 
         res.status(200).json({

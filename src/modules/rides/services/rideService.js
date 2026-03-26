@@ -1,135 +1,126 @@
 import * as rideRepo from '../repositories/ride.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as walletRepo from '../../wallet/repositories/wallet.repository.js';
-import *as rideCalculator from '../../../core/utils/rideCalculator.js';
+import * as rideCalculator from '../../../core/utils/rideCalculator.js';
+import { getWeatherSignal } from '../../../core/utils/weatherService.js';
 import { ApiError, NotFoundError, ConflictError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
-import { ENV } from '../../../config/envConfig.js';   // ✅ sahi
+import { ENV } from '../../../config/envConfig.js';
 import { db } from '../../../infrastructure/database/postgres.js';
 
-const getRequestVelocityHint = (nearbyDriversCount) => {
-    // Placeholder for Redis/event-stream based demand velocity.
-    return Math.max(5, Math.round((Number(nearbyDriversCount) || 0) * 1.4));
+// ─── Helper: gather REAL demand + weather signals ───────────────────────────
+const gatherDemandSignals = async (vehicleType, latitude, longitude) => {
+    const searchRadius    = Number(ENV.DEFAULT_SEARCH_RADIUS_KM) || 5;
+    const demandWindow    = Number(ENV.DEMAND_WINDOW_MINUTES)    || 10;
+    const velocityWindow  = Number(ENV.VELOCITY_WINDOW_MINUTES)  || 5;
+
+    // All four queries run in parallel — demand + weather
+    const [rideRequests, requestVelocity, nearbyDrivers, weatherSignal] = await Promise.all([
+        rideRepo.countRecentRideRequests(vehicleType, latitude, longitude, searchRadius, demandWindow),
+        rideRepo.getRequestVelocity(vehicleType, latitude, longitude, searchRadius, velocityWindow),
+        rideRepo.findNearbyDrivers(vehicleType, latitude, longitude, searchRadius),
+        getWeatherSignal(latitude, longitude)
+    ]);
+
+    const availableDrivers = nearbyDrivers.length;
+    const pickupDistanceKm = availableDrivers > 0
+        ? Number(nearbyDrivers[0].distance || 0)
+        : 0;
+
+    return { rideRequests, requestVelocity, availableDrivers, nearbyDrivers, pickupDistanceKm, weatherSignal };
 };
 
-const getDriverDailyRideCountByDriverId = async (driverId) => {
-    if (!driverId) return 1;
-
-    const result = await db.query(
-        `SELECT COUNT(*)::int AS total
-         FROM rides
-         WHERE driver_id = $1
-           AND status = 'completed'
-           AND DATE(completed_at) = CURRENT_DATE`,
-        [driverId]
-    );
-
-    return result.rows[0]?.total || 0;
-};
-
+// ═════════════════════════════════════════════════════════════════════════════
+//  REQUEST RIDE — estimated fare with REAL demand signals
+// ═════════════════════════════════════════════════════════════════════════════
 export const requestRide = async (userId, rideData) => {
     try {
-        // Check if user has active ride
         const activeRide = await rideRepo.findActiveRideByPassenger(userId);
         if (activeRide) {
             throw new ConflictError('You already have an active ride');
         }
 
-        // Calculate distance
+        // Distance & duration
         const distanceKm = rideCalculator.calculateDistance(
-            rideData.pickupLatitude,
-            rideData.pickupLongitude,
-            rideData.dropoffLatitude,
-            rideData.dropoffLongitude
+            rideData.pickupLatitude, rideData.pickupLongitude,
+            rideData.dropoffLatitude, rideData.dropoffLongitude
         );
+        const durationMinutes = rideCalculator.calculateDuration(distanceKm, rideData.vehicleType);
 
-        // Calculate duration
-        const durationMinutes = rideCalculator.calculateDuration(
-            distanceKm,
-            rideData.vehicleType
-        );
-
-        // Find nearby drivers for pricing signal
-        const nearbyDrivers = await rideRepo.findNearbyDrivers(
+        // Real demand signals from DB
+        const signals = await gatherDemandSignals(
             rideData.vehicleType,
             rideData.pickupLatitude,
-            rideData.pickupLongitude,
-            ENV.DEFAULT_SEARCH_RADIUS_KM || 2.5
+            rideData.pickupLongitude
         );
 
-        // Trusted pricing signals are computed by backend.
-        const totalRequests = 10;
-        const requestVelocity = getRequestVelocityHint(nearbyDrivers.length);
-        const availableDrivers = nearbyDrivers.length;
-        const pickupDistanceKm = availableDrivers > 0
-            ? Number(nearbyDrivers[0].distance || 0)
-            : 0;
+        // Closest driver's daily ride count for platform fee cap
+        const selectedDriverId = signals.availableDrivers > 0 ? signals.nearbyDrivers[0].id : null;
+        const driverDailyRideCount = await rideRepo.getDriverDailyRideCount(selectedDriverId);
 
-        const goFare = rideCalculator.calculateGoMobilityFare({
-            vehicleType: rideData.vehicleType,
+        // Calculate estimated fare (dynamic surge + weather, no waiting yet)
+        const goFare = rideCalculator.calculateEstimatedFare({
+            vehicleType:             rideData.vehicleType,
             distanceKm,
             estimatedDurationMinutes: durationMinutes,
-            actualDurationMinutes: durationMinutes,
-            waitedMinutes: 0,
-            pickupDistanceKm,
-            driverDailyRideCount: 1,
-            rideRequests: totalRequests,
-            availableDrivers,
-            requestVelocity
+            pickupDistanceKm:        signals.pickupDistanceKm,
+            driverDailyRideCount,
+            rideRequests:            signals.rideRequests,
+            availableDrivers:        signals.availableDrivers,
+            requestVelocity:         signals.requestVelocity,
+            weatherSignal:           signals.weatherSignal
         });
 
         const fare = {
-            baseFare: goFare.passenger.baseFare,
-            distanceFare: goFare.passenger.distanceFare,
-            timeFare: durationMinutes,
+            baseFare:        goFare.passenger.baseFare,
+            distanceFare:    goFare.passenger.distanceFare,
+            timeFare:        durationMinutes,
             surgeMultiplier: goFare.passenger.surgeMultiplier,
-            estimatedFare: goFare.passenger.estimatedFare
+            estimatedFare:   goFare.passenger.estimatedFare
         };
 
-        // Generate ride number
         const rideNumber = rideCalculator.generateRideNumber();
 
-        // Create ride
         const ride = await rideRepo.createRide({
             rideNumber,
-            passengerId: userId,
-            vehicleType: rideData.vehicleType,
-            pickupLatitude: rideData.pickupLatitude,
-            pickupLongitude: rideData.pickupLongitude,
-            pickupAddress: rideData.pickupAddress,
+            passengerId:       userId,
+            vehicleType:       rideData.vehicleType,
+            pickupLatitude:    rideData.pickupLatitude,
+            pickupLongitude:   rideData.pickupLongitude,
+            pickupAddress:     rideData.pickupAddress,
             pickupLocationName: rideData.pickupLocationName,
-            dropoffLatitude: rideData.dropoffLatitude,
-            dropoffLongitude: rideData.dropoffLongitude,
-            dropoffAddress: rideData.dropoffAddress,
+            dropoffLatitude:   rideData.dropoffLatitude,
+            dropoffLongitude:  rideData.dropoffLongitude,
+            dropoffAddress:    rideData.dropoffAddress,
             dropoffLocationName: rideData.dropoffLocationName,
             distanceKm,
             durationMinutes,
-            baseFare: fare.baseFare,
-            distanceFare: fare.distanceFare,
-            timeFare: fare.timeFare,
+            baseFare:        fare.baseFare,
+            distanceFare:    fare.distanceFare,
+            timeFare:        fare.timeFare,
             surgeMultiplier: fare.surgeMultiplier,
-            estimatedFare: fare.estimatedFare,
-            paymentMethod: rideData.paymentMethod || 'cash'
+            estimatedFare:   fare.estimatedFare,
+            paymentMethod:   rideData.paymentMethod || 'cash'
         });
 
         logger.info(`Ride requested: ${rideNumber} for user ${userId}`);
 
         return {
-            rideId: ride.id,
-            rideNumber: ride.ride_number,
-            vehicleType: ride.vehicle_type,
-            pickupAddress: ride.pickup_address,
-            dropoffAddress: ride.dropoff_address,
-            distanceKm: ride.distance_km,
-            durationMinutes: ride.duration_minutes,
-            estimatedFare: ride.estimated_fare,
-            surgeMultiplier: ride.surge_multiplier,
-                passengerFareBreakdown: goFare.passenger,
-                driverEarningBreakdown: goFare.driver,
-                pricingSignals: goFare.signals,
-            status: ride.status,
-            requestedAt: ride.requested_at,
-            nearbyDrivers: nearbyDrivers.length,
+            rideId:           ride.id,
+            rideNumber:       ride.ride_number,
+            vehicleType:      ride.vehicle_type,
+            pickupAddress:    ride.pickup_address,
+            dropoffAddress:   ride.dropoff_address,
+            distanceKm:       ride.distance_km,
+            durationMinutes:  ride.duration_minutes,
+            estimatedFare:    ride.estimated_fare,
+            surgeMultiplier:  ride.surge_multiplier,
+            passengerFareBreakdown: goFare.passenger,
+            driverEarningBreakdown: goFare.driver,
+            pricingSignals:         goFare.signals,
+            status:           ride.status,
+            requestedAt:      ride.requested_at,
+            nearbyDrivers:    signals.availableDrivers,
             message: 'Ride requested successfully. Finding nearby drivers...'
         };
     } catch (error) {
@@ -138,26 +129,103 @@ export const requestRide = async (userId, rideData) => {
     }
 };
 
+// ═════════════════════════════════════════════════════════════════════════════
+//  CALCULATE FARE API — estimate with real demand (no booking)
+//  Same flow as requestRide — pickup/dropoff se distance, demand signals from DB
+// ═════════════════════════════════════════════════════════════════════════════
+export const calculateFare = async (fareData) => {
+    try {
+        const { vehicleType, pickupLatitude, pickupLongitude, dropoffLatitude, dropoffLongitude } = fareData;
+
+        // Same distance + duration calculation as requestRide
+        const distanceKm = rideCalculator.calculateDistance(
+            pickupLatitude, pickupLongitude,
+            dropoffLatitude, dropoffLongitude
+        );
+        const durationMinutes = rideCalculator.calculateDuration(distanceKm, vehicleType);
+
+        // Same demand signals from DB as requestRide
+        const signals = await gatherDemandSignals(vehicleType, pickupLatitude, pickupLongitude);
+
+        const selectedDriverId = signals.availableDrivers > 0 ? signals.nearbyDrivers[0].id : null;
+        const driverDailyRideCount = await rideRepo.getDriverDailyRideCount(selectedDriverId);
+
+        return rideCalculator.calculateEstimatedFare({
+            vehicleType,
+            distanceKm,
+            estimatedDurationMinutes: durationMinutes,
+            pickupDistanceKm:        signals.pickupDistanceKm,
+            driverDailyRideCount,
+            rideRequests:            signals.rideRequests,
+            availableDrivers:        signals.availableDrivers,
+            requestVelocity:         signals.requestVelocity,
+            weatherSignal:           signals.weatherSignal
+        });
+    } catch (error) {
+        logger.error('Calculate fare service error:', error);
+        throw error;
+    }
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  FINAL FARE — called internally when ride status → completed
+//  Uses LOCKED surge from request time + ACTUAL waiting & duration
+// ═════════════════════════════════════════════════════════════════════════════
+const calculateCompletionFare = async (ride) => {
+    // Actual waited minutes: driver_arrived_at → started_at
+    let waitedMinutes = 0;
+    if (ride.driver_arrived_at && ride.started_at) {
+        waitedMinutes = (new Date(ride.started_at) - new Date(ride.driver_arrived_at)) / 60000;
+    }
+
+    // Actual ride duration: started_at → completed_at
+    let actualDurationMinutes = Number(ride.duration_minutes) || 0;
+    if (ride.started_at && ride.completed_at) {
+        actualDurationMinutes = (new Date(ride.completed_at) - new Date(ride.started_at)) / 60000;
+    }
+
+    // Pickup distance (driver location at assignment → pickup point)
+    // Use the stored distance_km for pickup since we don't track driver's start point separately
+    const pickupDistanceKm = 0; // TODO: track actual pickup distance when driver is assigned
+
+    const driverDailyRideCount = await rideRepo.getDriverDailyRideCount(ride.driver_id);
+
+    const result = rideCalculator.calculateFinalRideFare({
+        vehicleType:             ride.vehicle_type,
+        distanceKm:              Number(ride.distance_km) || 0,
+        estimatedDurationMinutes: Number(ride.duration_minutes) || 0,
+        actualDurationMinutes,
+        waitedMinutes,
+        surgeMultiplier:         Number(ride.surge_multiplier) || 1,
+        pickupDistanceKm,
+        driverDailyRideCount
+    });
+
+    return result;
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  OTHER SERVICE METHODS (unchanged logic)
+// ═════════════════════════════════════════════════════════════════════════════
+
 export const findNearbyDrivers = async (vehicleType, latitude, longitude) => {
     try {
         const drivers = await rideRepo.findNearbyDrivers(
-            vehicleType,
-            latitude,
-            longitude,
+            vehicleType, latitude, longitude,
             ENV.DEFAULT_SEARCH_RADIUS_KM || 5
         );
 
         return drivers.map(driver => ({
-            id: driver.id,
-            name: driver.full_name,
-            vehicleType: driver.vehicle_type,
+            id:            driver.id,
+            name:          driver.full_name,
+            vehicleType:   driver.vehicle_type,
             vehicleNumber: driver.vehicle_number,
-            vehicleModel: driver.vehicle_model,
-            vehicleColor: driver.vehicle_color,
-            rating: parseFloat(driver.rating || 0).toFixed(1),
-            distance: parseFloat(driver.distance).toFixed(1),
+            vehicleModel:  driver.vehicle_model,
+            vehicleColor:  driver.vehicle_color,
+            rating:        parseFloat(driver.rating || 0).toFixed(1),
+            distance:      parseFloat(driver.distance).toFixed(1),
             location: {
-                latitude: driver.current_latitude,
+                latitude:  driver.current_latitude,
                 longitude: driver.current_longitude
             }
         }));
@@ -169,45 +237,27 @@ export const findNearbyDrivers = async (vehicleType, latitude, longitude) => {
 
 export const acceptRide = async (driverUserId, rideId) => {
     try {
-        // Get driver details
         const driver = await driverRepo.findDriverByUserId(driverUserId);
-        if (!driver) {
-            throw new NotFoundError('Driver not found');
-        }
+        if (!driver) throw new NotFoundError('Driver not found');
+        if (!driver.is_verified) throw new ApiError(403, 'Driver not verified');
 
-        if (!driver.is_verified) {
-            throw new ApiError(403, 'Driver not verified');
-        }
-
-        // Check if driver has active ride
         const activeRide = await rideRepo.findActiveRideByDriver(driver.id);
-        if (activeRide) {
-            throw new ConflictError('You already have an active ride');
-        }
+        if (activeRide) throw new ConflictError('You already have an active ride');
 
-        // Get ride details
         const ride = await rideRepo.findRideById(rideId);
-        if (!ride) {
-            throw new NotFoundError('Ride not found');
-        }
+        if (!ride) throw new NotFoundError('Ride not found');
+        if (ride.status !== 'requested') throw new ConflictError('Ride is no longer available');
 
-        if (ride.status !== 'requested') {
-            throw new ConflictError('Ride is no longer available');
-        }
-
-        // Assign driver to ride
         const updatedRide = await rideRepo.assignDriverToRide(rideId, driver.id);
-
-        // Update driver availability
         await driverRepo.updateDriver(driver.id, { is_on_duty: true });
 
         logger.info(`Driver ${driverUserId} accepted ride ${rideId}`);
 
         return {
-            rideId: updatedRide.id,
+            rideId:     updatedRide.id,
             rideNumber: updatedRide.ride_number,
-            status: updatedRide.status,
-            message: 'Ride accepted successfully'
+            status:     updatedRide.status,
+            message:    'Ride accepted successfully'
         };
     } catch (error) {
         logger.error('Accept ride service error:', error);
@@ -219,69 +269,57 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
     try {
         const { status, cancellationReason } = statusData;
 
-        // Get driver details
         const driver = await driverRepo.findDriverByUserId(driverUserId);
-        if (!driver) {
-            throw new NotFoundError('Driver not found');
-        }
+        if (!driver) throw new NotFoundError('Driver not found');
 
-        // Get ride details
         const ride = await rideRepo.findRideById(rideId);
-        if (!ride) {
-            throw new NotFoundError('Ride not found');
-        }
+        if (!ride) throw new NotFoundError('Ride not found');
+        if (ride.driver_id !== driver.id) throw new ApiError(403, 'You are not assigned to this ride');
 
-        // Verify driver is assigned to this ride
-        if (ride.driver_id !== driver.id) {
-            throw new ApiError(403, 'You are not assigned to this ride');
-        }
-
-        // Validate status transition
         validateStatusTransition(ride.status, status);
 
         let additionalFields = {};
+
         if (status === 'cancelled') {
             additionalFields.cancelled_by = 'driver';
             additionalFields.cancellation_reason = cancellationReason || 'Driver cancelled';
-            
-            // Free driver for next ride
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
         }
 
         if (status === 'completed') {
-            // Calculate final fare
-            const finalFare = calculateFinalFare(ride);
-            additionalFields.actual_fare = finalFare;
-            additionalFields.final_fare = finalFare;
+            // ── FINAL FARE with real actuals ──
+            // We need completed_at for calculation, but it hasn't been set yet.
+            // So we set it now for the calculation.
+            const completedAt = new Date();
+            const rideWithTimestamp = { ...ride, completed_at: completedAt };
+
+            const finalResult = await calculateCompletionFare(rideWithTimestamp);
+
+            additionalFields.actual_fare    = finalResult.passenger.finalFare;
+            additionalFields.final_fare     = finalResult.passenger.finalFare;
             additionalFields.payment_status = 'pending';
-            
-            // Free driver for next ride
+
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
-            
-            // Update driver stats
             await driverRepo.updateDriver(driver.id, {
-                total_rides: driver.total_rides + 1,
-                total_earnings: (driver.total_earnings || 0) + finalFare
+                total_rides:    driver.total_rides + 1,
+                total_earnings: (driver.total_earnings || 0) + finalResult.driver.netEarnings
             });
+
+            logger.info(`Ride ${rideId} final fare: ₹${finalResult.passenger.finalFare} (estimated: ₹${ride.estimated_fare})`);
         }
 
-        // if (status === 'driver_arrived') {
-        //     additionalFields.driver_arrived_at = new Date();
-        // }
-
-        // if (status === 'in_progress') {
-        //     additionalFields.started_at = new Date();
-        // }
-
-        // Update ride status
         const updatedRide = await rideRepo.updateRideStatus(rideId, status, additionalFields);
 
         logger.info(`Ride ${rideId} status updated to ${status}`);
 
         return {
-            rideId: updatedRide.id,
+            rideId:     updatedRide.id,
             rideNumber: updatedRide.ride_number,
-            status: updatedRide.status,
+            status:     updatedRide.status,
+            ...(status === 'completed' && {
+                estimatedFare: ride.estimated_fare,
+                finalFare:     additionalFields.final_fare
+            }),
             message: `Ride status updated to ${status}`
         };
     } catch (error) {
@@ -293,11 +331,8 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
 export const getRideDetails = async (userId, rideId, userRole) => {
     try {
         const ride = await rideRepo.findRideById(rideId);
-        if (!ride) {
-            throw new NotFoundError('Ride not found');
-        }
+        if (!ride) throw new NotFoundError('Ride not found');
 
-        // Verify user has access to this ride
         if (userRole === 'passenger' && ride.passenger_id !== userId) {
             throw new ApiError(403, 'You do not have access to this ride');
         }
@@ -319,14 +354,13 @@ export const getRideDetails = async (userId, rideId, userRole) => {
 export const getPassengerRideHistory = async (userId, { page = 1, limit = 10, status }) => {
     try {
         const offset = (page - 1) * limit;
-        
         const rides = await rideRepo.findRidesByPassenger(userId, { limit, offset, status });
         const total = await rideRepo.countRidesByPassenger(userId, status);
 
         return {
-            rides: rides.map(ride => formatRideListResponse(ride)),
+            rides: rides.map(formatRideListResponse),
             pagination: {
-                page: parseInt(page),
+                page:  parseInt(page),
                 limit: parseInt(limit),
                 total,
                 pages: Math.ceil(total / limit)
@@ -341,19 +375,16 @@ export const getPassengerRideHistory = async (userId, { page = 1, limit = 10, st
 export const getDriverRideHistory = async (driverUserId, { page = 1, limit = 10, status }) => {
     try {
         const driver = await driverRepo.findDriverByUserId(driverUserId);
-        if (!driver) {
-            throw new NotFoundError('Driver not found');
-        }
+        if (!driver) throw new NotFoundError('Driver not found');
 
         const offset = (page - 1) * limit;
-        
         const rides = await rideRepo.findRidesByDriver(driver.id, { limit, offset, status });
         const total = await rideRepo.countRidesByDriver(driver.id, status);
 
         return {
-            rides: rides.map(ride => formatRideListResponse(ride)),
+            rides: rides.map(formatRideListResponse),
             pagination: {
-                page: parseInt(page),
+                page:  parseInt(page),
                 limit: parseInt(limit),
                 total,
                 pages: Math.ceil(total / limit)
@@ -368,25 +399,17 @@ export const getDriverRideHistory = async (driverUserId, { page = 1, limit = 10,
 export const getCurrentRide = async (userId, userRole) => {
     try {
         let ride;
-        
         if (userRole === 'passenger') {
             ride = await rideRepo.findActiveRideByPassenger(userId);
         } else {
             const driver = await driverRepo.findDriverByUserId(userId);
-            if (!driver) {
-                throw new NotFoundError('Driver not found');
-            }
+            if (!driver) throw new NotFoundError('Driver not found');
             ride = await rideRepo.findActiveRideByDriver(driver.id);
         }
 
-        if (!ride) {
-            return { hasActiveRide: false };
-        }
+        if (!ride) return { hasActiveRide: false };
 
-        return {
-            hasActiveRide: true,
-            ride: formatRideResponse(ride)
-        };
+        return { hasActiveRide: true, ride: formatRideResponse(ride) };
     } catch (error) {
         logger.error('Get current ride service error:', error);
         throw error;
@@ -396,107 +419,34 @@ export const getCurrentRide = async (userId, userRole) => {
 export const rateRide = async (userId, rideId, rating, review) => {
     try {
         const ride = await rideRepo.findRideById(rideId);
-        if (!ride) {
-            throw new NotFoundError('Ride not found');
-        }
+        if (!ride) throw new NotFoundError('Ride not found');
+        if (ride.passenger_id !== userId) throw new ApiError(403, 'You are not authorized to rate this ride');
+        if (ride.status !== 'completed') throw new ApiError(400, 'Can only rate completed rides');
+        if (ride.rating) throw new ApiError(400, 'Ride already rated');
 
-        if (ride.passenger_id !== userId) {
-            throw new ApiError(403, 'You are not authorized to rate this ride');
-        }
+        await rideRepo.rateRide(rideId, rating, review);
 
-        if (ride.status !== 'completed') {
-            throw new ApiError(400, 'Can only rate completed rides');
-        }
-
-        if (ride.rating) {
-            throw new ApiError(400, 'Ride already rated');
-        }
-
-        const updatedRide = await rideRepo.rateRide(rideId, rating, review);
-
-        // Update driver rating
         if (ride.driver_id) {
             await updateDriverRating(ride.driver_id);
         }
 
-        return {
-            success: true,
-            message: 'Ride rated successfully'
-        };
+        return { success: true, message: 'Ride rated successfully' };
     } catch (error) {
         logger.error('Rate ride service error:', error);
         throw error;
     }
 };
 
-export const calculateFare = async (fareData) => {
-    try {
-        const {
-            vehicleType,
-            distanceKm,
-            durationMinutes,
-            actualDurationMinutes,
-            waitedMinutes,
-            pickupLatitude,
-            pickupLongitude,
-            allowSignalOverride = false,
-            debugSignals = {}
-        } = fareData;
+// ─── Internal Helpers ───────────────────────────────────────────────────────
 
-        const nearbyDrivers = await rideRepo.findNearbyDrivers(
-            vehicleType,
-            Number(pickupLatitude) || 0,
-            Number(pickupLongitude) || 0,
-            ENV.DEFAULT_SEARCH_RADIUS_KM || 2.5
-        );
-
-        const availableDrivers = nearbyDrivers.length;
-        const pickupDistanceKm = availableDrivers > 0
-            ? Number(nearbyDrivers[0].distance || 0)
-            : 0;
-        const selectedDriverId = availableDrivers > 0 ? nearbyDrivers[0].id : null;
-        const driverDailyRideCount = await getDriverDailyRideCountByDriverId(selectedDriverId);
-
-        let rideRequests = 10;
-        let requestVelocity = getRequestVelocityHint(availableDrivers);
-
-        const isDebugOverrideEnabled = ENV.ALLOW_PRICING_SIGNAL_OVERRIDE === 'true' && allowSignalOverride;
-        if (isDebugOverrideEnabled) {
-            if (typeof debugSignals.rideRequests === 'number') {
-                rideRequests = debugSignals.rideRequests;
-            }
-            if (typeof debugSignals.requestVelocity === 'number') {
-                requestVelocity = debugSignals.requestVelocity;
-            }
-        }
-
-        return rideCalculator.calculateGoMobilityFare({
-            vehicleType,
-            distanceKm,
-            estimatedDurationMinutes: durationMinutes,
-            actualDurationMinutes: actualDurationMinutes ?? durationMinutes,
-            waitedMinutes: waitedMinutes ?? 0,
-            pickupDistanceKm,
-            driverDailyRideCount,
-            rideRequests,
-            availableDrivers,
-            requestVelocity
-        });
-    } catch (error) {
-        logger.error('Calculate fare service error:', error);
-        throw error;
-    }
-};
-
-// Helper functions
 const validateStatusTransition = (currentStatus, newStatus) => {
     const validTransitions = {
-        'requested': ['driver_assigned', 'cancelled'],
+        'requested':       ['driver_assigned', 'cancelled'],
         'driver_assigned': ['driver_arrived', 'cancelled'],
-        'driver_arrived': ['in_progress', 'cancelled'],
-        'in_progress': ['completed'],
-        'completed': [],
-        'cancelled': []
+        'driver_arrived':  ['in_progress', 'cancelled'],
+        'in_progress':     ['completed'],
+        'completed':       [],
+        'cancelled':       []
     };
 
     if (!validTransitions[currentStatus]?.includes(newStatus)) {
@@ -504,71 +454,58 @@ const validateStatusTransition = (currentStatus, newStatus) => {
     }
 };
 
-const calculateFinalFare = (ride) => {
-    // Add waiting charges, tolls, etc.
-    return ride.estimated_fare;
-};
-
 const updateDriverRating = async (driverId) => {
     try {
-        const result = await db.query(
-            `UPDATE drivers 
+        await db.query(
+            `UPDATE drivers
              SET rating = (
-                 SELECT AVG(rating) 
-                 FROM rides 
-                 WHERE driver_id = $1 AND rating IS NOT NULL
+                 SELECT AVG(rating) FROM rides WHERE driver_id = $1 AND rating IS NOT NULL
              )
              WHERE id = $1`,
             [driverId]
         );
-        return result.rows[0];
     } catch (error) {
         logger.error('Update driver rating error:', error);
     }
 };
 
 const formatRideResponse = (ride) => ({
-    id: ride.id,
-    rideNumber: ride.ride_number,
-    vehicleType: ride.vehicle_type,
-    pickupAddress: ride.pickup_address,
-    pickupLocation: {
-        latitude: ride.pickup_latitude,
-        longitude: ride.pickup_longitude
-    },
-    dropoffAddress: ride.dropoff_address,
-    dropoffLocation: {
-        latitude: ride.dropoff_latitude,
-        longitude: ride.dropoff_longitude
-    },
-    distanceKm: ride.distance_km,
+    id:              ride.id,
+    rideNumber:      ride.ride_number,
+    vehicleType:     ride.vehicle_type,
+    pickupAddress:   ride.pickup_address,
+    pickupLocation:  { latitude: ride.pickup_latitude, longitude: ride.pickup_longitude },
+    dropoffAddress:  ride.dropoff_address,
+    dropoffLocation: { latitude: ride.dropoff_latitude, longitude: ride.dropoff_longitude },
+    distanceKm:      ride.distance_km,
     durationMinutes: ride.duration_minutes,
-    estimatedFare: ride.estimated_fare,
-    actualFare: ride.actual_fare,
-    status: ride.status,
-    paymentStatus: ride.payment_status,
-    paymentMethod: ride.payment_method,
-    requestedAt: ride.requested_at,
+    estimatedFare:   ride.estimated_fare,
+    actualFare:      ride.actual_fare,
+    finalFare:       ride.final_fare,
+    status:          ride.status,
+    paymentStatus:   ride.payment_status,
+    paymentMethod:   ride.payment_method,
+    requestedAt:     ride.requested_at,
     driverAssignedAt: ride.driver_assigned_at,
-    startedAt: ride.started_at,
-    completedAt: ride.completed_at,
-    cancelledAt: ride.cancelled_at,
-    cancelledBy: ride.cancelled_by,
+    startedAt:       ride.started_at,
+    completedAt:     ride.completed_at,
+    cancelledAt:     ride.cancelled_at,
+    cancelledBy:     ride.cancelled_by,
     cancellationReason: ride.cancellation_reason,
     passenger: ride.passenger_name ? {
-        name: ride.passenger_name,
+        name:  ride.passenger_name,
         phone: ride.passenger_phone
     } : null,
     driver: ride.driver_name ? {
-        name: ride.driver_name,
-        phone: ride.driver_phone,
-        vehicleType: ride.vehicle_type,
+        name:          ride.driver_name,
+        phone:         ride.driver_phone,
+        vehicleType:   ride.vehicle_type,
         vehicleNumber: ride.vehicle_number,
-        vehicleModel: ride.vehicle_model,
-        vehicleColor: ride.vehicle_color
+        vehicleModel:  ride.vehicle_model,
+        vehicleColor:  ride.vehicle_color
     } : null,
     driverLocation: ride.driver_current_latitude ? {
-        latitude: ride.driver_current_latitude,
+        latitude:  ride.driver_current_latitude,
         longitude: ride.driver_current_longitude
     } : null,
     rating: ride.rating,
@@ -576,18 +513,19 @@ const formatRideResponse = (ride) => ({
 });
 
 const formatRideListResponse = (ride) => ({
-    id: ride.id,
-    rideNumber: ride.ride_number,
-    vehicleType: ride.vehicle_type,
+    id:            ride.id,
+    rideNumber:    ride.ride_number,
+    vehicleType:   ride.vehicle_type,
     pickupAddress: ride.pickup_address,
     dropoffAddress: ride.dropoff_address,
-    distanceKm: ride.distance_km,
+    distanceKm:    ride.distance_km,
     estimatedFare: ride.estimated_fare,
-    actualFare: ride.actual_fare,
-    status: ride.status,
+    actualFare:    ride.actual_fare,
+    finalFare:     ride.final_fare,
+    status:        ride.status,
     paymentStatus: ride.payment_status,
-    requestedAt: ride.requested_at,
-    completedAt: ride.completed_at,
+    requestedAt:   ride.requested_at,
+    completedAt:   ride.completed_at,
     passengerName: ride.passenger_name,
-    driverName: ride.driver_name
+    driverName:    ride.driver_name
 });

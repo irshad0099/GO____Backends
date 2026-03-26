@@ -351,6 +351,81 @@ export const countRidesByDriver = async (driverId, status) => {
     }
 };
 
+// ─── Real Demand Signals (no hardcoding) ────────────────────────────────────
+
+/**
+ * Count ride requests in the last `windowMinutes` within `radiusKm` of a point.
+ * This gives the REAL rideRequests number for surge / peak detection.
+ */
+export const countRecentRideRequests = async (vehicleType, latitude, longitude, radiusKm = 5, windowMinutes = 10) => {
+    try {
+        const result = await db.query(
+            `SELECT COUNT(*)::int AS total
+             FROM rides
+             WHERE vehicle_type = $1
+               AND requested_at >= NOW() - ($5 || ' minutes')::INTERVAL
+               AND status IN ('requested', 'driver_assigned', 'driver_arrived', 'in_progress')
+               AND (6371 * acos(
+                    cos(radians($2)) * cos(radians(pickup_latitude)) *
+                    cos(radians(pickup_longitude) - radians($3)) +
+                    sin(radians($2)) * sin(radians(pickup_latitude))
+               )) <= $4`,
+            [vehicleType, latitude, longitude, radiusKm, windowMinutes]
+        );
+        return result.rows[0]?.total || 0;
+    } catch (error) {
+        logger.error('countRecentRideRequests error:', error);
+        return 0;
+    }
+};
+
+/**
+ * Requests per minute in the last `windowMinutes`.
+ * velocity = count / windowMinutes
+ */
+export const getRequestVelocity = async (vehicleType, latitude, longitude, radiusKm = 5, windowMinutes = 5) => {
+    try {
+        const result = await db.query(
+            `SELECT COUNT(*)::int AS total
+             FROM rides
+             WHERE vehicle_type = $1
+               AND requested_at >= NOW() - ($5 || ' minutes')::INTERVAL
+               AND (6371 * acos(
+                    cos(radians($2)) * cos(radians(pickup_latitude)) *
+                    cos(radians(pickup_longitude) - radians($3)) +
+                    sin(radians($2)) * sin(radians(pickup_latitude))
+               )) <= $4`,
+            [vehicleType, latitude, longitude, radiusKm, windowMinutes]
+        );
+        const count = result.rows[0]?.total || 0;
+        return Math.round((count / Math.max(1, windowMinutes)) * 100) / 100;
+    } catch (error) {
+        logger.error('getRequestVelocity error:', error);
+        return 0;
+    }
+};
+
+/**
+ * Driver's completed ride count for today (for platform fee daily cap).
+ */
+export const getDriverDailyRideCount = async (driverId) => {
+    if (!driverId) return 0;
+    try {
+        const result = await db.query(
+            `SELECT COUNT(*)::int AS total
+             FROM rides
+             WHERE driver_id = $1
+               AND status = 'completed'
+               AND DATE(completed_at) = CURRENT_DATE`,
+            [driverId]
+        );
+        return result.rows[0]?.total || 0;
+    } catch (error) {
+        logger.error('getDriverDailyRideCount error:', error);
+        return 0;
+    }
+};
+
 export const rateRide = async (rideId, rating, review) => {
     try {
         const result = await db.query(

@@ -160,28 +160,21 @@ export const rateRide = async (req, res, next) => {
 
 export const calculateFare = async (req, res, next) => {
     try {
-        const {
-            vehicleType,
-            distanceKm,
-            durationMinutes,
-            actualDurationMinutes,
-            waitedMinutes,
-            pickupLatitude,
-            pickupLongitude,
-            allowSignalOverride,
-            debugSignals
-        } = req.body;
-        
+        const { vehicleType, pickupLatitude, pickupLongitude, dropoffLatitude, dropoffLongitude } = req.body;
+
+        if (!vehicleType || !pickupLatitude || !pickupLongitude || !dropoffLatitude || !dropoffLongitude) {
+            return res.status(400).json({
+                success: false,
+                message: 'vehicleType, pickupLatitude, pickupLongitude, dropoffLatitude, dropoffLongitude are required'
+            });
+        }
+
         const fare = await rideService.calculateFare({
             vehicleType,
-            distanceKm,
-            durationMinutes,
-            actualDurationMinutes,
-            waitedMinutes,
-            pickupLatitude,
-            pickupLongitude,
-            allowSignalOverride,
-            debugSignals
+            pickupLatitude: parseFloat(pickupLatitude),
+            pickupLongitude: parseFloat(pickupLongitude),
+            dropoffLatitude: parseFloat(dropoffLatitude),
+            dropoffLongitude: parseFloat(dropoffLongitude)
         });
 
         res.status(200).json({

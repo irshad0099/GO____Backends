@@ -10,7 +10,7 @@ import {
     saveMethod,
     removeMethod,
     setDefault,
-} from '../../payments/controller/paymentController.js';
+} from '../controllers/paymentController.js';
 
 import {
     createOrderSchema,
@@ -19,15 +19,15 @@ import {
     historyFilterSchema,
     saveMethodSchema,
     validate,
-} from '../validator/paymentValidator.js';
+} from '../validators/paymentValidator.js';
 
 import { authenticate } from '../../../core/middleware/auth.middleware.js';
-import { requireRole }  from '../../../core/middlewares/roleMiddleware.js';
+import { requireRole }  from '../../../core/middleware/roleMiddleware.js';
 import {
     apiLimiter,
     authLimiter,
     walletRechargeLimiter,
-} from '../../../middlewares/rateLimiter.js';
+} from '../../../core/middleware/rateLimiter.middleware.js';
 
 const router = express.Router();
 

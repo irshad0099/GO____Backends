@@ -1,6 +1,3 @@
-
-
-
 import { pool } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 

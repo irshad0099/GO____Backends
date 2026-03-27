@@ -8,7 +8,7 @@ export const ENV = {
     APP_NAME: process.env.APP_NAME || 'GoMobility',
     PORT: parseInt(process.env.PORT) || 5000,
     BASE_URL: process.env.BASE_URL || 'http://localhost:5000',
-    API_PREFIX: process.env.API_PREFIX || '/api/v1',
+    API_PREFIX: process.env.API_PREFIX || '/api',
     
     // Database
     DB_HOST: process.env.DB_HOST || 'localhost',

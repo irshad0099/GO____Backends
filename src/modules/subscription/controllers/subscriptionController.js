@@ -1,115 +1,168 @@
-import * as subscriptionService from '../services/subscriptionService.js';
 import logger from '../../../core/logger/logger.js';
+import {
+    fetchAllPlans,
+    fetchPlanById,
+    fetchActiveSubscription,
+    purchaseSubscription,
+    cancelSubscription,
+    toggleAutoRenew,
+    applyRideBenefits,
+    fetchSubscriptionHistory,
+    fetchSubscriptionPayments,
+    createNewPlan,
+    setPlanActiveStatus,
+} from '../services/subscriptionService.js';
 
-// ==================== Plans (Public) ====================
-export const getAllPlans = async (req, res, next) => {
+// ─── Error handler ────────────────────────────────────────────────────────────
+
+const handleError = (res, error) => {
+    logger.error(`[SubscriptionController] ${error.message}`);
+    const status = error.statusCode || 500;
+    return res.status(status).json({
+        success: false,
+        message: error.message || 'Internal server error',
+    });
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  PUBLIC
+// ─────────────────────────────────────────────────────────────────────────────
+
+// GET /api/v1/subscriptions/plans
+// All available plans — shown on pricing page
+export const getPlans = async (req, res) => {
     try {
-        const plans = await subscriptionService.getAllPlans();
-        res.status(200).json({ success: true, data: plans });
+        const result = await fetchAllPlans();
+        return res.status(200).json(result);
     } catch (error) {
-        next(error);
+        return handleError(res, error);
     }
 };
 
-export const getPlanBySlug = async (req, res, next) => {
+// GET /api/v1/subscriptions/plans/:planId
+// Single plan detail
+export const getPlan = async (req, res) => {
     try {
-        const { slug } = req.params;
-        const plan = await subscriptionService.getPlanBySlug(slug);
-        res.status(200).json({ success: true, data: plan });
+        const result = await fetchPlanById(parseInt(req.params.planId));
+        return res.status(200).json(result);
     } catch (error) {
-        next(error);
+        return handleError(res, error);
     }
 };
 
-// ==================== Plans (Admin) ====================
-export const createPlan = async (req, res, next) => {
+// ─────────────────────────────────────────────────────────────────────────────
+//  USER — Subscription management
+// ─────────────────────────────────────────────────────────────────────────────
+
+// GET /api/v1/subscriptions/active
+// User's current active subscription + benefits
+export const getActiveSubscription = async (req, res) => {
     try {
-        const planData = req.body;
-        const plan = await subscriptionService.createPlan(planData);
-        res.status(201).json({ success: true, message: 'Plan created', data: plan });
+        const result = await fetchActiveSubscription(req.user.id);
+        return res.status(200).json(result);
     } catch (error) {
-        next(error);
+        return handleError(res, error);
     }
 };
 
-export const updatePlan = async (req, res, next) => {
+// POST /api/v1/subscriptions/purchase
+// Subscribe to a plan
+export const purchase = async (req, res) => {
     try {
-        const { planId } = req.params;
-        const updates = req.body;
-        const plan = await subscriptionService.updatePlan(planId, updates);
-        res.status(200).json({ success: true, message: 'Plan updated', data: plan });
+        const result = await purchaseSubscription(req.user.id, req.body);
+        return res.status(201).json(result);
     } catch (error) {
-        next(error);
+        return handleError(res, error);
     }
 };
 
-// ==================== User Subscriptions ====================
-export const getMyActiveSubscription = async (req, res, next) => {
+// POST /api/v1/subscriptions/cancel
+// Cancel active subscription (benefits still valid till expiry)
+export const cancel = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const subscription = await subscriptionService.getMyActiveSubscription(userId);
-        res.status(200).json({ success: true, data: subscription });
+        const result = await cancelSubscription(req.user.id, req.body);
+        return res.status(200).json(result);
     } catch (error) {
-        next(error);
+        return handleError(res, error);
     }
 };
 
-export const getMySubscriptions = async (req, res, next) => {
+// PATCH /api/v1/subscriptions/auto-renew
+// Enable or disable auto-renewal
+export const autoRenew = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const subscriptions = await subscriptionService.getMySubscriptions(userId);
-        res.status(200).json({ success: true, data: subscriptions });
+        const result = await toggleAutoRenew(req.user.id, req.body);
+        return res.status(200).json(result);
     } catch (error) {
-        next(error);
+        return handleError(res, error);
     }
 };
 
-export const purchaseSubscription = async (req, res, next) => {
+// POST /api/v1/subscriptions/apply-benefits
+// Check & apply ride discount / free ride for a given ride amount
+// Called by ride-service before billing user
+export const applyBenefits = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const { planId, paymentMethod, paymentDetails } = req.body;
-        const result = await subscriptionService.purchaseSubscription(userId, planId, paymentMethod, paymentDetails);
-        res.status(201).json({
-            success: true,
-            message: 'Subscription activated successfully',
-            data: result
+        const { ride_amount } = req.body;
+        const result = await applyRideBenefits(req.user.id, parseFloat(ride_amount));
+        return res.status(200).json(result);
+    } catch (error) {
+        return handleError(res, error);
+    }
+};
+
+// GET /api/v1/subscriptions/history
+// Paginated subscription history
+export const getHistory = async (req, res) => {
+    try {
+        const { limit = 10, offset = 0 } = req.query;
+        const result = await fetchSubscriptionHistory(req.user.id, {
+            limit:  parseInt(limit),
+            offset: parseInt(offset),
         });
+        return res.status(200).json(result);
     } catch (error) {
-        next(error);
+        return handleError(res, error);
     }
 };
 
-export const cancelMySubscription = async (req, res, next) => {
+// GET /api/v1/subscriptions/:subscriptionId/payments
+// Payment history for a specific subscription
+export const getPayments = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const { subscriptionId } = req.params;
-        const { reason } = req.body;
-        const cancelled = await subscriptionService.cancelMySubscription(userId, subscriptionId, reason);
-        res.status(200).json({
-            success: true,
-            message: 'Subscription cancelled',
-            data: cancelled
-        });
+        const result = await fetchSubscriptionPayments(
+            req.user.id,
+            parseInt(req.params.subscriptionId)
+        );
+        return res.status(200).json(result);
     } catch (error) {
-        next(error);
+        return handleError(res, error);
     }
 };
 
-// ==================== Admin Utilities ====================
-export const expireOverdue = async (req, res, next) => {
+// ─────────────────────────────────────────────────────────────────────────────
+//  ADMIN
+// ─────────────────────────────────────────────────────────────────────────────
+
+// POST /api/v1/subscriptions/admin/plans
+// Create a new subscription plan
+export const adminCreatePlan = async (req, res) => {
     try {
-        const count = await subscriptionService.expireAllOverdue();
-        res.status(200).json({ success: true, message: `Expired ${count} subscriptions` });
+        const result = await createNewPlan(req.body);
+        return res.status(201).json(result);
     } catch (error) {
-        next(error);
+        return handleError(res, error);
     }
 };
 
-export const resetFreeRides = async (req, res, next) => {
+// PATCH /api/v1/subscriptions/admin/plans/:planId/status
+// Activate or deactivate a plan
+export const adminTogglePlan = async (req, res) => {
     try {
-        const count = await subscriptionService.resetFreeRidesForAll();
-        res.status(200).json({ success: true, message: `Reset free rides for ${count} active subscriptions` });
+        const { is_active } = req.body;
+        const result = await setPlanActiveStatus(parseInt(req.params.planId), is_active);
+        return res.status(200).json(result);
     } catch (error) {
-        next(error);
+        return handleError(res, error);
     }
 };

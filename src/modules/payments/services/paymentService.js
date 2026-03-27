@@ -19,7 +19,7 @@ import {
     savepaymentMethod,
     deletePaymentMethod,
     setDefaultPaymentMethod,
-} from '../repository/paymentRepository.js';
+} from '../repositories/payment.Repository.js';
 
 // ─── Wallet service integration ───────────────────────────────────────────────
 // Import your wallet service to credit/debit when payment settles

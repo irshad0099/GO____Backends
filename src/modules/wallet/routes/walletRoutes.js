@@ -25,8 +25,8 @@ import {
 } from '../validators/walletValidator.js';
 
 // ─── Middlewares ──────────────────────────────────────────────────────────────
-import { authenticate } from '../../../core/middleware/auth.middleware.js';          // ✅ .js added
-import { requireRole } from '../../../core/middleware/roleMiddleware.js';            // ✅ .js added
+import { authenticate }             from '../../../core/middleware/auth.middleware.js';
+import { requireRole }              from '../../../core/middleware/roleMiddleware.js';
 import {
     walletRechargeLimiter,
     ridePaymentLimiter,
@@ -34,7 +34,7 @@ import {
     refundLimiter,
     walletReadLimiter,
     transactionHistoryLimiter,
-} from '../../../core/middleware/rateLimiter.middleware.js';                                         // ✅ ensure this path is correct
+} from '../../../core/middleware/rateLimiter.middleware.js';
 
 const router = express.Router();
 
@@ -45,35 +45,90 @@ router.use(authenticate);
 //  WALLET INFO
 // ─────────────────────────────────────────────────────────────────────────────
 
+// GET /api/v1/wallet
 router.get('/',        walletReadLimiter, getWallet);
+
+// GET /api/v1/wallet/balance
 router.get('/balance', walletReadLimiter, getBalance);
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  MONEY IN
 // ─────────────────────────────────────────────────────────────────────────────
 
-router.post('/recharge', walletRechargeLimiter, validate(walletRechargeSchema), recharge);
-router.post('/referral-bonus', requireRole(['admin', 'system']), validate(referralBonusSchema), referralBonus);
+// POST /api/v1/wallet/recharge
+router.post(
+    '/recharge',
+    walletRechargeLimiter,
+    validate(walletRechargeSchema),
+    recharge
+);
+
+// POST /api/v1/wallet/referral-bonus  (admin / system only)
+router.post(
+    '/referral-bonus',
+    requireRole(['admin', 'system']),
+    validate(referralBonusSchema),
+    referralBonus
+);
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  MONEY OUT
 // ─────────────────────────────────────────────────────────────────────────────
 
-router.post('/pay-ride', ridePaymentLimiter, validate(ridePaymentSchema), ridePayment);
-router.post('/cancellation-fee', ridePaymentLimiter, validate(cancellationFeeSchema), cancellationFee);
-router.post('/withdraw', withdrawalLimiter, validate(withdrawalSchema), withdraw);
+// POST /api/v1/wallet/pay-ride
+router.post(
+    '/pay-ride',
+    ridePaymentLimiter,
+    validate(ridePaymentSchema),
+    ridePayment
+);
+
+// POST /api/v1/wallet/cancellation-fee
+router.post(
+    '/cancellation-fee',
+    ridePaymentLimiter,
+    validate(cancellationFeeSchema),
+    cancellationFee
+);
+
+// POST /api/v1/wallet/withdraw
+router.post(
+    '/withdraw',
+    withdrawalLimiter,
+    validate(withdrawalSchema),
+    withdraw
+);
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  REFUNDS  (admin / system only)
 // ─────────────────────────────────────────────────────────────────────────────
 
-router.post('/refund', requireRole(['admin', 'system']), refundLimiter, validate(rideRefundSchema), refund);
+// POST /api/v1/wallet/refund
+router.post(
+    '/refund',
+    requireRole(['admin', 'system']),
+    refundLimiter,
+    validate(rideRefundSchema),
+    refund
+);
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  TRANSACTIONS
 // ─────────────────────────────────────────────────────────────────────────────
 
-router.get('/transactions', transactionHistoryLimiter, validate(transactionFilterSchema, 'query'), getTransactions);
-router.get('/transactions/:txnNumber', transactionHistoryLimiter, getTransaction);
+// GET /api/v1/wallet/transactions
+router.get(
+    '/transactions',
+    transactionHistoryLimiter,
+    validate(transactionFilterSchema, 'query'),
+    getTransactions
+);
+
+// GET /api/v1/wallet/transactions/:txnNumber
+router.get(
+    '/transactions/:txnNumber',
+    transactionHistoryLimiter,
+    getTransaction
+);
 
 export default router;

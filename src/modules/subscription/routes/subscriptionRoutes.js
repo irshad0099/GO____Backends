@@ -1,27 +1,128 @@
 import express from 'express';
-import * as controller from '../controllers/subscriptionController.js';
-import { authenticate, authorize } from '../../../core/middleware/auth.middleware.js';
-import { validate } from '../../../core/middleware/validation.middleware.js';
-import * as validator from '../validators/subscriptionValidator.js';
+
+import {
+    getPlans,
+    getPlan,
+    getActiveSubscription,
+    purchase,
+    cancel,
+    autoRenew,
+    applyBenefits,
+    getHistory,
+    getPayments,
+    adminCreatePlan,
+    adminTogglePlan,
+} from '../controllers/subscriptionController.js';
+
+import {
+    purchaseSchema,
+    cancelSchema,
+    autoRenewSchema,
+    rideBenefitsSchema,
+    historyFilterSchema,
+    createPlanSchema,
+    validate,
+} from '../validators/subscriptionValidator.js';
+
+// ─── Middlewares ──────────────────────────────────────────────────────────────
+import { authenticate } from '../../../core/middleware/auth.middleware.js';
+import { requireRole }  from '../../../core/middleware/roleMiddleware.js';
+import {
+    apiLimiter,
+    authLimiter,
+} from '../../../core/middleware/rateLimiter.middleware.js';
 
 const router = express.Router();
 
-// ==================== Public routes (no auth required) ====================
-router.get('/plans', controller.getAllPlans);
-router.get('/plans/:slug', validate([validator.validatePlanSlug()]), controller.getPlanBySlug);
+// ─────────────────────────────────────────────────────────────────────────────
+//  PUBLIC — No auth needed (plan listing shown on home/pricing page)
+// ─────────────────────────────────────────────────────────────────────────────
 
-// ==================== Protected user routes ====================
-router.use(authenticate); // all routes below require authentication
+// GET /api/v1/subscriptions/plans
+router.get('/plans',          apiLimiter, getPlans);
 
-router.get('/me/active', controller.getMyActiveSubscription);
-router.get('/me/history', controller.getMySubscriptions);
-router.post('/purchase', validate(validator.validatePurchase), controller.purchaseSubscription);
-router.post('/:subscriptionId/cancel', validate(validator.validateCancel), controller.cancelMySubscription);
+// GET /api/v1/subscriptions/plans/:planId
+router.get('/plans/:planId',  apiLimiter, getPlan);
 
-// ==================== Admin only routes ====================
-router.post('/admin/plans', authorize('admin'), validate(validator.validateCreatePlan), controller.createPlan);
-router.put('/admin/plans/:planId', authorize('admin'), validate(validator.validateUpdatePlan), controller.updatePlan);
-router.post('/admin/expire', authorize('admin'), controller.expireOverdue);
-router.post('/admin/reset-free-rides', authorize('admin'), controller.resetFreeRides);
+// ─────────────────────────────────────────────────────────────────────────────
+//  USER — Requires login
+// ─────────────────────────────────────────────────────────────────────────────
+
+router.use(authenticate);
+
+// GET /api/v1/subscriptions/active
+// Check if user has active subscription + benefits
+router.get('/active', getActiveSubscription);
+
+// POST /api/v1/subscriptions/purchase
+// Subscribe to a plan
+// Rate limited: 3 purchases per hour (prevent accidental double purchase)
+router.post(
+    '/purchase',
+    authLimiter,
+    validate(purchaseSchema),
+    purchase
+);
+
+// POST /api/v1/subscriptions/cancel
+// Cancel active subscription
+router.post(
+    '/cancel',
+    validate(cancelSchema),
+    cancel
+);
+
+// PATCH /api/v1/subscriptions/auto-renew
+// Toggle auto-renew on/off
+router.patch(
+    '/auto-renew',
+    validate(autoRenewSchema),
+    autoRenew
+);
+
+// POST /api/v1/subscriptions/apply-benefits
+// Apply discount/free ride to a given ride amount
+// Called internally by ride-service before billing
+router.post(
+    '/apply-benefits',
+    validate(rideBenefitsSchema),
+    applyBenefits
+);
+
+// GET /api/v1/subscriptions/history
+// Paginated past subscription list
+router.get(
+    '/history',
+    validate(historyFilterSchema, 'query'),
+    getHistory
+);
+
+// GET /api/v1/subscriptions/:subscriptionId/payments
+// Payment history for a subscription
+router.get(
+    '/:subscriptionId/payments',
+    getPayments
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  ADMIN — Requires admin role
+// ─────────────────────────────────────────────────────────────────────────────
+
+// POST /api/v1/subscriptions/admin/plans
+// Create a new plan
+router.post(
+    '/admin/plans',
+    requireRole(['admin']),
+    validate(createPlanSchema),
+    adminCreatePlan
+);
+
+// PATCH /api/v1/subscriptions/admin/plans/:planId/status
+// body: { is_active: true/false }
+router.patch(
+    '/admin/plans/:planId/status',
+    requireRole(['admin']),
+    adminTogglePlan
+);
 
 export default router;

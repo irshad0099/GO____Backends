@@ -1,228 +1,431 @@
-import * as subscriptionRepo from '../repositories/subscriptionRepository.js';
-import * as paymentService from '../../payments/services/paymentService.js'; // optional, if you have payment module
-import { NotFoundError, ApiError, ConflictError } from '../../../core/errors/ApiError.js';
+import { pool } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
+import {
+    getAllPlans,
+    getPlanById,
+    getPlanBySlug,
+    getActiveSubscription,
+    getSubscriptionById,
+    getSubscriptionHistory,
+    getSubscriptionHistoryCount,
+    createSubscription,
+    updateSubscriptionStatus,
+    updateAutoRenew,
+    useFreeRide,
+    resetFreeRides,
+    createSubscriptionPayment,
+    updatePaymentStatus,
+    getPaymentsBySubscriptionId,
+    createPlan,
+    togglePlanStatus,
+} from '../repositories/subscriptionRepository.js';
 
-// ==================== Plans ====================
-export const getAllPlans = async () => {
-    try {
-        return await subscriptionRepo.findAllPlans(true);
-    } catch (error) {
-        logger.error('Get all plans service error:', error);
-        throw error;
-    }
+// ─── Formatters ───────────────────────────────────────────────────────────────
+
+const formatPlan = (p) => ({
+    planId:               p.id,
+    name:                 p.name,
+    slug:                 p.slug,
+    description:          p.description   || null,
+    price:                parseFloat(p.price),
+    durationDays:         p.duration_days,
+    benefits: {
+        rideDiscountPercent:  parseFloat(p.ride_discount_percent),
+        freeRidesPerMonth:    p.free_rides_per_month,
+        priorityBooking:      p.priority_booking,
+        cancellationWaiver:   p.cancellation_waiver,
+        surgeProtection:      p.surge_protection,
+    },
+    isActive:             p.is_active,
+    createdAt:            p.created_at,
+});
+
+const formatSubscription = (s) => ({
+    subscriptionId:      s.id,
+    userId:              s.user_id,
+    plan: {
+        planId:          s.plan_id,
+        name:            s.plan_name        || null,
+        slug:            s.slug             || null,
+        price:           s.price            ? parseFloat(s.price) : null,
+        benefits: {
+            rideDiscountPercent: s.ride_discount_percent ? parseFloat(s.ride_discount_percent) : null,
+            freeRidesPerMonth:   s.free_rides_per_month  || null,
+            priorityBooking:     s.priority_booking      || null,
+            cancellationWaiver:  s.cancellation_waiver   || null,
+            surgeProtection:     s.surge_protection      || null,
+        },
+    },
+    status:              s.status,
+    startedAt:           s.started_at,
+    expiresAt:           s.expires_at,
+    cancelledAt:         s.cancelled_at    || null,
+    cancelReason:        s.cancel_reason   || null,
+    autoRenew:           s.auto_renew,
+    freeRidesUsed:       s.free_rides_used,
+    freeRidesResetAt:    s.free_rides_reset_at || null,
+    paymentMethod:       s.payment_method  || null,
+    createdAt:           s.created_at,
+});
+
+const formatPayment = (p) => ({
+    paymentId:           p.id,
+    subscriptionId:      p.subscription_id,
+    planId:              p.plan_id,
+    amount:              parseFloat(p.amount),
+    paymentMethod:       p.payment_method       || null,
+    paymentGateway:      p.payment_gateway      || null,
+    gatewayTransactionId: p.gateway_transaction_id || null,
+    status:              p.status,
+    description:         p.description          || null,
+    createdAt:           p.created_at,
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  1. Get all active plans (public)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const fetchAllPlans = async () => {
+    const plans = await getAllPlans();
+    return {
+        success: true,
+        data: plans.map(formatPlan),
+    };
 };
 
-export const getPlanBySlug = async (slug) => {
-    try {
-        const plan = await subscriptionRepo.findPlanBySlug(slug);
-        if (!plan) throw new NotFoundError('Subscription plan');
-        return plan;
-    } catch (error) {
-        logger.error('Get plan by slug service error:', error);
-        throw error;
+// ─────────────────────────────────────────────────────────────────────────────
+//  2. Get single plan detail
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const fetchPlanById = async (planId) => {
+    const plan = await getPlanById(planId);
+    if (!plan) {
+        const err = new Error('Plan not found');
+        err.statusCode = 404;
+        throw err;
     }
+    return { success: true, data: formatPlan(plan) };
 };
 
-export const getPlanById = async (planId) => {
-    try {
-        const plan = await subscriptionRepo.findPlanById(planId);
-        if (!plan) throw new NotFoundError('Subscription plan');
-        return plan;
-    } catch (error) {
-        logger.error('Get plan by ID service error:', error);
-        throw error;
-    }
+// ─────────────────────────────────────────────────────────────────────────────
+//  3. Get user's active subscription
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const fetchActiveSubscription = async (userId) => {
+    const sub = await getActiveSubscription(userId);
+    return {
+        success: true,
+        data: sub ? formatSubscription(sub) : null,
+        hasActiveSubscription: !!sub,
+    };
 };
 
-export const createPlan = async (planData) => {
-    try {
-        // Check if slug already exists
-        const existing = await subscriptionRepo.findPlanBySlug(planData.slug);
-        if (existing) throw new ConflictError('Plan with this slug already exists');
-        return await subscriptionRepo.createPlan(planData);
-    } catch (error) {
-        logger.error('Create plan service error:', error);
-        throw error;
-    }
-};
+// ─────────────────────────────────────────────────────────────────────────────
+//  4. Purchase / Subscribe to a plan
+// ─────────────────────────────────────────────────────────────────────────────
 
-export const updatePlan = async (planId, updates) => {
+export const purchaseSubscription = async (userId, {
+    plan_id,
+    payment_method,
+    payment_gateway,
+    gateway_transaction_id,
+    auto_renew,
+}) => {
+    const client = await pool.connect();
     try {
-        const plan = await subscriptionRepo.findPlanById(planId);
-        if (!plan) throw new NotFoundError('Subscription plan');
-        return await subscriptionRepo.updatePlan(planId, updates);
-    } catch (error) {
-        logger.error('Update plan service error:', error);
-        throw error;
-    }
-};
+        await client.query('BEGIN');
 
-// ==================== User Subscriptions ====================
-export const getMyActiveSubscription = async (userId) => {
-    try {
-        return await subscriptionRepo.findActiveSubscriptionByUser(userId);
-    } catch (error) {
-        logger.error('Get my active subscription service error:', error);
-        throw error;
-    }
-};
-
-export const getMySubscriptions = async (userId) => {
-    try {
-        return await subscriptionRepo.findUserSubscriptions(userId);
-    } catch (error) {
-        logger.error('Get my subscriptions service error:', error);
-        throw error;
-    }
-};
-
-export const purchaseSubscription = async (userId, planId, paymentMethod, paymentDetails = {}) => {
-    try {
-        // 1. Validate plan
-        const plan = await subscriptionRepo.findPlanById(planId);
-        if (!plan) throw new NotFoundError('Subscription plan');
-
-        // 2. Check if user already has an active subscription (optional: allow multiple? Usually one active)
-        const active = await subscriptionRepo.findActiveSubscriptionByUser(userId);
-        if (active) {
-            throw new ConflictError('You already have an active subscription. Cancel it first or wait until it expires.');
+        // Check plan exists
+        const plan = await getPlanById(plan_id);
+        if (!plan) {
+            const err = new Error('Subscription plan not found');
+            err.statusCode = 404;
+            throw err;
         }
 
-        // 3. Create payment record (or integrate with payment gateway)
-        // Here we assume payment is processed and we have transaction details
-        // For demo, we'll create a dummy payment record
-        const paymentData = {
-            user_id: userId,
-            subscription_id: null, // will update after subscription created
-            plan_id: planId,
-            amount: plan.price,
-            payment_method: paymentMethod,
-            payment_gateway: paymentDetails.gateway || 'razorpay',
-            gateway_transaction_id: paymentDetails.transactionId || `txn_${Date.now()}`,
-            status: 'success', // assume success
-            description: `Subscription purchase for ${plan.name}`,
-            metadata: paymentDetails.metadata || {}
-        };
-        const payment = await subscriptionRepo.createSubscriptionPayment(paymentData);
+        // Check if user already has an active subscription
+        const existing = await getActiveSubscription(userId);
+        if (existing) {
+            const err = new Error(
+                `You already have an active "${existing.plan_name}" subscription valid till ${new Date(existing.expires_at).toLocaleDateString('en-IN')}`
+            );
+            err.statusCode = 400;
+            throw err;
+        }
 
-        // 4. Calculate subscription dates
-        const startedAt = new Date();
-        const expiresAt = new Date();
+        // Calculate expiry
+        const startedAt  = new Date();
+        const expiresAt  = new Date();
         expiresAt.setDate(expiresAt.getDate() + plan.duration_days);
 
-        // 5. Create user subscription
-        const subscriptionData = {
-            user_id: userId,
-            plan_id: planId,
-            started_at: startedAt,
-            expires_at: expiresAt,
-            auto_renew: true, // default true
-            payment_method: paymentMethod,
-            transaction_id: payment.id
-        };
-        const subscription = await subscriptionRepo.createUserSubscription(subscriptionData);
+        // Free rides monthly reset date
+        const freeRidesResetAt = new Date();
+        freeRidesResetAt.setDate(freeRidesResetAt.getDate() + 30);
 
-        // 6. Update payment record with subscription_id
-        await subscriptionRepo.updatePaymentStatus(payment.id, 'success', payment.gateway_transaction_id);
-        // In a real scenario, you might want to link payment to subscription after creation
+        // Create subscription record
+        const subscription = await createSubscription(client, {
+            userId,
+            planId:          plan.id,
+            status:          'active',
+            startedAt,
+            expiresAt,
+            autoRenew:       auto_renew ?? true,
+            paymentMethod:   payment_method,
+            freeRidesResetAt,
+        });
 
-        return { subscription, payment };
-    } catch (error) {
-        logger.error('Purchase subscription service error:', error);
-        throw error;
-    }
-};
+        // Record payment
+        const payment = await createSubscriptionPayment(client, {
+            userId,
+            subscriptionId:      subscription.id,
+            planId:              plan.id,
+            amount:              plan.price,
+            paymentMethod:       payment_method,
+            paymentGateway:      payment_gateway      || null,
+            gatewayTransactionId: gateway_transaction_id || null,
+            status:              'success',
+            description:         `Subscription to ${plan.name}`,
+            metadata:            { plan_slug: plan.slug },
+        });
 
-export const cancelMySubscription = async (userId, subscriptionId, reason) => {
-    try {
-        // Verify subscription belongs to user and is active
-        const subscriptions = await subscriptionRepo.findUserSubscriptions(userId);
-        const sub = subscriptions.find(s => s.id === parseInt(subscriptionId) && s.status === 'active');
-        if (!sub) throw new NotFoundError('Active subscription not found');
+        await client.query('COMMIT');
 
-        const cancelled = await subscriptionRepo.cancelUserSubscription(subscriptionId, reason);
-        return cancelled;
-    } catch (error) {
-        logger.error('Cancel subscription service error:', error);
-        throw error;
-    }
-};
-
-// ==================== Benefits Check (used by ride service) ====================
-export const getUserSubscriptionBenefits = async (userId) => {
-    try {
-        const active = await subscriptionRepo.findActiveSubscriptionByUser(userId);
-        if (!active) {
-            return {
-                hasActive: false,
-                discountPercent: 0,
-                freeRidesLeft: 0,
-                priorityBooking: false,
-                cancellationWaiver: false,
-                surgeProtection: false
-            };
-        }
-        // Calculate free rides left this month
-        let freeRidesLeft = active.free_rides_per_month - active.free_rides_used;
-        if (freeRidesLeft < 0) freeRidesLeft = 0;
+        logger.info(
+            `[Subscription] New subscription | User: ${userId} | Plan: ${plan.name} | Expires: ${expiresAt.toISOString()}`
+        );
 
         return {
-            hasActive: true,
-            subscriptionId: active.id,
-            planName: active.name,
-            discountPercent: active.ride_discount_percent,
-            freeRidesLeft,
-            priorityBooking: active.priority_booking,
-            cancellationWaiver: active.cancellation_waiver,
-            surgeProtection: active.surge_protection
+            success: true,
+            message: `Successfully subscribed to ${plan.name}!`,
+            data: {
+                subscription: {
+                    subscriptionId: subscription.id,
+                    planName:       plan.name,
+                    price:          parseFloat(plan.price),
+                    startedAt:      subscription.started_at,
+                    expiresAt:      subscription.expires_at,
+                    autoRenew:      subscription.auto_renew,
+                    benefits: {
+                        rideDiscountPercent: parseFloat(plan.ride_discount_percent),
+                        freeRidesPerMonth:   plan.free_rides_per_month,
+                        priorityBooking:     plan.priority_booking,
+                        cancellationWaiver:  plan.cancellation_waiver,
+                        surgeProtection:     plan.surge_protection,
+                    },
+                },
+                payment: formatPayment(payment),
+            },
         };
     } catch (error) {
-        logger.error('Get user subscription benefits service error:', error);
+        await client.query('ROLLBACK');
+        logger.error(`[Subscription] purchaseSubscription error | User: ${userId}:`, error);
         throw error;
+    } finally {
+        client.release();
     }
 };
 
-// Call this after a ride is completed to decrement free ride counter if a free ride was used
-export const consumeFreeRide = async (userId) => {
+// ─────────────────────────────────────────────────────────────────────────────
+//  5. Cancel subscription
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const cancelSubscription = async (userId, { subscription_id, reason }) => {
+    const sub = await getSubscriptionById(subscription_id, userId);
+
+    if (!sub) {
+        const err = new Error('Subscription not found');
+        err.statusCode = 404;
+        throw err;
+    }
+    if (sub.status !== 'active') {
+        const err = new Error(`Subscription is already ${sub.status}`);
+        err.statusCode = 400;
+        throw err;
+    }
+
+    const updated = await updateSubscriptionStatus(subscription_id, 'cancelled', {
+        cancelReason: reason || 'Cancelled by user',
+    });
+
+    logger.info(`[Subscription] Cancelled | User: ${userId} | Sub: ${subscription_id}`);
+
+    return {
+        success: true,
+        message: 'Subscription cancelled. Benefits valid till expiry date.',
+        data: {
+            subscriptionId: updated.id,
+            status:         updated.status,
+            cancelledAt:    updated.cancelled_at,
+            expiresAt:      updated.expires_at,   // still usable till expires_at
+        },
+    };
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  6. Toggle auto-renew
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const toggleAutoRenew = async (userId, { subscription_id, auto_renew }) => {
+    const sub = await getSubscriptionById(subscription_id, userId);
+
+    if (!sub) {
+        const err = new Error('Subscription not found');
+        err.statusCode = 404;
+        throw err;
+    }
+    if (sub.status !== 'active') {
+        const err = new Error('Cannot update auto-renew on an inactive subscription');
+        err.statusCode = 400;
+        throw err;
+    }
+
+    const updated = await updateAutoRenew(subscription_id, userId, auto_renew);
+
+    return {
+        success: true,
+        message: `Auto-renew ${auto_renew ? 'enabled' : 'disabled'} successfully`,
+        data: { subscriptionId: updated.id, autoRenew: updated.auto_renew },
+    };
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  7. Check & apply subscription benefits for a ride
+//     Called by ride-service before billing
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const applyRideBenefits = async (userId, rideAmount) => {
+    const client = await pool.connect();
     try {
-        const active = await subscriptionRepo.findActiveSubscriptionByUser(userId);
-        if (!active) return false;
-        if (active.free_rides_used < active.free_rides_per_month) {
-            await subscriptionRepo.incrementFreeRidesUsed(active.id);
-            return true;
+        await client.query('BEGIN');
+
+        const sub = await getActiveSubscription(userId);
+
+        // No active subscription — return original amount
+        if (!sub) {
+            await client.query('ROLLBACK');
+            return {
+                success:        true,
+                hasSubscription: false,
+                originalAmount:  rideAmount,
+                finalAmount:     rideAmount,
+                discountAmount:  0,
+                isFreeRide:      false,
+                benefits:        null,
+            };
         }
-        return false;
-    } catch (error) {
-        logger.error('Consume free ride service error:', error);
-        throw error;
-    }
-};
 
-// ==================== Cron Jobs ====================
-export const expireAllOverdue = async () => {
-    try {
-        const count = await subscriptionRepo.expireSubscriptions();
-        logger.info(`Expired ${count} subscriptions`);
-        return count;
-    } catch (error) {
-        logger.error('Expire all overdue service error:', error);
-        throw error;
-    }
-};
+        const freeRidesLeft = sub.free_rides_per_month - sub.free_rides_used;
+        let finalAmount     = rideAmount;
+        let discountAmount  = 0;
+        let isFreeRide      = false;
 
-export const resetFreeRidesForAll = async () => {
-    // This would be run monthly (first day of month) to reset counters
-    try {
-        const result = await db.query(
-            `UPDATE user_subscriptions
-             SET free_rides_used = 0, free_rides_reset_at = NOW(), updated_at = NOW()
-             WHERE status = 'active'`
+        // Free ride available — charge ₹0
+        if (freeRidesLeft > 0) {
+            isFreeRide    = true;
+            finalAmount   = 0;
+            discountAmount = rideAmount;
+            await useFreeRide(client, sub.id);
+
+        // Discount ride
+        } else if (parseFloat(sub.ride_discount_percent) > 0) {
+            discountAmount = (rideAmount * parseFloat(sub.ride_discount_percent)) / 100;
+            discountAmount = Math.round(discountAmount * 100) / 100;
+            finalAmount    = Math.max(0, rideAmount - discountAmount);
+        }
+
+        await client.query('COMMIT');
+
+        logger.info(
+            `[Subscription] Ride benefit applied | User: ${userId} | Free: ${isFreeRide} | Discount: ₹${discountAmount}`
         );
-        logger.info(`Reset free rides for ${result.rowCount} active subscriptions`);
-        return result.rowCount;
+
+        return {
+            success:         true,
+            hasSubscription: true,
+            originalAmount:  rideAmount,
+            finalAmount,
+            discountAmount,
+            isFreeRide,
+            freeRidesLeft:   isFreeRide ? freeRidesLeft - 1 : freeRidesLeft,
+            benefits: {
+                planName:          sub.plan_name,
+                priorityBooking:   sub.priority_booking,
+                cancellationWaiver: sub.cancellation_waiver,
+                surgeProtection:   sub.surge_protection,
+            },
+        };
     } catch (error) {
-        logger.error('Reset free rides for all service error:', error);
+        await client.query('ROLLBACK');
+        logger.error(`[Subscription] applyRideBenefits error | User: ${userId}:`, error);
         throw error;
+    } finally {
+        client.release();
     }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  8. Subscription history (paginated)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const fetchSubscriptionHistory = async (userId, { limit, offset }) => {
+    const [history, total] = await Promise.all([
+        getSubscriptionHistory(userId, { limit, offset }),
+        getSubscriptionHistoryCount(userId),
+    ]);
+
+    return {
+        success: true,
+        data: {
+            subscriptions: history.map(formatSubscription),
+            pagination: {
+                total,
+                limit,
+                offset,
+                hasMore: offset + limit < total,
+            },
+        },
+    };
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  9. Get payments for a subscription
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const fetchSubscriptionPayments = async (userId, subscriptionId) => {
+    const sub = await getSubscriptionById(subscriptionId, userId);
+    if (!sub) {
+        const err = new Error('Subscription not found');
+        err.statusCode = 404;
+        throw err;
+    }
+
+    const payments = await getPaymentsBySubscriptionId(subscriptionId);
+    return {
+        success: true,
+        data: payments.map(formatPayment),
+    };
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  ADMIN SERVICES
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const createNewPlan = async (data) => {
+    const plan = await createPlan(data);
+    logger.info(`[Subscription] New plan created: ${plan.name}`);
+    return { success: true, message: 'Plan created successfully', data: formatPlan(plan) };
+};
+
+export const setPlanActiveStatus = async (planId, isActive) => {
+    const plan = await togglePlanStatus(planId, isActive);
+    if (!plan) {
+        const err = new Error('Plan not found');
+        err.statusCode = 404;
+        throw err;
+    }
+    return {
+        success: true,
+        message: `Plan ${isActive ? 'activated' : 'deactivated'} successfully`,
+        data: formatPlan(plan),
+    };
 };

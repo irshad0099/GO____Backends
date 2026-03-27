@@ -2,8 +2,7 @@ import * as driverRepo from '../repositories/driver.repository.js';
 import * as rideRepo from '../../rides/repositories/ride.repository.js';
 import { NotFoundError, ConflictError, ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
-import { appConfig } from '../../../config/app.config.js';
-
+import appConfig from '../../../config/app.config.js';
 export const registerDriver = async (userId, driverData) => {
     try {
         // Check if already registered as driver

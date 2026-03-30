@@ -25,8 +25,8 @@ import {
 } from '../validators/walletValidator.js';
 
 // ─── Middlewares ──────────────────────────────────────────────────────────────
-import { authenticate }             from '../../../core/middleware/auth.middleware';
-import { requireRole }              from '../../../middlewares/roleMiddleware.js';
+import { authenticate }             from '../../../core/middleware/auth.middleware.js';
+import { requireRole }              from '../../../core/middleware/roleMiddleware.js';
 import {
     walletRechargeLimiter,
     ridePaymentLimiter,
@@ -34,7 +34,7 @@ import {
     refundLimiter,
     walletReadLimiter,
     transactionHistoryLimiter,
-} from '../../../middlewares/rateLimiter.js';
+} from '../../../core/middleware/rateLimiter.middleware.js';
 
 const router = express.Router();
 

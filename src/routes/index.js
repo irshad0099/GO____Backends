@@ -1,4 +1,5 @@
 
+
 // import express from 'express';
 // import authRoutes from '../modules/auth/routes/authRoutes.js';
 // import userRoutes from '../modules/users/routes/userRoutes.js';
@@ -66,6 +67,7 @@
 // export default router;
 
 
+
 import express from 'express';
 
 // ─── Existing Routes ──────────────────────────────────────────────────────────
@@ -80,6 +82,7 @@ import subscriptionRoutes from '../modules/subscription/routes/subscriptionRoute
 import paymentRoutes      from '../modules/payments/routes/paymentRoutes.js';
 import pricingRoutes      from '../modules/pricing/routes/pricingRoutes.js';
 import reviewRoutes       from '../modules/review/routes/reviewRoutes.js';
+import adminRoutes        from '../modules/admin/routes/adminroutes.js';
 
 // ─── Passenger New Feature Routes ─────────────────────────────────────────────
 import sosRoutes          from '../modules/sos/routes/sosRoutes.js';
@@ -98,9 +101,12 @@ router.use('/subscriptions', subscriptionRoutes);
 router.use('/payments',      paymentRoutes);
 router.use('/pricing',       pricingRoutes);
 router.use('/reviews',       reviewRoutes);
+
 router.use('/sos',           sosRoutes);
 router.use('/coupons',       couponRoutes);
 router.use('/support',       supportRoutes);
+
+router.use('/admin',         adminRoutes);
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 router.get('/health', (req, res) => {
@@ -127,19 +133,23 @@ router.get('/', (req, res) => {
         success: true,
         name:    'GoMobility API',
         version: '1.0.0',
-        endpoints: {
-            auth:          '/auth',
-            users:         '/users',
-            drivers:       '/drivers',
-            rides:         '/rides',
-            wallet:        '/wallet',
-            subscriptions: '/subscriptions',
-            payments:      '/payments',
-            pricing:       '/pricing',
-            reviews:       '/reviews',
-            health:        '/health',
-            test:          '/test'
-        }
+      endpoints: {
+    auth:          '/auth',
+    users:         '/users',
+    drivers:       '/drivers',
+    rides:         '/rides',
+    wallet:        '/wallet',
+    subscriptions: '/subscriptions',
+    payments:      '/payments',
+    pricing:       '/pricing',
+    reviews:       '/reviews',
+    sos:           '/sos',
+    coupons:       '/coupons',
+    support:       '/support',
+    admin:         '/admin',
+    health:        '/health',
+    test:          '/test'
+}
     });
 });
 

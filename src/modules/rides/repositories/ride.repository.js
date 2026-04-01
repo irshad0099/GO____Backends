@@ -215,6 +215,19 @@ export const updateRideStatus = async (rideId, status, additionalFields = {}) =>
     }
 };
 
+export const updateRideField = async (rideId, field, value) => {
+    try {
+        const { rows } = await db.query(
+            `UPDATE rides SET ${field} = $1, updated_at = NOW() WHERE id = $2 RETURNING *`,
+            [value, rideId]
+        );
+        return rows[0];
+    } catch (error) {
+        logger.error('Update ride field repository error:', error);
+        throw error;
+    }
+};
+
 export const updateRidePayment = async (rideId, actualFare, paymentStatus) => {
     try {
         const result = await db.query(

@@ -1,3 +1,4 @@
+
 // import express from 'express';
 // import authRoutes from '../modules/auth/routes/authRoutes.js';
 // import userRoutes from '../modules/users/routes/userRoutes.js';
@@ -80,6 +81,11 @@ import paymentRoutes      from '../modules/payments/routes/paymentRoutes.js';
 import pricingRoutes      from '../modules/pricing/routes/pricingRoutes.js';
 import reviewRoutes       from '../modules/review/routes/reviewRoutes.js';
 
+// ─── Passenger New Feature Routes ─────────────────────────────────────────────
+import sosRoutes          from '../modules/sos/routes/sosRoutes.js';
+import couponRoutes       from '../modules/coupons/routes/couponRoutes.js';
+import supportRoutes      from '../modules/support/routes/supportRoutes.js';
+
 const router = express.Router();
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
@@ -92,6 +98,9 @@ router.use('/subscriptions', subscriptionRoutes);
 router.use('/payments',      paymentRoutes);
 router.use('/pricing',       pricingRoutes);
 router.use('/reviews',       reviewRoutes);
+router.use('/sos',           sosRoutes);
+router.use('/coupons',       couponRoutes);
+router.use('/support',       supportRoutes);
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 router.get('/health', (req, res) => {

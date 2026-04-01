@@ -4,6 +4,16 @@ import { authenticate, authorize } from '../../../core/middleware/auth.middlewar
 import { validate } from '../../../core/middleware/validation.middleware.js';
 import * as validator from '../validators/rideValidator.js';
 
+// ─── New Feature Controllers ─────────────────────────────────────────────────
+import * as cancelCtrl    from '../controllers/rideCancellationController.js';
+import * as otpCtrl       from '../controllers/rideOtpController.js';
+import * as invoiceCtrl   from '../controllers/rideInvoiceController.js';
+import * as schedCtrl     from '../controllers/scheduledRideController.js';
+import {
+    cancelRideSchema, verifyOtpSchema, scheduleRideSchema,
+    validate as joiValidate,
+} from '../validators/rideNewFeatures.validator.js';
+
 const router = express.Router();
 
 router.use(authenticate);
@@ -61,5 +71,48 @@ router.post('/:rideId/rate',
     validate(validator.rateRideValidators),
     controller.rateRide
 );
+
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  NEW FEATURE ENDPOINTS
+// ═════════════════════════════════════════════════════════════════════════════
+
+// ─── Ride Cancellation (Passenger) ──────────────────────────────────────────
+// POST /api/v1/rides/:rideId/cancel
+router.post(
+    '/:rideId/cancel',
+    authorize('passenger'),
+    joiValidate(cancelRideSchema),
+    cancelCtrl.cancelRide
+);
+
+// ─── Ride OTP Verification ──────────────────────────────────────────────────
+// POST /api/v1/rides/:rideId/verify-otp — driver enters passenger's OTP
+router.post(
+    '/:rideId/verify-otp',
+    authorize('driver'),
+    joiValidate(verifyOtpSchema),
+    otpCtrl.verifyOtp
+);
+
+// ─── Ride Invoice ───────────────────────────────────────────────────────────
+// GET /api/v1/rides/:rideId/invoice — get receipt after ride
+router.get('/:rideId/invoice', invoiceCtrl.getInvoice);
+
+// ─── Scheduled Rides (Book for Later) ───────────────────────────────────────
+// POST /api/v1/rides/schedule
+router.post(
+    '/schedule',
+    authorize('passenger'),
+    joiValidate(scheduleRideSchema),
+    schedCtrl.scheduleRide
+);
+
+// GET /api/v1/rides/scheduled — my scheduled rides
+router.get('/scheduled', authorize('passenger'), schedCtrl.getMyScheduled);
+
+// DELETE /api/v1/rides/scheduled/:id — cancel scheduled ride
+router.delete('/scheduled/:id', authorize('passenger'), schedCtrl.cancelScheduled);
+
 
 export default router;

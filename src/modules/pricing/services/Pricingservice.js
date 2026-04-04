@@ -1,4 +1,4 @@
-import appConfig from '../../../config/app.config.js';
+import { appConfig } from '../../../config/app.config.js';
 import logger from '../../../core/logger/logger.js';
 import {
     isPeakHour,

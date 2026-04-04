@@ -8,7 +8,7 @@
 CREATE TABLE IF NOT EXISTS payment_orders (
     id                      SERIAL PRIMARY KEY,
     order_number            VARCHAR(60)     NOT NULL UNIQUE,    -- PAY20240101XXXX
-    user_id                 INTEGER         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id                 UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     ride_id                 INTEGER         REFERENCES rides(id),
     amount                  DECIMAL(10,2)   NOT NULL CHECK (amount > 0),
     currency                VARCHAR(5)      NOT NULL DEFAULT 'INR',
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS payment_refunds (
     id                      SERIAL PRIMARY KEY,
     refund_number           VARCHAR(60)     NOT NULL UNIQUE,    -- REF20240101XXXX
     payment_order_id        INTEGER         NOT NULL REFERENCES payment_orders(id),
-    user_id                 INTEGER         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id                 UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     ride_id                 INTEGER         REFERENCES rides(id),
     amount                  DECIMAL(10,2)   NOT NULL CHECK (amount > 0),
     reason                  VARCHAR(500),
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS payment_refunds (
 -- Tokenized cards / UPI IDs saved by user (like Ola's saved cards)
 CREATE TABLE IF NOT EXISTS saved_payment_methods (
     id                      SERIAL PRIMARY KEY,
-    user_id                 INTEGER         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id                 UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     type                    VARCHAR(20)     NOT NULL
                                 CHECK (type IN ('card', 'upi', 'netbanking')),
     -- Card details (masked)

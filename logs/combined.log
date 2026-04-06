@@ -1201,3 +1201,48 @@ error: password authentication failed for user "postgres"
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
     at async Database.connect (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/infrastructure/database/postgres.js:35:28)
     at async startServer (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/server.js:22:9)
+2026-04-04 11:44:10 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-04 11:44:10 [ERROR]: Database query error:
+2026-04-04 11:44:11 [ERROR]: Database query error:
+2026-04-04 11:44:11 [ERROR]: Database query error:
+2026-04-04 11:44:11 [ERROR]: Database query error:
+2026-04-04 11:44:11 [ERROR]: Database query error:
+2026-04-04 11:44:12 [INFO]: PostgreSQL disconnected
+2026-04-04 11:49:10 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-04 11:49:11 [ERROR]: Database query error:
+2026-04-04 11:49:11 [ERROR]: Database query error:
+2026-04-04 11:49:11 [ERROR]: Database query error:
+2026-04-04 11:49:11 [INFO]: PostgreSQL disconnected
+2026-04-04 11:52:07 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-04 11:52:07 [ERROR]: Database query error:
+2026-04-04 11:52:08 [ERROR]: Database query error:
+2026-04-04 11:52:08 [ERROR]: Database query error:
+2026-04-04 11:52:08 [ERROR]: Database query error:
+2026-04-04 11:52:08 [ERROR]: Database query error:
+2026-04-04 11:52:08 [ERROR]: Database query error:
+2026-04-04 11:52:08 [ERROR]: Database query error:
+2026-04-04 11:52:08 [ERROR]: Database query error:
+2026-04-04 11:52:08 [ERROR]: Database query error:
+2026-04-04 11:52:08 [ERROR]: Database query error:
+2026-04-04 11:52:08 [ERROR]: Database query error:
+2026-04-04 11:52:08 [ERROR]: Database query error:
+2026-04-04 11:52:08 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:09 [ERROR]: Database query error:
+2026-04-04 11:52:10 [ERROR]: Database query error:
+2026-04-04 11:52:10 [ERROR]: Database query error:
+2026-04-04 11:59:28 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-04 12:00:10 [INFO]: PostgreSQL disconnected
+2026-04-04 12:00:38 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-04 12:08:39 [INFO]: PostgreSQL disconnected

@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS reviews (
     id                  SERIAL PRIMARY KEY,
 
     ride_id             INTEGER         NOT NULL REFERENCES rides(id) ON DELETE CASCADE,
-    reviewer_id         INTEGER         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    reviewee_id         INTEGER         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    reviewer_id         UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    reviewee_id         UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 
     -- Who is reviewing whom
     reviewer_type       VARCHAR(10)     NOT NULL CHECK (reviewer_type IN ('passenger', 'driver')),
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS reviews (
 CREATE TABLE IF NOT EXISTS review_responses (
     id                  SERIAL PRIMARY KEY,
     review_id           INTEGER         NOT NULL REFERENCES reviews(id) ON DELETE CASCADE UNIQUE,
-    responder_id        INTEGER         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    responder_id        UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     response            TEXT            NOT NULL,
     created_at          TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP       DEFAULT CURRENT_TIMESTAMP
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS review_responses (
 -- Avoids expensive AVG() queries on every profile load
 CREATE TABLE IF NOT EXISTS rating_summaries (
     id                  SERIAL PRIMARY KEY,
-    user_id             INTEGER         NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+    user_id             UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE,
     user_type           VARCHAR(10)     NOT NULL CHECK (user_type IN ('passenger', 'driver')),
     average_rating      DECIMAL(3,2)    NOT NULL DEFAULT 0,
     total_reviews       INTEGER         NOT NULL DEFAULT 0,

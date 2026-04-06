@@ -13,7 +13,7 @@ const s3 = new S3Client({
 export const s3Upload = multer({
   storage: multerS3({
     s3: s3,
-    bucket: process.env.AWS_BUCKET_NAME,
+    bucket: process.env.AWS_BUCKET_NAME || 'default-bucket',
     key: function (req, file, cb) {
 
   const type = req.body.type; // aadhaar, pan etc

@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS subscription_plans (
 -- Tracks which user has which plan and its validity
 CREATE TABLE IF NOT EXISTS user_subscriptions (
     id                  SERIAL PRIMARY KEY,
-    user_id             INTEGER        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id             UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     plan_id             INTEGER        NOT NULL REFERENCES subscription_plans(id),
     status              VARCHAR(20)    NOT NULL DEFAULT 'active'
                             CHECK (status IN ('active', 'expired', 'cancelled', 'pending')),
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS user_subscriptions (
 -- Full payment history for subscriptions
 CREATE TABLE IF NOT EXISTS subscription_payments (
     id                      SERIAL PRIMARY KEY,
-    user_id                 INTEGER        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id                 UUID           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     subscription_id         INTEGER        NOT NULL REFERENCES user_subscriptions(id),
     plan_id                 INTEGER        NOT NULL REFERENCES subscription_plans(id),
     amount                  DECIMAL(10,2)  NOT NULL,

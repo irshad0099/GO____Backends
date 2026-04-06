@@ -576,3 +576,33 @@ ConflictError: You already have an active ride
 2026-03-15 03:52:41 [INFO]: ✅ PostgreSQL connected successfully
 2026-03-15 03:53:45 [INFO]: ✅ PostgreSQL connected successfully
 2026-03-15 04:12:35 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-03 20:31:39 [ERROR]: ❌ PostgreSQL connection failed: password authentication failed for user "postgres"
+error: password authentication failed for user "postgres"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Database.connect (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/infrastructure/database/postgres.js:35:28)
+    at async startServer (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/server.js:22:9)
+2026-04-03 20:32:35 [ERROR]: ❌ PostgreSQL connection failed: password authentication failed for user "postgres"
+error: password authentication failed for user "postgres"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Database.connect (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/infrastructure/database/postgres.js:35:28)
+    at async startServer (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/server.js:22:9)
+2026-04-03 20:33:37 [ERROR]: ❌ PostgreSQL connection failed: password authentication failed for user "postgres"
+error: password authentication failed for user "postgres"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Database.connect (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/infrastructure/database/postgres.js:35:28)
+    at async startServer (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/server.js:22:9)
+2026-04-03 20:33:41 [ERROR]: ❌ PostgreSQL connection failed: password authentication failed for user "postgres"
+error: password authentication failed for user "postgres"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Database.connect (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/infrastructure/database/postgres.js:35:28)
+    at async startServer (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/server.js:22:9)
+2026-04-03 20:36:43 [ERROR]: ❌ PostgreSQL connection failed: password authentication failed for user "postgres"
+error: password authentication failed for user "postgres"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Database.connect (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/infrastructure/database/postgres.js:35:28)
+    at async startServer (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/server.js:22:9)

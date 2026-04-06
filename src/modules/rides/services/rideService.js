@@ -3,6 +3,8 @@ import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as walletRepo from '../../wallet/repositories/wallet.repository.js';
 import * as rideCalculator from '../../../core/utils/rideCalculator.js';
 import { getWeatherSignal } from '../../../core/utils/weatherService.js';
+import * as couponService from '../../coupons/services/couponService.js';
+import * as subscriptionService from '../../subscription/services/subscriptionService.js';
 import { ApiError, NotFoundError, ConflictError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 import { ENV } from '../../../config/envConfig.js';
@@ -72,35 +74,93 @@ export const requestRide = async (userId, rideData) => {
         });
 
         const fare = {
-            baseFare:        goFare.passenger.baseFare,
-            distanceFare:    goFare.passenger.distanceFare,
-            timeFare:        durationMinutes,
-            surgeMultiplier: goFare.passenger.surgeMultiplier,
-            estimatedFare:   goFare.passenger.estimatedFare
+            baseFare:           goFare.passenger.baseFare,
+            distanceFare:       goFare.passenger.distanceFare,
+            timeFare:           durationMinutes,
+            surgeMultiplier:    goFare.passenger.surgeMultiplier,
+            estimatedFare:      goFare.passenger.estimatedFare,
+            // Lock these at request time so final fare stays consistent
+            convenienceFee:     goFare.passenger.convenienceFee ?? 0,
+            isPeak:             goFare.passenger.isPeak ?? false,
+            demandSupplyRatio:  goFare.signals.demandSupplyRatio ?? 1.0
         };
+
+        // ── Step 1: Apply subscription benefits (free ride / % discount / surge protection)
+        // Subscription is checked FIRST — it takes priority over coupon
+        let subscriptionResult = null;
+        {
+            // Surge protection: check BEFORE calling applyRideBenefits so we call it only once
+            // with the correct (post-surge-removal) fare
+            let fareForSubscription = fare.estimatedFare;
+
+            const sub = await subscriptionService.fetchActiveSubscription(userId);
+            if (sub.hasActiveSubscription && sub.data?.benefits?.surgeProtection && fare.surgeMultiplier > 1) {
+                // Recalculate fare without surge — then apply subscription on this lower fare
+                const noSurgeFare = rideCalculator.calculateEstimatedFare({
+                    vehicleType:             rideData.vehicleType,
+                    distanceKm,
+                    estimatedDurationMinutes: durationMinutes,
+                    pickupDistanceKm:        signals.pickupDistanceKm,
+                    driverDailyRideCount,
+                    rideRequests:            0,
+                    availableDrivers:        1,
+                    requestVelocity:         0,
+                    weatherSignal:           null
+                });
+                fareForSubscription  = noSurgeFare.passenger.estimatedFare;
+                fare.surgeMultiplier = 1.0;
+                fare.convenienceFee  = noSurgeFare.passenger.convenienceFee ?? 0;
+                fare.isPeak          = noSurgeFare.passenger.isPeak ?? false;
+            }
+
+            // Single call — no double free-ride deduction
+            subscriptionResult = await subscriptionService.applyRideBenefits(userId, fareForSubscription);
+            if (subscriptionResult.hasSubscription) {
+                fare.estimatedFare = subscriptionResult.finalAmount;
+            }
+        }
+
+        // ── Step 2: Apply coupon ONLY if not a free ride (no double discount on free rides)
+        let couponResult = null;
+        if (rideData.couponCode && !(subscriptionResult?.isFreeRide)) {
+            couponResult = await couponService.applyCoupon(
+                userId,
+                rideData.couponCode,
+                fare.estimatedFare,
+                rideData.vehicleType
+            );
+            fare.estimatedFare = couponResult.finalAmount;
+        }
 
         const rideNumber = rideCalculator.generateRideNumber();
 
         const ride = await rideRepo.createRide({
             rideNumber,
-            passengerId:       userId,
-            vehicleType:       rideData.vehicleType,
-            pickupLatitude:    rideData.pickupLatitude,
-            pickupLongitude:   rideData.pickupLongitude,
-            pickupAddress:     rideData.pickupAddress,
+            passengerId:        userId,
+            vehicleType:        rideData.vehicleType,
+            pickupLatitude:     rideData.pickupLatitude,
+            pickupLongitude:    rideData.pickupLongitude,
+            pickupAddress:      rideData.pickupAddress,
             pickupLocationName: rideData.pickupLocationName,
-            dropoffLatitude:   rideData.dropoffLatitude,
-            dropoffLongitude:  rideData.dropoffLongitude,
-            dropoffAddress:    rideData.dropoffAddress,
+            dropoffLatitude:    rideData.dropoffLatitude,
+            dropoffLongitude:   rideData.dropoffLongitude,
+            dropoffAddress:     rideData.dropoffAddress,
             dropoffLocationName: rideData.dropoffLocationName,
             distanceKm,
             durationMinutes,
-            baseFare:        fare.baseFare,
-            distanceFare:    fare.distanceFare,
-            timeFare:        fare.timeFare,
-            surgeMultiplier: fare.surgeMultiplier,
-            estimatedFare:   fare.estimatedFare,
-            paymentMethod:   rideData.paymentMethod || 'cash'
+            baseFare:             fare.baseFare,
+            distanceFare:         fare.distanceFare,
+            timeFare:             fare.timeFare,
+            surgeMultiplier:      fare.surgeMultiplier,
+            estimatedFare:        fare.estimatedFare,
+            convenienceFee:       fare.convenienceFee,
+            isPeak:               fare.isPeak,
+            demandSupplyRatio:    fare.demandSupplyRatio,
+            paymentMethod:        rideData.paymentMethod || 'cash',
+            couponId:             couponResult?.couponId || null,
+            couponDiscount:       couponResult?.discountApplied || 0,
+            subscriptionDiscount: subscriptionResult?.discountAmount || 0,
+            isFreeRide:           subscriptionResult?.isFreeRide || false
         });
 
         logger.info(`Ride requested: ${rideNumber} for user ${userId}`);
@@ -118,9 +178,26 @@ export const requestRide = async (userId, rideData) => {
             passengerFareBreakdown: goFare.passenger,
             driverEarningBreakdown: goFare.driver,
             pricingSignals:         goFare.signals,
-            status:           ride.status,
-            requestedAt:      ride.requested_at,
-            nearbyDrivers:    signals.availableDrivers,
+            ...(subscriptionResult?.hasSubscription && {
+                subscription: {
+                    planName:        subscriptionResult.benefits?.planName,
+                    isFreeRide:      subscriptionResult.isFreeRide,
+                    discountApplied: subscriptionResult.discountAmount,
+                    originalFare:    subscriptionResult.originalAmount,
+                    surgeProtected:  subscriptionResult.benefits?.surgeProtection && fare.surgeMultiplier === 1.0
+                }
+            }),
+            ...(couponResult && {
+                coupon: {
+                    code:            couponResult.code,
+                    discountApplied: couponResult.discountApplied,
+                    originalFare:    couponResult.originalAmount,
+                    message:         couponResult.message
+                }
+            }),
+            status:        ride.status,
+            requestedAt:   ride.requested_at,
+            nearbyDrivers: signals.availableDrivers,
             message: 'Ride requested successfully. Finding nearby drivers...'
         };
     } catch (error) {
@@ -184,9 +261,8 @@ const calculateCompletionFare = async (ride) => {
         actualDurationMinutes = (new Date(ride.completed_at) - new Date(ride.started_at)) / 60000;
     }
 
-    // Pickup distance (driver location at assignment → pickup point)
-    // Use the stored distance_km for pickup since we don't track driver's start point separately
-    const pickupDistanceKm = 0; // TODO: track actual pickup distance when driver is assigned
+    // Pickup distance saved at the time driver accepted the ride
+    const pickupDistanceKm = Number(ride.driver_pickup_distance_km) || 0;
 
     const driverDailyRideCount = await rideRepo.getDriverDailyRideCount(ride.driver_id);
 
@@ -198,7 +274,9 @@ const calculateCompletionFare = async (ride) => {
         waitedMinutes,
         surgeMultiplier:         Number(ride.surge_multiplier) || 1,
         pickupDistanceKm,
-        driverDailyRideCount
+        driverDailyRideCount,
+        lockedConvenienceFee:    ride.convenience_fee != null ? Number(ride.convenience_fee) : null,
+        lockedIsPeak:            ride.is_peak != null ? ride.is_peak : null
     });
 
     return result;
@@ -248,7 +326,16 @@ export const acceptRide = async (driverUserId, rideId) => {
         if (!ride) throw new NotFoundError('Ride not found');
         if (ride.status !== 'requested') throw new ConflictError('Ride is no longer available');
 
-        const updatedRide = await rideRepo.assignDriverToRide(rideId, driver.id);
+        // Calculate actual distance from driver's current location to ride's pickup point
+        const pickupDistanceKm = (driver.current_latitude && driver.current_longitude)
+            ? rideCalculator.calculateDistance(
+                driver.current_latitude, driver.current_longitude,
+                ride.pickup_latitude, ride.pickup_longitude
+              )
+            : 0;
+
+        const updatedRide = await rideRepo.assignDriverToRide(rideId, driver.id, pickupDistanceKm);
+        if (!updatedRide) throw new ConflictError('Ride is no longer available or you are already on duty');
         await driverRepo.updateDriver(driver.id, { is_on_duty: true });
 
         logger.info(`Driver ${driverUserId} accepted ride ${rideId}`);
@@ -295,8 +382,20 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
 
             const finalResult = await calculateCompletionFare(rideWithTimestamp);
 
-            additionalFields.actual_fare    = finalResult.passenger.finalFare;
-            additionalFields.final_fare     = finalResult.passenger.finalFare;
+            // Apply stored discounts (subscription + coupon) to final fare too
+            // Discounts are fixed amounts locked at request time
+            let passengerFinalFare = finalResult.passenger.finalFare;
+
+            if (ride.is_free_ride) {
+                passengerFinalFare = 0;
+            } else {
+                const subDiscount    = Number(ride.subscription_discount) || 0;
+                const couponDiscount = Number(ride.coupon_discount) || 0;
+                passengerFinalFare   = Math.max(0, passengerFinalFare - subDiscount - couponDiscount);
+            }
+
+            additionalFields.actual_fare    = passengerFinalFare;
+            additionalFields.final_fare     = passengerFinalFare;
             additionalFields.payment_status = 'pending';
 
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
@@ -305,7 +404,18 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
                 total_earnings: (driver.total_earnings || 0) + finalResult.driver.netEarnings
             });
 
-            logger.info(`Ride ${rideId} final fare: ₹${finalResult.passenger.finalFare} (estimated: ₹${ride.estimated_fare})`);
+            // Record coupon usage if coupon was applied on this ride
+            if (ride.coupon_id) {
+                await couponService.recordUsage(
+                    ride.coupon_id,
+                    ride.passenger_id,
+                    rideId,
+                    Number(ride.coupon_discount),
+                    finalResult.passenger.finalFare
+                );
+            }
+
+            logger.info(`Ride ${rideId} final fare: ₹${passengerFinalFare} (estimated: ₹${ride.estimated_fare})`);
         }
 
         const updatedRide = await rideRepo.updateRideStatus(rideId, status, additionalFields);
@@ -317,8 +427,11 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             rideNumber: updatedRide.ride_number,
             status:     updatedRide.status,
             ...(status === 'completed' && {
-                estimatedFare: ride.estimated_fare,
-                finalFare:     additionalFields.final_fare
+                estimatedFare:        ride.estimated_fare,
+                finalFare:            additionalFields.final_fare,
+                subscriptionDiscount: Number(ride.subscription_discount) || 0,
+                couponDiscount:       Number(ride.coupon_discount) || 0,
+                isFreeRide:           ride.is_free_ride || false
             }),
             message: `Ride status updated to ${status}`
         };

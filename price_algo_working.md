@@ -87,8 +87,14 @@ Step 6: ESTIMATED FARE FORMULA:
          )
          |
          v
-Step 7: (sirf /request pe) Ride DB mein save karo (surge_multiplier lock hota hai)
-Step 8: Response bhejo — passenger ko fare breakdown + driver ko earnings breakdown
+Step 7: (sirf /request pe) Ride DB mein save karo:
+         ├── surge_multiplier LOCK hota hai
+         ├── convenience_fee LOCK hoti hai (request time wali peak/non-peak value)
+         ├── is_peak LOCK hota hai
+         └── demand_supply_ratio save hota hai
+Step 8: Subscription benefits check karo (free ride / discount / surge protection)
+Step 9: Coupon apply karo (SIRF agar free ride nahi hai — subscription first, coupon second)
+Step 10: Response bhejo — passenger ko fare breakdown + driver ko earnings breakdown
 ```
 
 ### 2B. FINAL FARE (Jab Ride Complete Hoti Hai)
@@ -110,13 +116,16 @@ Step 2: ACTUAL values calculate karo:
          └── actualDuration = completed_at - started_at      (real ride time)
          |
          v
-Step 3: LOCKED surge use karo (request time wala, recalculate NAHI karte)
+Step 3: LOCKED values use karo (request time wale, recalculate NAHI karte):
+         ├── surge_multiplier → ride.surge_multiplier
+         ├── convenience_fee  → ride.convenience_fee  (LOCKED — peak/non-peak consistent)
+         └── is_peak          → ride.is_peak
          |
          v
 Step 4: FINAL FARE FORMULA:
          |
          Final Fare = max(
-             (BaseFare + DistanceFare + WaitingCharges + ConvenienceFee) x LockedSurge,
+             (BaseFare + DistanceFare + WaitingCharges + LockedConvenienceFee) x LockedSurge,
              MinimumFare
          )
          |
@@ -128,6 +137,7 @@ Step 5: Driver earnings calculate karo:
          v
 Step 6: DB mein actual_fare aur final_fare update karo
 Step 7: Driver ki total_rides aur total_earnings update karo
+Step 8: Agar coupon tha → coupon_usages mein record karo (current_uses increment)
 ```
 
 ---
@@ -429,17 +439,19 @@ Calculation:
 
 ```
   WaitingCharges = 2 min x Rs.1.5 = Rs.3
-  ConvFee        = Rs.12 (non-peak band, kyunki surge was 1.0)
+  ConvFee        = Rs.20 (LOCKED from request time — peak band, kyunki 9AM time peak tha)
+  Note: Purana bug: surge=1.0 se non-peak infer karta tha → Rs.12 (GALAT)
+        Fix: convenience_fee request time pe lock hoti hai → Rs.20 (SAHI)
 
-  FinalFare = (30 + 120 + 3 + 12) x 1.0 = Rs.165
+  FinalFare = (30 + 120 + 3 + 20) x 1.0 = Rs.173
 ```
 
 | | Passenger Final | Driver Final |
 |---|---|---|
-| Fare | Rs.165 | Rs.165 (gross) |
+| Fare | Rs.173 | Rs.173 (gross) |
 | Waiting | Rs.3 charged | Rs.3 earned |
 | Platform Fee | — | -Rs.1.5 |
-| **Net** | **Rs.165 pay karega** | **Rs.166.5 milega** |
+| **Net** | **Rs.173 pay karega** | **Rs.174.5 milega** |
 
 ---
 
@@ -486,22 +498,22 @@ Calculation:
 **FINAL FARE (ride complete pe):**
 - Rider ne 8 min wait karaya (3 min grace, 5 min charged)
 - Ride 15 min mein complete hui
-- Surge locked at 1.28x from request time
+- Surge locked at 1.48x (request time wala — estimate wala hi use hoga)
 
 ```
   WaitingCharges = 5 min x Rs.1 = Rs.5
-  ConvFee        = Rs.10.37 (peak band, scaled)
+  ConvFee        = Rs.11.33 (LOCKED from request time — peak band, demand ratio 2.0)
 
-  FinalFare = (20 + 40 + 5 + 10.37) x 1.28 = Rs.96 (rounded)
+  FinalFare = (20 + 40 + 5 + 11.33) x 1.48 = Rs.113 (rounded)
 ```
 
 | | Passenger Final | Driver Final |
 |---|---|---|
-| Fare | Rs.96 | Rs.96 (gross) |
+| Fare | Rs.113 | Rs.113 (gross) |
 | Waiting | Rs.5 charged | Rs.5 earned |
 | Platform Fee | — | -Rs.1 |
 | Pickup Comp | — | +Rs.4.50 |
-| **Net** | **Rs.96 pay karega** | **Rs.104.5 milega** |
+| **Net** | **Rs.113 pay karega** | **Rs.121.5 milega** |
 
 ---
 
@@ -599,23 +611,25 @@ Calculation:
 
 ```
   WaitingCharges   = 0 (2 min < 3 min grace)
-  ConvFee          = Rs.40 (peak band scaled)
+  ConvFee          = Rs.50 (LOCKED from request time — demand ratio 3.0 → max band)
+  Note: Purana bug: lockedSurge=1.75 pass karta tha → Rs.40 milta tha (GALAT)
+        Fix: request time ki locked convenience_fee = Rs.50 (SAHI)
   TrafficOverage   = 90 - (43+30) = 17 min overage
   TrafficComp      = 17 x Rs.1.5 = Rs.25.5 (DRIVER ko milega)
 
-  FinalFare = (50 + 375 + 0 + 40) x 1.75 = Rs.814 (rounded)
+  FinalFare = (50 + 375 + 0 + 50) x 1.75 = Rs.831 (rounded)
 
-  Driver Net = 814 - 0(no platform fee) + 17.5(pickup) + 0(waiting) + 25.5(traffic) = Rs.857
+  Driver Net = 831 - 0(no platform fee) + 17.5(pickup) + 0(waiting) + 25.5(traffic) = Rs.874
 ```
 
 | | Passenger Final | Driver Final |
 |---|---|---|
-| Fare | Rs.814 | Rs.814 (gross) |
+| Fare | Rs.831 | Rs.831 (gross) |
 | Waiting | Rs.0 (grace mein) | Rs.0 |
 | Platform Fee | — | Rs.0 (cap reached) |
 | Pickup Comp | — | +Rs.17.50 |
 | Traffic Comp | — | +Rs.25.50 (17 min extra) |
-| **Net** | **Rs.814 pay karega** | **Rs.857 milega** |
+| **Net** | **Rs.831 pay karega** | **Rs.874 milega** |
 
 **Important:** Traffic delay compensation SIRF driver ko milta hai. Passenger ka fare traffic se nahi badhta (unfair hoga rider ke liye). Driver ko yeh extra platform deta hai as protection.
 
@@ -713,11 +727,16 @@ Return: { isWeatherPeak: true, weatherCondition: "Rain", severity: "mild", weath
 | Weather peak = surge + peak fee | Rain 1.1x, Thunderstorm 1.25x. Convenience fee bhi peak band se |
 | Demand + Weather stack nahi hote | max(demandSurge, weatherSurge) — jo zyada woh apply |
 | Surge LOCK hota hai | Request time pe jo surge tha, wahi final fare mein use hoga. Ride ke beech mein change nahi hota |
+| Convenience fee bhi LOCK hoti hai | Request time ki peak/non-peak band value DB mein save hoti hai. Final fare mein wahi use hoti hai — recalculate nahi hoti |
+| Subscription PEHLE apply hota hai | Free ride ya % discount subscription se aata hai. Coupon uske baad |
+| Free ride pe coupon nahi lagta | Subscription free ride = Rs.0 fare. Coupon apply karna meaningless hoga |
+| Surge protection subscription benefit | Agar plan mein surge_protection=true hai toh surge force 1.0x ho jata hai |
 | Waiting 3 min free | Driver arrive hone ke baad 3 min grace, uske baad per min charge |
 | Traffic 30 min grace | Estimated + 30 min tak koi extra charge nahi |
 | Traffic comp sirf driver ko | Passenger ka fare traffic se nahi badhta, driver ko platform compensate karta hai |
 | Platform fee cap 10 rides | Pehle 10 rides tak fee lagti hai, uske baad free |
 | Minimum fare always apply | Chahe distance kitna bhi kam ho, minimum fare se neeche nahi jayega |
+| Driver assignment atomic hai | High traffic mein bhi ek ride sirf ek driver ko milegi (DB-level lock) |
 | Sab ENV se configurable | Koi bhi value .env file se change kar sakte ho bina code change kiye |
 
 ---
@@ -801,6 +820,80 @@ Koi bhi value change karo `.env` mein — code touch karne ki zaroorat nahi. Ser
 
 ---
 
+## 14. Subscription Benefits — Pricing Pe Impact
+
+Subscription plan ke 4 pricing benefits hain:
+
+### Free Rides (Priority 1)
+```
+User ke paas free rides bacha hai?
+  YES → fare = Rs.0 (coupon bhi nahi lagega)
+  NO  → discount ya surge protection check karo
+```
+
+### Surge Protection
+```
+Plan mein surge_protection = true?
+  YES → surge force 1.0x (demand/weather ignore hota hai)
+        Recalculate hota hai bina surge ke
+  NO  → normal surge apply
+```
+
+### Ride Discount %
+```
+Surge protection nahi, free rides nahi?
+  → plan ki ride_discount_percent se discount lagao
+  → discountAmount = estimatedFare × (discountPercent/100)
+```
+
+### Coupon + Subscription Priority
+```
+Rule: Subscription PEHLE, Coupon BAAD MEIN
+
+Flow:
+  1. Subscription benefit apply karo (estimatedFare update)
+  2. Agar isFreeRide = true → coupon SKIP
+  3. Agar isFreeRide = false → coupon apply on discounted fare
+```
+
+**Example:**
+| Scenario | Original | Sub Discount | Sub Final | Coupon | Final |
+|----------|----------|-------------|-----------|--------|-------|
+| Gold plan (20% off) + SAVE10 coupon | Rs.200 | Rs.40 | Rs.160 | Rs.10 | **Rs.150** |
+| Free ride + coupon | Rs.200 | Rs.200 | Rs.0 | SKIP | **Rs.0** |
+| No subscription + coupon | Rs.200 | — | Rs.200 | Rs.20 | **Rs.180** |
+
+---
+
+## 15. High Traffic — Concurrency Safety
+
+### Problem (pehle):
+```
+Driver 1 aur Driver 2 dono ek saath ek ride accept karne ki koshish karte hain:
+
+Request A: findActiveRide(driver1) → null → OK
+Request B: findActiveRide(driver2) → null → OK  [same time]
+Request A: assignDriver(ride, driver1) → success
+Request B: assignDriver(ride, driver2) → success  ← DONO ASSIGN HO JAATE THE!
+```
+
+### Fix (ab):
+```
+assignDriverToRide() ab DB transaction mein chalta hai:
+
+BEGIN TRANSACTION
+  SELECT * FROM drivers WHERE id=$1 AND is_on_duty=false FOR UPDATE
+  ← Row lock lag jaata hai — dusra request wait karta hai
+  
+  UPDATE rides SET driver_id=$1 WHERE id=$2 AND status='requested'
+  ← Agar ride already assigned → rowCount=0 → ROLLBACK
+COMMIT
+
+Result: High traffic mein bhi guaranteed ek ride = ek driver
+```
+
+---
+
 ## NOTE: Weather API Integration — Kahan Set Karna Hai
 
 Weather feature **Plug & Play** hai. Activate karne ke liye:
@@ -827,7 +920,70 @@ src/core/utils/rideCalculator.js     ← detectPeak() + calculateEstimatedFare()
 src/config/envConfig.js              ← OPENWEATHER_API_KEY + weather thresholds
 ```
 
+
+Sab kuch check kiya end-to-end:                                                                                                      
+   
+  ┌──────────────────────────────────────────┬───────────────────────────────────────────┐                                             
+  │                Component                 │                  Status                   │                                           
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Distance (Haversine)                     │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Duration (ENV speed)                     │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Demand signals (DB se parallel)          │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Volume guard (min 5 requests)            │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Time peak detection                      │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Demand surge formula                     │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Weather surge (max, not stacked)         │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Surge cap 1.75x                          │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Convenience fee (peak/non-peak band)     │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ ConvenienceFee LOCKED at request time    │ ✅ Fixed                                  │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ isPeak LOCKED at request time            │ ✅ Fixed                                  │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Waiting charges (3 min grace)            │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Traffic delay comp (30 min grace)        │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Pickup compensation (2.5km free)         │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Platform fee + daily cap                 │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Minimum fare guarantee                   │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Cancellation penalty (500m check)        │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Subscription apply karta hai             │ ✅ Fixed                                  │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Surge protection (single call)           │ ✅ Fixed (double deduction bug hata diya) │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Coupon priority (sub first)              │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Free ride pe coupon block                │ ✅ Sahi                                   │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Discounts final_fare mein bhi lagti hain │ ✅ Fixed                                  │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Driver pickup distance actual            │ ✅ Fixed                                  │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Atomic driver assignment                 │ ✅ Fixed                                  │
+  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
+  │ Coupon usage record on completion        │ ✅ Sahi                                   │
+  └──────────────────────────────────────────┴───────────────────────────────────────────┘
+
+  Kya missing hai? Sirf 1 cheez:
+
+  Area-wise / City-wise pricing — abhi sab cities ka same rate hai. Agar Mumbai aur Tier-2 city ka alag rate chahiye toh ek
+  city_pricing table banana padega. Yeh future scope hai, core algo ke liye zaroori nahi.
+
+  Baaki sab — sahi aur complete hai. 🎯
 ---
 
-*Last Updated: March 2026*
-*Algorithm Version: v3.0 — Dynamic Peak Detection (Time + Demand + Weather) + Volume Guard + Locked Surge + Real-time Weather API*
+*Last Updated: April 2026*
+*Algorithm Version: v4.0 — v3.0 + Locked ConvenienceFee + Subscription Benefits + Coupon Priority + Atomic Driver Assignment + Driver Pickup Distance Tracking*

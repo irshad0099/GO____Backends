@@ -351,15 +351,21 @@ export const calculateFinalRideFare = ({
     waitedMinutes            = 0,
     surgeMultiplier          = 1,
     pickupDistanceKm         = 0,
-    driverDailyRideCount     = 0
+    driverDailyRideCount     = 0,
+    lockedConvenienceFee     = null,  // locked at request time — pass from ride.convenience_fee
+    lockedIsPeak             = null   // locked at request time — pass from ride.is_peak
 }) => {
     const pricing  = getVehiclePricing(vehicleType);
     const surgeCap = Number(ENV.SURGE_MAX_MULTIPLIER) || 1.75;
     const lockedSurge = clamp(Number(surgeMultiplier), 1, surgeCap);
 
-    // Peak was determined at request time — infer from locked surge
-    const wasPeak    = lockedSurge > 1;
-    const convenience = calculateConvenienceFee(pricing.vehicleType, wasPeak, lockedSurge);
+    // Use locked peak flag from request time if available, else infer from surge (fallback)
+    const wasPeak = lockedIsPeak !== null ? Boolean(lockedIsPeak) : lockedSurge > 1;
+
+    // Use locked convenience fee from request time if available (prevents peak/non-peak mismatch)
+    const convenience = lockedConvenienceFee !== null
+        ? { convenienceFee: round2(Number(lockedConvenienceFee)), feeBand: {}, isPeak: wasPeak }
+        : calculateConvenienceFee(pricing.vehicleType, wasPeak, lockedSurge);
     const waiting     = calculateWaitingCharges(pricing.vehicleType, waitedMinutes);
     const traffic     = calculateTrafficDelayCompensation(pricing.vehicleType, estimatedDurationMinutes, actualDurationMinutes);
     const pickup      = calculatePickupCompensation(pricing.vehicleType, pickupDistanceKm);

@@ -58,7 +58,8 @@ export const requestRideValidators = [
     body('dropoffLongitude').notEmpty().isFloat({ min: -180, max: 180 }),
     body('dropoffAddress').notEmpty().isString().isLength({ min: 5, max: 500 }),
     body('dropoffLocationName').optional().isString().isLength({ max: 255 }),
-    body('paymentMethod').optional().isIn(['cash', 'card', 'wallet', 'upi']).default('cash')
+    body('paymentMethod').optional().isIn(['cash', 'card', 'wallet', 'upi']).default('cash'),
+    body('couponCode').optional().isString().isLength({ min: 2, max: 50 }).withMessage('Invalid coupon code')
 ];
 
 // ==================== ACCEPT RIDE VALIDATORS ====================

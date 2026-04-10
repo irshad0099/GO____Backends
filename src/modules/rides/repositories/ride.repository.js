@@ -64,18 +64,47 @@ export const createRide = async (rideData) => {
     }
 };
 
+// export const findRideById = async (rideId) => {
+//     try {
+//         const result = await db.query(
+//             `SELECT r.*, 
+//                     u.full_name as passenger_name, u.phone_number as passenger_phone,
+//                     dv.vehicle_type, dv.vehicle_number, dv.vehicle_model, dv.vehicle_color,
+//                     du.full_name as driver_name, du.phone_number as driver_phone
+//              FROM rides r
+//              LEFT JOIN users u ON r.passenger_id = u.id
+//              LEFT JOIN drivers d ON r.driver_id = d.id
+//              LEFT JOIN driver_vehicle dv ON d.id = dv.driver_id
+//              LEFT JOIN users du ON d.user_id = du.id
+//              WHERE r.id = $1`,
+//             [rideId]
+//         );
+//         return result.rows[0];
+//     } catch (error) {
+//         logger.error('Find ride by ID repository error:', error);
+//         throw error;
+//     }
+// };
+
 export const findRideById = async (rideId) => {
     try {
         const result = await db.query(
             `SELECT r.*, 
-                    u.full_name as passenger_name, u.phone_number as passenger_phone,
-                    dv.vehicle_type, dv.vehicle_number, dv.vehicle_model, dv.vehicle_color,
-                    du.full_name as driver_name, du.phone_number as driver_phone
+                    u.full_name       AS passenger_name,
+                    u.phone_number    AS passenger_phone,
+                    u.fcm_token       AS passenger_fcm_token,
+                    dv.vehicle_type,
+                    dv.vehicle_number,
+                    dv.vehicle_model,
+                    dv.vehicle_color,
+                    du.full_name      AS driver_name,
+                    du.phone_number   AS driver_phone,
+                    du.fcm_token      AS driver_fcm_token
              FROM rides r
-             LEFT JOIN users u ON r.passenger_id = u.id
-             LEFT JOIN drivers d ON r.driver_id = d.id
-             LEFT JOIN driver_vehicle dv ON d.id = dv.driver_id
-             LEFT JOIN users du ON d.user_id = du.id
+             LEFT JOIN users u           ON r.passenger_id = u.id
+             LEFT JOIN drivers d         ON r.driver_id    = d.id
+             LEFT JOIN driver_vehicle dv ON d.id           = dv.driver_id
+             LEFT JOIN users du          ON d.user_id      = du.id
              WHERE r.id = $1`,
             [rideId]
         );

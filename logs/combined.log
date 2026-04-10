@@ -1289,3 +1289,89 @@ error: password authentication failed for user "postgres"
 2026-04-09 00:21:29 [INFO]: ✅ PostgreSQL connected successfully
 2026-04-09 12:45:00 [INFO]: ✅ PostgreSQL connected successfully
 2026-04-09 15:04:38 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 00:26:18 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 00:27:23 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 00:32:11 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 00:32:21 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:26:24 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:26:29 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:26:32 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:26:40 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:26:44 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:27:26 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:28:11 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:29:52 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:31:07 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:39:50 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:39:50 [ERROR]: Database query error:
+2026-04-10 02:39:50 [ERROR]: Database query error:
+2026-04-10 02:39:50 [ERROR]: Database query error:
+2026-04-10 02:39:50 [ERROR]: Database query error:
+2026-04-10 02:39:50 [ERROR]: Database query error:
+2026-04-10 02:39:50 [ERROR]: Database query error:
+2026-04-10 02:39:50 [ERROR]: Database query error:
+2026-04-10 02:39:51 [ERROR]: Database query error:
+2026-04-10 02:39:51 [ERROR]: Database query error:
+2026-04-10 02:39:51 [ERROR]: Database query error:
+2026-04-10 02:39:51 [ERROR]: Database query error:
+2026-04-10 02:39:51 [ERROR]: Database query error:
+2026-04-10 02:39:51 [ERROR]: Database query error:
+2026-04-10 02:39:51 [ERROR]: Database query error:
+2026-04-10 02:39:51 [ERROR]: Database query error:
+2026-04-10 02:39:51 [ERROR]: Database query error:
+2026-04-10 02:39:52 [ERROR]: Database query error:
+2026-04-10 02:39:52 [ERROR]: Database query error:
+2026-04-10 02:39:52 [ERROR]: Database query error:
+2026-04-10 02:39:52 [ERROR]: Database query error:
+2026-04-10 02:39:52 [ERROR]: Database query error:
+2026-04-10 02:39:52 [ERROR]: Database query error:
+2026-04-10 02:39:52 [ERROR]: Database query error:
+2026-04-10 02:39:52 [ERROR]: Database query error:
+2026-04-10 02:39:52 [ERROR]: Database query error:
+2026-04-10 02:39:52 [ERROR]: Database query error:
+2026-04-10 02:39:52 [ERROR]: Database query error:
+2026-04-10 02:39:53 [ERROR]: Database query error:
+2026-04-10 02:39:53 [ERROR]: Database query error:
+2026-04-10 02:39:53 [ERROR]: Database query error:
+2026-04-10 02:39:53 [ERROR]: Database query error:
+2026-04-10 02:39:53 [ERROR]: Database query error:
+2026-04-10 02:39:53 [INFO]: PostgreSQL disconnected
+2026-04-10 02:40:41 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:45:45 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:47:41 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:56:42 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:56:46 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 02:56:49 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 03:00:05 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 03:05:54 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 03:05:56 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 03:06:42 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 03:13:14 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 10:41:22 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 10:43:21 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 10:50:55 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 10:50:57 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 10:51:59 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 10:54:26 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 10:54:28 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 10:55:47 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 11:04:33 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 11:07:37 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 11:09:25 [INFO]: [SMS to 9876543213]: Your OTP for Ride Sharing app is: 365587. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-10 11:09:25 [INFO]: OTP sent successfully to 9876543213 for purpose: signin
+2026-04-10 11:11:38 [INFO]: OTP verified successfully for 9876543213
+2026-04-10 11:11:39 [INFO]: User signed in successfully:
+2026-04-10 11:20:24 [INFO]: [SMS to 9876543214]: Your OTP for Ride Sharing app is: 883960. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-10 11:20:24 [INFO]: OTP sent successfully to 9876543214 for purpose: signup
+2026-04-10 11:20:58 [INFO]: OTP verified successfully for 9876543214
+2026-04-10 11:20:58 [INFO]: User signed up successfully:
+2026-04-10 11:23:13 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 11:23:28 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 21:10:19 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 21:39:31 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 21:40:34 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 21:40:37 [INFO]: ✅ Redis connected successfully
+2026-04-10 21:40:47 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 21:40:49 [INFO]: ✅ Redis connected successfully
+2026-04-10 21:42:42 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 21:42:45 [INFO]: ✅ Redis connected successfully

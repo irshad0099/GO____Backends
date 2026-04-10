@@ -1,6 +1,7 @@
 import * as rideRepo from '../repositories/ride.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as walletRepo from '../../wallet/repositories/wallet.repository.js';
+import * as rideOtpService from './rideOtpService.js';
 import * as rideCalculator from '../../../core/utils/rideCalculator.js';
 import { getWeatherSignal } from '../../../core/utils/weatherService.js';
 import { ApiError, NotFoundError, ConflictError } from '../../../core/errors/ApiError.js';
@@ -284,6 +285,30 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             additionalFields.cancelled_by = 'driver';
             additionalFields.cancellation_reason = cancellationReason || 'Driver cancelled';
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
+        }
+
+        // ─── Generate & Send OTP when driver arrives ───
+        if (status === 'driver_arrived') {
+            try {
+                const passengerPhone = ride.passenger_phone;
+                if (passengerPhone) {
+                    const otpResult = await rideOtpService.generateRideOTP(rideId, passengerPhone);
+                    logger.info('✅ OTP generated and sent when driver arrived', {
+                        rideId,
+                        passengerPhone: passengerPhone.slice(-4),
+                        otpCode: otpResult.otpCode,
+                        smsSent: otpResult.smsSent
+                    });
+                } else {
+                    logger.warn('⚠️ Driver arrived but passenger phone not found in ride details', { rideId });
+                }
+            } catch (otpError) {
+                // Log but don't fail the status update — OTP is not critical
+                logger.error('⚠️ Failed to generate OTP on driver arrival (status update will continue)', {
+                    rideId,
+                    error: otpError.message
+                });
+            }
         }
 
         if (status === 'completed') {

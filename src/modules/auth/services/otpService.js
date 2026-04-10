@@ -10,7 +10,15 @@ const generateOTP = () => {
 };
 
 export const sendOTP = async (phone, purpose = 'signin') => {
+    const startTime = Date.now();
+
     try {
+        logger.info('🔐 OTP send initiated', {
+            phone: phone.slice(-4), // Log only last 4 digits
+            purpose,
+            provider: ENV.SMS_PROVIDER
+        });
+
         // Generate OTP
         const otp = generateOTP();
         const expiry = new Date(Date.now() + ENV.OTP_EXPIRY_MINUTES * 60 * 1000);
@@ -23,18 +31,41 @@ export const sendOTP = async (phone, purpose = 'signin') => {
             expiresAt: expiry
         });
 
-        // Send OTP via SMS
-        await smsProvider.sendOTP(phone, otp);
+        logger.debug('💾 OTP saved to database', {
+            phone: phone.slice(-4),
+            purpose,
+            expiresAt: expiry.toISOString()
+        });
 
-        logger.info(`OTP sent successfully to ${phone} for purpose: ${purpose}`);
+        // Send OTP via SMS
+        const smsResult = await smsProvider.sendOTP(phone, otp, purpose);
+        console.log(smsResult);
+        logger.info('✅ OTP sent successfully', {
+            phone: phone.slice(-4),
+            purpose,
+            provider: ENV.SMS_PROVIDER,
+            expiryInMinutes: ENV.OTP_EXPIRY_MINUTES,
+            messageId: smsResult.messageId || smsResult.sid,
+            duration: Date.now() - startTime
+        });
 
         return {
             message: 'OTP sent successfully',
-            expiryInMinutes: ENV.OTP_EXPIRY_MINUTES
+            expiryInMinutes: ENV.OTP_EXPIRY_MINUTES,
+            provider: smsResult.provider
         };
     } catch (error) {
-        logger.error('Send OTP service error:', error);
-        throw new ApiError(500, 'Failed to send OTP');
+        logger.error('❌ Send OTP service error', {
+            phone: phone.slice(-4),
+            purpose,
+            provider: ENV.SMS_PROVIDER,
+            errorCode: error.code,
+            errorMessage: error.message,
+            stack: error.stack,
+            duration: Date.now() - startTime
+        });
+
+        throw new ApiError(500, 'Failed to send OTP. Please try again.');
     }
 };
 

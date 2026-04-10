@@ -1,4 +1,4 @@
-import appConfig from '../../../config/app.config.js';
+import { appConfig } from '../../../config/app.config.js';
 // ─── Check if current time is peak hour ──────────────────────────────────────
 export const isPeakHour = (date = new Date()) => {
     const hhmm = date.toTimeString().slice(0, 5); // "HH:MM"

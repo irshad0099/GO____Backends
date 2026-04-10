@@ -86,6 +86,14 @@ router.post(
     cancelCtrl.cancelRide
 );
 
+// ─── Ride OTP Generation ────────────────────────────────────────────────────
+// POST /api/v1/rides/:rideId/generate-otp — driver/system generates & sends OTP to passenger
+router.post(
+    '/:rideId/generate-otp',
+    authorize('driver'),
+    otpCtrl.generateOtp
+);
+
 // ─── Ride OTP Verification ──────────────────────────────────────────────────
 // POST /api/v1/rides/:rideId/verify-otp — driver enters passenger's OTP
 router.post(

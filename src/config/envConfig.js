@@ -101,6 +101,8 @@ export const ENV = {
     AUTH_RATE_LIMIT_MAX: parseInt(process.env.AUTH_RATE_LIMIT_MAX) || 5,
     OTP_RATE_LIMIT_MAX: parseInt(process.env.OTP_RATE_LIMIT_MAX) || 3,
     
+
+    
     // File Upload
     UPLOAD_PROVIDER: process.env.UPLOAD_PROVIDER || 'local',
     UPLOAD_DIR: process.env.UPLOAD_DIR || 'uploads',

@@ -22,7 +22,14 @@ export const createRide = async (rideData) => {
             timeFare,
             surgeMultiplier,
             estimatedFare,
-            paymentMethod
+            paymentMethod,
+            couponId             = null,
+            couponDiscount       = 0,
+            convenienceFee       = 0,
+            isPeak               = false,
+            demandSupplyRatio    = 1.0,
+            subscriptionDiscount = 0,
+            isFreeRide           = false
         } = rideData;
 
         const result = await db.query(
@@ -32,8 +39,11 @@ export const createRide = async (rideData) => {
                 dropoff_latitude, dropoff_longitude, dropoff_address, dropoff_location_name,
                 distance_km, duration_minutes,
                 base_fare, distance_fare, time_fare, surge_multiplier, estimated_fare,
-                payment_method, status, requested_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 'requested', NOW())
+                payment_method, coupon_id, coupon_discount,
+                convenience_fee, is_peak, demand_supply_ratio,
+                subscription_discount, is_free_ride,
+                status, requested_at
+            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,'requested',NOW())
             RETURNING *`,
             [
                 rideNumber, passengerId, vehicleType,
@@ -41,7 +51,9 @@ export const createRide = async (rideData) => {
                 dropoffLatitude, dropoffLongitude, dropoffAddress, dropoffLocationName,
                 distanceKm, durationMinutes,
                 baseFare, distanceFare, timeFare, surgeMultiplier, estimatedFare,
-                paymentMethod
+                paymentMethod, couponId, couponDiscount,
+                convenienceFee, isPeak, demandSupplyRatio,
+                subscriptionDiscount, isFreeRide
             ]
         );
 
@@ -52,18 +64,47 @@ export const createRide = async (rideData) => {
     }
 };
 
+// export const findRideById = async (rideId) => {
+//     try {
+//         const result = await db.query(
+//             `SELECT r.*, 
+//                     u.full_name as passenger_name, u.phone_number as passenger_phone,
+//                     dv.vehicle_type, dv.vehicle_number, dv.vehicle_model, dv.vehicle_color,
+//                     du.full_name as driver_name, du.phone_number as driver_phone
+//              FROM rides r
+//              LEFT JOIN users u ON r.passenger_id = u.id
+//              LEFT JOIN drivers d ON r.driver_id = d.id
+//              LEFT JOIN driver_vehicle dv ON d.id = dv.driver_id
+//              LEFT JOIN users du ON d.user_id = du.id
+//              WHERE r.id = $1`,
+//             [rideId]
+//         );
+//         return result.rows[0];
+//     } catch (error) {
+//         logger.error('Find ride by ID repository error:', error);
+//         throw error;
+//     }
+// };
+
 export const findRideById = async (rideId) => {
     try {
         const result = await db.query(
             `SELECT r.*, 
-                    u.full_name as passenger_name, u.phone_number as passenger_phone,
-                    dv.vehicle_type, dv.vehicle_number, dv.vehicle_model, dv.vehicle_color,
-                    du.full_name as driver_name, du.phone_number as driver_phone
+                    u.full_name       AS passenger_name,
+                    u.phone_number    AS passenger_phone,
+                    u.fcm_token       AS passenger_fcm_token,
+                    dv.vehicle_type,
+                    dv.vehicle_number,
+                    dv.vehicle_model,
+                    dv.vehicle_color,
+                    du.full_name      AS driver_name,
+                    du.phone_number   AS driver_phone,
+                    du.fcm_token      AS driver_fcm_token
              FROM rides r
-             LEFT JOIN users u ON r.passenger_id = u.id
-             LEFT JOIN drivers d ON r.driver_id = d.id
-             LEFT JOIN driver_vehicle dv ON d.id = dv.driver_id
-             LEFT JOIN users du ON d.user_id = du.id
+             LEFT JOIN users u           ON r.passenger_id = u.id
+             LEFT JOIN drivers d         ON r.driver_id    = d.id
+             LEFT JOIN driver_vehicle dv ON d.id           = dv.driver_id
+             LEFT JOIN users du          ON d.user_id      = du.id
              WHERE r.id = $1`,
             [rideId]
         );
@@ -157,22 +198,46 @@ export const findNearbyDrivers = async (vehicleType, latitude, longitude, radius
     }
 };
 
-export const assignDriverToRide = async (rideId, driverId) => {
+export const assignDriverToRide = async (rideId, driverId, pickupDistanceKm = 0) => {
+    const client = await db.getClient();
     try {
-        const result = await db.query(
-            `UPDATE rides 
-             SET driver_id = $1, 
+        await client.query('BEGIN');
+
+        // Lock driver row to prevent concurrent acceptance (high traffic race condition fix)
+        const driverCheck = await client.query(
+            `SELECT id FROM drivers WHERE id = $1 AND is_on_duty = false FOR UPDATE`,
+            [driverId]
+        );
+        if (driverCheck.rowCount === 0) {
+            await client.query('ROLLBACK');
+            return null; // Driver already on duty — caller should throw ConflictError
+        }
+
+        const result = await client.query(
+            `UPDATE rides
+             SET driver_id = $1,
                  status = 'driver_assigned',
                  driver_assigned_at = NOW(),
+                 driver_pickup_distance_km = $3,
                  updated_at = NOW()
-             WHERE id = $2
+             WHERE id = $2 AND status = 'requested'
              RETURNING *`,
-            [driverId, rideId]
+            [driverId, rideId, pickupDistanceKm]
         );
+
+        if (result.rowCount === 0) {
+            await client.query('ROLLBACK');
+            return null; // Ride no longer available
+        }
+
+        await client.query('COMMIT');
         return result.rows[0];
     } catch (error) {
+        await client.query('ROLLBACK');
         logger.error('Assign driver to ride repository error:', error);
         throw error;
+    } finally {
+        client.release();
     }
 };
 

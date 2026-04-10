@@ -1,47 +1,3 @@
-// import express from 'express';
-// import * as controller from '../controllers/driverController.js';
-// import { authenticate, authorize } from '../../../core/middleware/auth.middleware.js';
-// import { validate } from '../../../core/middleware/validation.middleware.js';
-// import * as validator from '../validators/driver.validator.js';
-
-// const router = express.Router();
-
-// // All driver routes require authentication
-// router.use(authenticate);
-
-// // Driver registration and profile
-// router.post(
-//     '/register',
-//     authorize('passenger', 'driver'),
-//     validate(validator.driverRegistrationValidators),
-//     controller.register
-// );
-
-// router.get('/profile', controller.getProfile);
-
-// router.put('/profile', controller.updateProfile);
-
-// // Location and availability
-// router.put(
-//     '/location',
-//     validate(validator.updateLocationValidators),
-//     controller.updateLocation
-// );
-
-// router.patch(
-//     '/availability',
-//     controller.toggleAvailability
-// );
-
-// // Ride management
-// router.get('/rides/current', controller.getCurrentRide);
-
-// router.get('/rides/history', controller.getRideHistory);
-
-// // Earnings
-// router.get('/earnings', controller.getEarnings);
-
-// export default router;
 
 
 import express from 'express';
@@ -50,6 +6,7 @@ import { authenticate, authorize } from '../../../core/middleware/auth.middlewar
 import { validate } from '../../../core/middleware/validation.middleware.js';
 import * as validator from '../validators/driver.validator.js';
 import { s3Upload } from '../../../core/middleware/s3Upload.middleware.js';
+import { db } from '../../../infrastructure/database/postgres.js';
 
 // ─── New Feature Controllers ─────────────────────────────────────────────────
 import * as incentiveCtrl    from '../controllers/incentiveController.js';
@@ -179,6 +136,56 @@ router.post(
   s3Upload.single("file"),
   controller.uploadFile
 );
+
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  FCM TOKEN — Push Notifications ke liye
+// ═════════════════════════════════════════════════════════════════════════════
+ 
+// POST /api/v1/drivers/fcm-token
+// Driver app login ke baad FCM token save karo
+router.post('/fcm-token', async (req, res) => {
+    try {
+        const { fcm_token } = req.body;
+ 
+        if (!fcm_token) {
+            return res.status(400).json({
+                success: false,
+                message: 'fcm_token is required'
+            });
+        }
+ 
+        // Driver ka user_id se driver record dhundho
+        const driverResult = await db.query(
+            'SELECT id FROM drivers WHERE user_id = $1',
+            [req.user.id]
+        );
+ 
+        if (!driverResult.rows[0]) {
+            return res.status(404).json({
+                success: false,
+                message: 'Driver not found'
+            });
+        }
+ 
+        const driverId = driverResult.rows[0].id;
+ 
+        await db.query(
+            'UPDATE drivers SET fcm_token = $1 WHERE id = $2',
+            [fcm_token, driverId]
+        );
+ 
+        return res.status(200).json({
+            success: true,
+            message: 'FCM token saved successfully'
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
 
 
 // ═════════════════════════════════════════════════════════════════════════════

@@ -1375,3 +1375,97 @@ error: password authentication failed for user "postgres"
 2026-04-10 21:40:49 [INFO]: ✅ Redis connected successfully
 2026-04-10 21:42:42 [INFO]: ✅ PostgreSQL connected successfully
 2026-04-10 21:42:45 [INFO]: ✅ Redis connected successfully
+2026-04-10 21:45:41 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 21:45:44 [INFO]: ✅ Redis connected successfully
+2026-04-10 23:36:59 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 23:37:00 [INFO]: ✅ Redis connected successfully
+2026-04-10 23:37:39 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 23:37:40 [INFO]: ✅ Redis connected successfully
+2026-04-10 23:38:47 [INFO]: [SMS to 9876543213]: Your OTP for Ride Sharing app is: 132535. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-10 23:38:47 [INFO]: OTP sent successfully to 9876543213 for purpose: signin
+2026-04-10 23:42:40 [INFO]: OTP verified via Redis for 9876543213
+2026-04-10 23:42:40 [INFO]: User signed in successfully:
+2026-04-10 23:48:28 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 23:48:29 [INFO]: ✅ Redis connected successfully
+2026-04-10 23:48:31 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 23:48:32 [INFO]: ✅ Redis connected successfully
+2026-04-10 23:48:34 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 23:48:35 [INFO]: ✅ Redis connected successfully
+2026-04-10 23:50:16 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 23:50:18 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 23:50:18 [INFO]: ✅ Redis connected successfully
+2026-04-10 23:50:21 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 23:50:21 [INFO]: ✅ Redis connected successfully
+2026-04-10 23:51:00 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-10 23:51:01 [INFO]: ✅ Redis connected successfully
+2026-04-10 23:52:42 [INFO]: [SMS to 9876543214]: Your OTP for Ride Sharing app is: 913575. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-10 23:52:42 [INFO]: OTP sent successfully to 9876543214 for purpose: signin
+2026-04-11 00:00:12 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:136:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 00:00:12 [ERROR]: Verify signin service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:136:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 00:02:29 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 00:02:30 [INFO]: ✅ Redis connected successfully
+2026-04-11 00:02:33 [INFO]: [SMS to 9876543214]: Your OTP for Ride Sharing app is: 482047. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 00:02:33 [INFO]: OTP sent successfully to 9876543214 for purpose: signin
+2026-04-11 00:02:58 [INFO]: [SMS to 9876543214]: Your OTP for Ride Sharing app is: 957116. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 00:02:58 [INFO]: OTP sent successfully to 9876543214 for purpose: signin
+2026-04-11 00:03:14 [ERROR]: Verify OTP service error: Invalid OTP
+Error: Invalid OTP
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:156:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:136:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 00:03:14 [ERROR]: Verify signin service error: Invalid OTP
+Error: Invalid OTP
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:156:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:136:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 00:03:39 [INFO]: OTP verified via Redis for 9876543214
+2026-04-11 00:03:39 [INFO]: User signed in successfully:
+2026-04-11 00:06:10 [ERROR]: Update driver location service error: Driver not verified
+Error: Driver not verified
+    at Module.updateDriverLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/driverService.js:369:40)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async updateLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/driverController.js:206:24)
+2026-04-11 00:06:27 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 00:06:28 [INFO]: ✅ Redis connected successfully
+2026-04-11 00:07:15 [INFO]: [SMS to 9876543214]: Your OTP for Ride Sharing app is: 503220. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 00:07:15 [INFO]: OTP sent successfully to 9876543214 for purpose: signin
+2026-04-11 00:08:01 [INFO]: OTP verified via Redis for 9876543214
+2026-04-11 00:08:01 [INFO]: User signed in successfully:
+2026-04-11 00:09:22 [ERROR]: Update driver location service error: Driver not verified
+Error: Driver not verified
+    at Module.updateDriverLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/driverService.js:369:40)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async updateLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/driverController.js:206:24)
+2026-04-11 00:12:18 [ERROR]: Update driver location service error: saveDriverLocation is not defined
+ReferenceError: saveDriverLocation is not defined
+    at Module.updateDriverLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/driverService.js:372:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async updateLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/driverController.js:206:24)
+2026-04-11 00:13:20 [INFO]: [SMS to 9876543214]: Your OTP for Ride Sharing app is: 697788. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 00:13:20 [INFO]: OTP sent successfully to 9876543214 for purpose: signin
+2026-04-11 00:13:53 [INFO]: OTP verified via Redis for 9876543214
+2026-04-11 00:13:53 [INFO]: User signed in successfully:
+2026-04-11 00:14:38 [ERROR]: Update driver location service error: saveDriverLocation is not defined
+ReferenceError: saveDriverLocation is not defined
+    at Module.updateDriverLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/driverService.js:372:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async updateLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/driverController.js:206:24)
+2026-04-11 00:16:44 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 00:16:44 [INFO]: ✅ Redis connected successfully
+2026-04-11 00:25:52 [INFO]: [SMS to 9876543214]: Your OTP for Ride Sharing app is: 326536. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 00:25:52 [INFO]: OTP sent successfully to 9876543214 for purpose: signin
+2026-04-11 00:26:21 [INFO]: OTP verified via Redis for 9876543214
+2026-04-11 00:26:21 [INFO]: User signed in successfully:
+2026-04-11 00:27:11 [INFO]: Driver 1 location updated: 28.6139, 77.209

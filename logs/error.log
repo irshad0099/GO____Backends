@@ -649,3 +649,47 @@ Error: OTP expired or not found. Please request a new OTP.
 2026-04-10 02:39:53 [ERROR]: Database query error:
 2026-04-10 02:39:53 [ERROR]: Database query error:
 2026-04-10 02:39:53 [ERROR]: Database query error:
+2026-04-11 00:00:12 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:136:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 00:00:12 [ERROR]: Verify signin service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:136:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 00:03:14 [ERROR]: Verify OTP service error: Invalid OTP
+Error: Invalid OTP
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:156:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:136:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 00:03:14 [ERROR]: Verify signin service error: Invalid OTP
+Error: Invalid OTP
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:156:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:136:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 00:06:10 [ERROR]: Update driver location service error: Driver not verified
+Error: Driver not verified
+    at Module.updateDriverLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/driverService.js:369:40)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async updateLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/driverController.js:206:24)
+2026-04-11 00:09:22 [ERROR]: Update driver location service error: Driver not verified
+Error: Driver not verified
+    at Module.updateDriverLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/driverService.js:369:40)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async updateLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/driverController.js:206:24)
+2026-04-11 00:12:18 [ERROR]: Update driver location service error: saveDriverLocation is not defined
+ReferenceError: saveDriverLocation is not defined
+    at Module.updateDriverLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/driverService.js:372:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async updateLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/driverController.js:206:24)
+2026-04-11 00:14:38 [ERROR]: Update driver location service error: saveDriverLocation is not defined
+ReferenceError: saveDriverLocation is not defined
+    at Module.updateDriverLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/driverService.js:372:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async updateLocation (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/driverController.js:206:24)

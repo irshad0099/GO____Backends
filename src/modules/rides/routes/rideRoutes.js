@@ -18,6 +18,21 @@ const router = express.Router();
 
 router.use(authenticate);
 
+// ─── Scheduled Rides (Book for Later) ───────────────────────────────────────
+// POST /api/v1/rides/schedule
+router.post(
+    '/schedule',
+    authorize('passenger'),
+    joiValidate(scheduleRideSchema),
+    schedCtrl.scheduleRide
+);
+
+// GET /api/v1/rides/scheduled — my scheduled rides
+router.get('/scheduled', authorize('passenger'), schedCtrl.getMyScheduled);
+
+// DELETE /api/v1/rides/scheduled/:id — cancel scheduled ride
+router.delete('/scheduled/:id', authorize('passenger'), schedCtrl.cancelScheduled);
+
 // GET /nearby-drivers – uses QUERY validators
 router.get('/nearby-drivers',
     validate([
@@ -99,20 +114,7 @@ router.post(
 // GET /api/v1/rides/:rideId/invoice — get receipt after ride
 router.get('/:rideId/invoice', invoiceCtrl.getInvoice);
 
-// ─── Scheduled Rides (Book for Later) ───────────────────────────────────────
-// POST /api/v1/rides/schedule
-router.post(
-    '/schedule',
-    authorize('passenger'),
-    joiValidate(scheduleRideSchema),
-    schedCtrl.scheduleRide
-);
 
-// GET /api/v1/rides/scheduled — my scheduled rides
-router.get('/scheduled', authorize('passenger'), schedCtrl.getMyScheduled);
-
-// DELETE /api/v1/rides/scheduled/:id — cancel scheduled ride
-router.delete('/scheduled/:id', authorize('passenger'), schedCtrl.cancelScheduled);
 
 
 export default router;

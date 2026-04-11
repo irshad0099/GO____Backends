@@ -49,12 +49,19 @@ export const cancelRide = async (userId, rideId, data) => {
             ride_status_at_cancel: ride.status
         });
 
-        // Update ride status
-        await rideRepo.updateRideStatus(rideId, 'cancelled', {
-            cancelled_by: 'passenger',
-            cancellation_reason: data.reason_code,
-            cancelled_at: new Date()
-        });
+        // // Update ride status
+        // await rideRepo.updateRideStatus(rideId, 'cancelled', {
+        //     cancelled_by: 'passenger',
+        //     cancellation_reason: data.reason_code,
+        //     cancelled_at: new Date()
+        // });
+
+
+        // BAAD MEIN — sirf yeh rakho
+await rideRepo.updateRideStatus(rideId, 'cancelled', {
+    cancelled_by: 'passenger',
+    cancellation_reason: data.reason_code,
+});
 
         return {
             rideId,

@@ -910,3 +910,228 @@ error: column "rating" of relation "rides" does not exist
     at async Module.rateRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/ride.repository.js:990:24)
     at async Module.rateRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:1290:9)
     at async rateRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:149:24)
+2026-04-12 00:38:00 [ERROR]: Database query error:
+2026-04-12 00:38:00 [ERROR]: Insert ride cancellation repository error: relation "ride_cancellations" does not exist
+error: relation "ride_cancellations" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.insert (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/rideCancellation.repository.js:6:26)
+    at async Module.cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideCancellationService.js:38:30)
+    at async cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideCancellationController.js:5:22)
+2026-04-12 00:38:00 [ERROR]: Cancel ride service error: relation "ride_cancellations" does not exist
+error: relation "ride_cancellations" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.insert (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/rideCancellation.repository.js:6:26)
+    at async Module.cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideCancellationService.js:38:30)
+    at async cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideCancellationController.js:5:22)
+2026-04-12 00:38:08 [ERROR]: Database query error:
+2026-04-12 00:38:08 [ERROR]: Insert ride cancellation repository error: relation "ride_cancellations" does not exist
+error: relation "ride_cancellations" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.insert (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/rideCancellation.repository.js:6:26)
+    at async Module.cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideCancellationService.js:38:30)
+    at async cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideCancellationController.js:5:22)
+2026-04-12 00:38:08 [ERROR]: Cancel ride service error: relation "ride_cancellations" does not exist
+error: relation "ride_cancellations" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.insert (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/rideCancellation.repository.js:6:26)
+    at async Module.cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideCancellationService.js:38:30)
+    at async cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideCancellationController.js:5:22)
+2026-04-12 00:39:52 [ERROR]: Database query error:
+2026-04-12 00:39:52 [ERROR]: Insert ride cancellation repository error: column "cancelled_by_user" of relation "ride_cancellations" does not exist
+error: column "cancelled_by_user" of relation "ride_cancellations" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.insert (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/rideCancellation.repository.js:6:26)
+    at async Module.cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideCancellationService.js:38:30)
+    at async cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideCancellationController.js:5:22)
+2026-04-12 00:39:52 [ERROR]: Cancel ride service error: column "cancelled_by_user" of relation "ride_cancellations" does not exist
+error: column "cancelled_by_user" of relation "ride_cancellations" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.insert (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/rideCancellation.repository.js:6:26)
+    at async Module.cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideCancellationService.js:38:30)
+    at async cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideCancellationController.js:5:22)
+2026-04-12 00:42:04 [ERROR]: Database query error:
+2026-04-12 00:42:04 [ERROR]: Update ride status repository error: multiple assignments to same column "cancelled_at"
+error: multiple assignments to same column "cancelled_at"
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.updateRideStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/ride.repository.js:783:24)
+    at async Module.cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideCancellationService.js:53:9)
+    at async cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideCancellationController.js:5:22)
+2026-04-12 00:42:04 [ERROR]: Cancel ride service error: multiple assignments to same column "cancelled_at"
+error: multiple assignments to same column "cancelled_at"
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.updateRideStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/ride.repository.js:783:24)
+    at async Module.cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideCancellationService.js:53:9)
+    at async cancelRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideCancellationController.js:5:22)
+2026-04-12 00:45:08 [ERROR]: Database query error:
+2026-04-12 00:45:08 [ERROR]: Update ride field repository error: column "invoice_generated" of relation "rides" does not exist
+error: column "invoice_generated" of relation "rides" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.updateRideField (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/ride.repository.js:793:26)
+    at async Module.getInvoice (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideInvoiceService.js:57:13)
+    at async getInvoice (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideInvoiceController.js:5:22)
+2026-04-12 00:45:08 [ERROR]: Get invoice service error: column "invoice_generated" of relation "rides" does not exist
+error: column "invoice_generated" of relation "rides" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.updateRideField (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/ride.repository.js:793:26)
+    at async Module.getInvoice (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideInvoiceService.js:57:13)
+    at async getInvoice (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideInvoiceController.js:5:22)
+2026-04-12 00:52:05 [ERROR]: Database query error:
+2026-04-12 00:52:05 [ERROR]: Insert scheduled ride repository error: relation "scheduled_rides" does not exist
+error: relation "scheduled_rides" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.insert (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/scheduledRide.repository.js:6:26)
+    at async Module.scheduleRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/scheduledRideService.js:25:24)
+    at async scheduleRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/scheduledRideController.js:5:22)
+2026-04-12 00:52:05 [ERROR]: Schedule ride service error: relation "scheduled_rides" does not exist
+error: relation "scheduled_rides" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.insert (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/scheduledRide.repository.js:6:26)
+    at async Module.scheduleRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/scheduledRideService.js:25:24)
+    at async scheduleRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/scheduledRideController.js:5:22)
+2026-04-12 00:57:37 [ERROR]: Authentication failed: Invalid token
+AuthError: Invalid token
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:46:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-04-12 01:25:55 [ERROR]: Update KYC driver repository error: Wrong status sent
+Error: Wrong status sent
+    at Module.verifyDriverDocument (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/driver.repository.js:409:11)
+    at Module.verifyDriverDocument (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/driverService.js:172:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async verifyDriverDocument (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/driverController.js:132:20)
+2026-04-12 01:25:55 [ERROR]: driver KYC Update service error: Wrong status sent
+Error: Wrong status sent
+    at Module.verifyDriverDocument (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/driver.repository.js:409:11)
+    at Module.verifyDriverDocument (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/driverService.js:172:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async verifyDriverDocument (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/driverController.js:132:20)
+2026-04-12 01:34:00 [ERROR]: Update driver profile service error: driverRepo.updateVehicleDetail is not a function
+TypeError: driverRepo.updateVehicleDetail is not a function
+    at Module.updateDriverProfile (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/driverService.js:322:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async updateProfile (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/driverController.js:189:32)
+2026-04-12 01:42:21 [ERROR]: Database query error:
+2026-04-12 01:42:21 [ERROR]: Find penalties by driver repository error: relation "driver_penalties" does not exist
+error: relation "driver_penalties" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findPenaltiesByDriver (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/penalty.repository.js:7:26)
+    at async Promise.all (index 0)
+    at async Module.getMyPenalties (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/penaltyService.js:12:45)
+    at async getMyPenalties (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/penaltyController.js:6:22)
+2026-04-12 01:42:21 [ERROR]: Get my penalties service error: relation "driver_penalties" does not exist
+error: relation "driver_penalties" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findPenaltiesByDriver (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/penalty.repository.js:7:26)
+    at async Promise.all (index 0)
+    at async Module.getMyPenalties (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/penaltyService.js:12:45)
+    at async getMyPenalties (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/penaltyController.js:6:22)
+2026-04-12 01:42:21 [ERROR]: Database query error:
+2026-04-12 01:42:21 [ERROR]: Count penalties by driver repository error: relation "driver_penalties" does not exist
+error: relation "driver_penalties" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.countPenaltiesByDriver (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/penalty.repository.js:23:26)
+    at async Promise.all (index 1)
+2026-04-12 01:42:21 [ERROR]: Database query error:
+2026-04-12 01:42:21 [ERROR]: Find penalty summary repository error: relation "driver_penalty_summary" does not exist
+error: relation "driver_penalty_summary" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findPenaltySummary (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/penalty.repository.js:37:26)
+    at async Promise.all (index 2)
+2026-04-12 01:48:04 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-04-12 01:49:58 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-04-12 01:52:59 [ERROR]: Database query error:
+2026-04-12 01:52:59 [ERROR]: Find current week earnings repository error: column "tip_amount" does not exist
+error: column "tip_amount" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findCurrentWeekEarnings (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/earnings.repository.js:53:36)
+    at async Module.getCurrentWeekEarnings (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/earningsService.js:73:16)
+    at async getCurrentWeekEarnings (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/earningsController.js:25:22)
+2026-04-12 01:52:59 [ERROR]: Get current week earnings service error: column "tip_amount" does not exist
+error: column "tip_amount" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findCurrentWeekEarnings (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/earnings.repository.js:53:36)
+    at async Module.getCurrentWeekEarnings (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/earningsService.js:73:16)
+    at async getCurrentWeekEarnings (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/earningsController.js:25:22)
+2026-04-12 01:56:42 [ERROR]: Database query error:
+2026-04-12 01:56:42 [ERROR]: Find cash balance repository error: relation "driver_cash_balance" does not exist
+error: relation "driver_cash_balance" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findCashBalance (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/cashCollection.repository.js:7:26)
+    at async Module.getCashBalance (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/cashCollectionService.js:12:23)
+    at async getCashBalance (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/cashCollectionController.js:5:22)
+2026-04-12 01:56:42 [ERROR]: Get cash balance service error: relation "driver_cash_balance" does not exist
+error: relation "driver_cash_balance" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findCashBalance (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/cashCollection.repository.js:7:26)
+    at async Module.getCashBalance (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/cashCollectionService.js:12:23)
+    at async getCashBalance (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/cashCollectionController.js:5:22)
+2026-04-12 01:59:15 [ERROR]: Submit deposit service error: No pending cash balance to deposit
+Error: No pending cash balance to deposit
+    at Module.submitDeposit (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/cashCollectionService.js:40:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async submitDeposit (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/cashCollectionController.js:14:22)
+2026-04-12 02:10:07 [ERROR]: Database query error:
+2026-04-12 02:10:07 [ERROR]: Find all document expiry repository error: relation "driver_document_expiry" does not exist
+error: relation "driver_document_expiry" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findAllByDriver (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/documentExpiry.repository.js:7:26)
+    at async Module.getDocumentStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/documentExpiryService.js:12:22)
+    at async getDocumentStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/documentExpiryController.js:5:22)
+2026-04-12 02:10:07 [ERROR]: Get document status service error: relation "driver_document_expiry" does not exist
+error: relation "driver_document_expiry" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.findAllByDriver (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/documentExpiry.repository.js:7:26)
+    at async Module.getDocumentStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/documentExpiryService.js:12:22)
+    at async getDocumentStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/documentExpiryController.js:5:22)

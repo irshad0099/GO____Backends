@@ -103,8 +103,12 @@ export const validate = (schema, source = 'body') => (req, res, next) => {
         });
     }
 
-    if (source === 'query') req.query = value;
-    else req.body = value;
+    // AB — fix
+if (source === 'query') {
+    Object.assign(req.query, value);
+} else {
+    req.body = value;
+}
 
     next();
 };

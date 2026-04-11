@@ -107,7 +107,7 @@ const startServer = async () => {
         await db.connect();
 
         // Connect to Redis
-        await redis.connect();
+        // await redis.connect();
 
         // Now start the server
         const server = app.listen(PORT, () => {

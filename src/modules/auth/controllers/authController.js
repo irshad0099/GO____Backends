@@ -83,16 +83,39 @@ export const verifySignin = async (req, res, next) => {
     }
 };
 
+// export const logout = async (req, res, next) => {
+//     try {
+//         const { refreshToken } = req.body;
+        
+//         const result = await authService.logout(refreshToken);
+
+//         res.status(200).json({
+//             success: true,
+//             message: 'Logged out successfully',
+//             data: result
+//         });
+//     } catch (error) {
+//         next(error);
+//     }
+// };
+
+
 export const logout = async (req, res, next) => {
     try {
         const { refreshToken } = req.body;
-        
-        const result = await authService.logout(refreshToken);
-
+ 
+        // ── Access token header se lo — blacklist ke liye ─────────────────────
+        const authHeader  = req.headers.authorization || '';
+        const accessToken = authHeader.startsWith('Bearer ')
+            ? authHeader.split(' ')[1]
+            : null;
+ 
+        const result = await authService.logout(refreshToken, accessToken);
+ 
         res.status(200).json({
             success: true,
             message: 'Logged out successfully',
-            data: result
+            data:    result
         });
     } catch (error) {
         next(error);

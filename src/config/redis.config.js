@@ -4,7 +4,7 @@ import logger from '../core/logger/logger.js';
 const redis = new Redis(process.env.REDIS_URL, {
     tls: {},
     maxRetriesPerRequest: 3,
-    lazyConnect: true,
+    lazyConnect: false,
 });
 
 redis.on('connect', () => logger.info('✅ Redis connected successfully'));

@@ -1110,7 +1110,9 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
             await driverRepo.updateDriver(driver.id, {
                 total_rides:    driver.total_rides + 1,
-                total_earnings: (driver.total_earnings || 0) + finalResult.driver.netEarnings
+                // total_earnings: (driver.total_earnings || 0) + finalResult.driver.netEarnings
+
+                total_earnings: parseFloat(driver.total_earnings || 0) + parseFloat(finalResult.driver.netEarnings || 0)
             });
 
             if (ride.coupon_id) {

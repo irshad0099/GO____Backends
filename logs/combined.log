@@ -1469,3 +1469,329 @@ ReferenceError: saveDriverLocation is not defined
 2026-04-11 00:26:21 [INFO]: OTP verified via Redis for 9876543214
 2026-04-11 00:26:21 [INFO]: User signed in successfully:
 2026-04-11 00:27:11 [INFO]: Driver 1 location updated: 28.6139, 77.209
+2026-04-11 10:24:33 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 10:24:33 [INFO]: ✅ Redis connected successfully
+2026-04-11 11:22:19 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:20 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:20 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:20 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:20 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:21 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:21 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:21 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:22 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:22 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:23 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:23 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:24 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:24 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:25 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:26 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:27 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:28 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:29 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:30 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:31 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:32 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:33 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:34 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:35 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:36 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:38 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:39 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:40 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:42 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:43 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:45 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:47 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:48 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:50 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:52 [ERROR]: ❌ Redis error:
+2026-04-11 11:22:55 [INFO]: ✅ Redis connected successfully
+2026-04-11 11:24:07 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 11:24:07 [INFO]: ✅ Redis connected successfully
+2026-04-11 11:24:21 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 11:24:24 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 11:24:24 [INFO]: ✅ Redis connected successfully
+2026-04-11 11:25:00 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 11:25:00 [INFO]: ✅ Redis connected successfully
+2026-04-11 11:26:50 [INFO]: [SMS to 9876543213]: Your OTP for Ride Sharing app is: 703148. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 11:26:50 [INFO]: OTP sent successfully to 9876543213 for purpose: signin
+2026-04-11 11:29:04 [INFO]: OTP verified via Redis for 9876543213
+2026-04-11 11:29:04 [INFO]: User signed in successfully:
+2026-04-11 11:30:17 [INFO]: Access token blacklisted successfully
+2026-04-11 11:31:51 [ERROR]: Authentication failed: Token has been revoked. Please login again.
+AuthError: Token has been revoked. Please login again.
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:100:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-04-11 11:32:22 [ERROR]: Authentication failed: Token has been revoked. Please login again.
+AuthError: Token has been revoked. Please login again.
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:100:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-04-11 11:37:26 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 11:39:17 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 11:39:20 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 11:40:04 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 11:40:04 [INFO]: ✅ Redis connected successfully
+2026-04-11 11:40:26 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 11:40:26 [INFO]: ✅ Redis connected successfully
+2026-04-11 11:41:49 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 11:41:49 [ERROR]: Verify signin service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 11:41:52 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 11:41:52 [ERROR]: Verify signin service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 11:41:54 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 11:41:54 [ERROR]: Verify signin service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 11:41:56 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 11:41:56 [ERROR]: Verify signin service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 11:41:58 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 11:41:58 [ERROR]: Verify signin service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/otpService.js:144:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/controllers/authController.js:68:24)
+2026-04-11 13:42:00 [ERROR]: ❌ Redis error:
+2026-04-11 13:42:00 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:27:18 [INFO]: [SMS to 9876543213]: Your OTP for Ride Sharing app is: 338287. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 15:27:18 [INFO]: OTP sent successfully to 9876543213 for purpose: signin
+2026-04-11 15:28:32 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:28:32 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:28:35 [INFO]: OTP verified via Redis for 9876543213
+2026-04-11 15:28:35 [INFO]: User signed in successfully:
+2026-04-11 15:29:40 [ERROR]: Request ride service error: You already have an active ride
+ConflictError: You already have an active ride
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:690:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-11 15:33:44 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:33:44 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:33:47 [ERROR]: getActiveSubscription error: Cannot read properties of null (reading 'query')
+TypeError: Cannot read properties of null (reading 'query')
+    at getActiveSubscription (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/subscription/repositories/subscriptionRepository.js:54:35)
+    at Module.fetchActiveSubscription (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/subscription/services/subscriptionService.js:115:23)
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:736:51)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-11 15:33:47 [ERROR]: Request ride service error: Cannot read properties of null (reading 'query')
+TypeError: Cannot read properties of null (reading 'query')
+    at getActiveSubscription (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/subscription/repositories/subscriptionRepository.js:54:35)
+    at Module.fetchActiveSubscription (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/subscription/services/subscriptionService.js:115:23)
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:736:51)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-11 15:41:39 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:41:40 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:41:43 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:41:43 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:42:18 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:42:18 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:47:43 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:47:43 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:48:07 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:48:07 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:48:56 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:48:56 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:50:04 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:50:04 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:51:01 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-04-11 15:51:53 [INFO]: [SMS to 9876543213]: Your OTP for Ride Sharing app is: 367501. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 15:51:53 [INFO]: OTP sent successfully to 9876543213 for purpose: signin
+2026-04-11 15:52:29 [INFO]: OTP verified via Redis for 9876543213
+2026-04-11 15:52:29 [INFO]: User signed in successfully:
+2026-04-11 15:53:34 [ERROR]: Request ride service error: db is not defined
+ReferenceError: db is not defined
+    at Module.applyRideBenefits (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/subscription/services/subscriptionService.js:297:20)
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:755:60)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-11 15:54:17 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:54:17 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:54:21 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:54:21 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:54:23 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:54:24 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:54:26 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 15:54:26 [INFO]: ✅ Redis connected successfully
+2026-04-11 15:54:41 [ERROR]: Database query error:
+2026-04-11 15:54:41 [ERROR]: Create ride repository error: column "coupon_id" of relation "rides" does not exist
+error: column "coupon_id" of relation "rides" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.createRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/ride.repository.js:35:24)
+    at async Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:775:22)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-11 15:54:41 [ERROR]: Request ride service error: column "coupon_id" of relation "rides" does not exist
+error: column "coupon_id" of relation "rides" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.createRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/ride.repository.js:35:24)
+    at async Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:775:22)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-11 15:59:32 [INFO]: [SMS to 9876543213]: Your OTP for Ride Sharing app is: 108450. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 15:59:32 [INFO]: OTP sent successfully to 9876543213 for purpose: signin
+2026-04-11 16:01:31 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 16:01:31 [INFO]: ✅ Redis connected successfully
+2026-04-11 16:01:34 [INFO]: [SMS to 9876543213]: Your OTP for Ride Sharing app is: 613121. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 16:01:34 [INFO]: OTP sent successfully to 9876543213 for purpose: signin
+2026-04-11 16:02:07 [INFO]: OTP verified via Redis for 9876543213
+2026-04-11 16:02:07 [INFO]: User signed in successfully:
+2026-04-11 16:03:05 [INFO]: Ride requested: RIDE-MNU754M3N7L3 for user 4
+2026-04-11 16:04:07 [INFO]: [SMS to 9876543214]: Your OTP for Ride Sharing app is: 960392. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 16:04:07 [INFO]: OTP sent successfully to 9876543214 for purpose: signin
+2026-04-11 16:04:49 [INFO]: OTP verified via Redis for 9876543214
+2026-04-11 16:04:49 [INFO]: User signed in successfully:
+2026-04-11 16:07:45 [ERROR]: ❌ Redis error:
+2026-04-11 16:07:45 [INFO]: ✅ Redis connected successfully
+2026-04-11 16:07:46 [ERROR]: FCM error:
+2026-04-11 16:07:46 [INFO]: Driver 5 accepted ride 2
+2026-04-11 16:09:08 [ERROR]: FCM error:
+2026-04-11 16:09:08 [INFO]: Ride 2 status updated to driver_arrived
+2026-04-11 17:09:58 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 17:09:58 [INFO]: ✅ Redis connected successfully
+2026-04-11 19:50:51 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 19:50:51 [INFO]: ✅ Redis connected successfully
+2026-04-11 19:50:55 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-04-11 19:51:08 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 19:51:09 [INFO]: ✅ Redis connected successfully
+2026-04-11 19:54:29 [INFO]: [SMS to 9876543213]: Your OTP for Ride Sharing app is: 378192. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 19:54:29 [INFO]: OTP sent successfully to 9876543213 for purpose: signin
+2026-04-11 19:55:34 [INFO]: OTP verified via Redis for 9876543213
+2026-04-11 19:55:34 [INFO]: User signed in successfully:
+2026-04-11 19:56:53 [INFO]: Ride requested: RIDE-MNUFHS5KVBSG for user 4
+2026-04-11 19:57:44 [INFO]: [SMS to 9876543214]: Your OTP for Ride Sharing app is: 130323. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 19:57:44 [INFO]: OTP sent successfully to 9876543214 for purpose: signin
+2026-04-11 19:58:22 [INFO]: OTP verified via Redis for 9876543214
+2026-04-11 19:58:23 [INFO]: User signed in successfully:
+2026-04-11 19:59:17 [ERROR]: Accept ride service error: Ride is no longer available or you are already on duty
+ConflictError: Ride is no longer available or you are already on duty
+    at Module.acceptRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:987:33)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async acceptRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:48:24)
+2026-04-11 20:00:16 [ERROR]: FCM error:
+2026-04-11 20:00:16 [INFO]: Driver 5 accepted ride 3
+2026-04-11 20:01:51 [ERROR]: FCM error:
+2026-04-11 20:01:51 [INFO]: Ride 3 status updated to driver_arrived
+2026-04-11 20:02:31 [ERROR]: FCM error:
+2026-04-11 20:02:31 [INFO]: Ride 3 status updated to in_progress
+2026-04-11 20:03:11 [ERROR]: Update ride status service error: Invalid vehicle type: null
+Error: Invalid vehicle type: null
+    at envKey (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/utils/rideCalculator.js:22:21)
+    at getVehiclePricing (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/utils/rideCalculator.js:28:27)
+    at Module.calculateFinalRideFare (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/utils/rideCalculator.js:358:22)
+    at calculateCompletionFare (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:919:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Module.updateRideStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:1095:39)
+    at async updateRideStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:66:24)
+2026-04-11 20:08:29 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 20:08:29 [INFO]: ✅ Redis connected successfully
+2026-04-11 20:08:32 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 20:08:32 [INFO]: ✅ Redis connected successfully
+2026-04-11 20:08:43 [ERROR]: Database query error:
+2026-04-11 20:08:43 [ERROR]: Update driver repository error: invalid input syntax for type numeric: "0.00286.5"
+error: invalid input syntax for type numeric: "0.00286.5"
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.updateDriver (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/driver.repository.js:580:24)
+    at async Module.updateRideStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:1111:13)
+    at async updateRideStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:66:24)
+2026-04-11 20:08:43 [ERROR]: Update ride status service error: invalid input syntax for type numeric: "0.00286.5"
+error: invalid input syntax for type numeric: "0.00286.5"
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.updateDriver (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/driver.repository.js:580:24)
+    at async Module.updateRideStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:1111:13)
+    at async updateRideStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:66:24)
+2026-04-11 20:10:50 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 20:10:50 [INFO]: ✅ Redis connected successfully
+2026-04-11 20:10:56 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 20:10:56 [INFO]: ✅ Redis connected successfully
+2026-04-11 20:11:23 [ERROR]: FCM error:
+2026-04-11 20:11:23 [INFO]: Ride 3 final fare: ₹288 (estimated: ₹288.00)
+2026-04-11 20:11:23 [INFO]: Ride 3 status updated to completed
+2026-04-11 20:12:29 [ERROR]: Rate ride service error: You are not authorized to rate this ride
+Error: You are not authorized to rate this ride
+    at Module.rateRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:1286:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async rateRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:149:24)
+2026-04-11 20:14:33 [INFO]: [SMS to 9876543213]: Your OTP for Ride Sharing app is: 170916. Valid for 5 minutes. Do not share this OTP with anyone.
+2026-04-11 20:14:33 [INFO]: OTP sent successfully to 9876543213 for purpose: signin
+2026-04-11 20:15:24 [INFO]: OTP verified via Redis for 9876543213
+2026-04-11 20:15:24 [INFO]: User signed in successfully:
+2026-04-11 20:16:52 [ERROR]: Database query error:
+2026-04-11 20:16:52 [ERROR]: Rate ride repository error: column "rating" of relation "rides" does not exist
+error: column "rating" of relation "rides" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.rateRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/ride.repository.js:990:24)
+    at async Module.rateRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:1290:9)
+    at async rateRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:149:24)
+2026-04-11 20:16:52 [ERROR]: Rate ride service error: column "rating" of relation "rides" does not exist
+error: column "rating" of relation "rides" does not exist
+    at C:\Users\Varun Bhandari\Downloads\Go_Backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Database.query (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/infrastructure/database/postgres.js:65:28)
+    at async Module.rateRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/repositories/ride.repository.js:990:24)
+    at async Module.rateRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:1290:9)
+    at async rateRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:149:24)
+2026-04-11 20:31:30 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 20:31:30 [INFO]: ✅ Redis connected successfully
+2026-04-11 21:45:22 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-11 21:45:22 [INFO]: ✅ Redis connected successfully

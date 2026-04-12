@@ -2,6 +2,7 @@ import * as userRepo from '../../users/repositories/user.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as otpService from './otpService.js';
 import * as tokenService from './tokenService.js';
+import { blacklistToken } from '../../../core/services/redisService.js';
 
 import * as sessionRepo from '../repositories/sessionRepository.js';
 import { ApiError, ConflictError, NotFoundError, AuthError } from '../../../core/errors/ApiError.js';
@@ -183,11 +184,30 @@ export const verifySignin = async ({ phone, otp, ipAddress, userAgent,role }) =>
     }
 };
 
-export const logout = async (refreshToken) => {
-    try {
-        // Delete session
-        await sessionRepo.deleteSession(refreshToken);
+// export const logout = async (refreshToken) => {
+//     try {
+//         // Delete session
+//         await sessionRepo.deleteSession(refreshToken);
 
+//         return { message: 'Logged out successfully' };
+//     } catch (error) {
+//         logger.error('Logout service error:', error);
+//         throw error;
+//     }
+// };
+
+
+export const logout = async (refreshToken, accessToken = null) => {
+    try {
+        // DB session delete karo
+        await sessionRepo.deleteSession(refreshToken);
+ 
+        // ── Access token blacklist mein dalo — reuse na ho sake ───────────────
+        if (accessToken) {
+            await blacklistToken(accessToken, 86400); // 24 hours blacklist
+            logger.info('Access token blacklisted successfully');
+        }
+ 
         return { message: 'Logged out successfully' };
     } catch (error) {
         logger.error('Logout service error:', error);

@@ -1,4 +1,4 @@
-import { pool } from '../../../infrastructure/database/postgres.js';
+import { db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 import {
     getAllPlans,
@@ -131,7 +131,7 @@ export const purchaseSubscription = async (userId, {
     gateway_transaction_id,
     auto_renew,
 }) => {
-    const client = await pool.connect();
+    const client = await db.getClient();
     try {
         await client.query('BEGIN');
 
@@ -294,7 +294,7 @@ export const toggleAutoRenew = async (userId, { subscription_id, auto_renew }) =
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const applyRideBenefits = async (userId, rideAmount) => {
-    const client = await pool.connect();
+    const client = await db.getClient();
     try {
         await client.query('BEGIN');
 

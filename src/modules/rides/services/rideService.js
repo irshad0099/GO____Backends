@@ -659,6 +659,21 @@ import logger from '../../../core/logger/logger.js';
 import { ENV } from '../../../config/envConfig.js';
 import { db } from '../../../infrastructure/database/postgres.js';
 import { sendNotification } from '../../../core/services/firebaseService.js';
+import {
+    emitRideRequest,
+    emitRideStatusUpdate,
+    emitToPassenger,
+    emitToDriver
+} from '../../../infrastructure/websocket/socket.events.js';
+import {
+    sendAssignmentToPassenger,
+    sendAssignmentToDriver,
+    notifyDriverArrival
+} from '../../../infrastructure/websocket/assignment.handler.js';
+
+const safeEmit = (fn, label) => {
+    try { fn(); } catch (err) { logger.warn(`Socket emit failed (${label}): ${err.message}`); }
+};
 
 // ─── Helper: gather REAL demand + weather signals ───────────────────────────
 const gatherDemandSignals = async (vehicleType, latitude, longitude) => {
@@ -804,7 +819,7 @@ export const requestRide = async (userId, rideData) => {
 
         // ── FCM 1: Nearby drivers ko ride request notification ────────────────
         if (signals.nearbyDrivers.length > 0) {
-            const notifyDrivers = signals.nearbyDrivers.slice(0, 5);
+            const notifyDrivers = signals.nearbyDrivers.slice(0, 100); // Limit to 100 drivers for notification
             await Promise.allSettled(
                 notifyDrivers
                     .filter(d => d.fcm_token)
@@ -822,6 +837,33 @@ export const requestRide = async (userId, rideData) => {
                         }
                     ))
             );
+        }
+
+        // ── SOCKET: broadcast new ride request to nearby drivers ──────────────
+        if (signals.nearbyDrivers.length > 0) {
+            const pickupLocation = {
+                latitude:  rideData.pickupLatitude,
+                longitude: rideData.pickupLongitude,
+                address:   rideData.pickupAddress
+            };
+            const dropoffLocation = {
+                latitude:  rideData.dropoffLatitude,
+                longitude: rideData.dropoffLongitude,
+                address:   rideData.dropoffAddress
+            };
+            signals.nearbyDrivers.slice(0, 100).forEach(d => {
+                safeEmit(() => emitToDriver(d.user_id || d.id, 'ride:new_request', {
+                    rideId:           ride.id,
+                    rideNumber:       ride.ride_number,
+                    pickupLocation,
+                    dropoffLocation,
+                    estimatedFare:    fare.estimatedFare,
+                    distanceKm,
+                    durationMinutes,
+                    vehicleType:      rideData.vehicleType,
+                    timestamp:        new Date().toISOString()
+                }), 'ride:new_request');
+            });
         }
 
         logger.info(`Ride requested: ${rideNumber} for user ${userId}`);
@@ -1007,6 +1049,44 @@ export const acceptRide = async (driverUserId, rideId) => {
             );
         }
 
+        // ── SOCKET: notify passenger of driver assignment ─────────────────────
+        const etaMinutes = Math.ceil(pickupDistanceKm * 3);
+        const assignmentData = {
+            rideId,
+            driverId:              driver.id,
+            driverName:            driver.full_name,
+            driverPhone:           driver.phone_number,
+            driverRating:          driver.rating || 0,
+            vehicleNumber:         driver.vehicle_number,
+            vehicleType:           driver.vehicle_type,
+            vehicleColor:          driver.vehicle_color,
+            vehicleModel:          driver.vehicle_model,
+            estimatedArrivalTime:  etaMinutes,
+            assignedAt:            new Date().toISOString()
+        };
+        safeEmit(() => sendAssignmentToPassenger(ride.passenger_id, assignmentData), 'ride:driver_assigned');
+
+        // ── SOCKET: confirm assignment to driver ──────────────────────────────
+        safeEmit(() => sendAssignmentToDriver(driver.user_id || driverUserId, {
+            id:                rideId,
+            rideNumber:        updatedRide.ride_number,
+            passengerName:     ride.passenger_name,
+            passengerPhone:    ride.passenger_phone,
+            pickupLocation:    {
+                latitude:  ride.pickup_latitude,
+                longitude: ride.pickup_longitude,
+                address:   ride.pickup_address
+            },
+            dropoffLocation:   {
+                latitude:  ride.dropoff_latitude,
+                longitude: ride.dropoff_longitude,
+                address:   ride.dropoff_address
+            },
+            estimatedFare:     ride.estimated_fare,
+            estimatedDistance: ride.distance_km,
+            estimatedDuration: ride.duration_minutes
+        }), 'ride:assignment_confirmed');
+
         logger.info(`Driver ${driverUserId} accepted ride ${rideId}`);
 
         return {
@@ -1111,7 +1191,9 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
             await driverRepo.updateDriver(driver.id, {
                 total_rides:    driver.total_rides + 1,
-                total_earnings: (driver.total_earnings || 0) + finalResult.driver.netEarnings
+                // total_earnings: (driver.total_earnings || 0) + finalResult.driver.netEarnings
+
+                total_earnings: parseFloat(driver.total_earnings || 0) + parseFloat(finalResult.driver.netEarnings || 0)
             });
 
             if (ride.coupon_id) {
@@ -1160,6 +1242,25 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
 
         const updatedRide = await rideRepo.updateRideStatus(rideId, status, additionalFields);
         logger.info(`Ride ${rideId} status updated to ${status}`);
+
+        // ── SOCKET: broadcast status change to ride room ──────────────────────
+        safeEmit(() => emitRideStatusUpdate(rideId, driver.id, ride.passenger_id, status, {
+            rideNumber:         updatedRide.ride_number,
+            cancellationReason: additionalFields.cancellation_reason || null,
+            ...(status === 'completed' && {
+                finalFare:            additionalFields.final_fare,
+                subscriptionDiscount: Number(ride.subscription_discount) || 0,
+                couponDiscount:       Number(ride.coupon_discount) || 0,
+                isFreeRide:           ride.is_free_ride || false
+            })
+        }), `ride:status_changed:${status}`);
+
+        if (status === 'driver_arrived') {
+            safeEmit(() => notifyDriverArrival(rideId, ride.passenger_id, driver.id, {
+                latitude:  driver.current_latitude,
+                longitude: driver.current_longitude
+            }), 'ride:driver_arrived');
+        }
 
         return {
             rideId:     updatedRide.id,

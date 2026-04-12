@@ -1,4 +1,5 @@
-import { pool } from '../../../infrastructure/database/postgres.js';
+// AB — sahi
+import { db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -7,7 +8,7 @@ import logger from '../../../core/logger/logger.js';
 
 export const getAllPlans = async () => {
     try {
-        const result = await pool.query(
+        const result = await db.query(
             `SELECT * FROM subscription_plans
              WHERE is_active = TRUE
              ORDER BY price ASC`
@@ -21,7 +22,7 @@ export const getAllPlans = async () => {
 
 export const getPlanById = async (planId) => {
     try {
-        const result = await pool.query(
+        const result = await db.query(
             `SELECT * FROM subscription_plans WHERE id = $1 AND is_active = TRUE`,
             [planId]
         );
@@ -34,7 +35,7 @@ export const getPlanById = async (planId) => {
 
 export const getPlanBySlug = async (slug) => {
     try {
-        const result = await pool.query(
+        const result = await db.query(
             `SELECT * FROM subscription_plans WHERE slug = $1 AND is_active = TRUE`,
             [slug]
         );
@@ -51,7 +52,7 @@ export const getPlanBySlug = async (slug) => {
 
 export const getActiveSubscription = async (userId) => {
     try {
-        const result = await pool.query(
+        const result = await db.query(
             `SELECT us.*, sp.name AS plan_name, sp.slug, sp.ride_discount_percent,
                     sp.free_rides_per_month, sp.priority_booking,
                     sp.cancellation_waiver, sp.surge_protection, sp.price
@@ -73,7 +74,7 @@ export const getActiveSubscription = async (userId) => {
 
 export const getSubscriptionById = async (subscriptionId, userId) => {
     try {
-        const result = await pool.query(
+        const result = await db.query(
             `SELECT us.*, sp.name AS plan_name, sp.slug, sp.ride_discount_percent,
                     sp.free_rides_per_month, sp.priority_booking,
                     sp.cancellation_waiver, sp.surge_protection, sp.price
@@ -91,7 +92,7 @@ export const getSubscriptionById = async (subscriptionId, userId) => {
 
 export const getSubscriptionHistory = async (userId, { limit = 10, offset = 0 }) => {
     try {
-        const result = await pool.query(
+        const result = await db.query(
             `SELECT us.*, sp.name AS plan_name, sp.slug, sp.price
              FROM user_subscriptions us
              JOIN subscription_plans sp ON us.plan_id = sp.id
@@ -109,7 +110,7 @@ export const getSubscriptionHistory = async (userId, { limit = 10, offset = 0 })
 
 export const getSubscriptionHistoryCount = async (userId) => {
     try {
-        const result = await pool.query(
+        const result = await db.query(
             `SELECT COUNT(*) FROM user_subscriptions WHERE user_id = $1`,
             [userId]
         );
@@ -146,7 +147,7 @@ export const createSubscription = async (client, data) => {
 export const updateSubscriptionStatus = async (subscriptionId, status, extra = {}) => {
     try {
         const { cancelReason } = extra;
-        const result = await pool.query(
+        const result = await db.query(
             `UPDATE user_subscriptions
              SET status       = $1,
                  cancelled_at = CASE WHEN $1 = 'cancelled' THEN CURRENT_TIMESTAMP ELSE cancelled_at END,
@@ -165,7 +166,7 @@ export const updateSubscriptionStatus = async (subscriptionId, status, extra = {
 
 export const updateAutoRenew = async (subscriptionId, userId, autoRenew) => {
     try {
-        const result = await pool.query(
+        const result = await db.query(
             `UPDATE user_subscriptions
              SET auto_renew = $1, updated_at = CURRENT_TIMESTAMP
              WHERE id = $2 AND user_id = $3
@@ -195,7 +196,7 @@ export const useFreeRide = async (client, subscriptionId) => {
 // Reset free rides counter (called monthly via cron)
 export const resetFreeRides = async (subscriptionId) => {
     try {
-        const result = await pool.query(
+        const result = await db.query(
             `UPDATE user_subscriptions
              SET free_rides_used    = 0,
                  free_rides_reset_at = CURRENT_TIMESTAMP + INTERVAL '30 days',
@@ -241,7 +242,7 @@ export const createSubscriptionPayment = async (client, data) => {
 
 export const updatePaymentStatus = async (paymentId, status) => {
     try {
-        const result = await pool.query(
+        const result = await db.query(
             `UPDATE subscription_payments
              SET status = $1, updated_at = CURRENT_TIMESTAMP
              WHERE id = $2
@@ -257,7 +258,7 @@ export const updatePaymentStatus = async (paymentId, status) => {
 
 export const getPaymentsBySubscriptionId = async (subscriptionId) => {
     try {
-        const result = await pool.query(
+        const result = await db.query(
             `SELECT * FROM subscription_payments
              WHERE subscription_id = $1
              ORDER BY created_at DESC`,
@@ -282,7 +283,7 @@ export const createPlan = async (data) => {
             priorityBooking, cancellationWaiver, surgeProtection,
         } = data;
 
-        const result = await pool.query(
+        const result = await db.query(
             `INSERT INTO subscription_plans (
                 name, slug, description, price, duration_days,
                 ride_discount_percent, free_rides_per_month,
@@ -305,7 +306,7 @@ export const createPlan = async (data) => {
 
 export const togglePlanStatus = async (planId, isActive) => {
     try {
-        const result = await pool.query(
+        const result = await db.query(
             `UPDATE subscription_plans
              SET is_active = $1, updated_at = CURRENT_TIMESTAMP
              WHERE id = $2

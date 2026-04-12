@@ -90,6 +90,8 @@ import app from './app.js';
 import { ENV } from './config/envConfig.js';
 import { db } from './infrastructure/database/postgres.js';
 import redis from './config/redis.config.js';
+import { initializeSocketIO } from './config/websocketConfig.js';
+import { setupSocketHandlers } from './infrastructure/websocket/socket.server.js';
 
 const PORT = ENV.PORT || 5000;
 
@@ -150,6 +152,15 @@ const startServer = async () => {
                 console.log('='.repeat(50));
             }, 500);
         });
+
+        // Initialize Socket.IO
+        try {
+            initializeSocketIO(server);
+            setupSocketHandlers();
+            console.log('✅ Socket.IO initialized and handlers setup');
+        } catch (error) {
+            console.error('⚠️ Socket.IO initialization warning:', error.message);
+        }
 
         // Graceful shutdown
         const gracefulShutdown = async () => {

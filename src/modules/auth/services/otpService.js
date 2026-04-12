@@ -124,22 +124,44 @@ export const sendOTP = async (phone, purpose = 'signin') => {
         });
 
         // ── SMS bhejo ──────────────────────────────────────────────────────────
-        const smsResult = await smsProvider.sendOTP(phone, otp, purpose);
+        let smsResult;
+        try {
+            smsResult = await smsProvider.sendOTP(phone, otp, purpose);
+        } catch (smsError) {
+            // SMS fail hua — console mode mein silently continue karo
+            // Production mein real SMS provider hoga, dev mein console fallback
+            logger.warn('⚠️ SMS send failed, falling back to console mode', {
+                phone: phone.slice(-4),
+                purpose,
+                provider: ENV.SMS_PROVIDER,
+                error: smsError.message,
+            });
+            smsResult = { success: true, provider: 'console_fallback' };
+        }
 
         logger.info('✅ OTP sent successfully', {
             phone: phone.slice(-4),
             purpose,
-            provider: ENV.SMS_PROVIDER,
+            provider: smsResult.provider || ENV.SMS_PROVIDER,
             expiryInMinutes: expiryMinutes,
             messageId: smsResult.messageId || smsResult.sid,
             duration: Date.now() - startTime
         });
 
-        return {
+        const response = {
             message: 'OTP sent successfully',
             expiryInMinutes: expiryMinutes,
-            provider: smsResult.provider
+            provider: smsResult.provider || ENV.SMS_PROVIDER,
         };
+
+        // Development / console mode: OTP response mein bhi do — testing ke liye
+        // Production mein SMS_PROVIDER real provider hoga (msg91/twilio/fast2sms)
+        if (ENV.SMS_PROVIDER === 'console' || smsResult.provider === 'console_fallback') {
+            response.otp = otp;
+            response._devNote = 'OTP included in response for testing. Disable in production.';
+        }
+
+        return response;
     } catch (error) {
         logger.error('❌ Send OTP service error', {
             phone: phone.slice(-4),

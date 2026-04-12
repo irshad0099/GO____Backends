@@ -18,7 +18,8 @@
       "Bash(find /d/Akash_Personal/GO____Backends/src -type f -name *.go)",
       "Bash(ls -la .env)",
       "Bash(ls src/modules/rides/controllers/)",
-      "Bash(node -c src/server.js)"
+      "Bash(node -c src/server.js)",
+      "Bash(curl:*)"
     ]
   }
 }

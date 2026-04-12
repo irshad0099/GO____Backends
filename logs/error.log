@@ -1166,3 +1166,11 @@ error: relation "driver_document_expiry" does not exist
 2026-04-12 08:59:38 [ERROR]: Database query error:
 2026-04-12 08:59:41 [ERROR]: Database query error:
 2026-04-12 08:59:43 [ERROR]: Database query error:
+2026-04-12 18:33:24 [ERROR]: ❌ Twilio SMS failed
+2026-04-12 18:33:24 [ERROR]: ❌ SMS sending failed
+2026-04-12 18:34:28 [ERROR]: ❌ Twilio SMS failed
+2026-04-12 18:34:28 [ERROR]: ❌ SMS sending failed
+2026-04-12 18:34:41 [ERROR]: Validation failed
+ValidationError: Validation failed
+    at file:///D:/Akash_Personal/GO____Backends/src/core/middleware/validation.middleware.js:20:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)

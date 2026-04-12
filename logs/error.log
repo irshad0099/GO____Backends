@@ -1135,3 +1135,34 @@ error: relation "driver_document_expiry" does not exist
     at async Module.findAllByDriver (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/repositories/documentExpiry.repository.js:7:26)
     at async Module.getDocumentStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/services/documentExpiryService.js:12:22)
     at async getDocumentStatus (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/drivers/controllers/documentExpiryController.js:5:22)
+2026-04-12 08:58:35 [ERROR]: Database query error:
+2026-04-12 08:58:37 [ERROR]: Database query error:
+2026-04-12 08:58:39 [ERROR]: Database query error:
+2026-04-12 08:58:40 [ERROR]: Database query error:
+2026-04-12 08:58:42 [ERROR]: Database query error:
+2026-04-12 08:58:45 [ERROR]: Database query error:
+2026-04-12 08:58:47 [ERROR]: Database query error:
+2026-04-12 08:58:50 [ERROR]: Database query error:
+2026-04-12 08:58:55 [ERROR]: Database query error:
+2026-04-12 08:58:59 [ERROR]: Database query error:
+2026-04-12 08:59:00 [ERROR]: Database query error:
+2026-04-12 08:59:04 [ERROR]: Database query error:
+2026-04-12 08:59:05 [ERROR]: Database query error:
+2026-04-12 08:59:07 [ERROR]: Database query error:
+2026-04-12 08:59:09 [ERROR]: Database query error:
+2026-04-12 08:59:11 [ERROR]: Database query error:
+2026-04-12 08:59:14 [ERROR]: Database query error:
+2026-04-12 08:59:15 [ERROR]: Database query error:
+2026-04-12 08:59:17 [ERROR]: Database query error:
+2026-04-12 08:59:20 [ERROR]: Database query error:
+2026-04-12 08:59:21 [ERROR]: Database query error:
+2026-04-12 08:59:23 [ERROR]: Database query error:
+2026-04-12 08:59:26 [ERROR]: Database query error:
+2026-04-12 08:59:27 [ERROR]: Database query error:
+2026-04-12 08:59:29 [ERROR]: Database query error:
+2026-04-12 08:59:32 [ERROR]: Database query error:
+2026-04-12 08:59:35 [ERROR]: Database query error:
+2026-04-12 08:59:36 [ERROR]: Database query error:
+2026-04-12 08:59:38 [ERROR]: Database query error:
+2026-04-12 08:59:41 [ERROR]: Database query error:
+2026-04-12 08:59:43 [ERROR]: Database query error:

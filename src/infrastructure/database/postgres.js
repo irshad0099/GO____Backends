@@ -109,5 +109,15 @@ class Database {
 // Create and export a single instance
 export const db = new Database();
 
-// Also export pool for backward compatibility
-export const pool = db.pool;
+// Proxy that delegates to db.pool at call-time (after connect()).
+// This fixes the "pool is null" bug — the old `export const pool = db.pool`
+// captured null at import-time because connect() hadn't run yet.
+export const pool = new Proxy({}, {
+    get(_target, prop) {
+        if (!db.pool) {
+            throw new Error('Database pool not initialized. Call db.connect() first.');
+        }
+        const value = db.pool[prop];
+        return typeof value === 'function' ? value.bind(db.pool) : value;
+    }
+});

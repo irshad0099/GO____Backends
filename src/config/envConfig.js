@@ -25,8 +25,13 @@ export const ENV = {
     REDIS_PORT: parseInt(process.env.REDIS_PORT) || 6379,
     REDIS_PASSWORD: process.env.REDIS_PASSWORD || '',
     REDIS_DB: parseInt(process.env.REDIS_DB) || 0,
-    UPSTASH_REDIS_URL: process.env.UPSTASH_REDIS_URL,
-    
+    UPSTASH_REDIS_URL: process.env.UPSTASH_REDIS_URL || 'rediss://default:gQAAAAAAAU2PAAIncDI0MzI0MDJkNDQxMGM0YzJlOTMzMDRjMTNmODAxZGIzY3AyODUzOTE@picked-marten-85391.upstash.io:6379',
+
+    // Firebase
+    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
+    FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL,
+    FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY,
+
     // JWT
     JWT_SECRET: process.env.JWT_SECRET || 'gomobility_super_secret_key',
     JWT_ACCESS_EXPIRY: process.env.JWT_ACCESS_EXPIRY || '15m',
@@ -46,6 +51,7 @@ export const ENV = {
     TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
     TWILIO_PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER,
+    FAST2SMS_API_KEY: process.env.FAST2SMS_API_KEY,
     
     // Payment Gateway
     PAYMENT_GATEWAY: process.env.PAYMENT_GATEWAY || 'razorpay',

@@ -29,6 +29,12 @@ class SMSProvider {
                     ENV.TWILIO_AUTH_TOKEN
                 );
                 break;
+            case 'fast2sms':
+                logger.info('🔌 Initializing Fast2SMS Provider', {
+                    apiKeyPresent: !!ENV.FAST2SMS_API_KEY
+                });
+                this.client = null; // Fast2SMS uses HTTP API, no SDK needed
+                break;
             case 'console':
             default:
                 logger.info('🔌 SMS Provider initialized in CONSOLE mode (development)');
@@ -65,6 +71,8 @@ class SMSProvider {
                     return await this.sendViaMSG91(phone, message, purpose);
                 case 'twilio':
                     return await this.sendViaTwilio(phone, message, purpose);
+                case 'fast2sms':
+                    return await this.sendViaFast2SMS(phone, message, purpose);
                 case 'console':
                 default:
                     return this.logToConsole(phone, message, purpose);
@@ -194,9 +202,88 @@ class SMSProvider {
                 phone: phone.slice(-4),
                 purpose,
                 error: error.message,
-                
+
                 duration: Date.now() - startTime
             });
+            throw error;
+        }
+    }
+
+    async sendViaFast2SMS(phone, message, purpose = 'general') {
+        const startTime = Date.now();
+        const cleanPhone = phone.replace(/\D/g, '');
+
+        try {
+            if (!ENV.FAST2SMS_API_KEY) {
+                throw new Error('FAST2SMS_API_KEY not configured');
+            }
+
+            // Fast2SMS API endpoint (v2)
+            const fast2smsUrl = 'https://www.fast2sms.com/dev/bulkV2';
+
+            const response = await fetch(fast2smsUrl, {
+                method: 'POST',
+                headers: {
+                    'authorization': ENV.FAST2SMS_API_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'route': purpose.includes('otp') ? 'otp' : 'p',
+                    'variables_values': message,
+                    'numbers': `91${cleanPhone}`
+                })
+            });
+
+            const responseText = await response.text();
+            console.log('Fast2SMS Full Response:', {
+                status: response.status,
+                headers: Object.fromEntries(response.headers.entries()),
+                body: responseText.substring(0, 500)
+            });
+            logger.debug('📨 Fast2SMS API Response Received', {
+                status: response.status,
+                phone: cleanPhone.slice(-4),
+                purpose,
+                rawResponse: responseText.substring(0, 150),
+                duration: Date.now() - startTime
+            });
+
+            let responseData;
+            try {
+                responseData = JSON.parse(responseText);
+            } catch (e) {
+                logger.error('❌ Fast2SMS returned non-JSON response:', {
+                    status: response.status,
+                    response: responseText.substring(0, 200)
+                });
+                throw new Error(`Fast2SMS API error: Invalid response format - ${responseText.substring(0, 100)}`);
+            }
+
+            if (responseData.return === true && response.ok) {
+                logger.info('✅ SMS sent successfully via Fast2SMS', {
+                    phone: cleanPhone.slice(-4),
+                    purpose,
+                    messageId: responseData.request_id,
+                    duration: Date.now() - startTime
+                });
+
+                return {
+                    success: true,
+                    provider: 'fast2sms',
+                    messageId: responseData.request_id || 'fast2sms_' + Date.now(),
+                    response: responseData
+                };
+            } else {
+                throw new Error(`Fast2SMS returned error: ${responseData.message || JSON.stringify(responseData)}`);
+            }
+        } catch (error) {
+            logger.error('❌ Fast2SMS SMS failed', {
+                phone: cleanPhone.slice(-4),
+                purpose,
+                error: error.message,
+                duration: Date.now() - startTime
+            });
+
             throw error;
         }
     }

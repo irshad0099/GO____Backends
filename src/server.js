@@ -106,8 +106,17 @@ const startServer = async () => {
         // Connect to database
         await db.connect();
 
-        // Connect to Redis
-        await redis.connect();
+        // Redis connects automatically when imported - no need to call connect()
+        // Just ensure it's ready
+        if (!redis.status || redis.status === 'connecting') {
+            await new Promise(resolve => {
+                if (redis.status === 'ready') {
+                    resolve();
+                } else {
+                    redis.once('ready', resolve);
+                }
+            });
+        }
 
         // Now start the server
         const server = app.listen(PORT, () => {

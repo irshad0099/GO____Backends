@@ -20,21 +20,37 @@ export const initializeSocketIO = (server) => {
     });
 
     // Redis adapter for horizontal scaling
-    try {
-        const pubClient = redis.duplicate();
-        const subClient = redis.duplicate();
+    // try {
+    //     const pubClient = redis.duplicate();
+    //     const subClient = redis.duplicate();
 
-        Promise.all([pubClient.connect(), subClient.connect()])
-            .then(() => {
-                io.adapter(createAdapter(pubClient, subClient));
-                logger.info('✅ Redis adapter initialized for Socket.IO');
-            })
-            .catch(err => {
-                logger.warn('⚠️ Redis adapter not available, using in-memory adapter', { error: err.message });
-            });
-    } catch (error) {
-        logger.warn('⚠️ Redis adapter initialization failed, using in-memory adapter', { error: error.message });
-    }
+    //     Promise.all([pubClient.connect(), subClient.connect()])
+    //         .then(() => {
+    //             io.adapter(createAdapter(pubClient, subClient));
+    //             logger.info('✅ Redis adapter initialized for Socket.IO');
+    //         })
+    //         .catch(err => {
+    //             logger.warn('⚠️ Redis adapter not available, using in-memory adapter', { error: err.message });
+    //         });
+    // } catch (error) {
+    //     logger.warn('⚠️ Redis adapter initialization failed, using in-memory adapter', { error: error.message });
+    // }
+
+
+    // AB — connect() nahi, seedha adapter set karo
+try {
+    const pubClient = redis.duplicate();
+    const subClient = redis.duplicate();
+
+    // Duplicate clients auto-connect hote hain
+    // Seedha adapter set karo
+    io.adapter(createAdapter(pubClient, subClient));
+    logger.info('✅ Redis adapter initialized for Socket.IO');
+} catch (error) {
+    logger.warn('⚠️ Redis adapter not available, using in-memory adapter', 
+        { error: error.message });
+}
+
 
     // Connection event
     io.on('connection', (socket) => {

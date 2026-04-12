@@ -112,7 +112,7 @@ class SMSProvider {
             msg91Url.searchParams.append('authkey', ENV.MSG91_AUTH_KEY);
             msg91Url.searchParams.append('mobiles', `91${cleanPhone}`);
             msg91Url.searchParams.append('message', message);
-            msg91Url.searchParams.append('route', '1'); // Promotional route (try this)
+            msg91Url.searchParams.append('route', '4'); // Promotional route (try this)
             msg91Url.searchParams.append('sender', ENV.MSG91_SENDER_ID || 'GoMob');
             logger.debug('📡 MSG91 API Request', {
                 endpoint: 'sendhttp.php',

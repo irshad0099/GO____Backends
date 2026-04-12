@@ -1,0 +1,1232 @@
+{
+  "info": {
+    "name": "GoMobility — Driver App API",
+    "description": "Complete accurate API collection for GoMobility Driver Application. Base URL: https://api.gomobility.co.in/api/v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "2.0.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://api.gomobility.co.in/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "paste_your_access_token_here",
+      "type": "string"
+    }
+  ],
+  "item": [
+
+    {
+      "name": "🔐 1. AUTHENTICATION",
+      "item": [
+        {
+          "name": "1.1 Signup — Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"fullName\": \"Rajesh Kumar\",\n  \"email\": \"rajesh@example.com\",\n  \"role\": \"driver\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/signup", "host": ["{{base_url}}"], "path": ["auth","signup"] },
+            "description": "Fields: phone (required, 10-digit Indian), fullName (optional), email (optional), role (required: 'driver')"
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"OTP sent successfully\",\n  \"data\": {\n    \"userId\": \"user_123\",\n    \"phone\": \"9876543210\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "1.2 Verify Signup OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"123456\",\n  \"fullName\": \"Rajesh Kumar\",\n  \"email\": \"rajesh@example.com\",\n  \"role\": \"driver\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/verify-signup", "host": ["{{base_url}}"], "path": ["auth","verify-signup"] },
+            "description": "OTP 6 digits. role is required. Returns accessToken + refreshToken."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Account created successfully\",\n  \"data\": {\n    \"accessToken\": \"eyJhbGc...\",\n    \"refreshToken\": \"eyJhbGc...\",\n    \"user\": {\n      \"id\": 1,\n      \"phone\": \"9876543210\",\n      \"fullName\": \"Rajesh Kumar\",\n      \"role\": \"driver\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "1.3 Signin — Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"role\": \"driver\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/signin", "host": ["{{base_url}}"], "path": ["auth","signin"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"OTP sent successfully\",\n  \"data\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "1.4 Verify Signin OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"123456\",\n  \"role\": \"driver\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/verify-signin", "host": ["{{base_url}}"], "path": ["auth","verify-signin"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"accessToken\": \"eyJhbGc...\",\n    \"refreshToken\": \"eyJhbGc...\",\n    \"user\": {\n      \"id\": 1,\n      \"phone\": \"9876543210\",\n      \"role\": \"driver\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "1.5 Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"eyJhbGc...\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/refresh-token", "host": ["{{base_url}}"], "path": ["auth","refresh-token"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"accessToken\": \"eyJhbGc...\",\n    \"refreshToken\": \"eyJhbGc...\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "1.6 Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"eyJhbGc...\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/logout", "host": ["{{base_url}}"], "path": ["auth","logout"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Logged out successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "1.7 Get Auth Me",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/auth/me", "host": ["{{base_url}}"], "path": ["auth","me"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"phone\": \"9876543210\",\n    \"fullName\": \"Rajesh Kumar\",\n    \"role\": \"driver\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "👷 2. DRIVER PROFILE",
+      "item": [
+        {
+          "name": "2.1 Register Driver (POST signup ke baad)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": { "raw": "{{base_url}}/drivers/register", "host": ["{{base_url}}"], "path": ["drivers","register"] },
+            "description": "Driver row is auto-created at signup for role=driver. Body can be empty."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Driver registration successful. Pending verification.\",\n  \"data\": {\n    \"id\": 1,\n    \"user_id\": 1,\n    \"status\": \"pending\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "2.2 Get Driver Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/profile", "host": ["{{base_url}}"], "path": ["drivers","profile"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"user_id\": 1,\n    \"name\": \"Rajesh Kumar\",\n    \"phone\": \"9876543210\",\n    \"vehicle_type\": \"bike\",\n    \"vehicle_number\": \"DL01AB1234\",\n    \"is_available\": false,\n    \"is_verified\": false,\n    \"rating\": 0,\n    \"total_rides\": 0\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "2.3 Update Driver Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rajesh Kumar\",\n  \"photo\": \"https://s3.amazonaws.com/gomobility/profile/photo.jpg\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/drivers/profile", "host": ["{{base_url}}"], "path": ["drivers","profile"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Profile updated\",\n  \"data\": { \"id\": 1, \"name\": \"Rajesh Kumar\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "2.4 Save FCM Token (Push Notifications)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fcm_token\": \"f7dBX9z...device_token_here\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/drivers/fcm-token", "host": ["{{base_url}}"], "path": ["drivers","fcm-token"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"FCM token saved successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "🎓 3. DRIVER KYC — /driver-kyc (Cashfree Verified)",
+      "item": [
+        {
+          "name": "3.1 Get KYC Status",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/driver-kyc/status", "host": ["{{base_url}}"], "path": ["driver-kyc","status"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"aadhaar\": \"verified\",\n    \"pan\": \"pending\",\n    \"bank\": \"not_submitted\",\n    \"license\": \"manual_review\",\n    \"rc\": \"not_submitted\",\n    \"overall\": \"incomplete\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3.2 Aadhaar — Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"aadhaar_number\": \"123456789012\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/driver-kyc/aadhaar/otp", "host": ["{{base_url}}"], "path": ["driver-kyc","aadhaar","otp"] },
+            "description": "12-digit Aadhaar number. OTP goes to Aadhaar-linked mobile."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"ref_id\": \"ref_abc123\",\n    \"message\": \"OTP sent to Aadhaar-linked mobile\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3.3 Aadhaar — Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ref_id\": \"ref_abc123\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/driver-kyc/aadhaar/verify", "host": ["{{base_url}}"], "path": ["driver-kyc","aadhaar","verify"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"status\": \"verified\",\n    \"name\": \"RAJESH KUMAR\",\n    \"masked_aadhaar\": \"XXXX-XXXX-9012\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3.4 PAN Verification",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pan_number\": \"ABCDE1234F\",\n  \"name\": \"Rajesh Kumar\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/driver-kyc/pan", "host": ["{{base_url}}"], "path": ["driver-kyc","pan"] },
+            "description": "pan_number format: ABCDE1234F (5 letters, 4 digits, 1 letter)"
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"status\": \"verified\",\n    \"pan_number\": \"ABCDE1234F\",\n    \"name_match\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3.5 Bank Account Verification",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account_number\": \"12345678901234\",\n  \"ifsc\": \"SBIN0001234\",\n  \"name\": \"Rajesh Kumar\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/driver-kyc/bank", "host": ["{{base_url}}"], "path": ["driver-kyc","bank"] },
+            "description": "ifsc format: 4 letters + 0 + 6 alphanumeric (e.g. SBIN0001234)"
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"status\": \"verified\",\n    \"account_number\": \"XXXXXXXXXXXX1234\",\n    \"name_match\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3.6 Driving License Verification",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"license_number\": \"DL0120000001\",\n  \"dob\": \"01-01-1990\",\n  \"name\": \"Rajesh Kumar\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/driver-kyc/license", "host": ["{{base_url}}"], "path": ["driver-kyc","license"] },
+            "description": "dob format: DD-MM-YYYY (e.g. 01-01-1990)"
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"status\": \"verified\",\n    \"license_number\": \"DL0120000001\",\n    \"name\": \"Rajesh Kumar\",\n    \"expiry\": \"2030-01-01\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3.7 Vehicle RC Verification",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rc_number\": \"DL01AB1234\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/driver-kyc/rc", "host": ["{{base_url}}"], "path": ["driver-kyc","rc"] },
+            "description": "rc_number: Vehicle registration number e.g. DL01AB1234"
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"status\": \"verified\",\n    \"rc_number\": \"DL01AB1234\",\n    \"vehicle_class\": \"MOTORCYCLE\",\n    \"owner_name\": \"RAJESH KUMAR\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "📄 4. DRIVER DOCUMENT UPLOADS — /drivers",
+      "item": [
+        {
+          "name": "4.1 Upload File to S3 (Pehle yeh karo)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": "document.jpg", "description": "Any document image" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/drivers/kyc-upload", "host": ["{{base_url}}"], "path": ["drivers","kyc-upload"] },
+            "description": "Pehle file upload karo S3 pe, wapas S3 URL milega. Phir us URL ko document endpoints mein use karo."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"url\": \"https://s3.amazonaws.com/gomobility/docs/uuid_filename.jpg\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "4.2 Add Aadhaar Detail",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"driver_id\": \"1\",\n  \"aadhaar_name\": \"Rajesh Kumar\",\n  \"aadhaar_number\": \"123456789012\",\n  \"aadhaar_front\": \"https://s3.amazonaws.com/gomobility/docs/aadhaar_front.jpg\",\n  \"aadhaar_back\": \"https://s3.amazonaws.com/gomobility/docs/aadhaar_back.jpg\",\n  \"consent_given\": \"true\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/drivers/add-aadhar", "host": ["{{base_url}}"], "path": ["drivers","add-aadhar"] },
+            "description": "aadhaar_front & back: S3 URLs from /kyc-upload. consent_given must be string 'true'."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Aadhaar uploaded successfully. Pending verification.\",\n  \"data\": { \"id\": 1, \"status\": \"pending\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "4.3 Add PAN Detail",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"driver_id\": \"1\",\n  \"pan_name\": \"Rajesh Kumar\",\n  \"pan_number\": \"ABCDE1234F\",\n  \"pan_dob\": \"1990-01-01\",\n  \"pan_front\": \"https://s3.amazonaws.com/gomobility/docs/pan.jpg\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/drivers/add-pancard", "host": ["{{base_url}}"], "path": ["drivers","add-pancard"] },
+            "description": "pan_dob: ISO8601 format (YYYY-MM-DD). pan_number: ABCDE1234F format."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"PAN details uploaded successfully. Pending verification.\",\n  \"data\": { \"id\": 1, \"status\": \"pending\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "4.4 Add Bank Detail",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account_holder_name\": \"Rajesh Kumar\",\n  \"account_number\": \"12345678901234\",\n  \"ifsc_code\": \"SBIN0001234\",\n  \"account_type\": \"saving\",\n  \"bank_proof_document\": \"https://s3.amazonaws.com/gomobility/docs/bankproof.jpg\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/drivers/add-bankdetail", "host": ["{{base_url}}"], "path": ["drivers","add-bankdetail"] },
+            "description": "account_type: 'saving' or 'current'. ifsc_code: SBIN0001234 format."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Bank details uploaded successfully. Pending verification.\",\n  \"data\": { \"id\": 1, \"status\": \"pending\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "4.5 Add Driving License",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"license_number\": \"DL0120000001\",\n  \"license_name\": \"Rajesh Kumar\",\n  \"license_dob\": \"1990-01-01\",\n  \"license_issue_date\": \"2010-06-15\",\n  \"license_expiry_date\": \"2030-06-14\",\n  \"license_front\": \"https://s3.amazonaws.com/gomobility/docs/license_front.jpg\",\n  \"license_back\": \"https://s3.amazonaws.com/gomobility/docs/license_back.jpg\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/drivers/add-license", "host": ["{{base_url}}"], "path": ["drivers","add-license"] },
+            "description": "All dates: ISO8601 (YYYY-MM-DD). license_expiry_date must be in future."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"License uploaded successfully. Pending verification.\",\n  \"data\": { \"id\": 1, \"status\": \"pending\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "4.6 Add Vehicle Details (RC + Insurance + Permit)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicle_type\": \"bike\",\n  \"vehicle_number\": \"DL01AB1234\",\n  \"vehicle_model\": \"Honda Activa 6G\",\n  \"vehicle_color\": \"Blue\",\n  \"rc_number\": \"DL01AB1234RC\",\n  \"owner_name\": \"Rajesh Kumar\",\n  \"rc_front\": \"https://s3.amazonaws.com/gomobility/docs/rc_front.jpg\",\n  \"rc_back\": \"https://s3.amazonaws.com/gomobility/docs/rc_back.jpg\",\n  \"policy_number\": \"POL2024001234\",\n  \"insurance_provider\": \"Bajaj Allianz\",\n  \"insurance_valid_until\": \"2026-01-01\",\n  \"insurance_front\": \"https://s3.amazonaws.com/gomobility/docs/insurance.jpg\",\n  \"permit_number\": \"PERM123456\",\n  \"permit_type\": \"commercial\",\n  \"permit_valid_until\": \"2025-12-31\",\n  \"permit_document\": \"https://s3.amazonaws.com/gomobility/docs/permit.jpg\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/drivers/add-vehicle-details", "host": ["{{base_url}}"], "path": ["drivers","add-vehicle-details"] },
+            "description": "vehicle_type: bike/auto/car. vehicle_number: DL01AB1234 format. RC fields required. Insurance & Permit optional."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Vehicle details uploaded successfully.\",\n  \"data\": { \"id\": 1, \"status\": \"pending\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "4.7 Get Document Status (by driver_id)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/document/1", "host": ["{{base_url}}"], "path": ["drivers","document","1"] },
+            "description": "Replace '1' with actual driver ID"
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"aadhaar\": { \"status\": \"verified\" },\n    \"pan\": { \"status\": \"pending\" },\n    \"bank\": { \"status\": \"not_submitted\" },\n    \"license\": { \"status\": \"manual_review\" },\n    \"vehicle\": { \"status\": \"pending\" }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "4.8 Get Document Expiry Status",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/documents/status", "host": ["{{base_url}}"], "path": ["drivers","documents","status"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"license\": { \"expiry\": \"2030-06-14\", \"days_left\": 1523, \"expired\": false },\n    \"insurance\": { \"expiry\": \"2026-01-01\", \"days_left\": 264, \"expired\": false },\n    \"permit\": { \"expiry\": \"2025-12-31\", \"days_left\": 263, \"expired\": false }\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "🟢 5. AVAILABILITY & LOCATION",
+      "item": [
+        {
+          "name": "5.1 Toggle Availability (Online/Offline)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isAvailable\": true\n}"
+            },
+            "url": { "raw": "{{base_url}}/drivers/availability", "host": ["{{base_url}}"], "path": ["drivers","availability"] },
+            "description": "isAvailable: true = Online, false = Offline"
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Availability updated\",\n  \"data\": { \"isAvailable\": true }\n}"
+            }
+          ]
+        },
+        {
+          "name": "5.2 Update Location (REST — DB update only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 28.7041,\n  \"longitude\": 77.1025\n}"
+            },
+            "url": { "raw": "{{base_url}}/drivers/location", "host": ["{{base_url}}"], "path": ["drivers","location"] },
+            "description": "⚠️ Real-time map tracking ke liye WebSocket driver:location_update use karo, yeh sirf DB update karta hai"
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Location updated\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "🚗 6. RIDE MANAGEMENT",
+      "item": [
+        {
+          "name": "6.1 Get Current Active Ride",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/rides/current", "host": ["{{base_url}}"], "path": ["rides","current"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 123,\n    \"status\": \"in_progress\",\n    \"passenger\": { \"id\": 5, \"name\": \"Aryan Shah\", \"phone\": \"9876543211\" },\n    \"pickup_address\": \"Connaught Place, Delhi\",\n    \"dropoff_address\": \"Gurugram, Haryana\",\n    \"estimated_fare\": 250.50\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "6.2 Get Ride History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": {
+              "raw": "{{base_url}}/rides/driver/history?page=1&limit=10&status=completed",
+              "host": ["{{base_url}}"], "path": ["rides","driver","history"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "completed", "description": "requested|driver_assigned|driver_arrived|in_progress|completed|cancelled" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"rides\": [ { \"id\": 120, \"status\": \"completed\", \"fare\": 220 } ],\n    \"total\": 45,\n    \"page\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "6.3 Get Ride Details",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/rides/123", "host": ["{{base_url}}"], "path": ["rides","123"] },
+            "description": "Replace 123 with actual rideId (integer)"
+          }
+        },
+        {
+          "name": "6.4 Accept Ride",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{base_url}}/rides/123/accept", "host": ["{{base_url}}"], "path": ["rides","123","accept"] },
+            "description": "No body required. rideId in URL (integer)."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Ride accepted successfully\",\n  \"data\": {\n    \"ride_id\": 123,\n    \"passenger\": { \"name\": \"Aryan Shah\", \"phone\": \"9876543211\" },\n    \"pickup_address\": \"Connaught Place, Delhi\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "6.5 Update Ride Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"driver_arrived\"\n}\n\n/* Valid status values:\n   driver_arrived  → Pahunch gaya pickup pe\n   in_progress     → Ride start ho gayi (after OTP verify)\n   completed       → Ride khatam\n   cancelled       → Cancel (with cancellationReason optional)\n*/"
+            },
+            "url": { "raw": "{{base_url}}/rides/123/status", "host": ["{{base_url}}"], "path": ["rides","123","status"] },
+            "description": "status values: driver_arrived | in_progress | completed | cancelled"
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Ride status updated successfully\",\n  \"data\": { \"id\": 123, \"status\": \"driver_arrived\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "6.6 Generate OTP (SMS jayega passenger ko)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{base_url}}/rides/123/generate-otp", "host": ["{{base_url}}"], "path": ["rides","123","generate-otp"] },
+            "description": "No body. OTP passenger ke phone pe SMS hoga."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"OTP sent to passenger\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "6.7 Verify OTP (Ride Start karo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"otp\": \"1234\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/rides/123/verify-otp", "host": ["{{base_url}}"], "path": ["rides","123","verify-otp"] },
+            "description": "⚠️ OTP 4 digits hai (6 nahi). Passenger batayega OTP driver ko."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"OTP verified. Ride started.\",\n  \"data\": { \"id\": 123, \"status\": \"in_progress\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "6.8 Get Ride Invoice",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/rides/123/invoice", "host": ["{{base_url}}"], "path": ["rides","123","invoice"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"invoice_number\": \"INV2025001234\",\n    \"total_fare\": 250.50,\n    \"breakdown\": { \"base\": 50, \"per_km\": 150, \"platform_fee\": 25, \"taxes\": 25.50 }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "6.9 Reject Ride Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason_code\": \"too_far\",\n  \"reason_text\": \"Pickup location bahut door hai\"\n}\n\n/* Valid reason_code values:\n   too_far | wrong_direction | low_fare | bad_area | busy | ending_shift | other\n*/"
+            },
+            "url": { "raw": "{{base_url}}/drivers/rides/123/reject", "host": ["{{base_url}}"], "path": ["drivers","rides","123","reject"] },
+            "description": "reason_code is REQUIRED. reason_text optional."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Ride rejected\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "6.10 Get Rejection History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/rides/rejections", "host": ["{{base_url}}"], "path": ["drivers","rides","rejections"] }
+          }
+        },
+        {
+          "name": "6.11 Get Acceptance Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/rides/acceptance-stats", "host": ["{{base_url}}"], "path": ["drivers","rides","acceptance-stats"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"total_requests\": 50,\n    \"accepted\": 45,\n    \"rejected\": 5,\n    \"acceptance_rate\": 90.0\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "💰 7. EARNINGS",
+      "item": [
+        {
+          "name": "7.1 Get Overall Earnings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/earnings", "host": ["{{base_url}}"], "path": ["drivers","earnings"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"total_earned\": 45000.00,\n    \"total_rides\": 350,\n    \"average_per_ride\": 128.57\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "7.2 Get Weekly Earnings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/earnings/weekly", "host": ["{{base_url}}"], "path": ["drivers","earnings","weekly"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    { \"week\": \"2025-W14\", \"amount\": 8500, \"rides\": 62 },\n    { \"week\": \"2025-W13\", \"amount\": 7800, \"rides\": 58 }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "7.3 Get Monthly Earnings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/earnings/monthly", "host": ["{{base_url}}"], "path": ["drivers","earnings","monthly"] }
+          }
+        },
+        {
+          "name": "7.4 Get Current Week Earnings (Live)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/earnings/current-week", "host": ["{{base_url}}"], "path": ["drivers","earnings","current-week"] }
+          }
+        },
+        {
+          "name": "7.5 Get Earnings Statement (Date Range)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": {
+              "raw": "{{base_url}}/drivers/earnings/statement?from=2025-01-01&to=2025-01-31",
+              "host": ["{{base_url}}"], "path": ["drivers","earnings","statement"],
+              "query": [
+                { "key": "from", "value": "2025-01-01", "description": "ISO date YYYY-MM-DD (required)" },
+                { "key": "to", "value": "2025-01-31", "description": "ISO date YYYY-MM-DD (required, must be after from)" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"from\": \"2025-01-01\",\n    \"to\": \"2025-01-31\",\n    \"total\": 22000.00,\n    \"rides\": 165,\n    \"transactions\": [ { \"date\": \"2025-01-05\", \"amount\": 320, \"ride_id\": 100 } ]\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "💵 8. CASH COLLECTION",
+      "item": [
+        {
+          "name": "8.1 Get Pending Cash Balance",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/cash/balance", "host": ["{{base_url}}"], "path": ["drivers","cash","balance"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"pending_cash\": 3500.00,\n    \"limit_warning\": false,\n    \"deposit_required_by\": null\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "8.2 Submit Cash Deposit",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 3500.00,\n  \"deposit_method\": \"upi\",\n  \"reference_number\": \"UPI123456789\",\n  \"deposit_proof\": \"https://s3.amazonaws.com/gomobility/receipts/deposit.jpg\"\n}\n\n/* deposit_method: upi | bank_transfer | cash_center */"
+            },
+            "url": { "raw": "{{base_url}}/drivers/cash/deposit", "host": ["{{base_url}}"], "path": ["drivers","cash","deposit"] },
+            "description": "deposit_method: upi | bank_transfer | cash_center. amount min ₹1 max ₹50000."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"id\": 1, \"status\": \"pending_verification\", \"amount\": 3500 }\n}"
+            }
+          ]
+        },
+        {
+          "name": "8.3 Get Deposit History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/cash/deposits", "host": ["{{base_url}}"], "path": ["drivers","cash","deposits"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🎯 9. INCENTIVES & PENALTIES",
+      "item": [
+        {
+          "name": "9.1 Get Active Incentives",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/incentives", "host": ["{{base_url}}"], "path": ["drivers","incentives"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"name\": \"Weekend Warrior\",\n      \"target_rides\": 20,\n      \"bonus_amount\": 500,\n      \"deadline\": \"2025-04-14\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "9.2 Get Incentive Progress",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/incentives/progress", "host": ["{{base_url}}"], "path": ["drivers","incentives","progress"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"incentive_id\": 1,\n      \"name\": \"Weekend Warrior\",\n      \"target\": 20,\n      \"completed\": 12,\n      \"remaining\": 8,\n      \"progress_percent\": 60\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "9.3 Get My Penalties",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/penalties", "host": ["{{base_url}}"], "path": ["drivers","penalties"] }
+          }
+        },
+        {
+          "name": "9.4 Check Ban Status",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/penalties/ban-status", "host": ["{{base_url}}"], "path": ["drivers","penalties","ban-status"] }
+          },
+          "response": [
+            {
+              "name": "200 Not Banned",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"is_banned\": false, \"reason\": null }\n}"
+            }
+          ]
+        },
+        {
+          "name": "9.5 Acknowledge Penalty (Mark as Seen)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/penalties/5/acknowledge", "host": ["{{base_url}}"], "path": ["drivers","penalties","5","acknowledge"] },
+            "description": "Replace 5 with actual penaltyId. No body required."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Penalty acknowledged\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "9.6 Appeal Penalty",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Yeh penalty galat hai kyunki passenger ne khud cancel kiya tha aur mera koi dosh nahi tha\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/drivers/penalties/5/appeal", "host": ["{{base_url}}"], "path": ["drivers","penalties","5","appeal"] },
+            "description": "reason: min 10 chars, max 500 chars. Required."
+          }
+        },
+        {
+          "name": "9.7 Get Acceptance Rate (Last 7 Days)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/acceptance-rate", "host": ["{{base_url}}"], "path": ["drivers","acceptance-rate"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🏠 10. DESTINATION MODE (Going Home)",
+      "item": [
+        {
+          "name": "10.1 Get Current Destination Mode",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/destination-mode", "host": ["{{base_url}}"], "path": ["drivers","destination-mode"] }
+          },
+          "response": [
+            {
+              "name": "200 Active",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"active\": true,\n    \"latitude\": 28.5355,\n    \"longitude\": 77.3910,\n    \"address\": \"Sector 45, Gurugram\",\n    \"radius_km\": 3.0\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "10.2 Set Destination (Going Home Mode ON)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 28.5355,\n  \"longitude\": 77.3910,\n  \"address\": \"Sector 45, Gurugram, Haryana\",\n  \"radius_km\": 3.0\n}"
+            },
+            "url": { "raw": "{{base_url}}/drivers/destination-mode", "host": ["{{base_url}}"], "path": ["drivers","destination-mode"] },
+            "description": "⚠️ Flat fields - latitude, longitude, address directly. Nested object mat dena. radius_km optional (default 3.0, max 10)."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Destination mode set\",\n  \"data\": { \"active\": true, \"address\": \"Sector 45, Gurugram\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "10.3 Turn Off Destination Mode",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/destination-mode", "host": ["{{base_url}}"], "path": ["drivers","destination-mode"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Destination mode disabled\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "⭐ 11. SCORE, BADGE & METRICS",
+      "item": [
+        {
+          "name": "11.1 Get Driver Score",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/score", "host": ["{{base_url}}"], "path": ["drivers","score"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"score\": 87.5,\n    \"rating\": 4.7,\n    \"acceptance_rate\": 90.0,\n    \"completion_rate\": 98.0\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "11.2 Get Driver Badge",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/badge", "host": ["{{base_url}}"], "path": ["drivers","badge"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"badge\": \"Gold\",\n    \"unlocked_at\": \"2025-03-01\",\n    \"benefits\": [\"Priority matching\", \"Higher earnings\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "11.3 Get Daily Metrics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/drivers/metrics/daily", "host": ["{{base_url}}"], "path": ["drivers","metrics","daily"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"date\": \"2025-04-12\",\n    \"rides\": 12,\n    \"earnings\": 1850.00,\n    \"online_hours\": 8.5,\n    \"distance_km\": 145\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "⭐ 12. REVIEWS (Driver side)",
+      "item": [
+        {
+          "name": "12.1 Submit Review (Passenger ko rate karo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ride_id\": 123,\n  \"reviewee_id\": 5,\n  \"reviewer_type\": \"driver\",\n  \"reviewee_type\": \"passenger\",\n  \"rating\": 4,\n  \"comment\": \"Polite passenger, on time\",\n  \"tags\": [\"polite\", \"on_time\"]\n}\n\n/* Passenger tags: polite | on_time | clean_seating | followed_route | no_complaints */"
+            },
+            "url": { "raw": "{{base_url}}/reviews", "host": ["{{base_url}}"], "path": ["reviews"] },
+            "description": "ride_id, reviewee_id, reviewer_type, reviewee_type, rating are REQUIRED. Tags for passenger: polite|on_time|clean_seating|followed_route|no_complaints"
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"id\": 50, \"ride_id\": 123, \"rating\": 4 }\n}"
+            }
+          ]
+        },
+        {
+          "name": "12.2 Get Ride Reviews",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/reviews/ride/123", "host": ["{{base_url}}"], "path": ["reviews","ride","123"] }
+          }
+        },
+        {
+          "name": "12.3 Get Passenger Rating Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/reviews/user/5/summary", "host": ["{{base_url}}"], "path": ["reviews","user","5","summary"] },
+            "description": "Replace 5 with passenger's userId"
+          }
+        },
+        {
+          "name": "12.4 Respond to Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"review_id\": 50,\n  \"response\": \"Thank you for your feedback! Happy to serve you again.\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/reviews/respond", "host": ["{{base_url}}"], "path": ["reviews","respond"] },
+            "description": "review_id (integer) aur response (min 3 chars) dono required."
+          }
+        }
+      ]
+    }
+
+  ]
+}

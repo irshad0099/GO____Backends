@@ -92,6 +92,7 @@ import { db } from './infrastructure/database/postgres.js';
 import redis from './config/redis.config.js';
 import { initializeSocketIO } from './config/websocketConfig.js';
 import { setupSocketHandlers } from './infrastructure/websocket/socket.server.js';
+import { startWorkers } from './infrastructure/queue/startWorkers.js';
 
 const PORT = ENV.PORT || 5000;
 
@@ -161,6 +162,9 @@ const startServer = async () => {
         } catch (error) {
             console.error('⚠️ Socket.IO initialization warning:', error.message);
         }
+
+        // BullMQ workers start karo — background job processors
+        await startWorkers();
 
         // Graceful shutdown
         const gracefulShutdown = async () => {

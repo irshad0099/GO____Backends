@@ -1,0 +1,1416 @@
+{
+  "info": {
+    "name": "GoMobility — Passenger App API",
+    "description": "Complete accurate API collection for GoMobility Passenger Application. Base URL: https://api.gomobility.co.in/api/v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "2.0.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://api.gomobility.co.in/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "paste_your_access_token_here",
+      "type": "string"
+    }
+  ],
+  "item": [
+
+    {
+      "name": "🔐 1. AUTHENTICATION",
+      "item": [
+        {
+          "name": "1.1 Signup — Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"fullName\": \"Aryan Shah\",\n  \"email\": \"aryan@example.com\",\n  \"role\": \"passenger\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/signup", "host": ["{{base_url}}"], "path": ["auth","signup"] },
+            "description": "phone: 10-digit Indian (6-9XXXXXXXXX). fullName optional. email optional. role REQUIRED = 'passenger'."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"OTP sent successfully\",\n  \"data\": {\n    \"userId\": \"1\",\n    \"phone\": \"9876543210\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "1.2 Verify Signup OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"123456\",\n  \"fullName\": \"Aryan Shah\",\n  \"email\": \"aryan@example.com\",\n  \"role\": \"passenger\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/verify-signup", "host": ["{{base_url}}"], "path": ["auth","verify-signup"] },
+            "description": "OTP 6 digits. role REQUIRED. Returns accessToken + refreshToken."
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Account created successfully\",\n  \"data\": {\n    \"accessToken\": \"eyJhbGc...\",\n    \"refreshToken\": \"eyJhbGc...\",\n    \"user\": {\n      \"id\": 1,\n      \"phone\": \"9876543210\",\n      \"fullName\": \"Aryan Shah\",\n      \"role\": \"passenger\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "1.3 Signin — Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"role\": \"passenger\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/signin", "host": ["{{base_url}}"], "path": ["auth","signin"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"OTP sent successfully\",\n  \"data\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "1.4 Verify Signin OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"123456\",\n  \"role\": \"passenger\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/verify-signin", "host": ["{{base_url}}"], "path": ["auth","verify-signin"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"accessToken\": \"eyJhbGc...\",\n    \"refreshToken\": \"eyJhbGc...\",\n    \"user\": {\n      \"id\": 1,\n      \"phone\": \"9876543210\",\n      \"role\": \"passenger\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "1.5 Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"eyJhbGc...\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/refresh-token", "host": ["{{base_url}}"], "path": ["auth","refresh-token"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"accessToken\": \"eyJhbGc...\",\n    \"refreshToken\": \"eyJhbGc...\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "1.6 Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"eyJhbGc...\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/logout", "host": ["{{base_url}}"], "path": ["auth","logout"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Logged out successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "1.7 Get Auth Me",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/auth/me", "host": ["{{base_url}}"], "path": ["auth","me"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"phone\": \"9876543210\",\n    \"fullName\": \"Aryan Shah\",\n    \"role\": \"passenger\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "👤 2. PROFILE",
+      "item": [
+        {
+          "name": "2.1 Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/users/profile", "host": ["{{base_url}}"], "path": ["users","profile"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"phone\": \"9876543210\",\n    \"fullName\": \"Aryan Shah\",\n    \"email\": \"aryan@example.com\",\n    \"profilePicture\": null,\n    \"wallet_balance\": 250.00\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "2.2 Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Aryan Shah\",\n  \"email\": \"aryan@example.com\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/users/profile", "host": ["{{base_url}}"], "path": ["users","profile"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Profile updated\",\n  \"data\": { \"id\": 1, \"name\": \"Aryan Shah\", \"email\": \"aryan@example.com\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "2.3 Save FCM Token (Push Notifications)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fcm_token\": \"f7dBX9z...device_token_here\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/users/fcm-token", "host": ["{{base_url}}"], "path": ["users","fcm-token"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"FCM token saved successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "2.4 Get Saved Addresses",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/users/addresses", "host": ["{{base_url}}"], "path": ["users","addresses"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"label\": \"Home\",\n      \"type\": \"home\",\n      \"address\": \"123 Main Street, Delhi\",\n      \"latitude\": 28.7041,\n      \"longitude\": 77.1025,\n      \"is_default\": true\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "2.5 Add Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Home\",\n  \"type\": \"home\",\n  \"latitude\": 28.7041,\n  \"longitude\": 77.1025,\n  \"address\": \"123 Main Street, Connaught Place, New Delhi\",\n  \"landmark\": \"Near Metro Station\",\n  \"is_default\": true\n}\n\n/* type values: home | work | other */"
+            },
+            "url": { "raw": "{{base_url}}/users/addresses", "host": ["{{base_url}}"], "path": ["users","addresses"] },
+            "description": "type: home | work | other. label min 2, max 50. address min 5, max 500."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"id\": 1, \"label\": \"Home\", \"type\": \"home\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "2.6 Update Address",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Home Updated\",\n  \"address\": \"456 New Street, Delhi\",\n  \"landmark\": \"Near Hospital\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/users/addresses/1", "host": ["{{base_url}}"], "path": ["users","addresses","1"] },
+            "description": "Replace 1 with actual address ID. All fields optional."
+          }
+        },
+        {
+          "name": "2.7 Delete Address",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/users/addresses/1", "host": ["{{base_url}}"], "path": ["users","addresses","1"] }
+          }
+        },
+        {
+          "name": "2.8 Get Emergency Contacts",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/users/emergency-contacts", "host": ["{{base_url}}"], "path": ["users","emergency-contacts"] }
+          }
+        },
+        {
+          "name": "2.9 Add Emergency Contact",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mom\",\n  \"phone\": \"9123456789\",\n  \"relationship\": \"parent\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/users/emergency-contacts", "host": ["{{base_url}}"], "path": ["users","emergency-contacts"] },
+            "description": "phone: 10-digit Indian. relationship optional. name min 2 max 100."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"id\": 1, \"name\": \"Mom\", \"phone\": \"9123456789\", \"relationship\": \"parent\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "2.10 Update Emergency Contact",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mom\",\n  \"phone\": \"9123456789\",\n  \"relationship\": \"mother\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/users/emergency-contacts/1", "host": ["{{base_url}}"], "path": ["users","emergency-contacts","1"] }
+          }
+        },
+        {
+          "name": "2.11 Delete Emergency Contact",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/users/emergency-contacts/1", "host": ["{{base_url}}"], "path": ["users","emergency-contacts","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🚗 3. RIDES",
+      "item": [
+        {
+          "name": "3.1 Get Nearby Drivers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/rides/nearby-drivers?vehicleType=bike&latitude=28.7041&longitude=77.1025",
+              "host": ["{{base_url}}"], "path": ["rides","nearby-drivers"],
+              "query": [
+                { "key": "vehicleType", "value": "bike", "description": "bike | auto | car (required)" },
+                { "key": "latitude", "value": "28.7041", "description": "required" },
+                { "key": "longitude", "value": "77.1025", "description": "required" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"count\": 5,\n    \"drivers\": [\n      {\n        \"id\": 1,\n        \"name\": \"Rajesh Kumar\",\n        \"rating\": 4.7,\n        \"vehicle_number\": \"DL01AB1234\",\n        \"distance_km\": 0.8,\n        \"eta_minutes\": 3\n      }\n    ]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3.2 Calculate Fare Estimate",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pickupLatitude\": 28.7041,\n  \"pickupLongitude\": 77.1025,\n  \"pickupAddress\": \"Connaught Place, New Delhi\",\n  \"dropoffLatitude\": 28.5355,\n  \"dropoffLongitude\": 77.3910,\n  \"dropoffAddress\": \"Sector 45, Gurugram, Haryana\",\n  \"vehicleType\": \"bike\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/rides/calculate-fare", "host": ["{{base_url}}"], "path": ["rides","calculate-fare"] },
+            "description": "vehicleType: bike | auto | car"
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"estimated_fare\": 250.50,\n    \"distance_km\": 18.5,\n    \"duration_minutes\": 35,\n    \"breakdown\": {\n      \"base_fare\": 50,\n      \"per_km_charge\": 150,\n      \"platform_fee\": 25,\n      \"taxes\": 25.50\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3.3 Request Ride (Book Now)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicleType\": \"bike\",\n  \"pickupLatitude\": 28.7041,\n  \"pickupLongitude\": 77.1025,\n  \"pickupAddress\": \"Connaught Place, New Delhi\",\n  \"pickupLocationName\": \"CP Metro Gate 1\",\n  \"dropoffLatitude\": 28.5355,\n  \"dropoffLongitude\": 77.3910,\n  \"dropoffAddress\": \"Sector 45, Gurugram, Haryana\",\n  \"dropoffLocationName\": \"Sector 45 Market\",\n  \"paymentMethod\": \"wallet\",\n  \"couponCode\": \"SAVE50\"\n}\n\n/* vehicleType: bike | auto | car\n   paymentMethod: cash | card | wallet | upi (optional, default: cash)\n   couponCode: optional\n   pickupLocationName: optional\n   dropoffLocationName: optional */"
+            },
+            "url": { "raw": "{{base_url}}/rides/request", "host": ["{{base_url}}"], "path": ["rides","request"] },
+            "description": "⚠️ Flat fields — pickup/dropoff ke liye nested object mat dena. vehicleType, pickupLatitude, pickupLongitude, pickupAddress, dropoffLatitude, dropoffLongitude, dropoffAddress REQUIRED."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Ride requested successfully\",\n  \"data\": {\n    \"id\": 123,\n    \"status\": \"requested\",\n    \"estimated_fare\": 250.50,\n    \"pickup_address\": \"Connaught Place, New Delhi\",\n    \"dropoff_address\": \"Sector 45, Gurugram\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3.4 Get Current Active Ride",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/rides/current", "host": ["{{base_url}}"], "path": ["rides","current"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 123,\n    \"status\": \"in_progress\",\n    \"driver\": {\n      \"id\": 1,\n      \"name\": \"Rajesh Kumar\",\n      \"phone\": \"9876543210\",\n      \"vehicle_number\": \"DL01AB1234\",\n      \"rating\": 4.7\n    },\n    \"pickup_address\": \"Connaught Place, New Delhi\",\n    \"dropoff_address\": \"Sector 45, Gurugram\",\n    \"estimated_fare\": 250.50\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3.5 Get Ride History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": {
+              "raw": "{{base_url}}/rides/passenger/history?page=1&limit=10&status=completed",
+              "host": ["{{base_url}}"], "path": ["rides","passenger","history"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "completed", "description": "requested|driver_assigned|driver_arrived|in_progress|completed|cancelled" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.6 Get Ride Details",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/rides/123", "host": ["{{base_url}}"], "path": ["rides","123"] },
+            "description": "Replace 123 with actual rideId (integer)"
+          }
+        },
+        {
+          "name": "3.7 Cancel Ride",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason_code\": \"changed_plan\",\n  \"reason_text\": \"Plan badal gaya\",\n  \"driver_distance_meters\": 500\n}\n\n/* reason_code (REQUIRED) values:\n   driver_too_far | changed_plan | found_another_ride |\n   driver_asked_to_cancel | wrong_pickup | long_wait |\n   personal_emergency | other\n*/"
+            },
+            "url": { "raw": "{{base_url}}/rides/123/cancel", "host": ["{{base_url}}"], "path": ["rides","123","cancel"] },
+            "description": "reason_code REQUIRED. reason_text optional. driver_distance_meters optional (default 0)."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Ride cancelled\",\n  \"data\": {\n    \"cancellation_fee\": 30.00,\n    \"refund_amount\": 0\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3.8 Get Ride Invoice",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/rides/123/invoice", "host": ["{{base_url}}"], "path": ["rides","123","invoice"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"invoice_number\": \"INV2025001234\",\n    \"total_fare\": 250.50,\n    \"payment_method\": \"wallet\",\n    \"breakdown\": {\n      \"base_fare\": 50,\n      \"per_km_charge\": 150,\n      \"platform_fee\": 25,\n      \"taxes\": 25.50\n    },\n    \"driver\": { \"name\": \"Rajesh Kumar\", \"vehicle_number\": \"DL01AB1234\" }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3.9 Rate Ride",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"review\": \"Bahut accha driver tha, smooth ride\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/rides/123/rate", "host": ["{{base_url}}"], "path": ["rides","123","rate"] },
+            "description": "⚠️ Field 'review' hai, 'comment' nahi. rating: 1-5 integer. review optional, max 500 chars."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Ride rated successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "📅 4. SCHEDULED RIDES",
+      "item": [
+        {
+          "name": "4.1 Schedule Ride (Book for Later)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pickup_latitude\": 28.7041,\n  \"pickup_longitude\": 77.1025,\n  \"pickup_address\": \"Connaught Place, New Delhi\",\n  \"pickup_location_name\": \"CP Metro Gate 1\",\n  \"dropoff_latitude\": 28.5355,\n  \"dropoff_longitude\": 77.3910,\n  \"dropoff_address\": \"Sector 45, Gurugram, Haryana\",\n  \"dropoff_location_name\": \"Sector 45 Market\",\n  \"vehicle_type\": \"bike\",\n  \"payment_method\": \"cash\",\n  \"pickup_time\": \"2025-04-15T09:30:00Z\",\n  \"estimated_fare\": 250.50\n}\n\n/* pickup_time: ISO8601 datetime (REQUIRED)\n   vehicle_type: bike | auto | car\n   payment_method: cash | card | wallet | upi (default: cash)\n   pickup_location_name, dropoff_location_name, estimated_fare: optional */"
+            },
+            "url": { "raw": "{{base_url}}/rides/schedule", "host": ["{{base_url}}"], "path": ["rides","schedule"] },
+            "description": "⚠️ snake_case fields. pickup_time (ISO datetime) REQUIRED. NOT 'scheduledAt'."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 10,\n    \"status\": \"scheduled\",\n    \"pickup_time\": \"2025-04-15T09:30:00Z\",\n    \"estimated_fare\": 250.50\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "4.2 Get My Scheduled Rides",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/rides/scheduled", "host": ["{{base_url}}"], "path": ["rides","scheduled"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    { \"id\": 10, \"pickup_time\": \"2025-04-15T09:30:00Z\", \"status\": \"scheduled\", \"pickup_address\": \"Connaught Place\" }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "4.3 Cancel Scheduled Ride",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/rides/scheduled/10", "host": ["{{base_url}}"], "path": ["rides","scheduled","10"] },
+            "description": "Replace 10 with actual scheduled ride ID"
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Scheduled ride cancelled\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "💳 5. PAYMENTS",
+      "item": [
+        {
+          "name": "5.1 Create Payment Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 250.50,\n  \"purpose\": \"ride_payment\",\n  \"payment_method\": \"upi\",\n  \"ride_id\": 123,\n  \"payment_gateway\": \"razorpay\",\n  \"description\": \"Payment for ride #123\"\n}\n\n/* purpose (REQUIRED): ride_payment | wallet_recharge | subscription | cancellation_fee | tip\n   payment_method (REQUIRED): cash | card | wallet | upi\n   ride_id: required when purpose = ride_payment | cancellation_fee | tip\n   payment_gateway: razorpay | stripe (optional)\n*/"
+            },
+            "url": { "raw": "{{base_url}}/payments/orders", "host": ["{{base_url}}"], "path": ["payments","orders"] },
+            "description": "cash/wallet: auto confirmed. UPI/card: returns gateway_order_id for Razorpay SDK."
+          },
+          "response": [
+            {
+              "name": "200 Cash/Wallet (Auto Confirmed)",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"order_number\": \"ORD2025001234\",\n    \"status\": \"success\",\n    \"amount\": 250.50\n  }\n}"
+            },
+            {
+              "name": "200 UPI/Card (Gateway Order)",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"order_number\": \"ORD2025001234\",\n    \"gateway_order_id\": \"order_razorpay_xyz\",\n    \"amount\": 250.50,\n    \"currency\": \"INR\",\n    \"status\": \"created\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "5.2 Verify Payment (Razorpay Callback)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gateway_order_id\": \"order_razorpay_xyz\",\n  \"gateway_payment_id\": \"pay_razorpay_abc\",\n  \"gateway_signature\": \"hmac_sha256_signature_here\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/payments/verify", "host": ["{{base_url}}"], "path": ["payments","verify"] },
+            "description": "⚠️ gateway_order_id, gateway_payment_id, gateway_signature — ye fields hain, orderId/paymentId/signature nahi."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"order_number\": \"ORD2025001234\",\n    \"status\": \"success\",\n    \"amount\": 250.50\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "5.3 Get Payment History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": {
+              "raw": "{{base_url}}/payments/history?limit=20&offset=0&status=success&purpose=ride_payment",
+              "host": ["{{base_url}}"], "path": ["payments","history"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" },
+                { "key": "status", "value": "success", "description": "created|attempted|success|failed|refunded|partially_refunded|cancelled" },
+                { "key": "purpose", "value": "ride_payment", "description": "ride_payment|wallet_recharge|subscription|cancellation_fee|tip" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"payments\": [ { \"order_number\": \"ORD001\", \"amount\": 250, \"status\": \"success\", \"purpose\": \"ride_payment\" } ],\n    \"total\": 45\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "5.4 Get Single Order Detail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/payments/orders/ORD2025001234", "host": ["{{base_url}}"], "path": ["payments","orders","ORD2025001234"] }
+          }
+        },
+        {
+          "name": "5.5 Get Saved Payment Methods",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/payments/methods", "host": ["{{base_url}}"], "path": ["payments","methods"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    { \"id\": 1, \"type\": \"upi\", \"upiId\": \"aryan@paytm\", \"isDefault\": true },\n    { \"id\": 2, \"type\": \"card\", \"cardLast4\": \"4242\", \"cardBrand\": \"visa\" }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "5.6 Save UPI Method",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"upi\",\n  \"upiId\": \"aryan@paytm\",\n  \"gatewayToken\": \"tok_upi_razorpay_xyz\",\n  \"isDefault\": true\n}"
+            },
+            "url": { "raw": "{{base_url}}/payments/methods", "host": ["{{base_url}}"], "path": ["payments","methods"] },
+            "description": "type=upi: upiId + gatewayToken required."
+          }
+        },
+        {
+          "name": "5.7 Save Card Method",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"card\",\n  \"cardLast4\": \"4242\",\n  \"cardBrand\": \"visa\",\n  \"cardExpMonth\": 12,\n  \"cardExpYear\": 2028,\n  \"gatewayToken\": \"tok_card_razorpay_xyz\",\n  \"isDefault\": false\n}\n\n/* cardBrand: visa | mastercard | rupay | amex */"
+            },
+            "url": { "raw": "{{base_url}}/payments/methods", "host": ["{{base_url}}"], "path": ["payments","methods"] },
+            "description": "type=card: cardLast4, cardBrand, cardExpMonth, cardExpYear, gatewayToken required."
+          }
+        },
+        {
+          "name": "5.8 Delete Payment Method",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/payments/methods/1", "host": ["{{base_url}}"], "path": ["payments","methods","1"] }
+          }
+        },
+        {
+          "name": "5.9 Set Default Payment Method",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/payments/methods/1/default", "host": ["{{base_url}}"], "path": ["payments","methods","1","default"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "👛 6. WALLET",
+      "item": [
+        {
+          "name": "6.1 Get Wallet Info",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/wallet", "host": ["{{base_url}}"], "path": ["wallet"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"balance\": 250.00,\n    \"currency\": \"INR\",\n    \"status\": \"active\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "6.2 Get Wallet Balance",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/wallet/balance", "host": ["{{base_url}}"], "path": ["wallet","balance"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"balance\": 250.00, \"currency\": \"INR\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "6.3 Recharge Wallet",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500.00,\n  \"payment_method\": \"upi\",\n  \"payment_gateway\": \"razorpay\"\n}\n\n/* payment_method: cash | card | upi  (NOT 'wallet')\n   amount: min ₹10, max ₹10000\n*/"
+            },
+            "url": { "raw": "{{base_url}}/wallet/recharge", "host": ["{{base_url}}"], "path": ["wallet","recharge"] },
+            "description": "⚠️ payment_method 'wallet' allowed nahi. Only cash | card | upi."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"new_balance\": 750.00,\n    \"transaction_id\": \"TXN2025001234\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "6.4 Get Wallet Transactions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": {
+              "raw": "{{base_url}}/wallet/transactions?limit=20&offset=0&type=debit&category=ride_payment",
+              "host": ["{{base_url}}"], "path": ["wallet","transactions"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" },
+                { "key": "type", "value": "debit", "description": "credit | debit" },
+                { "key": "category", "value": "ride_payment", "description": "ride_payment|ride_refund|wallet_recharge|referral_bonus|cancellation_fee|withdrawal" },
+                { "key": "status", "value": "", "description": "pending|success|failed|refunded" },
+                { "key": "startDate", "value": "", "description": "ISO date YYYY-MM-DD" },
+                { "key": "endDate", "value": "", "description": "ISO date YYYY-MM-DD" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"transactions\": [\n      { \"id\": \"TXN001\", \"type\": \"debit\", \"amount\": 250, \"category\": \"ride_payment\", \"status\": \"success\" }\n    ],\n    \"total\": 30\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "6.5 Get Single Transaction",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/wallet/transactions/TXN2025001234", "host": ["{{base_url}}"], "path": ["wallet","transactions","TXN2025001234"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🏷️ 7. COUPONS",
+      "item": [
+        {
+          "name": "7.1 Get Available Coupons",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": {
+              "raw": "{{base_url}}/coupons/available?vehicleType=bike",
+              "host": ["{{base_url}}"], "path": ["coupons","available"],
+              "query": [
+                { "key": "vehicleType", "value": "bike", "description": "bike | auto | car" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"code\": \"SAVE50\",\n      \"discount_type\": \"flat\",\n      \"discount_value\": 50,\n      \"min_ride_amount\": 150,\n      \"max_discount\": 50,\n      \"expiry\": \"2025-04-30\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "7.2 Apply Coupon",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"SAVE50\",\n  \"ride_amount\": 250.50,\n  \"vehicle_type\": \"bike\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/coupons/apply", "host": ["{{base_url}}"], "path": ["coupons","apply"] },
+            "description": "⚠️ ride_amount (number) required, rideId nahi. vehicle_type optional."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"original_amount\": 250.50,\n    \"discount\": 50.00,\n    \"final_amount\": 200.50,\n    \"coupon_code\": \"SAVE50\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "⭐ 8. REVIEWS (Passenger side)",
+      "item": [
+        {
+          "name": "8.1 Submit Review (Driver ko rate karo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ride_id\": 123,\n  \"reviewee_id\": 1,\n  \"reviewer_type\": \"passenger\",\n  \"reviewee_type\": \"driver\",\n  \"rating\": 5,\n  \"comment\": \"Excellent ride, very smooth\",\n  \"tags\": [\"clean_car\", \"safe_driving\", \"polite_driver\"],\n  \"tip_amount\": 20\n}\n\n/* Driver tags:\n   clean_car | safe_driving | polite_driver | on_time_pickup | good_navigation | ac_working | smooth_ride\n   tip_amount: optional, max ₹500 */"
+            },
+            "url": { "raw": "{{base_url}}/reviews", "host": ["{{base_url}}"], "path": ["reviews"] },
+            "description": "ride_id, reviewee_id (driver's userId), reviewer_type, reviewee_type, rating — sab REQUIRED."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"id\": 50, \"ride_id\": 123, \"rating\": 5 }\n}"
+            }
+          ]
+        },
+        {
+          "name": "8.2 Get Ride Reviews",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/reviews/ride/123", "host": ["{{base_url}}"], "path": ["reviews","ride","123"] }
+          }
+        },
+        {
+          "name": "8.3 Get User Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reviews/user/1?limit=10&offset=0",
+              "host": ["{{base_url}}"], "path": ["reviews","user","1"],
+              "query": [
+                { "key": "limit", "value": "10" },
+                { "key": "offset", "value": "0" },
+                { "key": "rating", "value": "", "description": "optional: 1|2|3|4|5 to filter" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "8.4 Get User Rating Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/reviews/user/1/summary", "host": ["{{base_url}}"], "path": ["reviews","user","1","summary"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"average_rating\": 4.7,\n    \"total_reviews\": 48,\n    \"breakdown\": { \"5\": 30, \"4\": 12, \"3\": 4, \"2\": 1, \"1\": 1 }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "8.5 Get Available Tags",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reviews/tags?reviewer_type=passenger",
+              "host": ["{{base_url}}"], "path": ["reviews","tags"],
+              "query": [
+                { "key": "reviewer_type", "value": "passenger", "description": "passenger | driver" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "8.6 Flag a Review",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/reviews/50/flag", "host": ["{{base_url}}"], "path": ["reviews","50","flag"] },
+            "description": "Replace 50 with actual reviewId. No body required."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🆘 9. SOS",
+      "item": [
+        {
+          "name": "9.1 Trigger SOS",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ride_id\": 123,\n  \"latitude\": 28.7041,\n  \"longitude\": 77.1025\n}"
+            },
+            "url": { "raw": "{{base_url}}/sos", "host": ["{{base_url}}"], "path": ["sos"] },
+            "description": "⚠️ Flat fields — ride_id, latitude, longitude directly. Nested location object mat dena."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"alert_id\": \"alert_123\",\n    \"status\": \"active\",\n    \"emergency_contacts_notified\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "9.2 Cancel SOS (False Alarm)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/sos/alert_123/cancel", "host": ["{{base_url}}"], "path": ["sos","alert_123","cancel"] },
+            "description": "Replace alert_123 with actual alertId. No body."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"SOS alert cancelled\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "9.3 Get SOS History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/sos/history", "host": ["{{base_url}}"], "path": ["sos","history"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "💰 10. SUBSCRIPTIONS",
+      "item": [
+        {
+          "name": "10.1 Get All Plans (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/subscriptions/plans", "host": ["{{base_url}}"], "path": ["subscriptions","plans"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    { \"id\": 1, \"name\": \"GoPass Monthly\", \"price\": 299, \"benefits\": [\"5 free rides\", \"10% discount\"] }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "10.2 Get Single Plan",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/subscriptions/plans/1", "host": ["{{base_url}}"], "path": ["subscriptions","plans","1"] }
+          }
+        },
+        {
+          "name": "10.3 Get Active Subscription",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/subscriptions/active", "host": ["{{base_url}}"], "path": ["subscriptions","active"] }
+          }
+        },
+        {
+          "name": "10.4 Purchase Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plan_id\": 1,\n  \"payment_method\": \"wallet\",\n  \"payment_gateway\": \"razorpay\",\n  \"auto_renew\": true\n}\n\n/* payment_method: cash | card | wallet | upi */"
+            },
+            "url": { "raw": "{{base_url}}/subscriptions/purchase", "host": ["{{base_url}}"], "path": ["subscriptions","purchase"] },
+            "description": "plan_id aur payment_method REQUIRED."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"subscription_id\": 5,\n    \"plan\": \"GoPass Monthly\",\n    \"valid_until\": \"2025-05-12\",\n    \"auto_renew\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "10.5 Cancel Subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subscription_id\": 5,\n  \"reason\": \"Not needed anymore\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/subscriptions/cancel", "host": ["{{base_url}}"], "path": ["subscriptions","cancel"] },
+            "description": "subscription_id REQUIRED. reason optional."
+          }
+        },
+        {
+          "name": "10.6 Toggle Auto-Renew",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subscription_id\": 5,\n  \"auto_renew\": false\n}"
+            },
+            "url": { "raw": "{{base_url}}/subscriptions/auto-renew", "host": ["{{base_url}}"], "path": ["subscriptions","auto-renew"] },
+            "description": "subscription_id aur auto_renew (boolean) dono REQUIRED."
+          }
+        },
+        {
+          "name": "10.7 Get Subscription History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/history?limit=10&offset=0",
+              "host": ["{{base_url}}"], "path": ["subscriptions","history"],
+              "query": [
+                { "key": "limit", "value": "10" },
+                { "key": "offset", "value": "0" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🎓 11. KYC — PASSENGER (/kyc)",
+      "item": [
+        {
+          "name": "11.1 Get KYC Status",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/kyc/status", "host": ["{{base_url}}"], "path": ["kyc","status"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"aadhaar\": \"verified\",\n    \"pan\": \"not_submitted\",\n    \"bank\": \"not_submitted\",\n    \"overall\": \"partial\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "11.2 Aadhaar — Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"aadhaar_number\": \"123456789012\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/kyc/aadhaar/otp", "host": ["{{base_url}}"], "path": ["kyc","aadhaar","otp"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"ref_id\": \"ref_abc123\",\n    \"message\": \"OTP sent to Aadhaar-linked mobile\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "11.3 Aadhaar — Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ref_id\": \"ref_abc123\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/kyc/aadhaar/verify", "host": ["{{base_url}}"], "path": ["kyc","aadhaar","verify"] }
+          }
+        },
+        {
+          "name": "11.4 Submit PAN",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pan_number\": \"ABCDE1234F\",\n  \"name\": \"Aryan Shah\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/kyc/pan", "host": ["{{base_url}}"], "path": ["kyc","pan"] }
+          }
+        },
+        {
+          "name": "11.5 Submit Bank Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account_number\": \"12345678901234\",\n  \"ifsc\": \"SBIN0001234\",\n  \"name\": \"Aryan Shah\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/kyc/bank", "host": ["{{base_url}}"], "path": ["kyc","bank"] }
+          }
+        },
+        {
+          "name": "11.6 Submit Face Match (Selfie)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"selfie\": \"/9j/4AAQSkZJRgAB...\",\n  \"aadhaar_photo\": \"/9j/4AAQSkZJRgAB...\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/kyc/face", "host": ["{{base_url}}"], "path": ["kyc","face"] },
+            "description": "selfie aur aadhaar_photo: base64 encoded image strings."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📞 12. SUPPORT",
+      "item": [
+        {
+          "name": "12.1 Create Support Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"payment_issue\",\n  \"subject\": \"Payment deducted but ride not confirmed\",\n  \"description\": \"Maine ₹250 wallet se diye lekin ride status abhi bhi pending hai aur driver assign nahi hua\",\n  \"ride_id\": 123\n}\n\n/* category (REQUIRED):\n   ride_issue | payment_issue | driver_behavior |\n   safety_concern | app_bug | account | other\n   ride_id: optional */"
+            },
+            "url": { "raw": "{{base_url}}/support/tickets", "host": ["{{base_url}}"], "path": ["support","tickets"] },
+            "description": "category, subject (min 5), description (min 10) REQUIRED. ride_id optional."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created", "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"ticket_number\": \"TKT2025001\",\n    \"status\": \"open\",\n    \"category\": \"payment_issue\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "12.2 Get My Tickets",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/support/tickets", "host": ["{{base_url}}"], "path": ["support","tickets"] }
+          }
+        },
+        {
+          "name": "12.3 Get Ticket Detail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/support/tickets/1", "host": ["{{base_url}}"], "path": ["support","tickets","1"] }
+          }
+        },
+        {
+          "name": "12.4 Reply to Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Thank you, problem solve ho gayi\",\n  \"attachments\": [\n    \"https://s3.amazonaws.com/gomobility/attachments/screenshot.jpg\"\n  ]\n}"
+            },
+            "url": { "raw": "{{base_url}}/support/tickets/1/reply", "host": ["{{base_url}}"], "path": ["support","tickets","1","reply"] },
+            "description": "message REQUIRED (min 1, max 2000). attachments optional (array of S3 URLs, max 5)."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📋 13. PRICING",
+      "item": [
+        {
+          "name": "13.1 Get Fare Estimate",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pricing/estimate?vehicle_type=bike&distance_km=18.5&estimated_minutes=35",
+              "host": ["{{base_url}}"], "path": ["pricing","estimate"],
+              "query": [
+                { "key": "vehicle_type", "value": "bike", "description": "bike | auto | cab (required)" },
+                { "key": "distance_km", "value": "18.5", "description": "required, max 200" },
+                { "key": "estimated_minutes", "value": "35", "description": "required, max 300" },
+                { "key": "ride_requests", "value": "", "description": "optional — current demand" },
+                { "key": "available_drivers", "value": "", "description": "optional — available supply" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"vehicle_type\": \"bike\",\n    \"estimated_fare\": 245.00,\n    \"surge_multiplier\": 1.0,\n    \"breakdown\": { \"base\": 50, \"per_km\": 150, \"per_min\": 20, \"platform_fee\": 25 }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "13.2 Get All Vehicles Estimate",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pricing/all-estimates?distance_km=18.5&estimated_minutes=35",
+              "host": ["{{base_url}}"], "path": ["pricing","all-estimates"],
+              "query": [
+                { "key": "distance_km", "value": "18.5", "description": "required" },
+                { "key": "estimated_minutes", "value": "35", "description": "required" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    { \"vehicle_type\": \"bike\", \"estimated_fare\": 245, \"eta_minutes\": 3 },\n    { \"vehicle_type\": \"auto\", \"estimated_fare\": 320, \"eta_minutes\": 5 },\n    { \"vehicle_type\": \"cab\", \"estimated_fare\": 450, \"eta_minutes\": 7 }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "13.3 Get Surge Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pricing/surge?ride_requests=50&available_drivers=10",
+              "host": ["{{base_url}}"], "path": ["pricing","surge"],
+              "query": [
+                { "key": "ride_requests", "value": "50", "description": "required" },
+                { "key": "available_drivers", "value": "10", "description": "required" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"surge_active\": true,\n    \"surge_multiplier\": 1.5,\n    \"reason\": \"High demand in your area\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "🎁 14. REFERRAL",
+      "item": [
+        {
+          "name": "14.1 Get My Referral Code",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/users/referral-code", "host": ["{{base_url}}"], "path": ["users","referral-code"] }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"code\": \"ARYAN2025\",\n    \"share_link\": \"https://gomobility.app/join?ref=ARYAN2025\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "14.2 Apply Referral Code",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"FRIEND2025\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/users/referral/apply", "host": ["{{base_url}}"], "path": ["users","referral","apply"] },
+            "description": "code: min 4, max 20 chars. REQUIRED."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK", "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"bonus_added\": 50.00,\n    \"new_wallet_balance\": 300.00\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "14.3 Get My Referrals",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": { "raw": "{{base_url}}/users/referrals", "host": ["{{base_url}}"], "path": ["users","referrals"] }
+          }
+        }
+      ]
+    }
+
+  ]
+}

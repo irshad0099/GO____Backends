@@ -16,7 +16,7 @@ import {
     getAllTransactionsCount,
     getRevenueByDay,
     getRevenueByVehicle,
-} from '../repositories/admin.Repository.js';
+} from '../repositories/admin.repository.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  DASHBOARD

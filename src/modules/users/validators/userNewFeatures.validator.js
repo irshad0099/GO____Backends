@@ -46,6 +46,7 @@ export const validate = (schema, source = 'body') => (req, res, next) => {
             errors: error.details.map(d => ({ field: d.path.join('.'), message: d.message })),
         });
     }
-    if (source === 'query') req.query = value; else req.body = value;
+    // Express 5: req.query is a read-only getter, use defineProperty to override
+    if (source === 'query') Object.defineProperty(req, 'query', { value, writable: true, configurable: true }); else req.body = value;
     next();
 };

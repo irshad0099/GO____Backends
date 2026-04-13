@@ -148,10 +148,16 @@ import { ENV }                       from '../../config/envConfig.js';
 
 // ─── Redis Store factory ──────────────────────────────────────────────────────
 // Har limiter ka alag prefix — taaki keys mix na hon
+// const makeStore = (prefix) => new RedisStore({
+//     // sendCommand: (...args) => redis.call(...args),
+//     // ✅ Correct
+//      sendCommand: (...args) => redis.sendCommand(args),
+//     prefix,
+// });
+
+
 const makeStore = (prefix) => new RedisStore({
-    // sendCommand: (...args) => redis.call(...args),
-    // ✅ Correct
-     sendCommand: (...args) => redis.sendCommand(args),
+    sendCommand: (command, ...args) => redis.call(command, ...args),
     prefix,
 });
 

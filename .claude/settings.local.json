@@ -19,7 +19,12 @@
       "Bash(ls -la .env)",
       "Bash(ls src/modules/rides/controllers/)",
       "Bash(node -c src/server.js)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(node --check src/infrastructure/database/postgres.js)",
+      "Bash(node --check src/modules/wallet/validators/walletValidator.js)",
+      "Bash(node --check src/modules/payments/validators/paymentValidator.js)",
+      "Bash(node --check src/modules/pricing/validators/pricingValidator.js)",
+      "Bash(node --check src/modules/subscription/validators/subscriptionValidator.js)"
     ]
   }
 }

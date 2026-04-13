@@ -25,7 +25,10 @@ export const ENV = {
     REDIS_PORT: parseInt(process.env.REDIS_PORT) || 6379,
     REDIS_PASSWORD: process.env.REDIS_PASSWORD || '',
     REDIS_DB: parseInt(process.env.REDIS_DB) || 0,
-    UPSTASH_REDIS_URL: process.env.UPSTASH_REDIS_URL || 'rediss://default:gQAAAAAAAU2PAAIncDI0MzI0MDJkNDQxMGM0YzJlOTMzMDRjMTNmODAxZGIzY3AyODUzOTE@picked-marten-85391.upstash.io:6379',
+    // UPSTASH_REDIS_URL: process.env.UPSTASH_REDIS_URL || 'rediss://default:gQAAAAAAAU2PAAIncDI0MzI0MDJkNDQxMGM0YzJlOTMzMDRjMTNmODAxZGIzY3AyODUzOTE@picked-marten-85391.upstash.io:6379',
+
+    // NAYA - YEH RAKHO
+REDIS_USERNAME: process.env.REDIS_USERNAME || 'default',
 
     // Firebase
     FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,

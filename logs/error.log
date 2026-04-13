@@ -1613,3 +1613,712 @@ Error: Failed to send OTP. Please try again.
 2026-04-12 15:37:36 [ERROR]: ❌ Redis error:
 2026-04-12 15:37:36 [ERROR]: ❌ Redis error:
 2026-04-12 15:37:37 [ERROR]: ❌ Redis error:
+=======
+2026-04-12 18:33:24 [ERROR]: ❌ Twilio SMS failed
+2026-04-12 18:33:24 [ERROR]: ❌ SMS sending failed
+2026-04-12 18:34:28 [ERROR]: ❌ Twilio SMS failed
+2026-04-12 18:34:28 [ERROR]: ❌ SMS sending failed
+2026-04-12 18:34:41 [ERROR]: Validation failed
+ValidationError: Validation failed
+    at file:///D:/Akash_Personal/GO____Backends/src/core/middleware/validation.middleware.js:20:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+2026-04-12 19:43:08 [ERROR]: Request ride service error: You already have an active ride
+ConflictError: You already have an active ride
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:706:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-12 19:43:08 [ERROR]: You already have an active ride
+ConflictError: You already have an active ride
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:706:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-12 19:47:13 [ERROR]: Request ride service error: You already have an active ride
+ConflictError: You already have an active ride
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:706:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-12 19:47:13 [ERROR]: You already have an active ride
+ConflictError: You already have an active ride
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:706:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-12 19:55:51 [ERROR]: Request ride service error: You already have an active ride
+ConflictError: You already have an active ride
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:706:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-12 19:55:51 [ERROR]: You already have an active ride
+ConflictError: You already have an active ride
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:706:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-12 20:04:20 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-04-12 20:04:20 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-04-12 20:20:32 [ERROR]: Request ride service error: You already have an active ride
+ConflictError: You already have an active ride
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:710:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-12 20:20:32 [ERROR]: You already have an active ride
+ConflictError: You already have an active ride
+    at Module.requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/services/rideService.js:710:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async requestRide (file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/modules/rides/controllers/rideController.js:9:24)
+2026-04-12 20:37:51 [ERROR]: [RideCompletionWorker] Worker error: connect ETIMEDOUT
+2026-04-12 20:37:52 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:52 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:52 [ERROR]: [PaymentWorker] Worker error: 
+2026-04-12 20:37:52 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:52 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:52 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:52 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:52 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:52 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:53 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:53 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:53 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:54 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:54 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:54 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:54 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:55 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:55 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:55 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:56 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:56 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:57 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:57 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:58 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:58 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:59 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:37:59 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:01 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:01 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:01 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:02 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:02 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:04 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:04 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:04 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:05 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:05 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:05 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:07 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:07 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:07 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:09 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:09 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:11 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:11 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:11 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:13 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:13 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-12 20:38:13 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-12 20:38:13 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:13 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:13 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:13 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:13 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:13 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:13 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:13 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:14 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:14 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:14 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-12 20:38:14 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:14 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:14 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:14 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:15 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:15 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:15 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:15 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:15 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:15 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:16 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:16 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:16 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:16 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:16 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:17 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:17 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:17 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:17 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:18 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:18 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:18 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:19 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:19 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:19 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:19 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:20 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:21 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:21 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:22 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:22 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:22 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:22 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:22 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:22 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:23 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:24 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:24 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:24 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:25 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:25 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:25 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:26 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:27 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:27 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:27 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:28 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:33 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:33 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:33 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:33 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:33 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:33 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:36 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:36 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:36 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:36 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:36 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:36 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:36 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:36 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:36 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:36 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:37 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:38 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:38 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:38 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:38 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:38 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:38 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:39 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:39 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:40 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:40 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:41 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:41 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:41 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:41 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:41 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:42 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:42 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:42 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:42 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:42 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:43 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:43 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:43 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:43 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:43 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:43 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:43 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:43 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:44 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:44 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:44 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:44 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:44 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:45 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:46 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:46 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:46 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:46 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:46 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:46 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:46 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:47 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:47 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:47 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:47 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:47 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:48 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:49 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:49 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:49 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:49 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:49 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:49 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:49 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:50 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:50 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:50 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:50 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:51 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:52 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:52 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:52 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:52 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:52 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:52 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:52 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:53 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:54 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:54 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:54 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:54 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:54 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:56 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:56 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:56 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:56 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:56 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:57 [ERROR]: ❌ Redis error:
+2026-04-12 20:38:58 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:58 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:58 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:58 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:38:59 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:00 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:00 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:00 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:00 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:00 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:02 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:02 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:02 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:02 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:02 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:03 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:04 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:04 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:04 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:04 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:04 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:04 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:05 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:07 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:07 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:07 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:07 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:07 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:07 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:07 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:08 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:09 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:09 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:09 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:09 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:10 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:12 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:12 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:12 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:12 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:12 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:14 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:15 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:15 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:15 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:15 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:16 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:17 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:18 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:18 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:18 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:18 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:20 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:20 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:20 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:20 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:20 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:22 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:23 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:23 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:24 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:24 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:24 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:26 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:26 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:26 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:27 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:27 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:28 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:29 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:30 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:30 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:30 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:30 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:32 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:32 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:33 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:33 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:33 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:34 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:35 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:36 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:36 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:36 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:36 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:38 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:38 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:40 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:41 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:42 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:42 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:42 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:42 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:44 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:44 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:45 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:45 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:45 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:46 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:47 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:48 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:48 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:48 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:48 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:48 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:48 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:50 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:50 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:51 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:51 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:51 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:52 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:53 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:54 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:54 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:54 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:54 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:56 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:56 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:57 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:57 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:57 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:39:58 [ERROR]: ❌ Redis error:
+2026-04-12 20:39:59 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:00 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:00 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:00 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:00 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:02 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:02 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:03 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:03 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:03 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:04 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:05 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:06 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:06 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:06 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:06 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:08 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:08 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:09 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:09 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:09 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:11 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:11 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:12 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:12 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:12 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:13 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:15 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:15 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:15 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:15 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:15 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:17 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:20 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:20 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:20 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:20 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:20 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:20 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:21 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:21 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:21 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:21 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:22 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:22 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:22 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:22 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:22 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:22 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:22 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:22 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:22 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:22 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:23 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:23 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:23 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:23 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:23 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:23 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:24 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:24 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:24 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:24 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:24 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:25 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:25 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:25 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:25 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:25 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:25 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:25 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:25 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:26 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:26 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:26 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:26 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:26 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:27 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:27 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:27 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:27 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:27 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:28 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:28 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:28 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:28 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:28 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:28 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:28 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:29 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:37 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:37 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:38 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:38 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:38 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:38 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:39 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:39 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:40 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:40 [ERROR]: ❌ Redis error:
+2026-04-12 20:40:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io
+2026-04-12 20:40:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND picked-marten-85391.upstash.io

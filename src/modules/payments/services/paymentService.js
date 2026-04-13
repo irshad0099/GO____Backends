@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { pool } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
+import { addPaymentPostActionJob } from '../../../infrastructure/queue/payment.queue.js';
 import {
     createPaymentOrder,
     getPaymentOrderById,
@@ -297,8 +298,9 @@ export const verifyAndConfirmPayment = async ({
 
         await client.query('COMMIT');
 
-        // Post-payment actions (wallet recharge, subscription activate etc.)
-        await handlePostPaymentActions(order);
+        // Post-payment actions — queue mein dalo, HTTP response block nahi hoga
+        // jobId se idempotency ensure hoti hai — duplicate webhooks handle hote hain
+        await addPaymentPostActionJob(order);
 
         logger.info(`[Payment] Verified & confirmed | Order: ${order.order_number} | GW: ${gateway_payment_id}`);
 

@@ -142,16 +142,12 @@
 
 
 import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
-import { RedisStore }                from 'rate-limit-redis';
-import redis                         from '../../config/redis.config.js';
 import { ENV }                       from '../../config/envConfig.js';
 
-// ─── Redis Store factory ──────────────────────────────────────────────────────
-// Har limiter ka alag prefix — taaki keys mix na hon
-const makeStore = (prefix) => new RedisStore({
-    sendCommand: (...args) => redis.call(...args),
-    prefix,
-});
+// ─────────────────────────────────────────────────────────────────────────────
+//  In-memory store use ho raha hai (express-rate-limit default)
+//  Redis store hata diya — Upstash rate limit hit ho raha tha
+// ─────────────────────────────────────────────────────────────────────────────
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  GENERAL LIMITERS
@@ -161,7 +157,6 @@ const makeStore = (prefix) => new RedisStore({
 export const apiLimiter = rateLimit({
     windowMs: ENV.RATE_LIMIT_WINDOW,
     max:      ENV.RATE_LIMIT_MAX,
-    store:    makeStore('rl:api:'),
     message: {
         success: false,
         message: 'Too many requests, please try again later.'
@@ -174,7 +169,6 @@ export const apiLimiter = rateLimit({
 export const authLimiter = rateLimit({
     windowMs:               15 * 60 * 1000, // 15 minutes
     max:                    5,
-    store:                  makeStore('rl:auth:'),
     skipSuccessfulRequests: true,
     message: {
         success: false,
@@ -188,7 +182,6 @@ export const authLimiter = rateLimit({
 export const otpLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     max:      3,
-    store:    makeStore('rl:otp:'),
     message: {
         success: false,
         message: 'Too many OTP requests, please try again after an hour.'
@@ -205,7 +198,6 @@ export const otpLimiter = rateLimit({
 export const walletRechargeLimiter = rateLimit({
     windowMs:     60 * 60 * 1000,
     max:          10,
-    store:        makeStore('rl:recharge:'),
     keyGenerator: (req) => `recharge_${req.user?.id || ipKeyGenerator(req)}`,
     message: {
         success: false,
@@ -219,7 +211,6 @@ export const walletRechargeLimiter = rateLimit({
 export const ridePaymentLimiter = rateLimit({
     windowMs:     60 * 60 * 1000,
     max:          30,
-    store:        makeStore('rl:ride_pay:'),
     keyGenerator: (req) => `ride_pay_${req.user?.id || ipKeyGenerator(req)}`,
     message: {
         success: false,
@@ -233,7 +224,6 @@ export const ridePaymentLimiter = rateLimit({
 export const withdrawalLimiter = rateLimit({
     windowMs:               24 * 60 * 60 * 1000,
     max:                    3,
-    store:                  makeStore('rl:withdraw:'),
     keyGenerator:           (req) => `withdraw_${req.user?.id || ipKeyGenerator(req)}`,
     skipSuccessfulRequests: false,
     message: {
@@ -248,7 +238,6 @@ export const withdrawalLimiter = rateLimit({
 export const refundLimiter = rateLimit({
     windowMs:     60 * 60 * 1000,
     max:          5,
-    store:        makeStore('rl:refund:'),
     keyGenerator: (req) => `refund_${req.user?.id || ipKeyGenerator(req)}`,
     message: {
         success: false,
@@ -262,7 +251,6 @@ export const refundLimiter = rateLimit({
 export const transferLimiter = rateLimit({
     windowMs:     60 * 60 * 1000,
     max:          5,
-    store:        makeStore('rl:transfer:'),
     keyGenerator: (req) => `transfer_${req.user?.id || ipKeyGenerator(req)}`,
     message: {
         success: false,
@@ -276,7 +264,6 @@ export const transferLimiter = rateLimit({
 export const walletReadLimiter = rateLimit({
     windowMs:     60 * 1000,
     max:          60,
-    store:        makeStore('rl:wallet_read:'),
     keyGenerator: (req) => `wallet_read_${req.user?.id || ipKeyGenerator(req)}`,
     message: {
         success: false,
@@ -290,7 +277,6 @@ export const walletReadLimiter = rateLimit({
 export const transactionHistoryLimiter = rateLimit({
     windowMs:     60 * 1000,
     max:          30,
-    store:        makeStore('rl:txn_history:'),
     keyGenerator: (req) => `txn_history_${req.user?.id || ipKeyGenerator(req)}`,
     message: {
         success: false,

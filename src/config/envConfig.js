@@ -52,6 +52,8 @@ export const ENV = {
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
     TWILIO_PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER,
     FAST2SMS_API_KEY: process.env.FAST2SMS_API_KEY,
+    AUTHKEY_API_KEY: process.env.AUTHKEY_API_KEY,
+    AUTHKEY_SID: process.env.AUTHKEY_SID,
     
     // Payment Gateway
     PAYMENT_GATEWAY: process.env.PAYMENT_GATEWAY || 'razorpay',

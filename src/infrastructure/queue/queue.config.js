@@ -2,27 +2,41 @@ import { ENV } from '../../config/envConfig.js';
 
 /**
  * BullMQ ke liye Redis connection options banata hai.
- * Upstash TLS URL se host/port/password parse karta hai.
+ * Backward compatible: UPSTASH_REDIS_URL explicitly set hai toh woh use karo,
+ * warna REDIS_HOST/PORT/PASSWORD use karo.
  * maxRetriesPerRequest: null — BullMQ ki hard requirement hai.
  */
 export const getRedisConnectionOptions = () => {
-    const redisUrl = ENV.UPSTASH_REDIS_URL;
+    const useUpstash = !!process.env.UPSTASH_REDIS_URL;
 
-    // URL format: rediss://default:<password>@<host>:<port>
-    const parsed = new URL(redisUrl);
+    if (useUpstash) {
+        // URL format: rediss://default:<password>@<host>:<port>
+        const parsed = new URL(ENV.UPSTASH_REDIS_URL);
 
-    return {
-        host:     parsed.hostname,
-        port:     parseInt(parsed.port) || 6379,
-        password: decodeURIComponent(parsed.password),
-        username: parsed.username || 'default',
-        tls:      parsed.protocol === 'rediss:' ? { rejectUnauthorized: false } : undefined,
+        return {
+            host:     parsed.hostname,
+            port:     parseInt(parsed.port) || 6379,
+            password: decodeURIComponent(parsed.password),
+            username: parsed.username || 'default',
+            tls:      parsed.protocol === 'rediss:' ? { rejectUnauthorized: false } : undefined,
+            maxRetriesPerRequest: null,
+            enableReadyCheck:     false,
+            enableOfflineQueue:   true,
+            retryStrategy: (times) => Math.min(times * 100, 3000),
+        };
+    }
 
-        // BullMQ requirement — blocking commands ke liye null chahiye
+    // Naya Redis / local Redis — individual vars se
+    const opts = {
+        host:     ENV.REDIS_HOST,
+        port:     ENV.REDIS_PORT,
         maxRetriesPerRequest: null,
         enableReadyCheck:     false,
         enableOfflineQueue:   true,
-
         retryStrategy: (times) => Math.min(times * 100, 3000),
     };
+    if (ENV.REDIS_PASSWORD) {
+        opts.password = ENV.REDIS_PASSWORD;
+    }
+    return opts;
 };

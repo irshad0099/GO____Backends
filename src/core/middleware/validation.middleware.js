@@ -11,7 +11,7 @@ export const validate = (validations) => {
         if (errors.isEmpty()) {
             return next();
         }
-
+        
         const formattedErrors = errors.array().map(error => ({
             field: error.path,
             message: error.msg

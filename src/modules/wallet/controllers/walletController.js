@@ -11,17 +11,7 @@ import {
     getTransactionHistory,
     getTransactionDetail,
 } from '../services/walletService.js';
-
-// ─── Error handler ────────────────────────────────────────────────────────────
-
-const handleError = (res, error) => {
-    logger.error(`[WalletController] ${error.message}`);
-    const status = error.statusCode || 500;
-    return res.status(status).json({
-        success: false,
-        message: error.message || 'Internal server error',
-    });
-};
+import { sendResponse, sendError } from '../../../core/utils/response.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  GET /api/v1/wallet
@@ -30,9 +20,10 @@ const handleError = (res, error) => {
 export const getWallet = async (req, res) => {
     try {
         const result = await getWalletDetails(req.user.id);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[WalletController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -43,9 +34,10 @@ export const getWallet = async (req, res) => {
 export const getBalance = async (req, res) => {
     try {
         const result = await getWalletBalance(req.user.id);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[WalletController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -56,9 +48,10 @@ export const getBalance = async (req, res) => {
 export const recharge = async (req, res) => {
     try {
         const result = await rechargeWallet(req.user.id, req.body);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[WalletController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -69,9 +62,10 @@ export const recharge = async (req, res) => {
 export const ridePayment = async (req, res) => {
     try {
         const result = await payForRide(req.user.id, req.body);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[WalletController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -85,9 +79,10 @@ export const refund = async (req, res) => {
         // Admin can pass target user_id in body; user refunds use their own id
         const userId = req.body.user_id || req.user.id;
         const result = await processRideRefund(userId, req.body);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[WalletController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -98,9 +93,10 @@ export const refund = async (req, res) => {
 export const cancellationFee = async (req, res) => {
     try {
         const result = await chargeCancellationFee(req.user.id, req.body);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[WalletController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -112,9 +108,10 @@ export const referralBonus = async (req, res) => {
     try {
         const userId = req.body.user_id || req.user.id;
         const result = await creditReferralBonus(userId, req.body);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[WalletController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -125,9 +122,10 @@ export const referralBonus = async (req, res) => {
 export const withdraw = async (req, res) => {
     try {
         const result = await withdrawFromWallet(req.user.id, req.body);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[WalletController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -149,9 +147,10 @@ export const getTransactions = async (req, res) => {
             endDate,
         });
 
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[WalletController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -162,8 +161,9 @@ export const getTransactions = async (req, res) => {
 export const getTransaction = async (req, res) => {
     try {
         const result = await getTransactionDetail(req.user.id, req.params.txnNumber);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[WalletController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };

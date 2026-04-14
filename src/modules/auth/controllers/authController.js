@@ -1,10 +1,11 @@
 import * as authService from '../services/authService.js';
 import logger from '../../../core/logger/logger.js';
+import { sendResponse } from '../../../core/utils/response.js';
 
 export const signup = async (req, res, next) => {
     try {
         const { phone, email, fullName,role="passenger" } = req.body;
-        
+
         const result = await authService.signup({
             phone,
             email,
@@ -12,11 +13,7 @@ export const signup = async (req, res, next) => {
             role
         });
 
-        res.status(200).json({
-            success: true,
-            message: 'OTP sent successfully',
-            data: result
-        });
+        sendResponse(res, 200, 'OTP sent successfully', result);
     } catch (error) {
         next(error);
     }
@@ -25,7 +22,7 @@ export const signup = async (req, res, next) => {
 export const verifySignup = async (req, res, next) => {
     try {
         const { phone, otp, email, fullName,role } = req.body;
-        
+
         const result = await authService.verifySignup({
             phone,
             otp,
@@ -34,11 +31,7 @@ export const verifySignup = async (req, res, next) => {
             role
         });
 
-        res.status(201).json({
-            success: true,
-            message: 'Account created successfully',
-            data: result
-        });
+        sendResponse(res, 201, 'Account created successfully', result);
     } catch (error) {
         next(error);
     }
@@ -47,14 +40,10 @@ export const verifySignup = async (req, res, next) => {
 export const signin = async (req, res, next) => {
     try {
         const { phone,role } = req.body;
-        
+
         const result = await authService.signin(phone,role);
 
-        res.status(200).json({
-            success: true,
-            message: 'OTP sent successfully',
-            data: result
-        });
+        sendResponse(res, 200, 'OTP sent successfully', result);
     } catch (error) {
         next(error);
     }
@@ -64,7 +53,7 @@ export const verifySignin = async (req, res, next) => {
     try {
         const { phone, otp,role } = req.body;
         const { ip, userAgent } = req;
-        
+
         const result = await authService.verifySignin({
             phone,
             otp,
@@ -73,11 +62,7 @@ export const verifySignin = async (req, res, next) => {
             userAgent
         });
 
-        res.status(200).json({
-            success: true,
-            message: 'Login successful',
-            data: result
-        });
+        sendResponse(res, 200, 'Login successful', result);
     } catch (error) {
         next(error);
     }
@@ -86,7 +71,7 @@ export const verifySignin = async (req, res, next) => {
 // export const logout = async (req, res, next) => {
 //     try {
 //         const { refreshToken } = req.body;
-        
+
 //         const result = await authService.logout(refreshToken);
 
 //         res.status(200).json({
@@ -103,20 +88,16 @@ export const verifySignin = async (req, res, next) => {
 export const logout = async (req, res, next) => {
     try {
         const { refreshToken } = req.body;
- 
+
         // ── Access token header se lo — blacklist ke liye ─────────────────────
         const authHeader  = req.headers.authorization || '';
         const accessToken = authHeader.startsWith('Bearer ')
             ? authHeader.split(' ')[1]
             : null;
- 
+
         const result = await authService.logout(refreshToken, accessToken);
- 
-        res.status(200).json({
-            success: true,
-            message: 'Logged out successfully',
-            data:    result
-        });
+
+        sendResponse(res, 200, 'Logged out successfully', result);
     } catch (error) {
         next(error);
     }
@@ -125,14 +106,10 @@ export const logout = async (req, res, next) => {
 export const refreshToken = async (req, res, next) => {
     try {
         const { refreshToken } = req.body;
-        
+
         const result = await authService.refreshToken(refreshToken);
 
-        res.status(200).json({
-            success: true,
-            message: 'Token refreshed successfully',
-            data: result
-        });
+        sendResponse(res, 200, 'Token refreshed successfully', result);
     } catch (error) {
         next(error);
     }
@@ -140,12 +117,7 @@ export const refreshToken = async (req, res, next) => {
 
 export const me = async (req, res, next) => {
     try {
-        res.status(200).json({
-            success: true,
-            data: {
-                user: req.user
-            }
-        });
+        sendResponse(res, 200, '', { user: req.user });
     } catch (error) {
         next(error);
     }

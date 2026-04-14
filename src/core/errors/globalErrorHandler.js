@@ -4,7 +4,6 @@ import { ApiError } from './ApiError.js';  // ✅ Import ApiError
 
 export const globalErrorHandler = (err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
-    err.status = err.status || 'error';
 
     logger.error({
         message: err.message,
@@ -15,29 +14,21 @@ export const globalErrorHandler = (err, req, res, next) => {
         ip: req.ip
     });
 
-    if (ENV.NODE_ENV === 'development') {
-        res.status(err.statusCode).json({
+    if (err.statusCode === 500) {
+        return res.status(500).json({
             success: false,
-            status: err.status,
-            error: err,
-            message: err.message,
-            stack: err.stack
+            statuscode: 500,
+            message: ENV.NODE_ENV === 'development' ? err.message : 'Something went wrong',
+            data: {},
         });
-    } else {
-        if (err.isOperational) {
-            res.status(err.statusCode).json({
-                success: false,
-                status: err.status,
-                message: err.message
-            });
-        } else {
-            res.status(500).json({
-                success: false,
-                status: 'error',
-                message: 'Something went wrong'
-            });
-        }
     }
+
+    return res.status(err.statusCode).json({
+        success: false,
+        statuscode: err.statusCode,
+        message: err.message,
+        data: {},
+    });
 };
 
 export const notFoundHandler = (req, res, next) => {

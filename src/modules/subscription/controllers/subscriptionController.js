@@ -12,17 +12,7 @@ import {
     createNewPlan,
     setPlanActiveStatus,
 } from '../services/subscriptionService.js';
-
-// ─── Error handler ────────────────────────────────────────────────────────────
-
-const handleError = (res, error) => {
-    logger.error(`[SubscriptionController] ${error.message}`);
-    const status = error.statusCode || 500;
-    return res.status(status).json({
-        success: false,
-        message: error.message || 'Internal server error',
-    });
-};
+import { sendResponse, sendError } from '../../../core/utils/response.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  PUBLIC
@@ -33,9 +23,10 @@ const handleError = (res, error) => {
 export const getPlans = async (req, res) => {
     try {
         const result = await fetchAllPlans();
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[SubscriptionController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -44,9 +35,10 @@ export const getPlans = async (req, res) => {
 export const getPlan = async (req, res) => {
     try {
         const result = await fetchPlanById(parseInt(req.params.planId));
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[SubscriptionController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -59,9 +51,10 @@ export const getPlan = async (req, res) => {
 export const getActiveSubscription = async (req, res) => {
     try {
         const result = await fetchActiveSubscription(req.user.id);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[SubscriptionController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -70,9 +63,10 @@ export const getActiveSubscription = async (req, res) => {
 export const purchase = async (req, res) => {
     try {
         const result = await purchaseSubscription(req.user.id, req.body);
-        return res.status(201).json(result);
+        return sendResponse(res, 201, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[SubscriptionController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -81,9 +75,10 @@ export const purchase = async (req, res) => {
 export const cancel = async (req, res) => {
     try {
         const result = await cancelSubscription(req.user.id, req.body);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[SubscriptionController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -92,9 +87,10 @@ export const cancel = async (req, res) => {
 export const autoRenew = async (req, res) => {
     try {
         const result = await toggleAutoRenew(req.user.id, req.body);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[SubscriptionController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -105,9 +101,10 @@ export const applyBenefits = async (req, res) => {
     try {
         const { ride_amount } = req.body;
         const result = await applyRideBenefits(req.user.id, parseFloat(ride_amount));
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[SubscriptionController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -120,9 +117,10 @@ export const getHistory = async (req, res) => {
             limit:  parseInt(limit),
             offset: parseInt(offset),
         });
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[SubscriptionController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -134,9 +132,10 @@ export const getPayments = async (req, res) => {
             req.user.id,
             parseInt(req.params.subscriptionId)
         );
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[SubscriptionController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -149,9 +148,10 @@ export const getPayments = async (req, res) => {
 export const adminCreatePlan = async (req, res) => {
     try {
         const result = await createNewPlan(req.body);
-        return res.status(201).json(result);
+        return sendResponse(res, 201, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[SubscriptionController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -161,8 +161,9 @@ export const adminTogglePlan = async (req, res) => {
     try {
         const { is_active } = req.body;
         const result = await setPlanActiveStatus(parseInt(req.params.planId), is_active);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[SubscriptionController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };

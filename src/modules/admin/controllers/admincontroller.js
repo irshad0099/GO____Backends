@@ -12,14 +12,7 @@ import {
     fetchAllTransactions,
     fetchRevenueAnalytics,
 } from '../services/adminservice.js';
-
-const handleError = (res, error) => {
-    logger.error(`[AdminController] ${error.message}`);
-    return res.status(error.statusCode || 500).json({
-        success: false,
-        message: error.message || 'Internal server error',
-    });
-};
+import { sendResponse, sendError } from '../../../core/utils/response.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  DASHBOARD
@@ -29,9 +22,10 @@ const handleError = (res, error) => {
 export const getDashboard = async (req, res) => {
     try {
         const result = await fetchDashboardStats();
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[AdminController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -46,9 +40,10 @@ export const getUsers = async (req, res) => {
         const result = await fetchAllUsers({
             limit: parseInt(limit), offset: parseInt(offset), search, status,
         });
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[AdminController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -56,9 +51,10 @@ export const getUsers = async (req, res) => {
 export const getUser = async (req, res) => {
     try {
         const result = await fetchUserDetail(parseInt(req.params.userId));
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[AdminController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -66,9 +62,10 @@ export const getUser = async (req, res) => {
 export const updateUserStatus = async (req, res) => {
     try {
         const result = await changeUserStatus(parseInt(req.params.userId), req.body.is_active);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[AdminController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -85,9 +82,10 @@ export const getDrivers = async (req, res) => {
             search, status,
             isVerified: is_verified !== undefined ? is_verified === 'true' : undefined,
         });
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[AdminController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -95,9 +93,10 @@ export const getDrivers = async (req, res) => {
 export const getDriver = async (req, res) => {
     try {
         const result = await fetchDriverDetail(parseInt(req.params.driverId));
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[AdminController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -105,9 +104,10 @@ export const getDriver = async (req, res) => {
 export const updateDriverVerification = async (req, res) => {
     try {
         const result = await changeDriverVerification(parseInt(req.params.driverId), req.body.is_verified);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[AdminController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -115,9 +115,10 @@ export const updateDriverVerification = async (req, res) => {
 export const updateDriverStatus = async (req, res) => {
     try {
         const result = await changeDriverStatus(parseInt(req.params.driverId), req.body.is_active);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[AdminController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -134,9 +135,10 @@ export const getRides = async (req, res) => {
             status, vehicleType: vehicle_type,
             startDate: start_date, endDate: end_date,
         });
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[AdminController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -153,9 +155,10 @@ export const getTransactions = async (req, res) => {
             type, category, status,
             startDate: start_date, endDate: end_date,
         });
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[AdminController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -168,8 +171,9 @@ export const getRevenueAnalytics = async (req, res) => {
     try {
         const { days = 7 } = req.query;
         const result = await fetchRevenueAnalytics(parseInt(days));
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[AdminController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };

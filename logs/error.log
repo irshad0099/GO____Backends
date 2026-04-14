@@ -2869,3 +2869,31 @@ Error: Invalid OTP
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
     at async Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:42:9)
     at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:29:24)
+2026-04-14 21:03:57 [ERROR]: Signup service error: User already exists with this phone number with same role
+ConflictError: User already exists with this phone number with same role
+    at Module.signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:16:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:9:24)
+2026-04-14 21:03:57 [ERROR]: User already exists with this phone number with same role
+ConflictError: User already exists with this phone number with same role
+    at Module.signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:16:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:9:24)
+2026-04-14 21:04:53 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/otpService.js:199:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:42:9)
+    at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:26:24)
+2026-04-14 21:04:53 [ERROR]: Verify signup service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/otpService.js:199:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:42:9)
+    at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:26:24)
+2026-04-14 21:04:53 [ERROR]: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/otpService.js:199:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:42:9)
+    at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:26:24)

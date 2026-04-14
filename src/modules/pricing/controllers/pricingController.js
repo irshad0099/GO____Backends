@@ -6,13 +6,11 @@ import {
     getCancellationFee,
     getSurgeInfo,
 } from '../services/Pricingservice.js';
+import { sendResponse, sendError } from '../../../core/utils/response.js';
 
 const handleError = (res, error) => {
     logger.error(`[PricingController] ${error.message}`);
-    return res.status(error.statusCode || 500).json({
-        success: false,
-        message: error.message || 'Internal server error',
-    });
+    return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
 };
 
 // GET /api/v1/pricing/estimate?vehicle_type=bike&distance_km=5&estimated_minutes=15
@@ -26,7 +24,7 @@ export const getFareEstimate = (req, res) => {
             rideRequests:      parseInt(ride_requests  || 1),
             availableDrivers:  parseInt(available_drivers || 1),
         });
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
         return handleError(res, error);
     }
@@ -42,7 +40,7 @@ export const getAllEstimates = (req, res) => {
             rideRequests:     parseInt(ride_requests  || 1),
             availableDrivers: parseInt(available_drivers || 1),
         });
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
         return handleError(res, error);
     }
@@ -68,7 +66,7 @@ export const getFinalFare = (req, res) => {
             rideRequests:      parseInt(ride_requests        || 1),
             availableDrivers:  parseInt(available_drivers    || 1),
         });
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
         return handleError(res, error);
     }
@@ -80,7 +78,7 @@ export const getCancellation = (req, res) => {
         const result = getCancellationFee({
             driverDistanceMeters: parseFloat(req.body.driver_distance_meters),
         });
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
         return handleError(res, error);
     }
@@ -93,7 +91,7 @@ export const getSurge = (req, res) => {
             rideRequests:     parseInt(req.query.ride_requests),
             availableDrivers: parseInt(req.query.available_drivers),
         });
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
         return handleError(res, error);
     }

@@ -2,6 +2,7 @@ import * as otpService from '../services/rideOtpService.js';
 import * as rideService from '../services/rideService.js';
 import logger from '../../../core/logger/logger.js';
 import { getIO } from '../../../config/websocketConfig.js';
+import { sendResponse, sendError } from '../../../core/utils/response.js';
 
 // Generate OTP when driver arrives (optional explicit endpoint)
 export const generateOtp = async (req, res, next) => {
@@ -14,10 +15,7 @@ export const generateOtp = async (req, res, next) => {
         const passengerPhone = ride.passenger?.phone;
 
         if (!passengerPhone) {
-            return res.status(400).json({
-                success: false,
-                message: 'Passenger phone number not found for this ride'
-            });
+            return sendError(res, 400, 'Passenger phone number not found for this ride');
         }
 
         const otpResult = await otpService.generateRideOTP(rideId, passengerPhone);
@@ -28,10 +26,7 @@ export const generateOtp = async (req, res, next) => {
             smsSent: otpResult.smsSent
         });
 
-        res.status(200).json({
-            success: true,
-            data: otpResult
-        });
+        sendResponse(res, 200, '', otpResult);
     } catch (error) {
         logger.error('Generate OTP error:', error);
         next(error);
@@ -62,8 +57,11 @@ export const verifyOtp = async (req, res, next) => {
             }
         }
 
-        const status = data.verified ? 200 : 400;
-        res.status(status).json({ success: data.verified, data });
+        if (data.verified) {
+            sendResponse(res, 200, '', data);
+        } else {
+            sendError(res, 400, '', data);
+        }
     } catch (error) {
         next(error);
     }

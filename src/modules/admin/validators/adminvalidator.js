@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { sendError } from '../../../core/utils/response.js';
 
 // ─── Common list filters ──────────────────────────────────────────────────────
 const paginationSchema = {
@@ -66,14 +67,7 @@ export const validate = (schema, source = 'body') => (req, res, next) => {
     });
 
     if (error) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors:  error.details.map(d => ({
-                field:   d.path.join('.'),
-                message: d.message,
-            })),
-        });
+        return sendError(res, 400, 'Validation failed', error.details.map(d => ({ field: d.path.join('.'), message: d.message })));
     }
 
     // Express 5: req.query is a read-only getter, use defineProperty to override

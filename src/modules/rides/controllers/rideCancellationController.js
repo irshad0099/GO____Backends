@@ -1,6 +1,7 @@
 import * as cancelService from '../services/rideCancellationService.js';
 import { getIO } from '../../../config/websocketConfig.js';
 import logger from '../../../core/logger/logger.js';
+import { sendResponse } from '../../../core/utils/response.js';
 
 export const cancelRide = async (req, res, next) => {
     try {
@@ -20,6 +21,6 @@ export const cancelRide = async (req, res, next) => {
             logger.warn(`Socket emit failed (ride:cancelled): ${sockErr.message}`);
         }
 
-        res.status(200).json({ success: true, data });
+        sendResponse(res, 200, '', data);
     } catch (error) { next(error); }
 };

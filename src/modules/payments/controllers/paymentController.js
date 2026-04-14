@@ -10,17 +10,7 @@ import {
     removeSavedMethod,
     makeDefaultMethod,
 } from '../services/paymentService.js';
-
-// ─── Error handler ────────────────────────────────────────────────────────────
-
-const handleError = (res, error) => {
-    logger.error(`[PaymentController] ${error.message}`);
-    const status = error.statusCode || 500;
-    return res.status(status).json({
-        success: false,
-        message: error.message || 'Internal server error',
-    });
-};
+import { sendResponse, sendError } from '../../../core/utils/response.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  POST /api/v1/payments/orders
@@ -31,9 +21,10 @@ const handleError = (res, error) => {
 export const createPaymentOrder = async (req, res) => {
     try {
         const result = await createOrder(req.user.id, req.body);
-        return res.status(201).json(result);
+        return sendResponse(res, 201, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[PaymentController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -45,9 +36,10 @@ export const createPaymentOrder = async (req, res) => {
 export const verifyPayment = async (req, res) => {
     try {
         const result = await verifyAndConfirmPayment(req.body);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[PaymentController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -60,9 +52,10 @@ export const initiateRefund = async (req, res) => {
     try {
         const userId = req.body.user_id || req.user.id; // admin passes user_id in body
         const result = await processRefund(userId, req.body);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[PaymentController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -73,9 +66,10 @@ export const initiateRefund = async (req, res) => {
 export const getOrder = async (req, res) => {
     try {
         const result = await getOrderDetail(req.user.id, req.params.orderNumber);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[PaymentController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -92,9 +86,10 @@ export const getHistory = async (req, res) => {
             status,
             purpose,
         });
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[PaymentController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -105,9 +100,10 @@ export const getHistory = async (req, res) => {
 export const getSavedMethods = async (req, res) => {
     try {
         const result = await fetchSavedMethods(req.user.id);
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[PaymentController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -118,9 +114,10 @@ export const getSavedMethods = async (req, res) => {
 export const saveMethod = async (req, res) => {
     try {
         const result = await addSavedMethod(req.user.id, req.body);
-        return res.status(201).json(result);
+        return sendResponse(res, 201, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[PaymentController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -131,9 +128,10 @@ export const saveMethod = async (req, res) => {
 export const removeMethod = async (req, res) => {
     try {
         const result = await removeSavedMethod(req.user.id, parseInt(req.params.methodId));
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[PaymentController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -144,8 +142,9 @@ export const removeMethod = async (req, res) => {
 export const setDefault = async (req, res) => {
     try {
         const result = await makeDefaultMethod(req.user.id, parseInt(req.params.methodId));
-        return res.status(200).json(result);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[PaymentController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };

@@ -25,7 +25,7 @@ export const signup = async ({ phone, email, fullName ,role}) => {
 
         // Send OTP
         const result = await otpService.sendOTP(phone, 'signup');
-
+        console.log('OTP service result:', result);
         // Store temporary data in cache/session if needed
         // For now, just return success
 

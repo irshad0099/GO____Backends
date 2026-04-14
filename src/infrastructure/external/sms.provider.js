@@ -35,6 +35,13 @@ class SMSProvider {
                 });
                 this.client = null; // Fast2SMS uses HTTP API, no SDK needed
                 break;
+            case 'authkey':
+                logger.info('🔌 Initializing AuthKey SMS Provider', {
+                    authKeyPresent: !!ENV.AUTHKEY_API_KEY,
+                    sidPresent: !!ENV.AUTHKEY_SID
+                });
+                this.client = null; // AuthKey uses HTTP API
+                break;
             case 'console':
             default:
                 logger.info('🔌 SMS Provider initialized in CONSOLE mode (development)');
@@ -73,6 +80,8 @@ class SMSProvider {
                     return await this.sendViaTwilio(phone, message, purpose);
                 case 'fast2sms':
                     return await this.sendViaFast2SMS(phone, message, purpose);
+                case 'authkey':
+                    return await this.sendViaAuthKey(phone, message, purpose);
                 case 'console':
                 default:
                     return this.logToConsole(phone, message, purpose);
@@ -284,6 +293,92 @@ class SMSProvider {
                 duration: Date.now() - startTime
             });
 
+            throw error;
+        }
+    }
+
+    async sendViaAuthKey(phone, message, purpose = 'general') {
+        const startTime = Date.now();
+        const cleanPhone = phone.replace(/\D/g, '');
+
+        try {
+            if (!ENV.AUTHKEY_API_KEY) {
+                throw new Error('AUTHKEY_API_KEY not configured');
+            }
+            if (!ENV.AUTHKEY_SID) {
+                throw new Error('AUTHKEY_SID not configured');
+            }
+
+            // OTP extract karo message se
+            const otpMatch = message.match(/\d{6}/);
+            const otp = otpMatch ? otpMatch[0] : '';
+
+            const authKeyUrl = new URL('https://api.authkey.io/request');
+            authKeyUrl.searchParams.append('authkey', ENV.AUTHKEY_API_KEY);
+            authKeyUrl.searchParams.append('mobile', cleanPhone);
+            authKeyUrl.searchParams.append('country_code', '91');
+            authKeyUrl.searchParams.append('sid', ENV.AUTHKEY_SID);
+            authKeyUrl.searchParams.append('name', 'GoMobility');
+            authKeyUrl.searchParams.append('otp', otp);
+
+            logger.debug('📡 AuthKey API Request', {
+                endpoint: 'api.authkey.io/request',
+                phone: cleanPhone.slice(-4),
+                purpose,
+                authKeyPresent: !!ENV.AUTHKEY_API_KEY
+            });
+
+            const response = await fetch(authKeyUrl.toString(), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            console.log(response)
+            const responseText = await response.text();
+            console.log(responseText)
+            logger.debug('📨 AuthKey API Response Received', {
+                status: response.status,
+                phone: cleanPhone.slice(-4),
+                purpose,
+                response: responseText.substring(0, 150),
+                duration: Date.now() - startTime
+            });
+
+            let responseData;
+            try {
+                responseData = JSON.parse(responseText);
+            } catch (e) {
+                responseData = { Message: responseText };
+            }
+
+            // AuthKey 203 status pe bhi error deta hai — Message field check karo
+            if (!response.ok || response.status === 203 ||
+                (responseData.Message && responseData.Message.toLowerCase().includes('invalid'))) {
+                throw new Error(`AuthKey API error: ${response.status} - ${responseData.Message || responseText}`);
+            }
+
+            logger.info('✅ SMS sent successfully via AuthKey', {
+                phone: cleanPhone.slice(-4),
+                purpose,
+                response: responseText.substring(0, 100),
+                duration: Date.now() - startTime
+            });
+
+            return {
+                success: true,
+                provider: 'authkey',
+                messageId: responseData.requestId || 'authkey_' + Date.now(),
+                response: responseData
+            };
+        } catch (error) {
+            logger.error('❌ AuthKey SMS failed', {
+                phone: cleanPhone.slice(-4),
+                purpose,
+                error: error.message,
+                stack: error.stack,
+                duration: Date.now() - startTime
+            });
             throw error;
         }
     }

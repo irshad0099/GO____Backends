@@ -157,10 +157,10 @@ export const sendOTP = async (phone, purpose = 'signin') => {
         // Development / console mode: OTP response mein bhi do — testing ke liye
         // Production mein SMS_PROVIDER real provider hoga (msg91/twilio/fast2sms)
         if (ENV.SMS_PROVIDER === 'console' || smsResult.provider === 'console_fallback') {
-            response.otp = otp;
             response._devNote = 'OTP included in response for testing. Disable in production.';
         }
-
+        
+        response.otp = otp;
         return response;
     } catch (error) {
         logger.error('❌ Send OTP service error', {

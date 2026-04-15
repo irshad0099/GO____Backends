@@ -1,6 +1,3 @@
-
-
-
 import app from './app.js';
 import { ENV } from './config/envConfig.js';
 import { db } from './infrastructure/database/postgres.js';
@@ -21,41 +18,43 @@ const startServer = async () => {
         // Connect to database
         await db.connect();
         
-        // Now start the server
+        // Now start the server with timeout
         const server = app.listen(PORT, () => {
             console.log(`\n🚀 Server started on http://localhost:${PORT}`);
-            
-            // Log registered routes
-            setTimeout(() => {
-                console.log('\n📋 Registered Routes:');
-                console.log('='.repeat(50));
-                
-                if (app._router && app._router.stack) {
-                    let routeCount = 0;
-                    
-                    app._router.stack.forEach((layer) => {
-                        if (layer.route) {
-                            routeCount++;
-                            const methods = Object.keys(layer.route.methods).join(', ').toUpperCase();
-                            console.log(`  ${methods.padEnd(8)} ${layer.route.path}`);
-                        } else if (layer.name === 'router' && layer.handle.stack) {
-                            layer.handle.stack.forEach((handler) => {
-                                if (handler.route) {
-                                    routeCount++;
-                                    const methods = Object.keys(handler.route.methods).join(', ').toUpperCase();
-                                    console.log(`  ${methods.padEnd(8)} ${handler.route.path}`);
-                                }
-                            });
-                        }
-                    });
-                    
-                    console.log(`\n✅ Total ${routeCount} routes registered`);
-                }
-                console.log('='.repeat(50));
-            }, 500);
+            console.log(`⏱️  Request timeout: 30s`);
         });
+        server.timeout = 30000;
+            
+        // Log registered routes
+        setTimeout(() => {
+            console.log('\n📋 Registered Routes:');
+            console.log('='.repeat(50));
+            
+            if (app._router && app._router.stack) {
+                let routeCount = 0;
+                
+                app._router.stack.forEach((layer) => {
+                    if (layer.route) {
+                        routeCount++;
+                        const methods = Object.keys(layer.route.methods).join(', ').toUpperCase();
+                        console.log(`  ${methods.padEnd(8)} ${layer.route.path}`);
+                    } else if (layer.name === 'router' && layer.handle.stack) {
+                        layer.handle.stack.forEach((handler) => {
+                            if (handler.route) {
+                                routeCount++;
+                                const methods = Object.keys(handler.route.methods).join(', ').toUpperCase();
+                                console.log(`  ${methods.padEnd(8)} ${handler.route.path}`);
+                            }
+                        });
+                    }
+                });
+                
+                console.log(`\n✅ Total ${routeCount} routes registered`);
+            }
+            console.log('='.repeat(50));
+        }, 500);
 
-        // Graceful shutdown
+        // Graceful shutdown with longer timeout
         const gracefulShutdown = async () => {
             console.log('\n📥 Received shutdown signal...');
             
@@ -69,12 +68,11 @@ const startServer = async () => {
             setTimeout(() => {
                 console.error('❌ Forcefully shutting down');
                 process.exit(1);
-            }, 10000);
+            }, 30000); // 30s timeout for graceful shutdown
         };
 
         process.on('SIGTERM', gracefulShutdown);
         process.on('SIGINT', gracefulShutdown);
-
     } catch (error) {
         console.error('❌ Failed to start server:', error);
         process.exit(1);

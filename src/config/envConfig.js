@@ -28,9 +28,9 @@ export const ENV = {
     UPSTASH_REDIS_URL: process.env.UPSTASH_REDIS_URL,
     
     // JWT
-    JWT_SECRET: process.env.JWT_SECRET || 'gomobility_super_secret_key',
+    JWT_SECRET: process.env.JWT_SECRET,  // NO DEFAULT - must be set in env
     JWT_ACCESS_EXPIRY: process.env.JWT_ACCESS_EXPIRY || '15m',
-    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'gomobility_refresh_secret',
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,  // NO DEFAULT - must be set in env
     JWT_REFRESH_EXPIRY: process.env.JWT_REFRESH_EXPIRY || '30d',
     
     // OTP
@@ -109,7 +109,7 @@ export const ENV = {
     
     // Security
     BCRYPT_SALT_ROUNDS: parseInt(process.env.BCRYPT_SALT_ROUNDS) || 10,
-    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY || 'gomobility_ultra_secure_key_2026',
+    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,  // NO DEFAULT - must be set in env
     CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
     
     // OCR
@@ -202,6 +202,15 @@ export const ENV = {
     PAGINATION_DEFAULT_LIMIT: parseInt(process.env.PAGINATION_DEFAULT_LIMIT) || 20,
     PAGINATION_MAX_LIMIT: parseInt(process.env.PAGINATION_MAX_LIMIT) || 100
 };
+
+// Validate required secrets in production
+if (ENV.NODE_ENV === 'production') {
+    const requiredSecrets = ['DB_PASSWORD', 'JWT_SECRET', 'JWT_REFRESH_SECRET', 'ENCRYPTION_KEY'];
+    const missing = requiredSecrets.filter(key => !ENV[key]);
+    if (missing.length > 0) {
+        throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+    }
+}
 
 // import dotenv from 'dotenv';
 // import path from 'path';

@@ -101,6 +101,10 @@ REDIS_USERNAME: process.env.REDIS_USERNAME || 'default',
     // Agar key nahi hai → weather detection silently skip hoga
     OPENWEATHER_API_KEY: process.env.OPENWEATHER_API_KEY || '',
     WEATHER_CACHE_MINUTES: parseInt(process.env.WEATHER_CACHE_MINUTES) || 15,
+
+    // Google Maps
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+
     WEATHER_PEAK_CONDITIONS: process.env.WEATHER_PEAK_CONDITIONS?.split(',') || ['Rain', 'Drizzle', 'Thunderstorm', 'Snow', 'Squall', 'Tornado'],
     WEATHER_SEVERE_CONDITIONS: process.env.WEATHER_SEVERE_CONDITIONS?.split(',') || ['Thunderstorm', 'Snow', 'Squall', 'Tornado'],
     WEATHER_SURGE_MILD: parseFloat(process.env.WEATHER_SURGE_MILD) || 1.1,

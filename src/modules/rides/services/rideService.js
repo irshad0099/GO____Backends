@@ -658,6 +658,7 @@ import { ApiError, NotFoundError, ConflictError } from '../../../core/errors/Api
 import logger from '../../../core/logger/logger.js';
 import { ENV } from '../../../config/envConfig.js';
 import { db } from '../../../infrastructure/database/postgres.js';
+import { getDistanceAndDuration } from '../../../core/services/googleMapsService.js';
 
 import { 
     getCachedNearbyDrivers, 
@@ -741,11 +742,18 @@ export const requestRide = async (userId, rideData) => {
             throw new ConflictError('You already have an active ride');
         }
 
-        const distanceKm = rideCalculator.calculateDistance(
-            rideData.pickupLatitude, rideData.pickupLongitude,
-            rideData.dropoffLatitude, rideData.dropoffLongitude
-        );
-        const durationMinutes = rideCalculator.calculateDuration(distanceKm, rideData.vehicleType);
+        // const distanceKm = rideCalculator.calculateDistance(
+        //     rideData.pickupLatitude, rideData.pickupLongitude,
+        //     rideData.dropoffLatitude, rideData.dropoffLongitude
+        // );
+        // const durationMinutes = rideCalculator.calculateDuration(distanceKm, rideData.vehicleType);
+
+        const mapsResult = await getDistanceAndDuration(
+    rideData.pickupLatitude, rideData.pickupLongitude,
+    rideData.dropoffLatitude, rideData.dropoffLongitude
+);
+const distanceKm = mapsResult.distanceKm;
+const durationMinutes = mapsResult.durationMinutes;
 
         const signals = await gatherDemandSignals(
             rideData.vehicleType,
@@ -950,11 +958,17 @@ export const calculateFare = async (fareData) => {
     try {
         const { vehicleType, pickupLatitude, pickupLongitude, dropoffLatitude, dropoffLongitude } = fareData;
 
-        const distanceKm = rideCalculator.calculateDistance(
-            pickupLatitude, pickupLongitude,
-            dropoffLatitude, dropoffLongitude
-        );
-        const durationMinutes = rideCalculator.calculateDuration(distanceKm, vehicleType);
+        // const distanceKm = rideCalculator.calculateDistance(
+        //     pickupLatitude, pickupLongitude,
+        //     dropoffLatitude, dropoffLongitude
+        // );
+        // const durationMinutes = rideCalculator.calculateDuration(distanceKm, vehicleType);
+        const mapsResult = await getDistanceAndDuration(
+    pickupLatitude, pickupLongitude,
+    dropoffLatitude, dropoffLongitude
+);
+const distanceKm = mapsResult.distanceKm;
+const durationMinutes = mapsResult.durationMinutes;
         const signals         = await gatherDemandSignals(vehicleType, pickupLatitude, pickupLongitude);
         const selectedDriverId = signals.availableDrivers > 0 ? signals.nearbyDrivers[0].id : null;
         const driverDailyRideCount = await rideRepo.getDriverDailyRideCount(selectedDriverId);

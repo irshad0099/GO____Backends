@@ -658,6 +658,14 @@ import { ApiError, NotFoundError, ConflictError } from '../../../core/errors/Api
 import logger from '../../../core/logger/logger.js';
 import { ENV } from '../../../config/envConfig.js';
 import { db } from '../../../infrastructure/database/postgres.js';
+import { getDistanceAndDuration } from '../../../core/services/googleMapsService.js';
+
+import { 
+    getCachedNearbyDrivers, 
+    setCachedNearbyDrivers,
+    getCachedSurge,        // ++ ADD
+    setCachedSurge,        // ++ ADD
+} from '../../../core/services/redisService.js';
 import {
     emitRideRequest,
     emitRideStatusUpdate,
@@ -676,6 +684,27 @@ const safeEmit = (fn, label) => {
 };
 
 // ─── Helper: gather REAL demand + weather signals ───────────────────────────
+// const gatherDemandSignals = async (vehicleType, latitude, longitude) => {
+//     const searchRadius    = Number(ENV.DEFAULT_SEARCH_RADIUS_KM) || 5;
+//     const demandWindow    = Number(ENV.DEMAND_WINDOW_MINUTES)    || 10;
+//     const velocityWindow  = Number(ENV.VELOCITY_WINDOW_MINUTES)  || 5;
+
+//     const [rideRequests, requestVelocity, nearbyDrivers, weatherSignal] = await Promise.all([
+//         rideRepo.countRecentRideRequests(vehicleType, latitude, longitude, searchRadius, demandWindow),
+//         rideRepo.getRequestVelocity(vehicleType, latitude, longitude, searchRadius, velocityWindow),
+//         rideRepo.findNearbyDrivers(vehicleType, latitude, longitude, searchRadius),
+//         getWeatherSignal(latitude, longitude)
+//     ]);
+
+//     const availableDrivers = nearbyDrivers.length;
+//     const pickupDistanceKm = availableDrivers > 0
+//         ? Number(nearbyDrivers[0].distance || 0)
+//         : 0;
+
+//     return { rideRequests, requestVelocity, availableDrivers, nearbyDrivers, pickupDistanceKm, weatherSignal };
+// };
+
+
 const gatherDemandSignals = async (vehicleType, latitude, longitude) => {
     const searchRadius    = Number(ENV.DEFAULT_SEARCH_RADIUS_KM) || 5;
     const demandWindow    = Number(ENV.DEMAND_WINDOW_MINUTES)    || 10;
@@ -684,7 +713,14 @@ const gatherDemandSignals = async (vehicleType, latitude, longitude) => {
     const [rideRequests, requestVelocity, nearbyDrivers, weatherSignal] = await Promise.all([
         rideRepo.countRecentRideRequests(vehicleType, latitude, longitude, searchRadius, demandWindow),
         rideRepo.getRequestVelocity(vehicleType, latitude, longitude, searchRadius, velocityWindow),
-        rideRepo.findNearbyDrivers(vehicleType, latitude, longitude, searchRadius),
+        // ++ Yeh line change ki — Redis cache se fetch karo
+        (async () => {
+            const cached = await getCachedNearbyDrivers(vehicleType, latitude, longitude);
+            if (cached) return cached;
+            const drivers = await rideRepo.findNearbyDrivers(vehicleType, latitude, longitude, searchRadius);
+            await setCachedNearbyDrivers(vehicleType, latitude, longitude, drivers);
+            return drivers;
+        })(),
         getWeatherSignal(latitude, longitude)
     ]);
 
@@ -706,11 +742,18 @@ export const requestRide = async (userId, rideData) => {
             throw new ConflictError('You already have an active ride');
         }
 
-        const distanceKm = rideCalculator.calculateDistance(
-            rideData.pickupLatitude, rideData.pickupLongitude,
-            rideData.dropoffLatitude, rideData.dropoffLongitude
-        );
-        const durationMinutes = rideCalculator.calculateDuration(distanceKm, rideData.vehicleType);
+        // const distanceKm = rideCalculator.calculateDistance(
+        //     rideData.pickupLatitude, rideData.pickupLongitude,
+        //     rideData.dropoffLatitude, rideData.dropoffLongitude
+        // );
+        // const durationMinutes = rideCalculator.calculateDuration(distanceKm, rideData.vehicleType);
+
+        const mapsResult = await getDistanceAndDuration(
+    rideData.pickupLatitude, rideData.pickupLongitude,
+    rideData.dropoffLatitude, rideData.dropoffLongitude
+);
+const distanceKm = mapsResult.distanceKm;
+const durationMinutes = mapsResult.durationMinutes;
 
         const signals = await gatherDemandSignals(
             rideData.vehicleType,
@@ -915,11 +958,17 @@ export const calculateFare = async (fareData) => {
     try {
         const { vehicleType, pickupLatitude, pickupLongitude, dropoffLatitude, dropoffLongitude } = fareData;
 
-        const distanceKm = rideCalculator.calculateDistance(
-            pickupLatitude, pickupLongitude,
-            dropoffLatitude, dropoffLongitude
-        );
-        const durationMinutes = rideCalculator.calculateDuration(distanceKm, vehicleType);
+        // const distanceKm = rideCalculator.calculateDistance(
+        //     pickupLatitude, pickupLongitude,
+        //     dropoffLatitude, dropoffLongitude
+        // );
+        // const durationMinutes = rideCalculator.calculateDuration(distanceKm, vehicleType);
+        const mapsResult = await getDistanceAndDuration(
+    pickupLatitude, pickupLongitude,
+    dropoffLatitude, dropoffLongitude
+);
+const distanceKm = mapsResult.distanceKm;
+const durationMinutes = mapsResult.durationMinutes;
         const signals         = await gatherDemandSignals(vehicleType, pickupLatitude, pickupLongitude);
         const selectedDriverId = signals.availableDrivers > 0 ? signals.nearbyDrivers[0].id : null;
         const driverDailyRideCount = await rideRepo.getDriverDailyRideCount(selectedDriverId);
@@ -975,14 +1024,52 @@ const calculateCompletionFare = async (ride) => {
 // ═════════════════════════════════════════════════════════════════════════════
 //  FIND NEARBY DRIVERS
 // ═════════════════════════════════════════════════════════════════════════════
+// export const findNearbyDrivers = async (vehicleType, latitude, longitude) => {
+//     try {
+//         const drivers = await rideRepo.findNearbyDrivers(
+//             vehicleType, latitude, longitude,
+//             ENV.DEFAULT_SEARCH_RADIUS_KM || 5
+//         );
+
+//         return drivers.map(driver => ({
+//             id:            driver.id,
+//             name:          driver.full_name,
+//             vehicleType:   driver.vehicle_type,
+//             vehicleNumber: driver.vehicle_number,
+//             vehicleModel:  driver.vehicle_model,
+//             vehicleColor:  driver.vehicle_color,
+//             rating:        parseFloat(driver.rating || 0).toFixed(1),
+//             distance:      parseFloat(driver.distance).toFixed(1),
+//             location: {
+//                 latitude:  driver.current_latitude,
+//                 longitude: driver.current_longitude
+//             }
+//         }));
+//     } catch (error) {
+//         logger.error('Find nearby drivers service error:', error);
+//         throw error;
+//     }
+// };
+
+
+
 export const findNearbyDrivers = async (vehicleType, latitude, longitude) => {
     try {
+        // ── Step 1: Redis cache check ─────────────────────────────────────────
+        const cached = await getCachedNearbyDrivers(vehicleType, latitude, longitude);
+        if (cached !== null) {
+            logger.debug(`✅ Nearby drivers cache HIT | ${vehicleType} | ${cached.length} drivers`);
+            return cached;
+        }
+
+        // ── Step 2: Cache miss — DB se fetch ──────────────────────────────────
+        logger.debug(`🚗 Nearby drivers cache MISS — fetching from DB`);
         const drivers = await rideRepo.findNearbyDrivers(
             vehicleType, latitude, longitude,
             ENV.DEFAULT_SEARCH_RADIUS_KM || 5
         );
 
-        return drivers.map(driver => ({
+        const formatted = drivers.map(driver => ({
             id:            driver.id,
             name:          driver.full_name,
             vehicleType:   driver.vehicle_type,
@@ -996,6 +1083,11 @@ export const findNearbyDrivers = async (vehicleType, latitude, longitude) => {
                 longitude: driver.current_longitude
             }
         }));
+
+        // ── Step 3: Redis mein cache karo (10 sec TTL) ────────────────────────
+        await setCachedNearbyDrivers(vehicleType, latitude, longitude, formatted);
+
+        return formatted;
     } catch (error) {
         logger.error('Find nearby drivers service error:', error);
         throw error;

@@ -44,10 +44,22 @@ export const getSocketUser = (socketId) => {
 /**
  * Get all connected sockets for a user
  */
+// export const getUserSockets = (userId) => {
+//     const sockets = [];
+//     for (const [socketId, user] of connectedSockets.entries()) {
+//         if (user.userId === userId) {
+//             sockets.push(socketId);
+//         }
+//     }
+//     return sockets;
+// };
+
+
 export const getUserSockets = (userId) => {
     const sockets = [];
+    const targetId = String(userId); // ++ String mein convert karo
     for (const [socketId, user] of connectedSockets.entries()) {
-        if (user.userId === userId) {
+        if (String(user.userId) === targetId) { // ++ dono String compare karo
             sockets.push(socketId);
         }
     }

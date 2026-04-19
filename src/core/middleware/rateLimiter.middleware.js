@@ -144,6 +144,21 @@
 import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import { ENV }                       from '../../config/envConfig.js';
 
+// ─── Redis Store factory ──────────────────────────────────────────────────────
+// Har limiter ka alag prefix — taaki keys mix na hon
+// const makeStore = (prefix) => new RedisStore({
+//     // sendCommand: (...args) => redis.call(...args),
+//     // ✅ Correct
+//      sendCommand: (...args) => redis.sendCommand(args),
+//     prefix,
+// });
+
+
+const makeStore = (prefix) => new RedisStore({
+    sendCommand: (command, ...args) => redis.call(command, ...args),
+    prefix,
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 //  In-memory store use ho raha hai (express-rate-limit default)
 //  Redis store hata diya — Upstash rate limit hit ho raha tha

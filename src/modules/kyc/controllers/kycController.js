@@ -2,6 +2,19 @@ import * as kycService from '../services/kycService.js';
 import logger from '../../../core/logger/logger.js';
 import { sendResponse, sendError } from '../../../core/utils/response.js';
 
+// ─── DigiLocker Webhook (public — no auth) ───────────────────────────────────
+
+export const handleDigilockerWebhook = async (req, res) => {
+    try {
+        const rawBody = req.rawBody?.toString('utf8') || JSON.stringify(req.body);
+        await kycService.processDigilockerWebhook(rawBody, req.headers);
+        res.status(200).json({ success: true });
+    } catch (err) {
+        logger.error('DigiLocker webhook error:', err);
+        res.status(err.statusCode || 500).json({ success: false, message: err.message });
+    }
+};
+
 // ─── Rider Endpoints ──────────────────────────────────────────────────────────
 
 export const getStatus = async (req, res) => {
@@ -14,33 +27,26 @@ export const getStatus = async (req, res) => {
     }
 };
 
-export const sendAadhaarOtp = async (req, res) => {
+/**
+ * POST /kyc/ocr — unified Smart OCR endpoint for PAN / AADHAAR / DRIVING_LICENCE / VEHICLE_RC
+ * multipart/form-data: { document_type, file }
+ */
+export const submitOcrDocument = async (req, res) => {
     try {
-        const { aadhaar_number } = req.body;
-        const data = await kycService.initiateAadhaarOtp(req.user.id, aadhaar_number);
-        sendResponse(res, 200, '', data);
-    } catch (err) {
-        logger.error('KYC error:', err);
-        sendError(res, err.statusCode || 500, err.message);
-    }
-};
+        if (!req.file) {
+            return sendError(res, 400, 'Document file is required (field name: file)');
+        }
+        const documentType = (req.body.document_type || '').toUpperCase();
+        if (!documentType) {
+            return sendError(res, 400, 'document_type is required (PAN | AADHAAR | DRIVING_LICENCE | VEHICLE_RC)');
+        }
 
-export const submitAadhaarOtp = async (req, res) => {
-    try {
-        const { ref_id, otp } = req.body;
-        const data = await kycService.verifyAadhaarOtp(req.user.id, ref_id, otp);
-        sendResponse(res, 200, '', data);
-    } catch (err) {
-        logger.error('KYC error:', err);
-        sendError(res, err.statusCode || 500, err.message);
-    }
-};
-
-export const submitPan = async (req, res) => {
-    try {
-        const { pan_number, name } = req.body;
-        const data = await kycService.verifyPan(req.user.id, pan_number.toUpperCase(), name);
-        sendResponse(res, 200, '', data);
+        const data = await kycService.submitOcrDocument(req.user.id, documentType, {
+            fileBuffer: req.file.buffer,
+            fileName:   req.file.originalname,
+            mimeType:   req.file.mimetype,
+        });
+        sendResponse(res, 200, `${documentType} verified via OCR`, data);
     } catch (err) {
         logger.error('KYC error:', err);
         sendError(res, err.statusCode || 500, err.message);
@@ -69,10 +75,11 @@ export const submitFaceMatch = async (req, res) => {
     }
 };
 
-export const submitDrivingLicense = async (req, res) => {
+export const getDigilockerDocument = async (req, res) => {
     try {
-        const { license_number, dob, name } = req.body;
-        const data = await kycService.verifyDrivingLicense(req.user.id, { license_number, dob, name });
+        const { document_type } = req.params;
+        const { verification_id, reference_id } = req.query;
+        const data = await kycService.getDigilockerDocument(req.user.id, document_type, { verification_id, reference_id });
         sendResponse(res, 200, '', data);
     } catch (err) {
         logger.error('KYC error:', err);
@@ -80,10 +87,32 @@ export const submitDrivingLicense = async (req, res) => {
     }
 };
 
-export const submitVehicleRC = async (req, res) => {
+export const getDigilockerStatus = async (req, res) => {
     try {
-        const { rc_number } = req.body;
-        const data = await kycService.verifyVehicleRC(req.user.id, rc_number);
+        const { verification_id, reference_id } = req.query;
+        const data = await kycService.getDigilockerStatus(req.user.id, { verification_id, reference_id });
+        sendResponse(res, 200, '', data);
+    } catch (err) {
+        logger.error('KYC error:', err);
+        sendError(res, err.statusCode || 500, err.message);
+    }
+};
+
+export const createDigilockerUrl = async (req, res) => {
+    try {
+        const { document_requested, user_flow } = req.body;
+        const data = await kycService.createDigilockerUrl(req.user.id, { document_requested, user_flow });
+        sendResponse(res, 200, '', data);
+    } catch (err) {
+        logger.error('KYC error:', err);
+        sendError(res, err.statusCode || 500, err.message);
+    }
+};
+
+export const submitDigilocker = async (req, res) => {
+    try {
+        const { mobile_number, aadhaar_number } = req.body;
+        const data = await kycService.verifyDigilocker(req.user.id, mobile_number, aadhaar_number);
         sendResponse(res, 200, '', data);
     } catch (err) {
         logger.error('KYC error:', err);

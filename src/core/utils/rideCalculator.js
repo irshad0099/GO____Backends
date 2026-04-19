@@ -227,7 +227,7 @@ export const calculatePlatformFee = (vehicleType, driverDailyRideCount = 0) => {
     const { key }  = envKey(vehicleType);
     const dailyCap = Number(ENV.PLATFORM_FEE_DAILY_CAP) || 10;
     const feeRate  = Number(ENV[`PLATFORM_FEE_${key}`]) || 0;
-    const charged  = Number(driverDailyRideCount) <= dailyCap;
+    const charged  = Number(driverDailyRideCount) < dailyCap;
 
     return {
         platformFee:    round2(charged ? feeRate : 0),

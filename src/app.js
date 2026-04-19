@@ -11,8 +11,10 @@ const app = express();
 console.log('✅ App created');
 console.log(`API Prefix: "${ENV.API_PREFIX}"`);
 
-// Parse JSON
-app.use(express.json());
+// Parse JSON — rawBody saved for webhook signature verification
+app.use(express.json({
+    verify: (req, _res, buf) => { req.rawBody = buf; },
+}));
 
 // Request logger
 app.use((req, res, next) => {

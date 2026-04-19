@@ -2897,3 +2897,1107 @@ Error: OTP expired or not found. Please request a new OTP.
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
     at async Module.verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:42:9)
     at async verifySignup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:26:24)
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to get queued messages
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to update driver location
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store session
+2026-04-16 23:28:36 [ERROR]: ❌ Failed to store session
+2026-04-16 23:28:37 [ERROR]: ❌ Failed to store session
+2026-04-16 23:28:37 [ERROR]: ❌ Failed to get queued messages
+2026-04-16 23:29:56 [ERROR]: ❌ Failed to store session
+2026-04-16 23:29:56 [ERROR]: ❌ Failed to store session
+2026-04-16 23:29:56 [ERROR]: ❌ Failed to store session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to get queued messages
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to update driver location
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store session
+2026-04-16 23:29:57 [ERROR]: ❌ Failed to store session
+2026-04-16 23:29:58 [ERROR]: ❌ Failed to store session
+2026-04-16 23:29:58 [ERROR]: ❌ Failed to get queued messages
+2026-04-16 23:31:10 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:10 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:10 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:10 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:10 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:11 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:11 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:12 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:12 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:12 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:12 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:12 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:12 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:13 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:14 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:14 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:14 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:14 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:15 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:15 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:15 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:15 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:16 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:16 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:16 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:17 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:17 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:17 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:17 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:18 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:18 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:19 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:20 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:20 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:20 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:20 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:20 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:20 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:20 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:20 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:21 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:21 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:22 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:22 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:22 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:23 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:23 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:24 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:24 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:24 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:25 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:25 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:26 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:26 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:26 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:26 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:27 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:28 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:28 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:29 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:29 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:29 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:29 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:29 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:30 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:31 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:32 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:33 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:33 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:33 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:33 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:34 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:34 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:34 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:35 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:35 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:35 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:35 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:35 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:35 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:36 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:36 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:37 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:37 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:38 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:38 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:39 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:39 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:39 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:39 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:39 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:39 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:39 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:39 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:39 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:39 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:39 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:39 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:39 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:39 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:39 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:39 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:39 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:40 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:40 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:40 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:40 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:40 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:41 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:41 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:41 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:41 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:41 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:41 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:41 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:42 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:42 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:43 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:43 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:43 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:43 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:43 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-16 23:31:43 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:31:44 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to store session
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to store session
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to store session
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to store session
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to store session
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to store session
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to get queued messages
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to update driver location
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to store session
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to store session
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:33:21 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:33:22 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:33:22 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:33:22 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:33:22 [ERROR]: ❌ Failed to store ride session
+2026-04-16 23:33:22 [ERROR]: ❌ Failed to store session
+2026-04-16 23:33:22 [ERROR]: ❌ Failed to store session
+2026-04-16 23:33:22 [ERROR]: ❌ Failed to store session
+2026-04-16 23:33:22 [ERROR]: ❌ Failed to get queued messages
+2026-04-16 23:40:05 [ERROR]: Validation failed
+ValidationError: Validation failed
+    at file:///D:/Akash_Personal/GO____Backends/src/core/middleware/validation.middleware.js:20:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-16 23:40:25 [ERROR]: Validation failed
+ValidationError: Validation failed
+    at file:///D:/Akash_Personal/GO____Backends/src/core/middleware/validation.middleware.js:20:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-16 23:42:07 [ERROR]: Validation failed
+ValidationError: Validation failed
+    at file:///D:/Akash_Personal/GO____Backends/src/core/middleware/validation.middleware.js:20:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-16 23:42:33 [ERROR]: Validation failed
+ValidationError: Validation failed
+    at file:///D:/Akash_Personal/GO____Backends/src/core/middleware/validation.middleware.js:20:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-16 23:43:38 [ERROR]: Signup service error: User already exists with this phone number with same role
+ConflictError: User already exists with this phone number with same role
+    at Module.signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:16:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:9:24)
+2026-04-16 23:43:38 [ERROR]: User already exists with this phone number with same role
+ConflictError: User already exists with this phone number with same role
+    at Module.signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:16:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:9:24)
+2026-04-16 23:55:45 [ERROR]: Signup service error: User already exists with this phone number with same role
+ConflictError: User already exists with this phone number with same role
+    at Module.signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:16:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:9:24)
+2026-04-16 23:55:45 [ERROR]: User already exists with this phone number with same role
+ConflictError: User already exists with this phone number with same role
+    at Module.signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:16:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:9:24)
+2026-04-17 00:04:54 [ERROR]: Request failed with status code 400
+AxiosError: Request failed with status code 400
+    at settle (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/core/settle.js:20:7)
+    at IncomingMessage.handleStreamEnd (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/adapters/http.js:847:13)
+    at IncomingMessage.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/core/Axios.js:46:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.generateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/cashfreeService.js:22:22)
+    at async Module.initiateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:103:20)
+    at async sendAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:20:22)
+2026-04-17 00:07:56 [ERROR]: Request failed with status code 400
+AxiosError: Request failed with status code 400
+    at settle (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/core/settle.js:20:7)
+    at IncomingMessage.handleStreamEnd (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/adapters/http.js:847:13)
+    at IncomingMessage.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/core/Axios.js:46:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.generateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/cashfreeService.js:22:22)
+    at async Module.initiateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:103:20)
+    at async sendAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:20:22)
+2026-04-17 00:08:53 [ERROR]: Request failed with status code 400
+AxiosError: Request failed with status code 400
+    at settle (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/core/settle.js:20:7)
+    at IncomingMessage.handleStreamEnd (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/adapters/http.js:847:13)
+    at IncomingMessage.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/core/Axios.js:46:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.generateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/cashfreeService.js:22:22)
+    at async Module.initiateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:103:20)
+    at async sendAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:20:22)
+2026-04-17 00:10:56 [ERROR]: Request failed with status code 403
+AxiosError: Request failed with status code 403
+    at settle (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/core/settle.js:20:7)
+    at IncomingMessage.handleStreamEnd (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/adapters/http.js:847:13)
+    at IncomingMessage.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/core/Axios.js:46:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.generateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/cashfreeService.js:22:22)
+    at async Module.initiateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:103:20)
+    at async sendAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:20:22)
+2026-04-17 00:12:12 [ERROR]: [Cashfree:generateAadhaarOtp] Request failed with status code 403
+2026-04-17 00:12:12 [ERROR]: Request failed with status code 403
+AxiosError: Request failed with status code 403
+    at settle (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/core/settle.js:20:7)
+    at IncomingMessage.handleStreamEnd (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/adapters/http.js:847:13)
+    at IncomingMessage.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/core/Axios.js:46:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.generateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/cashfreeService.js:32:26)
+    at async Module.initiateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:103:20)
+    at async sendAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:20:22)
+2026-04-17 00:13:40 [ERROR]: [Cashfree:generateAadhaarOtp] status=404 body="404 page not found"
+2026-04-17 00:13:40 [ERROR]: Request failed with status code 404
+AxiosError: Request failed with status code 404
+    at settle (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/core/settle.js:20:7)
+    at IncomingMessage.handleStreamEnd (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/adapters/http.js:847:13)
+    at IncomingMessage.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///D:/Akash_Personal/GO____Backends/node_modules/axios/lib/core/Axios.js:46:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.generateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/cashfreeService.js:28:26)
+    at async Module.initiateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:103:20)
+    at async sendAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:20:22)
+2026-04-17 00:34:12 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-17 00:34:12 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-17 00:35:12 [ERROR]: [Cashfree:generateAadhaarOtp] status=401 body={"code":"authentication_failed","message":"Invalid clientId and clientSecret combination","type":"authentication_error"}
+2026-04-17 00:35:12 [ERROR]: Request failed with status code 401
+AxiosError: Request failed with status code 401
+    at settle (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:1913:12)
+    at IncomingMessage.handleStreamEnd (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:2995:11)
+    at IncomingMessage.emit (node:events:531:35)
+    at IncomingMessage.emit (node:domain:489:12)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-17 00:35:56 [ERROR]: [Cashfree:generateAadhaarOtp] status=403 body={"code":"ip_validation_failed","message":"IP not whitelisted. Your current ip is 152.59.82.158. For IP whitelisting assistance, visit our guide at https://www.cashfree.com/docs/secure-id/get-started/integration/ip-whitelisting-verification.","type":"authentication_error"}
+2026-04-17 00:35:56 [ERROR]: Request failed with status code 403
+AxiosError: Request failed with status code 403
+    at settle (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:1913:12)
+    at IncomingMessage.handleStreamEnd (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:2995:11)
+    at IncomingMessage.emit (node:events:531:35)
+    at IncomingMessage.emit (node:domain:489:12)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-17 00:37:01 [ERROR]: [Cashfree:generateAadhaarOtp] status=403 body={"code":"ip_validation_failed","message":"IP not whitelisted. Your current ip is 152.59.82.158. For IP whitelisting assistance, visit our guide at https://www.cashfree.com/docs/secure-id/get-started/integration/ip-whitelisting-verification.","type":"authentication_error"}
+2026-04-17 00:37:01 [ERROR]: Request failed with status code 403
+AxiosError: Request failed with status code 403
+    at settle (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:1913:12)
+    at IncomingMessage.handleStreamEnd (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:2995:11)
+    at IncomingMessage.emit (node:events:531:35)
+    at IncomingMessage.emit (node:domain:489:12)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-17 00:37:47 [ERROR]: [Cashfree:generateAadhaarOtp] status=500 body={"type":"validation_error","code":"verification_failed","message":"Verification attempt failed","error":{"refId":"172534"}}
+2026-04-17 00:37:47 [ERROR]: Request failed with status code 500
+AxiosError: Request failed with status code 500
+    at settle (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:1913:12)
+    at IncomingMessage.handleStreamEnd (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:2995:11)
+    at IncomingMessage.emit (node:events:531:35)
+    at IncomingMessage.emit (node:domain:489:12)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-17 00:41:49 [ERROR]: Signup service error: User already exists with this phone number with same role
+ConflictError: User already exists with this phone number with same role
+    at Module.signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:16:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:9:24)
+2026-04-17 00:41:49 [ERROR]: User already exists with this phone number with same role
+ConflictError: User already exists with this phone number with same role
+    at Module.signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:16:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async signup (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:9:24)
+2026-04-17 00:41:59 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/otpService.js:199:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:57:24)
+2026-04-17 00:41:59 [ERROR]: Verify signin service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/otpService.js:199:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:57:24)
+2026-04-17 00:41:59 [ERROR]: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/otpService.js:199:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:137:9)
+    at async verifySignin (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:57:24)
+2026-04-17 00:42:34 [ERROR]: [Cashfree:generateAadhaarOtp] status=400 body={"code":"authentication_failed","message":"x-cf-signature missing in the request header","type":"validation_error"}
+2026-04-17 00:42:34 [ERROR]: Request failed with status code 400
+AxiosError: Request failed with status code 400
+    at settle (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:1913:12)
+    at IncomingMessage.handleStreamEnd (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:2995:11)
+    at IncomingMessage.emit (node:events:531:35)
+    at IncomingMessage.emit (node:domain:489:12)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-17 00:49:00 [ERROR]: [Cashfree:generateAadhaarOtp] status=401 body={"message":"Signature mismatch","type":"authentication_error","code":"authentication_failed"}
+2026-04-17 00:49:00 [ERROR]: Request failed with status code 401
+AxiosError: Request failed with status code 401
+    at settle (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:1913:12)
+    at IncomingMessage.handleStreamEnd (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:2995:11)
+    at IncomingMessage.emit (node:events:531:35)
+    at IncomingMessage.emit (node:domain:489:12)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-17 00:51:17 [ERROR]: [Cashfree:generateAadhaarOtp] status=400 body={"code":"authentication_failed","message":"x-cf-signature missing in the request header","type":"validation_error"}
+2026-04-17 00:51:17 [ERROR]: Request failed with status code 400
+AxiosError: Request failed with status code 400
+    at settle (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:1913:12)
+    at IncomingMessage.handleStreamEnd (D:\Akash_Personal\GO____Backends\node_modules\cashfree-verification\node_modules\axios\dist\node\axios.cjs:2995:11)
+    at IncomingMessage.emit (node:events:531:35)
+    at IncomingMessage.emit (node:domain:489:12)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-04-17 00:57:56 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-17 00:57:56 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-17 00:58:16 [ERROR]: [Cashfree:generateAadhaarOtp] status=undefined body=undefined
+2026-04-17 00:58:16 [ERROR]: KYC error: error:1E08010C:DECODER routines::unsupported
+Error: error:1E08010C:DECODER routines::unsupported
+    at Object.publicEncrypt (node:internal/crypto/cipher:79:12)
+    at generateSignature (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/cashfreeService.js:27:30)
+    at withSig (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/cashfreeService.js:35:34)
+    at Module.generateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/cashfreeService.js:54:96)
+    at Module.initiateAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:103:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async sendAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:21:22)
+2026-04-17 01:00:36 [ERROR]: [Cashfree:verifyAadhaarOtp] status=500 body={"type":"validation_error","code":"verification_failed","message":"Verification attempt failed","error":{"refId":"172535"}}
+2026-04-17 01:00:37 [ERROR]: KYC error: Aadhaar OTP verification failed
+Error: Aadhaar OTP verification failed
+    at Module.verifyAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:121:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:32:22)
+2026-04-17 01:02:07 [ERROR]: [Cashfree:verifyAadhaarOtp] status=400 body={"type":"validation_error","code":"verification_failed","message":"Session expired, please generate a new OTP","error":{"refId":"172535"}}
+2026-04-17 01:02:08 [ERROR]: KYC error: Session expired, please generate a new OTP
+Error: Session expired, please generate a new OTP
+    at Module.verifyAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:122:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:32:22)
+2026-04-17 01:02:43 [ERROR]: [Cashfree:verifyAadhaarOtp] status=500 body={"type":"validation_error","code":"verification_failed","message":"Verification attempt failed","error":{"refId":"172536"}}
+2026-04-17 01:02:43 [ERROR]: KYC error: Verification attempt failed
+Error: Verification attempt failed
+    at Module.verifyAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:122:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitAadhaarOtp (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:32:22)
+2026-04-19 07:52:22 [ERROR]: KYC error: Cannot read properties of undefined (reading 'id')
+TypeError: Cannot read properties of undefined (reading 'id')
+    at submitPanOcr (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:59:61)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\lib\route.js:157:13)
+    at enforcePdfSize (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/middleware/kycUpload.middleware.js:30:5)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\lib\route.js:157:13)
+    at Layer.handleRequest (D:\Akash_Personal\GO____Backends\node_modules\router\lib\layer.js:147:12)
+    at next (D:\Akash_Personal\GO____Backends\node_modules\router\lib\route.js:157:13)
+    at done (D:\Akash_Personal\GO____Backends\node_modules\multer\lib\make-middleware.js:69:7)
+    at indicateDone (D:\Akash_Personal\GO____Backends\node_modules\multer\lib\make-middleware.js:73:68)
+2026-04-19 07:52:59 [ERROR]: Refresh token service error: Invalid refresh token
+AuthError: Invalid refresh token
+    at Module.refreshToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:226:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async refreshToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:110:24)
+2026-04-19 07:52:59 [ERROR]: Invalid or expired refresh token
+AuthError: Invalid or expired refresh token
+    at Module.refreshToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:252:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async refreshToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:110:24)
+2026-04-19 07:53:50 [ERROR]: Authentication failed: Invalid token
+AuthError: Invalid token
+    at verifyToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/tokenService.js:46:19)
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-19 07:53:50 [ERROR]: Invalid token
+AuthError: Invalid token
+    at verifyToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/tokenService.js:46:19)
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-19 07:54:43 [ERROR]: KYC error: PAN rejected — fraud indicators: screenshot
+Error: PAN rejected — fraud indicators: screenshot
+    at Module.submitPanOcr (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:218:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitPanOcr (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:59:22)
+2026-04-19 07:56:36 [ERROR]: KYC error: PAN rejected — fraud indicators: screenshot
+Error: PAN rejected — fraud indicators: screenshot
+    at Module.submitPanOcr (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:219:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitPanOcr (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:59:22)
+2026-04-19 08:02:33 [ERROR]: KYC error: PAN already verified
+Error: PAN already verified
+    at Module.submitPanOcr (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:188:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitPanOcr (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:59:22)
+2026-04-19 08:03:02 [ERROR]: [Cashfree:smartOcr] status=400 body={"message":"Client secret belongs to test environment","type":"validation_error","code":"x-client-secret_value_invalid"}
+2026-04-19 08:03:03 [ERROR]: KYC error: Client secret belongs to test environment
+Error: Client secret belongs to test environment
+    at Module.submitPanOcr (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:204:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitPanOcr (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:59:22)
+2026-04-19 08:38:27 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-19 08:38:27 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/tokenService.js:43:19)
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-19 09:31:58 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-19 09:31:58 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-19 09:32:06 [ERROR]: Refresh token service error: Invalid refresh token
+AuthError: Invalid refresh token
+    at Module.refreshToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:226:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async refreshToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:110:24)
+2026-04-19 09:32:06 [ERROR]: Invalid or expired refresh token
+AuthError: Invalid or expired refresh token
+    at Module.refreshToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/authService.js:252:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async refreshToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/controllers/authController.js:110:24)
+2026-04-19 09:32:31 [ERROR]: KYC error: PAN already verified
+Error: PAN already verified
+    at Module.submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:120:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:44:22)
+2026-04-19 09:41:20 [ERROR]: [Cashfree:smartOcr] status=400 body={"message":"Client secret belongs to prod environment","type":"validation_error","code":"x-client-secret_value_invalid"}
+2026-04-19 09:41:21 [ERROR]: KYC error: Client secret belongs to prod environment
+Error: Client secret belongs to prod environment
+    at Module.submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:135:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:44:22)
+2026-04-19 09:43:44 [ERROR]: [Cashfree:smartOcr] status=403 body={"code":"ip_validation_failed","message":"IP not whitelisted. Your current ip is 47.15.235.196. For IP whitelisting assistance, visit our guide at https://www.cashfree.com/docs/secure-id/get-started/integration/ip-whitelisting-verification.","type":"authentication_error"}
+2026-04-19 09:43:45 [ERROR]: KYC error: IP not whitelisted. Your current ip is 47.15.235.196. For IP whitelisting assistance, visit our guide at https://www.cashfree.com/docs/secure-id/get-started/integration/ip-whitelisting-verification.
+Error: IP not whitelisted. Your current ip is 47.15.235.196. For IP whitelisting assistance, visit our guide at https://www.cashfree.com/docs/secure-id/get-started/integration/ip-whitelisting-verification.
+    at Module.submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:135:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:44:22)
+2026-04-19 09:44:46 [ERROR]: KYC error: Could not extract PAN number from image
+Error: Could not extract PAN number from image
+    at Module.submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:191:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:44:22)
+2026-04-19 09:46:08 [ERROR]: KYC error: Could not extract PAN number from image
+Error: Could not extract PAN number from image
+    at Module.submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:192:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:44:22)
+2026-04-19 09:46:38 [ERROR]: KYC error: Could not extract PAN number from image
+Error: Could not extract PAN number from image
+    at Module.submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:192:37)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:44:22)
+2026-04-19 09:48:42 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-19 09:48:42 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///D:/Akash_Personal/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///D:/Akash_Personal/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-19 09:49:12 [ERROR]: [Cashfree:smartOcr] status=400 body={"type":"validation_error","code":"file_name_invalid","message":"File name is invalid"}
+2026-04-19 09:49:13 [ERROR]: KYC error: File name is invalid
+Error: File name is invalid
+    at Module.submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/services/kycService.js:136:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async submitOcrDocument (file:///D:/Akash_Personal/GO____Backends/src/modules/kyc/controllers/kycController.js:44:22)

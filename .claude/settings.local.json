@@ -24,7 +24,13 @@
       "Bash(node --check src/modules/wallet/validators/walletValidator.js)",
       "Bash(node --check src/modules/payments/validators/paymentValidator.js)",
       "Bash(node --check src/modules/pricing/validators/pricingValidator.js)",
-      "Bash(node --check src/modules/subscription/validators/subscriptionValidator.js)"
+      "Bash(node --check src/modules/subscription/validators/subscriptionValidator.js)",
+      "Bash(node -e \"import\\('socket.io-client'\\).then\\(m => console.log\\('socket.io-client version:', m.default?.version || 'installed'\\)\\).catch\\(\\(\\) => console.log\\('NOT installed'\\)\\)\")",
+      "WebFetch(domain:docs.cashfree.com)",
+      "WebFetch(domain:sandbox.cashfree.com)",
+      "WebFetch(domain:www.cashfree.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }

@@ -10,6 +10,7 @@ export const ENV = {
     BASE_URL: process.env.BASE_URL || 'http://localhost:5000',
     API_PREFIX: process.env.API_PREFIX || '/api/v1',
     
+    
     // Database
     DB_HOST: process.env.DB_HOST || 'localhost',
     DB_PORT: parseInt(process.env.DB_PORT) || 5432,
@@ -34,7 +35,7 @@ export const ENV = {
 
     // JWT
     JWT_SECRET: process.env.JWT_SECRET || 'gomobility_super_secret_key',
-    JWT_ACCESS_EXPIRY: process.env.JWT_ACCESS_EXPIRY || '15m',
+    JWT_ACCESS_EXPIRY: process.env.JWT_ACCESS_EXPIRY || '30d',
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'gomobility_refresh_secret',
     JWT_REFRESH_EXPIRY: process.env.JWT_REFRESH_EXPIRY || '30d',
     
@@ -210,7 +211,27 @@ export const ENV = {
     
     // Pagination
     PAGINATION_DEFAULT_LIMIT: parseInt(process.env.PAGINATION_DEFAULT_LIMIT) || 20,
-    PAGINATION_MAX_LIMIT: parseInt(process.env.PAGINATION_MAX_LIMIT) || 100
+    PAGINATION_MAX_LIMIT: parseInt(process.env.PAGINATION_MAX_LIMIT) || 100,
+
+    // Cashfree Verification Suite (KYC)
+    CASHFREE_ENV:                process.env.CASHFREE_ENV                || 'sandbox',
+    CASHFREE_CLIENT_ID:          process.env.CASHFREE_CLIENT_ID,
+    CASHFREE_CLIENT_SECRET:      process.env.CASHFREE_CLIENT_SECRET,
+    // RSA public key for x-cf-signature
+    // .env mein ek variable mein full PEM daal sakte ho, ya CASHFREE_PUBLIC_KEY2 mein sirf body
+    CASHFREE_PUBLIC_KEY: (() => {
+        const raw = process.env.CASHFREE_PUBLIC_KEY || '';
+        const body = process.env.CASHFREE_PUBLIC_KEY2 || '';
+        // Agar sirf header hai pehle var mein, aur body alag var mein
+        if (body) {
+            return `-----BEGIN PUBLIC KEY-----\n${body}\n-----END PUBLIC KEY-----`;
+        }
+        // Agar full key ek hi var mein hai (\\n escaped)
+        return raw.replace(/\\n/g, '\n');
+    })(),
+    CASHFREE_FACE_MATCH_THRESHOLD:    parseFloat(process.env.CASHFREE_FACE_MATCH_THRESHOLD) || 75,
+    CASHFREE_NAME_MATCH_THRESHOLD:    parseFloat(process.env.CASHFREE_NAME_MATCH_THRESHOLD) || 70,
+    DIGILOCKER_REDIRECT_URL:          process.env.DIGILOCKER_REDIRECT_URL || 'http://localhost:5000/api/v1/kyc/digilocker/callback',
 };
 
 // import dotenv from 'dotenv';

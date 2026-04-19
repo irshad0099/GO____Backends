@@ -258,6 +258,33 @@ export const setVehicleRcManualReview = async (userId, reason) => {
     return rows[0];
 };
 
+// ─── DigiLocker ───────────────────────────────────────────────────────────────
+
+export const findByVerificationId = async (verificationId) => {
+    // verification_id format: digi_{userId}_{timestamp} — userId extract karo
+    const parts = String(verificationId).split('_');
+    const userId = parts[1];
+    if (!userId || isNaN(Number(userId))) return null;
+    return findByUserId(Number(userId));
+};
+
+export const setDigilockerVerified = async (userId, userDetails) => {
+    const { rows } = await db.query(
+        `UPDATE rider_kyc
+         SET aadhaar_status        = CASE WHEN aadhaar_status != 'verified' THEN 'verified' ELSE aadhaar_status END,
+             aadhaar_name          = COALESCE(aadhaar_name, $2),
+             aadhaar_dob           = COALESCE(aadhaar_dob, $3),
+             aadhaar_gender        = COALESCE(aadhaar_gender, $4),
+             aadhaar_verified_at   = COALESCE(aadhaar_verified_at, NOW()),
+             kyc_status            = CASE WHEN kyc_status = 'pending' THEN 'in_progress' ELSE kyc_status END,
+             updated_at            = NOW()
+         WHERE user_id = $1
+         RETURNING *`,
+        [userId, userDetails.name || null, userDetails.dob || null, userDetails.gender || null]
+    );
+    return rows[0];
+};
+
 // ─── Overall Status ───────────────────────────────────────────────────────────
 
 export const setOverallStatus = async (userId, status, extra = {}) => {

@@ -165,10 +165,12 @@ export const apiLimiter = rateLimit({
     legacyHeaders:   false
 });
 
+const isDev = process.env.NODE_ENV !== 'production';
+
 // Stricter limiter for auth routes
 export const authLimiter = rateLimit({
-    windowMs:               15 * 60 * 1000, // 15 minutes
-    max:                    5,
+    windowMs:               15 * 60 * 1000,
+    max:                    isDev ? 10000 : 10,   // dev mein practically unlimited
     skipSuccessfulRequests: true,
     message: {
         success: false,
@@ -180,8 +182,8 @@ export const authLimiter = rateLimit({
 
 // OTP request limiter
 export const otpLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
-    max:      3,
+    windowMs: 60 * 60 * 1000,
+    max:      isDev ? 10000 : 5,                  // dev mein practically unlimited
     message: {
         success: false,
         message: 'Too many OTP requests, please try again after an hour.'

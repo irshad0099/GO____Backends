@@ -8,7 +8,18 @@ const pickInRange = (min, max, ratio = 0.5) => {
     return round2(min + ((max - min) * clamp(ratio, 0, 1)));
 };
 
-const VEHICLE_ENV_KEY = { bike: 'BIKE', auto: 'AUTO', car: 'CAR', cab: 'CAR', taxi: 'CAR' };
+// const VEHICLE_ENV_KEY = { bike: 'BIKE', auto: 'AUTO', car: 'CAR', cab: 'CAR', taxi: 'CAR' };
+
+const VEHICLE_ENV_KEY = { 
+    bike: 'BIKE', 
+    auto: 'AUTO', 
+    car: 'CAR', 
+    cab: 'CAR', 
+    taxi: 'CAR',
+    xl: 'XL',
+    premium: 'PREMIUM',
+    luxury: 'LUXURY'
+};
 
 const normalizeVehicleType = (vehicleType) => {
     const type = String(vehicleType || '').toLowerCase();

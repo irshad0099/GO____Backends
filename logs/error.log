@@ -5938,3 +5938,35 @@ AuthError: Token expired
 ValidationError: Validation failed
     at file:///C:/Users/Varun%20Bhandari/Downloads/Go_Backend/src/core/middleware/validation.middleware.js:20:15
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-04-19 12:31:20 [ERROR]: Database query error:
+2026-04-19 12:31:22 [ERROR]: Database query error:
+2026-04-19 12:31:23 [ERROR]: Database query error:
+2026-04-19 12:31:26 [ERROR]: Database query error:
+2026-04-19 12:31:29 [ERROR]: Database query error:
+2026-04-19 12:31:31 [ERROR]: Database query error:
+2026-04-19 12:31:33 [ERROR]: Database query error:
+2026-04-19 12:31:37 [ERROR]: Database query error:
+2026-04-19 12:31:39 [ERROR]: Database query error:
+2026-04-19 12:31:41 [ERROR]: Database query error:
+2026-04-19 12:31:43 [ERROR]: Database query error:
+2026-04-19 12:31:45 [ERROR]: Database query error:
+2026-04-19 12:31:47 [ERROR]: Database query error:
+2026-04-19 12:31:49 [ERROR]: Database query error:
+2026-04-19 12:31:51 [ERROR]: Database query error:
+2026-04-19 12:31:53 [ERROR]: Database query error:
+2026-04-19 12:31:56 [ERROR]: Database query error:
+2026-04-19 12:31:58 [ERROR]: Database query error:
+2026-04-19 12:32:00 [ERROR]: Database query error:
+2026-04-19 12:32:02 [ERROR]: Database query error:
+2026-04-19 12:32:03 [ERROR]: Database query error:
+2026-04-19 12:32:05 [ERROR]: Database query error:
+2026-04-19 12:32:07 [ERROR]: Database query error:
+2026-04-19 12:32:09 [ERROR]: Database query error:
+2026-04-19 12:32:10 [ERROR]: Database query error:
+2026-04-19 12:32:12 [ERROR]: Database query error:
+2026-04-19 12:32:15 [ERROR]: Database query error:
+2026-04-19 12:32:18 [ERROR]: Database query error:
+2026-04-19 12:32:20 [ERROR]: Database query error:
+2026-04-19 12:32:22 [ERROR]: Database query error:
+2026-04-19 12:32:25 [ERROR]: Database query error:
+2026-04-19 12:32:27 [ERROR]: Database query error:

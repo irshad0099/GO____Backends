@@ -259,7 +259,12 @@ CONV_FEE_LUXURY_PEAK_MAX:    parseFloat(process.env.CONV_FEE_LUXURY_PEAK_MAX)   
     
     // Pagination
     PAGINATION_DEFAULT_LIMIT: parseInt(process.env.PAGINATION_DEFAULT_LIMIT) || 20,
-    PAGINATION_MAX_LIMIT: parseInt(process.env.PAGINATION_MAX_LIMIT) || 100
+    PAGINATION_MAX_LIMIT: parseInt(process.env.PAGINATION_MAX_LIMIT) || 100,
+
+    SENDGRID_API_KEY:   process.env.SENDGRID_API_KEY || '',
+EMAIL_FROM:         process.env.EMAIL_FROM        || 'mailatgomobility@gmail.com',
+EMAIL_FROM_NAME:    process.env.EMAIL_FROM_NAME   || 'GO Mobility',
+EMAIL_REPLY_TO:     process.env.EMAIL_REPLY_TO    || 'support@gomobility.co.in',
 };
 
 // import dotenv from 'dotenv';

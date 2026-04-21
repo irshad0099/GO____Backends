@@ -16,7 +16,8 @@ export const getMyScheduled = async (req, res, next) => {
 
 export const cancelScheduled = async (req, res, next) => {
     try {
-        const data = await schedService.cancelScheduledRide(req.user.id, parseInt(req.params.id), req.body.reason);
+        // const data = await schedService.cancelScheduledRide(req.user.id, parseInt(req.params.id), req.body.reason);
+        const data = await schedService.cancelScheduledRide(req.user.id, parseInt(req.params.id), req.body?.reason || 'Cancelled by passenger');
         res.status(200).json({ success: true, data });
     } catch (error) { next(error); }
 };

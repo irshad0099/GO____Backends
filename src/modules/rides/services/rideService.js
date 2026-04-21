@@ -13,6 +13,10 @@ import logger from '../../../core/logger/logger.js';
 import { ENV } from '../../../config/envConfig.js';
 import { db } from '../../../infrastructure/database/postgres.js';
 import { getDistanceAndDuration, getDriverETA, geocodeAddress } from '../../../core/services/googleMapsService.js';
+import { 
+    sendRideReceipt, 
+    sendRideCancelledEmail 
+} from '../../../core/services/emailService.js';
 
 import { 
     getCachedNearbyDrivers, 
@@ -522,6 +526,17 @@ const etaMinutes = etaResult.etaMinutes;
             });
         }
 
+        // Cancel email bhejo
+// if (ride.passenger_email) {
+//     sendRideCancelledEmail({
+//         to:          ride.passenger_email,
+//         riderName:   ride.passenger_name || 'Rider',
+//         rideNumber:  ride.ride_number,
+//         cancelledBy: 'Driver',
+//         reason:      cancellationReason || 'Driver cancelled',
+//     }).catch(err => logger.error('Cancel email error:', err));
+// }
+
         // ── SOCKET: notify passenger of driver assignment ─────────────────────
         // const etaMinutes = Math.ceil(pickupDistanceKm * 3);
         const assignmentData = {
@@ -706,6 +721,30 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
                     },
                 });
             }
+
+            // Email receipt bhejo
+if (ride.passenger_email) {
+    sendRideReceipt({
+        to:               ride.passenger_email,
+        riderName:        ride.passenger_name || 'Rider',
+        rideNumber:       ride.ride_number,
+        vehicleType:      ride.vehicle_type,
+        pickupAddress:    ride.pickup_address,
+        dropoffAddress:   ride.dropoff_address,
+        distanceKm:       ride.distance_km,
+        durationMinutes:  ride.duration_minutes,
+        baseFare:         ride.base_fare,
+        distanceFare:     ride.distance_fare,
+        convenienceFee:   ride.convenience_fee,
+        surgeMultiplier:  ride.surge_multiplier,
+        finalFare:        ride.final_fare || ride.estimated_fare,
+        paymentMethod:    ride.payment_method,
+        rideDate:         ride.completed_at,
+        subscriptionDiscount: ride.subscription_discount || 0,
+        couponDiscount:   ride.coupon_discount || 0,
+        isFreeRide:       ride.is_free_ride || false,
+    }).catch(err => logger.error('Receipt email error:', err));
+}
 
             logger.info(`Ride ${rideId} final fare: Rs.${passengerFinalFare} (estimated: Rs.${ride.estimated_fare})`);
         }

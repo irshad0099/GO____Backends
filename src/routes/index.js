@@ -14,6 +14,7 @@ import subscriptionRoutes from '../modules/subscription/routes/subscriptionRoute
 // ─── New Routes ───────────────────────────────────────────────────────────────
 import paymentRoutes      from '../modules/payments/routes/paymentRoutes.js';
 import pricingRoutes      from '../modules/pricing/routes/pricingRoutes.js';
+import pricingAdminRoutes from '../modules/pricing/routes/pricingAdminRoutes.js';
 import reviewRoutes       from '../modules/review/routes/reviewRoutes.js';
 import adminRoutes        from '../modules/admin/routes/adminroutes.js';
 
@@ -44,6 +45,7 @@ router.use('/kyc',           kycRoutes);
 router.use('/driver-kyc',    driverKycRoutes);
 
 router.use('/admin',         adminRoutes);
+router.use('/admin/pricing', pricingAdminRoutes);
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 router.get('/health', (req, res) => {

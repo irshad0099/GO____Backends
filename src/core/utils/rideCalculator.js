@@ -1,60 +1,32 @@
 import { ENV } from '../../config/envConfig.js';
+import {
+    getPricingConfig,
+    getVehicleConfig,
+    getSubscriberRule,
+    getDistanceTierMultiplier,
+    getSetting,
+    normalizeVehicleType,
+} from '../../modules/pricing/services/pricingConfigLoader.js';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const round2 = (v) => Math.round((Number(v) + Number.EPSILON) * 100) / 100;
 const clamp  = (v, min, max) => Math.min(max, Math.max(min, v));
-const pickInRange = (min, max, ratio = 0.5) => {
-    if (min === max) return min;
-    return round2(min + ((max - min) * clamp(ratio, 0, 1)));
+const num    = (v, fallback = 0) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : fallback;
 };
 
-// const VEHICLE_ENV_KEY = { bike: 'BIKE', auto: 'AUTO', car: 'CAR', cab: 'CAR', taxi: 'CAR' };
-
-const VEHICLE_ENV_KEY = { 
-    bike: 'BIKE', 
-    auto: 'AUTO', 
-    car: 'CAR', 
-    cab: 'CAR', 
-    taxi: 'CAR',
-    xl: 'XL',
-    premium: 'PREMIUM',
-    luxury: 'LUXURY'
-};
-
-const normalizeVehicleType = (vehicleType) => {
-    const type = String(vehicleType || '').toLowerCase();
-    if (type === 'cab' || type === 'taxi') return 'car';
-    return type;
-};
-
-const envKey = (vehicleType) => {
-    const norm = normalizeVehicleType(vehicleType);
-    const key = VEHICLE_ENV_KEY[norm];
-    if (!key) throw new Error(`Invalid vehicle type: ${vehicleType}`);
-    return { norm, key };
-};
-
-// ─── Vehicle Pricing (from ENV — Spec Section 8) ───────────────────────────
-const getVehiclePricing = (vehicleType) => {
-    const { norm, key } = envKey(vehicleType);
-    return {
-        vehicleType: norm,
-        baseFare:    Number(ENV[`${key}_BASE_FARE`])    || 0,
-        perKm:       Number(ENV[`${key}_PER_KM`])       || 0,
-        minimumFare: Number(ENV[`${key}_MINIMUM_FARE`]) || 0
-    };
-};
-
-// ─── Time-based Peak Detection ──────────────────────────────────────────────
-// Returns true if current server time falls within configured peak windows
+// ═════════════════════════════════════════════════════════════════════════════
+//  PEAK DETECTION (time / demand / weather)
+// ═════════════════════════════════════════════════════════════════════════════
 export const isTimePeak = () => {
     const now  = new Date();
     const hour = now.getHours();
 
-    const morningStart = Number(ENV.PEAK_HOURS_MORNING_START) || 8;
-    const morningEnd   = Number(ENV.PEAK_HOURS_MORNING_END)   || 10;
-    const eveningStart = Number(ENV.PEAK_HOURS_EVENING_START) || 18;
-    const eveningEnd   = Number(ENV.PEAK_HOURS_EVENING_END)   || 21;
+    const morningStart = num(getSetting('peak_hours_morning_start'), 8);
+    const morningEnd   = num(getSetting('peak_hours_morning_end'),   10);
+    const eveningStart = num(getSetting('peak_hours_evening_start'), 18);
+    const eveningEnd   = num(getSetting('peak_hours_evening_end'),   21);
 
     const isMorningPeak = hour >= morningStart && hour < morningEnd;
     const isEveningPeak = hour >= eveningStart && hour < eveningEnd;
@@ -64,26 +36,21 @@ export const isTimePeak = () => {
         timeWindow: isMorningPeak ? 'morning_peak'
                   : isEveningPeak ? 'evening_peak'
                   : 'off_peak',
-        currentHour: hour
+        currentHour: hour,
     };
 };
 
-// ─── Demand-based Peak Detection (with minimum volume guard) ────────────────
-// Demand ratio only considered if rideRequests >= MIN_DEMAND_REQUESTS
-// This prevents 2 requests / 1 driver = 2.0 from falsely triggering peak
 export const isDemandPeak = ({ rideRequests = 0, availableDrivers = 0, requestVelocity = 0 }) => {
-    const safeDrivers       = Math.max(1, Number(availableDrivers));
-    const requests           = Number(rideRequests) || 0;
+    const safeDrivers       = Math.max(1, num(availableDrivers));
+    const requests          = num(rideRequests);
     const demandSupplyRatio = round2(requests / safeDrivers);
-    const vel               = Number(requestVelocity) || 0;
+    const vel               = num(requestVelocity);
 
-    const minVolume      = Number(ENV.MIN_DEMAND_REQUESTS)      || 5;
-    const ratioThreshold = Number(ENV.PEAK_RATIO_THRESHOLD)     || 1.2;
-    const velThreshold   = Number(ENV.PEAK_VELOCITY_THRESHOLD)  || 18;
+    const minVolume      = num(getSetting('min_demand_requests'),      5);
+    const ratioThreshold = num(getSetting('peak_ratio_threshold'),    1.2);
+    const velThreshold   = num(getSetting('peak_velocity_threshold'), 18);
 
-    // Minimum volume guard — low volume means no demand peak, period
     const hasSufficientVolume = requests >= minVolume;
-
     const highRatio    = hasSufficientVolume && demandSupplyRatio >= ratioThreshold;
     const highVelocity = hasSufficientVolume && vel >= velThreshold;
     const isDemand     = highRatio || highVelocity;
@@ -96,49 +63,44 @@ export const isDemandPeak = ({ rideRequests = 0, availableDrivers = 0, requestVe
     return { isDemandPeak: isDemand, demandReason, demandSupplyRatio, requestVelocity: vel, hasSufficientVolume };
 };
 
-// ─── Combined Peak Detection (Time + Demand + Weather) ──────────────────────
-// isPeak = TRUE if time-based peak OR demand-based peak OR weather-based peak
-// weatherSignal is optional — comes from weatherService.getWeatherSignal()
 export const detectPeak = ({ rideRequests = 0, availableDrivers = 0, requestVelocity = 0, weatherSignal = null }) => {
     const time   = isTimePeak();
     const demand = isDemandPeak({ rideRequests, availableDrivers, requestVelocity });
 
-    // Weather signal (plug & play — null/undefined = ignored)
-    const isWeatherPeak  = weatherSignal?.isWeatherPeak || false;
-    const weatherSurge   = Number(weatherSignal?.weatherSurge) || 1.0;
+    const isWeatherPeak = weatherSignal?.isWeatherPeak || false;
+    const weatherSurge  = num(weatherSignal?.weatherSurge, 1.0);
 
     const isPeak = time.isTimePeak || demand.isDemandPeak || isWeatherPeak;
 
-    // Peak reason — prioritize combined reasons
-    let peakReasons = [];
-    if (time.isTimePeak)    peakReasons.push('peak_hour');
+    const peakReasons = [];
+    if (time.isTimePeak)     peakReasons.push('peak_hour');
     if (demand.isDemandPeak) peakReasons.push('high_demand');
-    if (isWeatherPeak)      peakReasons.push('bad_weather');
-
-    const peakReason = peakReasons.length > 0 ? peakReasons.join('_and_') : 'normal_load';
+    if (isWeatherPeak)       peakReasons.push('bad_weather');
 
     return {
         isPeak,
-        peakReason,
-        isTimePeak:            time.isTimePeak,
-        timeWindow:            time.timeWindow,
-        currentHour:           time.currentHour,
-        isDemandPeak:          demand.isDemandPeak,
-        demandReason:          demand.demandReason,
-        demandSupplyRatio:     demand.demandSupplyRatio,
-        requestVelocity:       demand.requestVelocity,
-        hasSufficientVolume:   demand.hasSufficientVolume,
+        peakReason:          peakReasons.length ? peakReasons.join('_and_') : 'normal_load',
+        isTimePeak:          time.isTimePeak,
+        timeWindow:          time.timeWindow,
+        currentHour:         time.currentHour,
+        isDemandPeak:        demand.isDemandPeak,
+        demandReason:        demand.demandReason,
+        demandSupplyRatio:   demand.demandSupplyRatio,
+        requestVelocity:     demand.requestVelocity,
+        hasSufficientVolume: demand.hasSufficientVolume,
         isWeatherPeak,
-        weatherCondition:      weatherSignal?.weatherCondition || 'unknown',
-        weatherSeverity:       weatherSignal?.severity || 'none',
-        weatherSurge
+        weatherCondition:    weatherSignal?.weatherCondition || 'unknown',
+        weatherSeverity:     weatherSignal?.severity || 'none',
+        weatherSurge,
     };
 };
 
-// ─── Surge Multiplier (Spec Section 2) ──────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+//  SURGE MULTIPLIER
+// ═════════════════════════════════════════════════════════════════════════════
 export const calculateSurgeByDemandSupply = (demandSupplyRatio) => {
-    const ratio    = Number(demandSupplyRatio) || 0;
-    const surgeCap = Number(ENV.SURGE_MAX_MULTIPLIER) || 1.75;
+    const ratio    = num(demandSupplyRatio, 0);
+    const surgeCap = num(getSetting('surge_max_multiplier'), 1.75);
 
     if (ratio <= 1.1) return 1.0;
 
@@ -151,179 +113,317 @@ export const calculateSurgeByDemandSupply = (demandSupplyRatio) => {
     return round2(clamp(progressive, 1.2, surgeCap));
 };
 
-// ─── Convenience Fee (from ENV — Spec Section 3) ────────────────────────────
-export const calculateConvenienceFee = (vehicleType, isPeak, demandSupplyRatio = 1) => {
-    const { key } = envKey(vehicleType);
-    const band    = isPeak ? 'PEAK' : 'NONPEAK';
+// ═════════════════════════════════════════════════════════════════════════════
+//  CONVENIENCE FEE — tiered + subscriber-aware (PRD Section 3.3 & 8)
+//
+//  1. tierMult = distance band multiplier (0.75 / 1.0 / 1.2 / 1.4)
+//  2. standardFee = baseFee(peak|off-peak) * tierMult
+//  3. Subscriber: free <= freeKm, then discount% off standardFee
+//  4. Non-subscriber: standardFee
+// ═════════════════════════════════════════════════════════════════════════════
+export const calculateConvenienceFee = ({
+    vehicleType,
+    distanceKm = 0,
+    isPeak     = false,
+    subscriberTier = 'none',
+    isSubscribed   = false,
+}) => {
+    const v    = getVehicleConfig(vehicleType);
+    const tier = getDistanceTierMultiplier(distanceKm);
+    const base = isPeak ? v.conveniencePeak : v.convenienceOffPeak;
 
-    const min = Number(ENV[`CONV_FEE_${key}_${band}_MIN`]) || 0;
-    const max = Number(ENV[`CONV_FEE_${key}_${band}_MAX`]) || 0;
+    const standardFee = round2(base * tier.multiplier);
 
-    const ratioFactor   = clamp(((Number(demandSupplyRatio) || 1) - 1) / 1.5, 0, 1);
-    const convenienceFee = pickInRange(min, max, ratioFactor);
+    let convenienceFee = standardFee;
+    let freeZoneApplied = false;
+    let subscriberDiscount = 0;
 
-    return { convenienceFee, feeBand: { min, max }, isPeak: Boolean(isPeak) };
+    if (isSubscribed) {
+        const rule = getSubscriberRule(subscriberTier);
+        if (distanceKm <= rule.freeKm) {
+            convenienceFee  = 0;
+            freeZoneApplied = true;
+        } else {
+            const discountPct = rule.discountPctBeyond / 100;
+            subscriberDiscount = round2(standardFee * discountPct);
+            convenienceFee     = round2(standardFee - subscriberDiscount);
+        }
+    }
+
+    return {
+        convenienceFee,
+        standardFee,
+        tierName:           tier.name,
+        tierMultiplier:     tier.multiplier,
+        baseRate:           round2(base),
+        isPeak:             Boolean(isPeak),
+        freeZoneApplied,
+        subscriberDiscount,
+    };
 };
 
-// ─── Cancellation Penalty (from ENV — Spec Section 4) ───────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+//  CANCELLATION PENALTY
+// ═════════════════════════════════════════════════════════════════════════════
 export const calculateCancellationPenalty = (cancellationDistanceMeters) => {
-    const threshold      = Number(ENV.CANCELLATION_DISTANCE_THRESHOLD)      || 500;
-    const penalty        = Number(ENV.CANCELLATION_PENALTY)                 || 50;
-    const driverPercent  = Number(ENV.CANCELLATION_DRIVER_SHARE_PERCENT)    || 80;
-    const platformPercent = Number(ENV.CANCELLATION_PLATFORM_SHARE_PERCENT) || 20;
+    const threshold       = num(getSetting('cancellation_distance_threshold'),  300);
+    const penalty         = num(getSetting('cancellation_penalty'),             50);
+    const driverPercent   = num(getSetting('cancellation_driver_share_pct'),    80);
+    const platformPercent = num(getSetting('cancellation_platform_share_pct'),  20);
 
-    if (Number(cancellationDistanceMeters) > threshold) {
+    if (num(cancellationDistanceMeters) > threshold) {
         return { isApplicable: false, penalty: 0, driverShare: 0, platformShare: 0, thresholdMeters: threshold };
     }
 
     return {
-        isApplicable: true,
+        isApplicable:    true,
         penalty,
-        driverShare:   round2(penalty * driverPercent / 100),
-        platformShare: round2(penalty * platformPercent / 100),
-        thresholdMeters: threshold
+        driverShare:     round2(penalty * driverPercent / 100),
+        platformShare:   round2(penalty * platformPercent / 100),
+        thresholdMeters: threshold,
     };
 };
 
-// ─── Waiting Charges (from ENV — Spec Section 5) ────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+//  WAITING CHARGES — 7 min grace (PRD Section 6)
+//  100% to driver. Not multiplied by surge.
+// ═════════════════════════════════════════════════════════════════════════════
 export const calculateWaitingCharges = (vehicleType, waitedMinutes = 0) => {
-    const { key }          = envKey(vehicleType);
-    const graceMinutes     = Number(ENV.WAITING_GRACE_MINUTES)       || 3;
-    const ratePerMin       = Number(ENV[`WAITING_RATE_${key}`])      || 0;
-    const chargeableMinutes = Math.max(0, Number(waitedMinutes) - graceMinutes);
+    const v = getVehicleConfig(vehicleType);
+    const chargeable = Math.max(0, num(waitedMinutes) - v.waitingGraceMinutes);
 
     return {
-        waitingRatePerMin: ratePerMin,
-        graceMinutes,
-        chargeableMinutes,
-        waitingCharges: round2(chargeableMinutes * ratePerMin)
+        waitingRatePerMin:  v.waitingRatePerMin,
+        graceMinutes:       v.waitingGraceMinutes,
+        chargeableMinutes:  round2(chargeable),
+        waitingCharges:     round2(chargeable * v.waitingRatePerMin),
     };
 };
 
-// ─── Traffic Delay Compensation (from ENV — Spec Section 6) ─────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+//  TRAFFIC DELAY COMPENSATION — 100% to driver
+// ═════════════════════════════════════════════════════════════════════════════
 export const calculateTrafficDelayCompensation = (vehicleType, estimatedMin = 0, actualMin = 0) => {
-    const { key }    = envKey(vehicleType);
-    const graceBuffer = Number(ENV.TRAFFIC_GRACE_BUFFER_MINUTES) || 30;
-    const ratePerMin  = Number(ENV[`TRAFFIC_RATE_${key}`])       || 0;
-    const noChargeUntil = Number(estimatedMin) + graceBuffer;
-    const overage       = Math.max(0, Number(actualMin) - noChargeUntil);
+    const v            = getVehicleConfig(vehicleType);
+    const noChargeUntil = num(estimatedMin) + v.trafficGraceMinutes;
+    const overage       = Math.max(0, num(actualMin) - noChargeUntil);
 
     return {
-        graceBufferMinutes:       graceBuffer,
+        graceBufferMinutes:       v.trafficGraceMinutes,
         noChargeUntilMinutes:     noChargeUntil,
-        trafficOverageMinutes:    overage,
-        trafficDelayRatePerMin:   ratePerMin,
-        trafficDelayCompensation: round2(overage * ratePerMin)
+        trafficOverageMinutes:    round2(overage),
+        trafficDelayRatePerMin:   v.trafficRatePerMin,
+        trafficDelayCompensation: round2(overage * v.trafficRatePerMin),
     };
 };
 
-// ─── Pickup Distance Compensation (from ENV — Spec Section 7) ───────────────
+// ═════════════════════════════════════════════════════════════════════════════
+//  PICKUP DISTANCE COMPENSATION — PRD Section 5
+//  100% to driver. Not multiplied by surge. Not in passenger total.
+// ═════════════════════════════════════════════════════════════════════════════
 export const calculatePickupCompensation = (vehicleType, pickupDistanceKm = 0) => {
-    const { key }    = envKey(vehicleType);
-    const baseRadius = Number(ENV.PICKUP_BASE_RADIUS_KM)    || 2.5;
-    const compPerKm  = Number(ENV[`PICKUP_COMP_${key}`])    || 0;
-    const extraKm    = Math.max(0, Number(pickupDistanceKm) - baseRadius);
+    const v        = getVehicleConfig(vehicleType);
+    const extraKm  = Math.max(0, num(pickupDistanceKm) - v.pickupFreeKm);
 
     return {
-        baseRadiusKm:       baseRadius,
-        pickupDistanceKm:   round2(pickupDistanceKm),
+        baseRadiusKm:       v.pickupFreeKm,
+        pickupDistanceKm:   round2(num(pickupDistanceKm)),
         extraPickupKm:      round2(extraKm),
-        compensationPerKm:  compPerKm,
-        pickupCompensation: round2(extraKm * compPerKm)
+        compensationPerKm:  v.pickupRatePerKm,
+        pickupCompensation: round2(extraKm * v.pickupRatePerKm),
     };
 };
 
-// ─── Platform Fee (from ENV — Spec Section 1) ───────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+//  PLATFORM FEE — daily cap applies
+// ═════════════════════════════════════════════════════════════════════════════
 export const calculatePlatformFee = (vehicleType, driverDailyRideCount = 0) => {
-    const { key }  = envKey(vehicleType);
-    const dailyCap = Number(ENV.PLATFORM_FEE_DAILY_CAP) || 10;
-    const feeRate  = Number(ENV[`PLATFORM_FEE_${key}`]) || 0;
-    const charged  = Number(driverDailyRideCount) < dailyCap;
+    const v       = getVehicleConfig(vehicleType);
+    const charged = num(driverDailyRideCount) < v.platformFeeDailyCap;
 
     return {
-        platformFee:    round2(charged ? feeRate : 0),
-        isCharged:      charged,
-        capApplied:     !charged,
-        rideCountForDay: Number(driverDailyRideCount),
-        dailyCapRide:   dailyCap
+        platformFee:     round2(charged ? v.platformFee : 0),
+        isCharged:       charged,
+        capApplied:      !charged,
+        rideCountForDay: num(driverDailyRideCount),
+        dailyCapRide:    v.platformFeeDailyCap,
+    };
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  GST — PRD Section 4
+// ═════════════════════════════════════════════════════════════════════════════
+export const calculateGst = (fareBeforeGst, platformFee) => {
+    const { gst } = getPricingConfig();
+    if (!gst.enabled) {
+        return {
+            enabled:            false,
+            riderRatePct:       0,
+            platformRatePct:    0,
+            gstOnFare:          0,
+            gstOnPlatformFee:   0,
+            passengerTotal:     round2(fareBeforeGst),
+            driverPlatformTotal: round2(platformFee),
+            riderSacCode:       gst.riderSacCode,
+            platformSacCode:    gst.platformSacCode,
+        };
+    }
+
+    const gstOnFare         = round2(num(fareBeforeGst) * gst.riderRatePct / 100);
+    const gstOnPlatformFee  = round2(num(platformFee)   * gst.platformRatePct / 100);
+
+    return {
+        enabled:             true,
+        riderRatePct:        gst.riderRatePct,
+        platformRatePct:     gst.platformRatePct,
+        gstOnFare,
+        gstOnPlatformFee,
+        passengerTotal:      round2(num(fareBeforeGst) + gstOnFare),
+        driverPlatformTotal: round2(num(platformFee) + gstOnPlatformFee),
+        riderSacCode:        gst.riderSacCode,
+        platformSacCode:     gst.platformSacCode,
+    };
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  CORE FARE BUILDER — shared by estimate + final
+//
+//  Formula (PRD Section 8):
+//    preSurge   = baseFare + distanceFare + waitingCharges       (no convFee here)
+//    surged     = preSurge * surgeMultiplier
+//    fareFloor  = max(surged, minimumFare)                        (Edge 10.3)
+//    fareB4Gst  = fareFloor + convenienceFee                      (convFee post-floor)
+//    passengerTotal = fareB4Gst + gstOnFare
+//    driverNet  = fareFloor - (platformFee + gstOnPlatform)
+//               + pickupComp + waitingCharges + trafficComp
+// ═════════════════════════════════════════════════════════════════════════════
+const buildFare = ({
+    vehicleType,
+    distanceKm,
+    surgeMultiplier,
+    convenienceFeeInput,
+    waitingCharges,
+    pickupCompensation,
+    trafficDelayCompensation,
+    platformFee,
+}) => {
+    const v = getVehicleConfig(vehicleType);
+
+    const distanceFare      = round2(num(distanceKm) * v.perKmRate);
+    const preSurge          = round2(v.baseFare + distanceFare + num(waitingCharges));
+    const surgedFare        = round2(preSurge * num(surgeMultiplier, 1));
+    const fareFloor         = round2(Math.max(surgedFare, v.minimumFare));
+    const fareBeforeGst     = round2(fareFloor + num(convenienceFeeInput));
+
+    const gst = calculateGst(fareBeforeGst, platformFee);
+
+    // Driver net — Bug 2 fix: subtract convenience fee (GO's revenue, not driver's)
+    const driverNet = round2(
+        fareFloor
+        - num(platformFee)
+        - gst.gstOnPlatformFee
+        + num(pickupCompensation)
+        + num(waitingCharges)
+        + num(trafficDelayCompensation)
+    );
+
+    return {
+        baseFare:       round2(v.baseFare),
+        perKmRate:      round2(v.perKmRate),
+        distanceFare,
+        minimumFare:    round2(v.minimumFare),
+        preSurgeSubtotal: preSurge,
+        surgedFare,
+        fareFloor,
+        convenienceFee: round2(num(convenienceFeeInput)),
+        fareBeforeGst,
+        gst,
+        passengerTotal: gst.passengerTotal,
+        driverNet,
     };
 };
 
 // ═════════════════════════════════════════════════════════════════════════════
 //  ESTIMATED FARE — called at ride request / calculate-fare API
-//  Uses REAL demand signals (from DB) → dynamic surge & peak detection
-//  No waiting charges at estimate time (ride hasn't started yet)
 // ═════════════════════════════════════════════════════════════════════════════
 export const calculateEstimatedFare = ({
     vehicleType,
-    distanceKm            = 0,
+    distanceKm              = 0,
     estimatedDurationMinutes = 0,
-    pickupDistanceKm      = 0,
-    driverDailyRideCount  = 0,
-    rideRequests          = 0,
-    availableDrivers      = 0,
-    requestVelocity       = 0,
-    weatherSignal         = null
+    pickupDistanceKm        = 0,
+    driverDailyRideCount    = 0,
+    rideRequests            = 0,
+    availableDrivers        = 0,
+    requestVelocity         = 0,
+    weatherSignal           = null,
+    subscriberTier          = 'none',
+    isSubscribed            = false,
 }) => {
-    const pricing    = getVehiclePricing(vehicleType);
+    const v          = getVehicleConfig(vehicleType);
     const peakSignal = detectPeak({ rideRequests, availableDrivers, requestVelocity, weatherSignal });
 
-    // Demand surge (volume guard: low volume = no demand surge)
-    const demandSurge = peakSignal.hasSufficientVolume
+    const demandSurge  = peakSignal.hasSufficientVolume
         ? calculateSurgeByDemandSupply(peakSignal.demandSupplyRatio)
         : 1.0;
-
-    // Weather surge (independent — rain/storm adds its own multiplier)
     const weatherSurge = peakSignal.weatherSurge || 1.0;
 
-    // Final surge = higher of demand surge or weather surge (not stacked)
-    // Example: demand 1.3x + rain 1.1x → use 1.3x (demand wins)
-    // Example: demand 1.0x + thunderstorm 1.25x → use 1.25x (weather wins)
-    const surgeCap = Number(ENV.SURGE_MAX_MULTIPLIER) || 1.75;
+    // Surge cap — subscriber tier overrides global cap
+    const subRule  = getSubscriberRule(isSubscribed ? subscriberTier : 'none');
+    const surgeCap = subRule.surgeCap;
     const surgeMultiplier = clamp(Math.max(demandSurge, weatherSurge), 1, surgeCap);
 
-    // Convenience fee uses COMBINED peak (time OR demand OR weather)
-    const convenience = calculateConvenienceFee(pricing.vehicleType, peakSignal.isPeak, peakSignal.demandSupplyRatio);
-    const pickup      = calculatePickupCompensation(pricing.vehicleType, pickupDistanceKm);
-    const platform    = calculatePlatformFee(pricing.vehicleType, driverDailyRideCount);
+    const conv     = calculateConvenienceFee({
+        vehicleType, distanceKm, isPeak: peakSignal.isPeak, subscriberTier, isSubscribed,
+    });
+    const pickup   = calculatePickupCompensation(vehicleType, pickupDistanceKm);
+    const platform = calculatePlatformFee(vehicleType, driverDailyRideCount);
 
-    // Spec Section 9:  (BaseFare + DistanceFare + ConvenienceFee) × Surge
-    // No waiting at estimate time
-    const distanceFare      = round2(Number(distanceKm) * pricing.perKm);
-    const preSurgeSubtotal  = round2(pricing.baseFare + distanceFare + convenience.convenienceFee);
-    const surgedFare        = round2(preSurgeSubtotal * surgeMultiplier);
-    const estimatedFare     = Math.max(Math.round(surgedFare), Math.round(pricing.minimumFare));
-
-    const driverNet = round2(estimatedFare - platform.platformFee + pickup.pickupCompensation);
+    const fare = buildFare({
+        vehicleType,
+        distanceKm,
+        surgeMultiplier,
+        convenienceFeeInput:      conv.convenienceFee,
+        waitingCharges:           0,   // no waiting at estimate time
+        pickupCompensation:       pickup.pickupCompensation,
+        trafficDelayCompensation: 0,   // no traffic at estimate time
+        platformFee:              platform.platformFee,
+    });
 
     return {
         passenger: {
-            vehicleType:    pricing.vehicleType,
-            baseFare:       round2(pricing.baseFare),
-            perKmRate:      round2(pricing.perKm),
-            distanceKm:     round2(distanceKm),
-            distanceFare,
-            waitingCharges: 0,
-            convenienceFee: convenience.convenienceFee,
+            vehicleType:     normalizeVehicleType(vehicleType),
+            baseFare:        fare.baseFare,
+            perKmRate:       fare.perKmRate,
+            distanceKm:      round2(distanceKm),
+            distanceFare:    fare.distanceFare,
+            waitingCharges:  0,
+            convenienceFee:  fare.convenienceFee,
             surgeMultiplier,
-            minimumFare:    round2(pricing.minimumFare),
-            estimatedFare,
-            isPeak:         peakSignal.isPeak,
-            peakReason:     peakSignal.peakReason
+            minimumFare:     fare.minimumFare,
+            fareFloor:       fare.fareFloor,
+            fareBeforeGst:   fare.fareBeforeGst,
+            gstOnFare:       fare.gst.gstOnFare,
+            passengerTotal:  fare.passengerTotal,
+            estimatedFare:   fare.passengerTotal,    // alias
+            isPeak:          peakSignal.isPeak,
+            peakReason:      peakSignal.peakReason,
+            tierName:        conv.tierName,
+            freeZoneApplied: conv.freeZoneApplied,
         },
         driver: {
-            grossFare:                  round2(estimatedFare),
+            grossFare:                  fare.fareFloor,
             platformFee:                platform.platformFee,
+            gstOnPlatformFee:           fare.gst.gstOnPlatformFee,
             platformFeeCharged:         platform.isCharged,
             pickupDistanceCompensation: pickup.pickupCompensation,
             waitingEarnings:            0,
             trafficDelayCompensation:   0,
-            netEarnings:                driverNet,
+            netEarnings:                fare.driverNet,
             dailyRideCount:             platform.rideCountForDay,
-            platformFeeCapRide:         platform.dailyCapRide
+            platformFeeCapRide:         platform.dailyCapRide,
         },
         signals: {
-            demandSupplyRatio:    peakSignal.demandSupplyRatio,
+            demandSupplyRatio:   peakSignal.demandSupplyRatio,
             requestVelocity:     peakSignal.requestVelocity,
             surgeCap,
             demandSurge,
@@ -338,100 +438,110 @@ export const calculateEstimatedFare = ({
             hasSufficientVolume: peakSignal.hasSufficientVolume,
             isWeatherPeak:       peakSignal.isWeatherPeak,
             weatherCondition:    peakSignal.weatherCondition,
-            weatherSeverity:     peakSignal.weatherSeverity
+            weatherSeverity:     peakSignal.weatherSeverity,
         },
+        gst: fare.gst,
         meta: {
-            estimatedDurationMinutes: Math.round(Number(estimatedDurationMinutes)),
-            convenienceFeeBand: convenience.feeBand,
+            estimatedDurationMinutes: Math.round(num(estimatedDurationMinutes)),
+            convenience: conv,
             pickup,
-            platform
-        }
+            platform,
+        },
     };
 };
 
 // ═════════════════════════════════════════════════════════════════════════════
 //  FINAL FARE — called when ride completes
-//  Surge is LOCKED from request time (not recalculated)
-//  Actual waiting + traffic delay calculated from real timestamps
+//  Reads locked values from ride record (snapshot at request time).
 // ═════════════════════════════════════════════════════════════════════════════
 export const calculateFinalRideFare = ({
     vehicleType,
-    distanceKm               = 0,
-    estimatedDurationMinutes = 0,
-    actualDurationMinutes    = 0,
-    waitedMinutes            = 0,
-    surgeMultiplier          = 1,
-    pickupDistanceKm         = 0,
-    driverDailyRideCount     = 0,
-    lockedConvenienceFee     = null,  // locked at request time — pass from ride.convenience_fee
-    lockedIsPeak             = null   // locked at request time — pass from ride.is_peak
+    distanceKm                = 0,
+    estimatedDurationMinutes  = 0,
+    actualDurationMinutes     = 0,
+    waitedMinutes             = 0,
+    surgeMultiplier           = 1,
+    pickupDistanceKm          = 0,
+    driverDailyRideCount      = 0,
+    lockedConvenienceFee      = null,
+    lockedIsPeak              = null,
+    lockedSubscriberTier      = 'none',
+    lockedIsSubscribed        = false,
+    lockedSurgeCap            = null,
 }) => {
-    const pricing  = getVehiclePricing(vehicleType);
-    const surgeCap = Number(ENV.SURGE_MAX_MULTIPLIER) || 1.75;
-    const lockedSurge = clamp(Number(surgeMultiplier), 1, surgeCap);
+    const surgeCapResolved = lockedSurgeCap != null
+        ? num(lockedSurgeCap, 1.75)
+        : getSubscriberRule(lockedIsSubscribed ? lockedSubscriberTier : 'none').surgeCap;
+    const lockedSurge = clamp(num(surgeMultiplier, 1), 1, surgeCapResolved);
 
-    // Use locked peak flag from request time if available, else infer from surge (fallback)
     const wasPeak = lockedIsPeak !== null ? Boolean(lockedIsPeak) : lockedSurge > 1;
 
-    // Use locked convenience fee from request time if available (prevents peak/non-peak mismatch)
-    const convenience = lockedConvenienceFee !== null
-        ? { convenienceFee: round2(Number(lockedConvenienceFee)), feeBand: {}, isPeak: wasPeak }
-        : calculateConvenienceFee(pricing.vehicleType, wasPeak, lockedSurge);
-    const waiting     = calculateWaitingCharges(pricing.vehicleType, waitedMinutes);
-    const traffic     = calculateTrafficDelayCompensation(pricing.vehicleType, estimatedDurationMinutes, actualDurationMinutes);
-    const pickup      = calculatePickupCompensation(pricing.vehicleType, pickupDistanceKm);
-    const platform    = calculatePlatformFee(pricing.vehicleType, driverDailyRideCount);
+    const conv = lockedConvenienceFee !== null
+        ? { convenienceFee: round2(num(lockedConvenienceFee)), tierName: 'locked', tierMultiplier: null, baseRate: null, isPeak: wasPeak, freeZoneApplied: false, subscriberDiscount: 0, standardFee: null }
+        : calculateConvenienceFee({
+            vehicleType, distanceKm, isPeak: wasPeak,
+            subscriberTier: lockedSubscriberTier, isSubscribed: lockedIsSubscribed,
+        });
 
-    // Spec Section 9:  (BaseFare + DistanceFare + WaitingCharges + ConvenienceFee) × Surge
-    const distanceFare     = round2(Number(distanceKm) * pricing.perKm);
-    const preSurgeSubtotal = round2(pricing.baseFare + distanceFare + waiting.waitingCharges + convenience.convenienceFee);
-    const surgedFare       = round2(preSurgeSubtotal * lockedSurge);
-    const finalFare        = Math.max(Math.round(surgedFare), Math.round(pricing.minimumFare));
+    const waiting  = calculateWaitingCharges(vehicleType, waitedMinutes);
+    const traffic  = calculateTrafficDelayCompensation(vehicleType, estimatedDurationMinutes, actualDurationMinutes);
+    const pickup   = calculatePickupCompensation(vehicleType, pickupDistanceKm);
+    const platform = calculatePlatformFee(vehicleType, driverDailyRideCount);
 
-    // Driver: FinalFare − PlatformFee + PickupComp + WaitingEarnings + TrafficComp
-    const driverNet = round2(
-        finalFare
-        - platform.platformFee
-        + pickup.pickupCompensation
-        + waiting.waitingCharges
-        + traffic.trafficDelayCompensation
-    );
+    const fare = buildFare({
+        vehicleType,
+        distanceKm,
+        surgeMultiplier:          lockedSurge,
+        convenienceFeeInput:      conv.convenienceFee,
+        waitingCharges:           waiting.waitingCharges,
+        pickupCompensation:       pickup.pickupCompensation,
+        trafficDelayCompensation: traffic.trafficDelayCompensation,
+        platformFee:              platform.platformFee,
+    });
 
     return {
         passenger: {
-            vehicleType:    pricing.vehicleType,
-            baseFare:       round2(pricing.baseFare),
-            perKmRate:      round2(pricing.perKm),
-            distanceKm:     round2(distanceKm),
-            distanceFare,
-            waitingCharges: waiting.waitingCharges,
-            convenienceFee: convenience.convenienceFee,
+            vehicleType:     normalizeVehicleType(vehicleType),
+            baseFare:        fare.baseFare,
+            perKmRate:       fare.perKmRate,
+            distanceKm:      round2(distanceKm),
+            distanceFare:    fare.distanceFare,
+            waitingCharges:  waiting.waitingCharges,
+            convenienceFee:  fare.convenienceFee,
             surgeMultiplier: lockedSurge,
-            minimumFare:    round2(pricing.minimumFare),
-            finalFare,
-            isPeak:         wasPeak
+            minimumFare:     fare.minimumFare,
+            fareFloor:       fare.fareFloor,
+            fareBeforeGst:   fare.fareBeforeGst,
+            gstOnFare:       fare.gst.gstOnFare,
+            passengerTotal:  fare.passengerTotal,
+            finalFare:       fare.passengerTotal,     // alias
+            isPeak:          wasPeak,
+            tierName:        conv.tierName,
+            freeZoneApplied: conv.freeZoneApplied,
         },
         driver: {
-            grossFare:                  round2(finalFare),
+            grossFare:                  fare.fareFloor,
             platformFee:                platform.platformFee,
+            gstOnPlatformFee:           fare.gst.gstOnPlatformFee,
             platformFeeCharged:         platform.isCharged,
             pickupDistanceCompensation: pickup.pickupCompensation,
             waitingEarnings:            waiting.waitingCharges,
             trafficDelayCompensation:   traffic.trafficDelayCompensation,
-            netEarnings:                driverNet,
+            netEarnings:                fare.driverNet,
             dailyRideCount:             platform.rideCountForDay,
-            platformFeeCapRide:         platform.dailyCapRide
+            platformFeeCapRide:         platform.dailyCapRide,
         },
+        gst: fare.gst,
         meta: {
-            actualDurationMinutes: Math.round(Number(actualDurationMinutes)),
-            estimatedDurationMinutes: Math.round(Number(estimatedDurationMinutes)),
-            waitedMinutes: round2(waitedMinutes),
-            convenienceFeeBand: convenience.feeBand,
+            actualDurationMinutes:    Math.round(num(actualDurationMinutes)),
+            estimatedDurationMinutes: Math.round(num(estimatedDurationMinutes)),
+            waitedMinutes:            round2(waitedMinutes),
+            convenience: conv,
             waiting,
             traffic,
             pickup,
-            platform
-        }
+            platform,
+        },
     };
 };
 
@@ -448,16 +558,18 @@ export const calculateDistance = (lat1, lon1, lat2, lon2) => {
     return Math.round(R * c * 10) / 10;
 };
 
-// ─── Duration Estimate (speed from ENV) ─────────────────────────────────────
+// ─── Duration estimate ──────────────────────────────────────────────────────
 export const calculateDuration = (distanceKm, vehicleType) => {
-    const { key }     = envKey(vehicleType);
-    const averageSpeed = Number(ENV[`SPEED_${key}`]) || 30;
-    return Math.ceil((distanceKm / averageSpeed) * 60);
+    const v = getVehicleConfig(vehicleType);
+    return Math.ceil((num(distanceKm) / v.avgSpeedKmph) * 60);
 };
 
-// ─── Ride Number Generator ──────────────────────────────────────────────────
+// ─── Ride number ────────────────────────────────────────────────────────────
 export const generateRideNumber = () => {
     const timestamp = Date.now().toString(36).toUpperCase();
     const random    = Math.random().toString(36).substring(2, 6).toUpperCase();
     return `RIDE-${timestamp}${random}`;
 };
+
+// ENV re-exported for back-compat (unused internally now)
+export { ENV };

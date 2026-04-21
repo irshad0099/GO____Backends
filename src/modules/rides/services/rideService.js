@@ -136,6 +136,13 @@ const durationMinutes = mapsResult.durationMinutes;
         const selectedDriverId = signals.availableDrivers > 0 ? signals.nearbyDrivers[0].id : null;
         const driverDailyRideCount = await rideRepo.getDriverDailyRideCount(selectedDriverId);
 
+        // ── Subscription snapshot — LOCKED at request time (Edge 10.2) ──────
+        const subSnapshot = await subscriptionService.fetchActiveSubscription(userId);
+        const lockedIsSubscribed   = Boolean(subSnapshot?.hasActiveSubscription);
+        const lockedSubscriberTier = lockedIsSubscribed
+            ? (subSnapshot.data?.plan?.slug || 'basic')
+            : 'none';
+
         const goFare = rideCalculator.calculateEstimatedFare({
             vehicleType:              rideData.vehicleType,
             distanceKm,
@@ -145,7 +152,9 @@ const durationMinutes = mapsResult.durationMinutes;
             rideRequests:             signals.rideRequests,
             availableDrivers:         signals.availableDrivers,
             requestVelocity:          signals.requestVelocity,
-            weatherSignal:            signals.weatherSignal
+            weatherSignal:            signals.weatherSignal,
+            subscriberTier:           lockedSubscriberTier,
+            isSubscribed:             lockedIsSubscribed
         });
 
         const fare = {
@@ -153,19 +162,22 @@ const durationMinutes = mapsResult.durationMinutes;
             distanceFare:      goFare.passenger.distanceFare,
             timeFare:          durationMinutes,
             surgeMultiplier:   goFare.passenger.surgeMultiplier,
-            estimatedFare:     goFare.passenger.estimatedFare,
+            estimatedFare:     goFare.passenger.passengerTotal,
             convenienceFee:    goFare.passenger.convenienceFee ?? 0,
             isPeak:            goFare.passenger.isPeak ?? false,
-            demandSupplyRatio: goFare.signals.demandSupplyRatio ?? 1.0
+            demandSupplyRatio: goFare.signals.demandSupplyRatio ?? 1.0,
+            fareBeforeGst:     goFare.passenger.fareBeforeGst ?? goFare.passenger.passengerTotal,
+            gstOnFare:         goFare.passenger.gstOnFare ?? 0,
+            surgeCapApplied:   goFare.signals.surgeCap
         };
 
-        // ── Step 1: Subscription benefits
+        // ── Step 1: Subscription benefits (surgeProtection) ────────────────
         let subscriptionResult = null;
         {
             let fareForSubscription = fare.estimatedFare;
 
-            const sub = await subscriptionService.fetchActiveSubscription(userId);
-            if (sub.hasActiveSubscription && sub.data?.benefits?.surgeProtection && fare.surgeMultiplier > 1) {
+            const subPlanBenefits = subSnapshot?.data?.plan?.benefits;
+            if (lockedIsSubscribed && subPlanBenefits?.surgeProtection && fare.surgeMultiplier > 1) {
                 const noSurgeFare = rideCalculator.calculateEstimatedFare({
                     vehicleType:              rideData.vehicleType,
                     distanceKm,
@@ -175,16 +187,20 @@ const durationMinutes = mapsResult.durationMinutes;
                     rideRequests:             0,
                     availableDrivers:         1,
                     requestVelocity:          0,
-                    weatherSignal:            null
+                    weatherSignal:            null,
+                    subscriberTier:           lockedSubscriberTier,
+                    isSubscribed:             lockedIsSubscribed
                 });
-                fareForSubscription  = noSurgeFare.passenger.estimatedFare;
+                fareForSubscription  = noSurgeFare.passenger.passengerTotal;
                 fare.surgeMultiplier = 1.0;
                 fare.convenienceFee  = noSurgeFare.passenger.convenienceFee ?? 0;
                 fare.isPeak          = noSurgeFare.passenger.isPeak ?? false;
+                fare.fareBeforeGst   = noSurgeFare.passenger.fareBeforeGst ?? fareForSubscription;
+                fare.gstOnFare       = noSurgeFare.passenger.gstOnFare ?? 0;
             }
 
             subscriptionResult = await subscriptionService.applyRideBenefits(userId, fareForSubscription);
-            if (subscriptionResult.hasSubscription) {
+            if (subscriptionResult?.hasSubscription) {
                 fare.estimatedFare = subscriptionResult.finalAmount;
             }
         }
@@ -229,7 +245,13 @@ const durationMinutes = mapsResult.durationMinutes;
             couponId:             couponResult?.couponId || null,
             couponDiscount:       couponResult?.discountApplied || 0,
             subscriptionDiscount: subscriptionResult?.discountAmount || 0,
-            isFreeRide:           subscriptionResult?.isFreeRide || false
+            isFreeRide:           subscriptionResult?.isFreeRide || false,
+            lockedIsSubscribed,
+            lockedSubscriberTier,
+            lockedSurgeCap:       fare.surgeCapApplied,
+            lockedIsPeak:         fare.isPeak,
+            fareBeforeGst:        fare.fareBeforeGst,
+            gstOnFare:            fare.gstOnFare
         });
 
         // ── FCM 1: Nearby drivers ko ride request notification (queued) ──────
@@ -389,7 +411,11 @@ const calculateCompletionFare = async (ride) => {
         pickupDistanceKm,
         driverDailyRideCount,
         lockedConvenienceFee:     ride.convenience_fee != null ? Number(ride.convenience_fee) : null,
-        lockedIsPeak:             ride.is_peak != null ? ride.is_peak : null
+        lockedIsPeak:             ride.locked_is_peak != null ? ride.locked_is_peak
+                                 : (ride.is_peak != null ? ride.is_peak : null),
+        lockedSubscriberTier:     ride.locked_subscriber_tier || 'none',
+        lockedIsSubscribed:       Boolean(ride.locked_is_subscribed),
+        lockedSurgeCap:           ride.locked_surge_cap != null ? Number(ride.locked_surge_cap) : null
     });
 };
 
@@ -657,9 +683,16 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
                 passengerFinalFare   = Math.max(0, passengerFinalFare - subDiscount - couponDiscount);
             }
 
-            additionalFields.actual_fare    = passengerFinalFare;
-            additionalFields.final_fare     = passengerFinalFare;
-            additionalFields.payment_status = 'pending';
+            additionalFields.actual_fare          = passengerFinalFare;
+            additionalFields.final_fare           = passengerFinalFare;
+            additionalFields.payment_status       = 'pending';
+            additionalFields.fare_before_gst      = finalResult.passenger.fareBeforeGst ?? 0;
+            additionalFields.gst_on_fare          = finalResult.passenger.gstOnFare ?? 0;
+            additionalFields.gst_on_platform_fee  = finalResult.driver.gstOnPlatformFee ?? 0;
+            additionalFields.passenger_total      = finalResult.passenger.passengerTotal ?? passengerFinalFare;
+            additionalFields.pickup_compensation  = finalResult.driver.pickupDistanceCompensation ?? 0;
+            additionalFields.waiting_charges      = finalResult.driver.waitingEarnings ?? 0;
+            additionalFields.traffic_compensation = finalResult.driver.trafficDelayCompensation ?? 0;
 
             // SYNC: driver ko immediately off-duty karo — naya ride accept kar sake
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });

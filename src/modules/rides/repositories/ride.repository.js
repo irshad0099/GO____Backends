@@ -562,7 +562,14 @@ export const createRide = async (rideData) => {
             isPeak               = false,
             demandSupplyRatio    = 1.0,
             subscriptionDiscount = 0,
-            isFreeRide           = false
+            isFreeRide           = false,
+            // ── v3.0 locked snapshot fields ────────────────────────────────
+            lockedIsSubscribed   = false,
+            lockedSubscriberTier = null,
+            lockedSurgeCap       = 1.75,
+            lockedIsPeak         = null,
+            fareBeforeGst        = 0,
+            gstOnFare            = 0
         } = rideData;
 
         const result = await db.query(
@@ -575,8 +582,10 @@ export const createRide = async (rideData) => {
                 payment_method, coupon_id, coupon_discount,
                 convenience_fee, is_peak, demand_supply_ratio,
                 subscription_discount, is_free_ride,
+                locked_is_subscribed, locked_subscriber_tier, locked_surge_cap, locked_is_peak,
+                fare_before_gst, gst_on_fare,
                 status, requested_at
-            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,'requested',NOW())
+            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,'requested',NOW())
             RETURNING *`,
             [
                 rideNumber, passengerId, vehicleType,
@@ -586,7 +595,10 @@ export const createRide = async (rideData) => {
                 baseFare, distanceFare, timeFare, surgeMultiplier, estimatedFare,
                 paymentMethod, couponId, couponDiscount,
                 convenienceFee, isPeak, demandSupplyRatio,
-                subscriptionDiscount, isFreeRide
+                subscriptionDiscount, isFreeRide,
+                lockedIsSubscribed, lockedSubscriberTier, lockedSurgeCap,
+                lockedIsPeak != null ? lockedIsPeak : isPeak,
+                fareBeforeGst, gstOnFare
             ]
         );
         return result.rows[0];

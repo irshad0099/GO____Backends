@@ -93,6 +93,7 @@ import redis from './config/redis.config.js';
 import { initializeSocketIO } from './config/websocketConfig.js';
 import { setupSocketHandlers } from './infrastructure/websocket/socket.server.js';
 import { startWorkers } from './infrastructure/queue/startWorkers.js';
+import { initPricingConfig } from './modules/pricing/services/pricingConfigLoader.js';
 
 const PORT = ENV.PORT || 5000;
 
@@ -119,6 +120,15 @@ const startServer = async () => {
                     redis.once('ready', resolve);
                 }
             });
+        }
+
+        // Load pricing config from DB into in-memory cache (must be before any fare calc)
+        try {
+            await initPricingConfig();
+            console.log('✅ Pricing config loaded from DB');
+        } catch (e) {
+            console.error('❌ Pricing config load failed:', e.message);
+            throw e;
         }
 
         // Now start the server

@@ -17,6 +17,7 @@ export const validate = (validations) => {
             message: error.msg
         }));
 
-        throw new ValidationError('Validation failed', formattedErrors);
+        const primaryMessage = formattedErrors[0]?.message || 'Validation failed';
+        throw new ValidationError(primaryMessage, formattedErrors);
     };
 };

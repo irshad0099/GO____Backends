@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { sendError } from '../../../core/utils/response.js';
+import { sendValidationError } from '../../../core/utils/response.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  RIDE REJECTION
@@ -94,7 +94,7 @@ export const validate = (schema, source = 'body') => (req, res, next) => {
     });
 
     if (error) {
-        return sendError(res, 400, 'Validation failed', error.details.map(d => ({ field: d.path.join('.'), message: d.message })));
+        return sendValidationError(res, error.details.map(d => ({ field: d.path.join('.'), message: d.message })));
     }
 
     // AB — fix

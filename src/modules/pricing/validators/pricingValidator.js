@@ -47,7 +47,7 @@ export const surgeInfoSchema = Joi.object({
     available_drivers: Joi.number().integer().min(0).required(),
 });
 
-import { sendError } from '../../../core/utils/response.js';
+import { sendValidationError } from '../../../core/utils/response.js';
 
 // ─── Validate middleware ──────────────────────────────────────────────────────
 export const validate = (schema, source = 'body') => (req, res, next) => {
@@ -55,7 +55,7 @@ export const validate = (schema, source = 'body') => (req, res, next) => {
     const { error, value } = schema.validate(data, { abortEarly: false, stripUnknown: true });
 
     if (error) {
-        return sendError(res, 400, 'Validation failed', error.details.map(d => ({ field: d.path.join('.'), message: d.message })));
+        return sendValidationError(res, error.details.map(d => ({ field: d.path.join('.'), message: d.message })));
     }
 
     // Express 5: req.query is a read-only getter, use defineProperty to override

@@ -110,7 +110,7 @@ export const transactionFilterSchema = Joi.object({
         .messages({ 'date.min': 'endDate must be after startDate' }),
 });
 
-import { sendError } from '../../../core/utils/response.js';
+import { sendValidationError } from '../../../core/utils/response.js';
 
 // ─── Validation Middleware Factory ────────────────────────────────────────────
 export const validate = (schema, source = 'body') => (req, res, next) => {
@@ -122,7 +122,7 @@ export const validate = (schema, source = 'body') => (req, res, next) => {
     });
 
     if (error) {
-        return sendError(res, 400, 'Validation failed', error.details.map(d => ({ field: d.path.join('.'), message: d.message })));
+        return sendValidationError(res, error.details.map(d => ({ field: d.path.join('.'), message: d.message })));
     }
 
     if (source === 'query') {

@@ -27,7 +27,7 @@ export const globalErrorHandler = (err, req, res, next) => {
         success: false,
         statuscode: err.statusCode,
         message: err.message,
-        errors: err.errors?.length ? err.errors : undefined,
+        errorFull: err.errors?.length ? err.errors : undefined,
         data: {},
     });
 };

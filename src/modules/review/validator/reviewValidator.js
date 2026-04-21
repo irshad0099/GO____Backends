@@ -69,13 +69,16 @@ export const validate = (schema, source = 'body') => (req, res, next) => {
     });
 
     if (error) {
+        const errorFull = error.details.map(d => ({
+            field:   d.path.join('.'),
+            message: d.message,
+        }));
         return res.status(400).json({
             success: false,
-            message: 'Validation failed',
-            errors:  error.details.map(d => ({
-                field:   d.path.join('.'),
-                message: d.message,
-            })),
+            statuscode: 400,
+            message: errorFull[0]?.message || 'Validation failed',
+            errorFull,
+            data: {},
         });
     }
 

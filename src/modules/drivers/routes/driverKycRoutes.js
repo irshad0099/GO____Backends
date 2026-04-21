@@ -1,7 +1,7 @@
 import express from 'express';
 import { authenticate, authorize } from '../../../core/middleware/auth.middleware.js';
 import * as ctrl from '../controllers/driverKycController.js';
-
+// depereceted 
 const router = express.Router();
 
 router.use(authenticate);

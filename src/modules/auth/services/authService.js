@@ -1,5 +1,6 @@
 import * as userRepo from '../../users/repositories/user.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
+import * as driverKycService from '../../drivers/services/driverKycService.js';
 import * as otpService from './otpService.js';
 import * as tokenService from './tokenService.js';
 import { blacklistToken } from '../../../core/services/redisService.js';
@@ -91,7 +92,7 @@ export const verifySignup = async ({ phone, otp, email, fullName,role }) => {
 
         logger.info('User signed up successfully:', { userId: user.id, phone });
 
-        return {
+        const response = {
             accessToken,
             refreshToken,
             user: {
@@ -103,6 +104,24 @@ export const verifySignup = async ({ phone, otp, email, fullName,role }) => {
                 isVerified: user.is_verified
             }
         };
+
+        // For driver role, include KYC status
+        if (role === 'driver') {
+            try {
+                const kycStatus = await driverKycService.getKycStatusForLogin(user.id);
+                response.kyc = kycStatus;
+            } catch (kycError) {
+                logger.warn('Failed to fetch KYC status during signup:', { userId: user.id, error: kycError.message });
+                response.kyc = {
+                    kycStatus: 'not_started',
+                    currentStep: 'aadhaar',
+                    completedSteps: [],
+                    pendingSteps: ['aadhaar', 'pan', 'bank', 'license', 'vehicle']
+                };
+            }
+        }
+
+        return response;
     } catch (error) {
         logger.error('Verify signup service error:', error);
         throw error;
@@ -165,7 +184,7 @@ export const verifySignin = async ({ phone, otp, ipAddress, userAgent,role }) =>
 
         logger.info('User signed in successfully:', { userId: user.id, phone });
 
-        return {
+        const response = {
             accessToken,
             refreshToken,
             user: {
@@ -178,6 +197,22 @@ export const verifySignin = async ({ phone, otp, ipAddress, userAgent,role }) =>
                 isActive: user.is_active
             }
         };
+
+        // For driver role, include KYC status
+        if (role === 'driver') {
+            try {
+                const kycStatus = await driverKycService.getKycStatusForLogin(user.id);
+                response.kyc = kycStatus;
+            } catch (kycError) {
+                logger.warn('Failed to fetch KYC status during login:', { userId: user.id, error: kycError.message });
+                response.kyc = {
+                    kycStatus: 'error',
+                    message: 'Could not fetch KYC status'
+                };
+            }
+        }
+
+        return response;
     } catch (error) {
         logger.error('Verify signin service error:', error);
         throw error;

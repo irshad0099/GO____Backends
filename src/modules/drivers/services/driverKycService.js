@@ -1,6 +1,7 @@
 import * as cf from '../../kyc/services/cashfreeService.js';
 import * as repo from '../repositories/driverKyc.repository.js';
 import { findDriverByUserId, checkAllDocumentsVerified, markDriverVerified } from '../repositories/driver.repository.js';
+import { db } from '../../../infrastructure/database/postgres.js';
 import { ENV } from '../../../config/envConfig.js';
 import logger from '../../../core/logger/logger.js';
 
@@ -77,6 +78,65 @@ const evaluateAndFinalize = async (driverId) => {
 export const getKycStatus = async (userId) => {
     const driverId = await getDriverId(userId);
     return repo.findDocsByDriverId(driverId);
+};
+
+export const getKycStatusForLogin = async (userId) => {
+    const driverId = await getDriverId(userId);
+
+    const { rows } = await db.query(
+        `SELECT
+            d.id,
+            d.is_verified,
+            COALESCE((SELECT verification_status FROM driver_aadhaar WHERE driver_id = d.id), 'not_submitted') as aadhaar_status,
+            COALESCE((SELECT verification_status FROM driver_pan WHERE driver_id = d.id), 'not_submitted') as pan_status,
+            COALESCE((SELECT verification_status FROM driver_bank WHERE driver_id = d.id), 'not_submitted') as bank_status,
+            COALESCE((SELECT verification_status FROM driver_license WHERE driver_id = d.id), 'not_submitted') as license_status,
+            COALESCE((SELECT verification_status FROM driver_vehicle WHERE driver_id = d.id), 'not_submitted') as vehicle_status
+         FROM drivers d
+         WHERE d.id = $1`,
+        [driverId]
+    );
+
+    if (!rows[0]) {
+        return {
+            kycStatus: 'not_started',
+            documentStatus: {
+                aadhaar: false,
+                pan: false,
+                bank: false,
+                license: false,
+                vehicle: false
+            },
+            allDocumentsSubmitted: false,
+            message: 'No KYC data found. Please start KYC submission.'
+        };
+    }
+
+    const doc = rows[0];
+
+    const documentStatus = {
+        aadhaar: doc.aadhaar_status === 'verified',
+        pan: doc.pan_status === 'verified',
+        bank: doc.bank_status === 'verified',
+        license: doc.license_status === 'verified',
+        vehicle: doc.vehicle_status === 'verified'
+    };
+
+    const allDocumentsSubmitted = Object.values(documentStatus).every(v => v === true);
+
+    let kycStatus = 'not_started';
+    if (allDocumentsSubmitted) {
+        kycStatus = 'complete';
+    } else if (Object.values(documentStatus).some(v => v === true)) {
+        kycStatus = 'in_progress';
+    }
+
+    return {
+        kycStatus,
+        documentStatus,
+        allDocumentsSubmitted,
+        isDriverVerified: doc.is_verified
+    };
 };
 
 // ─── Aadhaar ──────────────────────────────────────────────────────────────────

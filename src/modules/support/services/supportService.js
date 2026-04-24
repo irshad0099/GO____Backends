@@ -94,6 +94,21 @@ export const getTicketDetail = async (userId, ticketId) => {
     }
 };
 
+export const searchTickets = async (userId, query) => {
+    try {
+        const tickets = await supportRepo.searchTickets(userId, query);
+        return tickets.map(t => ({
+            id: t.id, ticketNumber: t.ticket_number,
+            category: t.category, subject: t.subject,
+            priority: t.priority, status: t.status,
+            createdAt: t.created_at
+        }));
+    } catch (error) {
+        logger.error('Search tickets service error:', error);
+        throw error;
+    }
+};
+
 export const replyToTicket = async (userId, ticketId, message, attachments) => {
     try {
         const ticket = await supportRepo.findTicketById(ticketId, userId);

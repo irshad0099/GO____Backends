@@ -4,6 +4,7 @@ import * as rideRepo from '../repositories/ride.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as walletRepo from '../../wallet/repositories/wallet.repository.js';
 import * as rideOtpService from './rideOtpService.js';
+import * as rideOtpRepo from '../repositories/rideOtp.repository.js';
 import * as rideCalculator from '../../../core/utils/rideCalculator.js';
 import { getWeatherSignal } from '../../../core/utils/weatherService.js';
 import * as couponService from '../../coupons/services/couponService.js';
@@ -867,7 +868,15 @@ export const getRideDetails = async (userId, rideId, userRole) => {
             }
         }
 
-        return formatRideResponse(ride);
+        const response = formatRideResponse(ride);
+
+        // Passenger ko OTP dikhao jab driver assigned ho aur ride start na hui ho
+        if (userRole === 'passenger' && ['driver_assigned', 'driver_arrived'].includes(ride.status)) {
+            const otpRow = await rideOtpRepo.findLatest(rideId);
+            response.otp = otpRow ? otpRow.otp_code : null;
+        }
+
+        return response;
     } catch (error) {
         logger.error('Get ride details service error:', error);
         throw error;

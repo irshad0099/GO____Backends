@@ -30,7 +30,10 @@
       "WebFetch(domain:sandbox.cashfree.com)",
       "WebFetch(domain:www.cashfree.com)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(node --check src/modules/users/routes/userRoutes.js)",
+      "Bash(node --check src/modules/users/controllers/recentPlacesController.js)",
+      "Bash(node --check src/modules/users/repositories/recentPlaces.repository.js)"
     ]
   }
 }

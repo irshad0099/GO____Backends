@@ -1,3 +1,7 @@
+
+
+
+
 import { pool } from '../../../infrastructure/database/postgres.js';
 import logger    from '../../../core/logger/logger.js';
 
@@ -44,12 +48,12 @@ export const getDashboardStats = async () => {
 
 export const getAllUsers = async ({ limit, offset, search, status }) => {
     try {
-        let query  = `SELECT id, name, email, phone, is_active, created_at FROM users WHERE 1=1`;
+        let query  = `SELECT id, full_name, email, phone_number, is_active, created_at FROM users WHERE 1=1`;
         const params = [];
         let idx = 1;
 
         if (search) {
-            query += ` AND (name ILIKE $${idx} OR email ILIKE $${idx} OR phone ILIKE $${idx})`;
+            query += ` AND (full_name ILIKE $${idx} OR email ILIKE $${idx} OR phone_number ILIKE $${idx})`;
             params.push(`%${search}%`); idx++;
         }
         if (status === 'active')   { query += ` AND is_active = TRUE`; }
@@ -73,7 +77,7 @@ export const getAllUsersCount = async ({ search, status }) => {
         let idx = 1;
 
         if (search) {
-            query += ` AND (name ILIKE $${idx} OR email ILIKE $${idx} OR phone ILIKE $${idx})`;
+            query += ` AND (full_name ILIKE $${idx} OR email ILIKE $${idx} OR phone_number ILIKE $${idx})`;
             params.push(`%${search}%`); idx++;
         }
         if (status === 'active')   { query += ` AND is_active = TRUE`; }
@@ -91,12 +95,9 @@ export const getUserById = async (userId) => {
     try {
         const result = await pool.query(
             `SELECT u.*,
-                    w.balance          AS wallet_balance,
-                    rs.average_rating  AS rating,
-                    rs.total_reviews
+                    w.balance          AS wallet_balance
              FROM users u
-             LEFT JOIN wallets w         ON w.user_id = u.id
-             LEFT JOIN rating_summaries rs ON rs.user_id = u.id
+             LEFT JOIN wallets w ON w.user_id = u.id
              WHERE u.id = $1`,
             [userId]
         );
@@ -111,7 +112,7 @@ export const toggleUserStatus = async (userId, isActive) => {
     try {
         const result = await pool.query(
             `UPDATE users SET is_active = $1, updated_at = CURRENT_TIMESTAMP
-             WHERE id = $2 RETURNING id, name, email, is_active`,
+             WHERE id = $2 RETURNING id, full_name, email, is_active`,
             [isActive, userId]
         );
         return result.rows[0] || null;
@@ -128,17 +129,15 @@ export const toggleUserStatus = async (userId, isActive) => {
 export const getAllDrivers = async ({ limit, offset, search, status, isVerified }) => {
     try {
         let query  = `
-            SELECT d.*, u.name, u.email, u.phone, u.is_active,
-                   rs.average_rating AS rating, rs.total_reviews
+            SELECT d.*, u.full_name, u.email, u.phone_number, u.is_active
             FROM drivers d
             JOIN users u ON d.user_id = u.id
-            LEFT JOIN rating_summaries rs ON rs.user_id = u.id
             WHERE 1=1`;
         const params = [];
         let idx = 1;
 
         if (search) {
-            query += ` AND (u.name ILIKE $${idx} OR u.email ILIKE $${idx} OR u.phone ILIKE $${idx})`;
+            query += ` AND (u.full_name ILIKE $${idx} OR u.email ILIKE $${idx} OR u.phone_number ILIKE $${idx})`;
             params.push(`%${search}%`); idx++;
         }
         if (status === 'online')  { query += ` AND d.is_online = TRUE`; }
@@ -164,7 +163,7 @@ export const getAllDriversCount = async ({ search, status, isVerified }) => {
         let idx = 1;
 
         if (search) {
-            query += ` AND (u.name ILIKE $${idx} OR u.email ILIKE $${idx} OR u.phone ILIKE $${idx})`;
+            query += ` AND (u.full_name ILIKE $${idx} OR u.email ILIKE $${idx} OR u.phone_number ILIKE $${idx})`;
             params.push(`%${search}%`); idx++;
         }
         if (status === 'online')  { query += ` AND d.is_online = TRUE`; }
@@ -183,13 +182,11 @@ export const getAllDriversCount = async ({ search, status, isVerified }) => {
 export const getDriverById = async (driverId) => {
     try {
         const result = await pool.query(
-            `SELECT d.*, u.name, u.email, u.phone, u.is_active,
-                    w.balance AS wallet_balance,
-                    rs.average_rating AS rating, rs.total_reviews
+            `SELECT d.*, u.full_name, u.email, u.phone_number, u.is_active,
+                    w.balance AS wallet_balance
              FROM drivers d
              JOIN users u ON d.user_id = u.id
              LEFT JOIN wallets w ON w.user_id = u.id
-             LEFT JOIN rating_summaries rs ON rs.user_id = u.id
              WHERE d.id = $1`,
             [driverId]
         );
@@ -221,7 +218,7 @@ export const toggleDriverStatus = async (driverId, isActive) => {
 
         const result = await pool.query(
             `UPDATE users SET is_active = $1, updated_at = CURRENT_TIMESTAMP
-             WHERE id = $2 RETURNING id, name, is_active`,
+             WHERE id = $2 RETURNING id, full_name, is_active`,
             [isActive, driver.rows[0].user_id]
         );
         return result.rows[0] || null;
@@ -239,12 +236,12 @@ export const getAllRides = async ({ limit, offset, status, vehicleType, startDat
     try {
         let query = `
             SELECT r.*,
-                   u.name  AS passenger_name,
-                   u.phone AS passenger_phone,
-                   d.id    AS driver_id,
-                   du.name AS driver_name
+                   u.full_name    AS passenger_name,
+                   u.phone_number AS passenger_phone,
+                   d.id           AS driver_id,
+                   du.full_name   AS driver_name
             FROM rides r
-            JOIN users u ON r.user_id = u.id
+            JOIN users u ON r.passenger_id = u.id
             LEFT JOIN drivers d  ON r.driver_id = d.id
             LEFT JOIN users  du  ON d.user_id = du.id
             WHERE 1=1`;
@@ -293,7 +290,7 @@ export const getAllRidesCount = async ({ status, vehicleType, startDate, endDate
 export const getAllTransactions = async ({ limit, offset, type, category, status, startDate, endDate }) => {
     try {
         let query = `
-            SELECT t.*, u.name AS user_name, u.phone AS user_phone
+            SELECT t.*, u.full_name AS user_name, u.phone_number AS user_phone
             FROM transactions t
             JOIN users u ON t.user_id = u.id
             WHERE 1=1`;
@@ -345,9 +342,9 @@ export const getRevenueByDay = async (days = 7) => {
     try {
         const result = await pool.query(
             `SELECT
-                DATE(created_at)             AS date,
-                COUNT(*)                     AS total_rides,
-                COALESCE(SUM(fare_amount), 0) AS total_revenue
+                DATE(created_at)               AS date,
+                COUNT(*)                       AS total_rides,
+                COALESCE(SUM(estimated_fare), 0) AS total_revenue
              FROM rides
              WHERE status = 'completed'
                AND created_at >= CURRENT_DATE - INTERVAL '${days} days'
@@ -366,9 +363,9 @@ export const getRevenueByVehicle = async () => {
         const result = await pool.query(
             `SELECT
                 vehicle_type,
-                COUNT(*)                      AS total_rides,
-                COALESCE(SUM(fare_amount), 0) AS total_revenue,
-                COALESCE(AVG(fare_amount), 0) AS avg_fare
+                COUNT(*)                        AS total_rides,
+                COALESCE(SUM(estimated_fare), 0) AS total_revenue,
+                COALESCE(AVG(estimated_fare), 0) AS avg_fare
              FROM rides
              WHERE status = 'completed'
              GROUP BY vehicle_type

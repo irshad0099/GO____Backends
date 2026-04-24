@@ -13,6 +13,10 @@ import logger from '../../../core/logger/logger.js';
 import { ENV } from '../../../config/envConfig.js';
 import { db } from '../../../infrastructure/database/postgres.js';
 import { getDistanceAndDuration, getDriverETA, geocodeAddress } from '../../../core/services/googleMapsService.js';
+import { 
+    sendRideReceipt, 
+    sendRideCancelledEmail 
+} from '../../../core/services/emailService.js';
 
 import { 
     getCachedNearbyDrivers, 
@@ -548,6 +552,9 @@ const etaMinutes = etaResult.etaMinutes;
             });
         }
 
+
+
+
         // ── SOCKET: notify passenger of driver assignment ─────────────────────
         // const etaMinutes = Math.ceil(pickupDistanceKm * 3);
         const assignmentData = {
@@ -619,24 +626,58 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
         let additionalFields = {};
 
         // ── FCM 3a: Ride cancelled (queued) ──────────────────────────────────
-        if (status === 'cancelled') {
-            additionalFields.cancelled_by        = 'driver';
-            additionalFields.cancellation_reason = cancellationReason || 'Driver cancelled';
-            await driverRepo.updateDriver(driver.id, { is_on_duty: false });
+        // if (status === 'cancelled') {
+        //     additionalFields.cancelled_by        = 'driver';
+        //     additionalFields.cancellation_reason = cancellationReason || 'Driver cancelled';
+        //     await driverRepo.updateDriver(driver.id, { is_on_duty: false });
 
-            if (ride.passenger_fcm_token) {
-                await addNotificationJob('ride-cancelled', {
-                    fcmToken: ride.passenger_fcm_token,
-                    title:    'Ride Cancelled',
-                    body:     'Your driver cancelled the ride. Please book again.',
-                    data: {
-                        type:   'ride_cancelled',
-                        rideId: String(rideId),
-                        reason: cancellationReason || 'Driver cancelled',
-                    },
-                });
-            }
-        }
+        //     if (ride.passenger_fcm_token) {
+        //         await addNotificationJob('ride-cancelled', {
+        //             fcmToken: ride.passenger_fcm_token,
+        //             title:    'Ride Cancelled',
+        //             body:     'Your driver cancelled the ride. Please book again.',
+        //             data: {
+        //                 type:   'ride_cancelled',
+        //                 rideId: String(rideId),
+        //                 reason: cancellationReason || 'Driver cancelled',
+        //             },
+        //         });
+        //     }
+        // }
+
+
+        // ── FCM 3a: Ride cancelled (queued) ──────────────────────────────────
+if (status === 'cancelled') {
+    additionalFields.cancelled_by        = 'driver';
+    additionalFields.cancellation_reason = cancellationReason || 'Driver cancelled';
+    await driverRepo.updateDriver(driver.id, { is_on_duty: false });
+
+    if (ride.passenger_fcm_token) {
+        await addNotificationJob('ride-cancelled', {
+            fcmToken: ride.passenger_fcm_token,
+            title:    'Ride Cancelled',
+            body:     'Your driver cancelled the ride. Please book again.',
+            data: {
+                type:   'ride_cancelled',
+                rideId: String(rideId),
+                reason: cancellationReason || 'Driver cancelled',
+            },
+        });
+    }
+
+    // Email notification
+    if (ride.passenger_email) {
+        sendRideCancelledEmail({
+            to:          ride.passenger_email,
+            riderName:   ride.passenger_name || 'Rider',
+            rideNumber:  ride.ride_number,
+            cancelledBy: 'Driver',
+            reason:      cancellationReason || 'Driver cancelled',
+        }).catch(err => logger.error('Cancel email error:', err));
+    }
+}
+
+
 
         // ── FCM 3b: Driver arrived (queued) ──────────────────────────────────
         if (status === 'driver_arrived') {
@@ -740,7 +781,31 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
                 });
             }
 
-            logger.info(`Ride ${rideId} final fare: Rs.${passengerFinalFare} (estimated: Rs.${ride.estimated_fare})`);
+           // Email receipt
+if (ride.passenger_email) {
+    sendRideReceipt({
+        to:                   ride.passenger_email,
+        riderName:            ride.passenger_name || 'Rider',
+        rideNumber:           ride.ride_number,
+        vehicleType:          ride.vehicle_type,
+        pickupAddress:        ride.pickup_address,
+        dropoffAddress:       ride.dropoff_address,
+        distanceKm:           ride.distance_km,
+        durationMinutes:      ride.duration_minutes,
+        baseFare:             ride.base_fare,
+        distanceFare:         ride.distance_fare,
+        convenienceFee:       ride.convenience_fee,
+        surgeMultiplier:      ride.surge_multiplier,
+        finalFare:            passengerFinalFare,
+        paymentMethod:        ride.payment_method,
+        rideDate:             new Date(),
+        subscriptionDiscount: Number(ride.subscription_discount) || 0,
+        couponDiscount:       Number(ride.coupon_discount) || 0,
+        isFreeRide:           ride.is_free_ride || false,
+    }).catch(err => logger.error('Receipt email error:', err));
+}
+
+logger.info(`Ride ${rideId} final fare: Rs.${passengerFinalFare} (estimated: Rs.${ride.estimated_fare})`);
         }
 
         const updatedRide = await rideRepo.updateRideStatus(rideId, status, additionalFields);

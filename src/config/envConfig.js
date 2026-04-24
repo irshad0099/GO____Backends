@@ -142,8 +142,13 @@ REDIS_USERNAME: process.env.REDIS_USERNAME || 'default',
     SMTP_PORT: parseInt(process.env.SMTP_PORT) || 587,
     SMTP_USER: process.env.SMTP_USER,
     SMTP_PASS: process.env.SMTP_PASS,
-    EMAIL_FROM: process.env.EMAIL_FROM || 'GoMobility <noreply@gomobility.com>',
+    // EMAIL_FROM: process.env.EMAIL_FROM || 'GoMobility <noreply@gomobility.com>',
     
+    EMAIL_FROM:      process.env.EMAIL_FROM      || 'mailatgomobility@gmail.com',
+EMAIL_FROM_NAME: process.env.EMAIL_FROM_NAME || 'GO Mobility',
+EMAIL_REPLY_TO:  process.env.EMAIL_REPLY_TO  || 'support@gomobility.co.in',
+
+
     // Logging
     LOG_LEVEL: process.env.LOG_LEVEL || 'debug',
     LOG_FILE: process.env.LOG_FILE || 'logs/app.log',

@@ -36,8 +36,48 @@ export const signupValidators = [
 
 ];
 
+// export const signinValidators = [
+//     validatePhone(),
+//     body('role')
+//         .notEmpty().withMessage('Role is required')
+//         .isIn(['passenger', 'driver', 'admin'])
+//         .withMessage('Role must be passenger, driver or admin')
+// ];
+
+
 export const signinValidators = [
-    validatePhone(),
+    body('phone')
+        .optional()
+        .matches(/^[6-9]\d{9}$/).withMessage('Please enter a valid 10-digit Indian phone number'),
+    body('email')
+        .optional()
+        .isEmail().withMessage('Please enter a valid email'),
+    body('role')
+        .notEmpty().withMessage('Role is required')
+        .isIn(['passenger', 'driver', 'admin'])
+        .withMessage('Role must be passenger, driver or admin'),
+    body().custom((value, { req }) => {
+        if (!req.body.phone && !req.body.email) {
+            throw new Error('Phone number or email is required');
+        }
+        return true;
+    })
+];
+
+export const verifySigninValidators = [
+    body('phone')
+        .optional()
+        .matches(/^[6-9]\d{9}$/).withMessage('Please enter a valid 10-digit Indian phone number'),
+    body('email')
+        .optional()
+        .isEmail().withMessage('Please enter a valid email'),
+    body().custom((value, { req }) => {
+        if (!req.body.phone && !req.body.email) {
+            throw new Error('Phone number or email is required');
+        }
+        return true;
+    }),
+    validateOTP(),
     body('role')
         .notEmpty().withMessage('Role is required')
         .isIn(['passenger', 'driver', 'admin'])
@@ -60,15 +100,15 @@ export const verifySignupValidators = [
         .withMessage('Role must be passenger, driver or admin')
 ];
 
-export const verifySigninValidators = [
-    validatePhone(),
-    validateOTP(),
-    body('role')
-        .notEmpty().withMessage('Role is required')
-        .isIn(['passenger', 'driver', 'admin'])
-        .withMessage('Role must be passenger, driver or admin')
+// export const verifySigninValidators = [
+//     validatePhone(),
+//     validateOTP(),
+//     body('role')
+//         .notEmpty().withMessage('Role is required')
+//         .isIn(['passenger', 'driver', 'admin'])
+//         .withMessage('Role must be passenger, driver or admin')
 
-];
+// ];
 
 export const logoutValidators = [
     validateRefreshToken()

@@ -8,6 +8,7 @@ import { blacklistToken } from '../../../core/services/redisService.js';
 import * as sessionRepo from '../repositories/sessionRepository.js';
 import { ApiError, ConflictError, NotFoundError, AuthError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
+import { sendOtpEmail } from '../../../core/services/emailService.js';
 
 export const signup = async ({ phone, email, fullName ,role}) => {
     try {
@@ -128,96 +129,124 @@ export const verifySignup = async ({ phone, otp, email, fullName,role }) => {
     }
 };
 
-export const signin = async (phone,role) => {
+// export const signin = async (phone,role) => {
+//     try {
+//         // Check if user exists
+//         const user = await userRepo.findUserByPhoneAndRole(phone,role);
+//         if (!user) {
+//             throw new NotFoundError('User not found. Please sign up first.');
+//         }
+
+//         if (!user.is_active) {
+//             throw new AuthError('Account is deactivated. Please contact support.');
+//         }
+
+//         // Send OTP
+//         const result = await otpService.sendOTP(phone, 'signin');
+
+//         return result;
+//     } catch (error) {
+//         logger.error('Signin service error:', error);
+//         throw error;
+//     }
+// };
+
+
+export const signin = async (phone, email, role) => {
     try {
-        // Check if user exists
-        const user = await userRepo.findUserByPhoneAndRole(phone,role);
+        let user;
+        let identifier;
+        let isEmail = false;
+
+        if (email) {
+            isEmail = true;
+            identifier = email;
+            user = await userRepo.findUserByEmailAndRole(email, role);
+        } else {
+            identifier = phone;
+            user = await userRepo.findUserByPhoneAndRole(phone, role);
+        }
+
         if (!user) {
             throw new NotFoundError('User not found. Please sign up first.');
         }
-
         if (!user.is_active) {
             throw new AuthError('Account is deactivated. Please contact support.');
         }
 
-        // Send OTP
-        const result = await otpService.sendOTP(phone, 'signin');
-
-        return result;
+        if (isEmail) {
+            // Email pe OTP bhejo
+            const result = await otpService.sendOTP(email, 'signin');
+            await sendOtpEmail({
+                to:      email,
+                userName: user.full_name || 'User',
+                otp:     result.otp,
+                purpose: 'login'
+            });
+            return { message: 'OTP sent to your email', expiryInMinutes: 5 };
+        } else {
+            // Phone pe OTP bhejo
+            const result = await otpService.sendOTP(phone, 'signin');
+            return result;
+        }
     } catch (error) {
         logger.error('Signin service error:', error);
         throw error;
     }
 };
 
-export const verifySignin = async ({ phone, otp, ipAddress, userAgent,role }) => {
-    try {
-        // Verify OTP
-        await otpService.verifyOTP(phone, otp, 'signin');
+// export const verifySignin = async ({ phone, otp, ipAddress, userAgent,role }) => {
+//     try {
+//         // Verify OTP
+//         await otpService.verifyOTP(phone, otp, 'signin');
 
-        // Get user
-        const user = await userRepo.findUserByPhoneAndRole(phone,role);
-        if (!user) {
-            throw new NotFoundError('User not found');
-        }
+//         // Get user
+//         const user = await userRepo.findUserByPhoneAndRole(phone,role);
+//         if (!user) {
+//             throw new NotFoundError('User not found');
+//         }
 
-        if (!user.is_active) {
-            throw new AuthError('Account is deactivated. Please contact support.');
-        }
+//         if (!user.is_active) {
+//             throw new AuthError('Account is deactivated. Please contact support.');
+//         }
 
-        // Update last login
-        await userRepo.updateUser(user.id, {
-            last_login: new Date()
-        });
+//         // Update last login
+//         await userRepo.updateUser(user.id, {
+//             last_login: new Date()
+//         });
 
-        // Generate tokens
-        const accessToken = tokenService.generateAccessToken(user);
-        const refreshToken = tokenService.generateRefreshToken(user);
+//         // Generate tokens
+//         const accessToken = tokenService.generateAccessToken(user);
+//         const refreshToken = tokenService.generateRefreshToken(user);
 
-        // Create session
-        await sessionRepo.createSession({
-            userId: user.id,
-            refreshToken,
-            ipAddress,
-            userAgent
-        });
+//         // Create session
+//         await sessionRepo.createSession({
+//             userId: user.id,
+//             refreshToken,
+//             ipAddress,
+//             userAgent
+//         });
 
-        logger.info('User signed in successfully:', { userId: user.id, phone });
+//         logger.info('User signed in successfully:', { userId: user.id, phone });
 
-        const response = {
-            accessToken,
-            refreshToken,
-            user: {
-                id: user.id,
-                phone: user.phone_number,
-                email: user.email,
-                fullName: user.full_name,
-                role: user.role,
-                isVerified: user.is_verified,
-                isActive: user.is_active
-            }
-        };
-
-        // For driver role, include KYC status
-        if (role === 'driver') {
-            try {
-                const kycStatus = await driverKycService.getKycStatusForLogin(user.id);
-                response.kyc = kycStatus;
-            } catch (kycError) {
-                logger.warn('Failed to fetch KYC status during login:', { userId: user.id, error: kycError.message });
-                response.kyc = {
-                    kycStatus: 'error',
-                    message: 'Could not fetch KYC status'
-                };
-            }
-        }
-
-        return response;
-    } catch (error) {
-        logger.error('Verify signin service error:', error);
-        throw error;
-    }
-};
+//         return {
+//             accessToken,
+//             refreshToken,
+//             user: {
+//                 id: user.id,
+//                 phone: user.phone_number,
+//                 email: user.email,
+//                 fullName: user.full_name,
+//                 role: user.role,
+//                 isVerified: user.is_verified,
+//                 isActive: user.is_active
+//             }
+//         };
+//     } catch (error) {
+//         logger.error('Verify signin service error:', error);
+//         throw error;
+//     }
+// };
 
 // export const logout = async (refreshToken) => {
 //     try {
@@ -231,6 +260,57 @@ export const verifySignin = async ({ phone, otp, ipAddress, userAgent,role }) =>
 //     }
 // };
 
+
+export const verifySignin = async ({ phone, email, otp, ipAddress, userAgent, role }) => {
+    try {
+        let user;
+        let identifier;
+
+        if (email) {
+            identifier = email;
+            await otpService.verifyOTP(email, otp, 'signin');
+            user = await userRepo.findUserByEmailAndRole(email, role);
+        } else {
+            identifier = phone;
+            await otpService.verifyOTP(phone, otp, 'signin');
+            user = await userRepo.findUserByPhoneAndRole(phone, role);
+        }
+
+        if (!user) throw new NotFoundError('User not found');
+        if (!user.is_active) throw new AuthError('Account is deactivated.');
+
+        await userRepo.updateUser(user.id, { last_login: new Date() });
+
+        const accessToken  = tokenService.generateAccessToken(user);
+        const refreshToken = tokenService.generateRefreshToken(user);
+
+        await sessionRepo.createSession({
+            userId: user.id,
+            refreshToken,
+            ipAddress,
+            userAgent
+        });
+
+        logger.info('User signed in successfully:', { userId: user.id, identifier });
+
+        return {
+            accessToken,
+            refreshToken,
+            user: {
+                id:        user.id,
+                phone:     user.phone_number,
+                email:     user.email,
+                fullName:  user.full_name,
+                role:      user.role,
+                isVerified: user.is_verified,
+                isActive:  user.is_active
+            }
+        };
+    } catch (error) {
+        logger.error('Verify signin service error:', error);
+        throw error;
+    }
+};
 
 export const logout = async (refreshToken, accessToken = null) => {
     try {

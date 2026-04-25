@@ -39,6 +39,7 @@ export const verifyToken = (token) => {
         });
         return decoded;
     } catch (error) {
+        console.log(error)
         if (error.name === 'TokenExpiredError') {
             throw new AuthError('Token expired', 401);
         }

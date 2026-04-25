@@ -15,7 +15,25 @@
       "Bash(node -e \"import\\(''./src/core/utils/weatherService.js''\\).then\\(m => { console.log\\(''weatherService OK:'', Object.keys\\(m\\)\\); }\\).catch\\(e => console.error\\(e.message\\)\\);\")",
       "Bash(node -e \"import\\(''./src/core/utils/rideCalculator.js''\\).then\\(m => { console.log\\(''rideCalculator OK:'', Object.keys\\(m\\)\\); }\\).catch\\(e => console.error\\(e.message\\)\\);\")",
       "Bash(node -e \"import\\(''./src/core/utils/rideCalculator.js''\\).then\\(m => { const noWeather = m.calculateEstimatedFare\\({ vehicleType:''auto'', distanceKm:10, estimatedDurationMinutes:24, rideRequests:3, availableDrivers:10, requestVelocity:2 }\\); console.log\\(''NO_WEATHER: fare='' + noWeather.passenger.estimatedFare + '' surge='' + noWeather.passenger.surgeMultiplier + '' peak='' + noWeather.signals.peakReason\\); const rain = m.calculateEstimatedFare\\({ vehicleType:''auto'', distanceKm:10, estimatedDurationMinutes:24, rideRequests:3, availableDrivers:10, requestVelocity:2, weatherSignal:{ isWeatherPeak:true, weatherCondition:''Rain'', severity:''mild'', weatherSurge:1.1 } }\\); console.log\\(''RAIN: fare='' + rain.passenger.estimatedFare + '' surge='' + rain.passenger.surgeMultiplier + '' peak='' + rain.signals.peakReason + '' weather='' + rain.signals.weatherCondition\\); const storm = m.calculateEstimatedFare\\({ vehicleType:''auto'', distanceKm:10, estimatedDurationMinutes:24, rideRequests:3, availableDrivers:10, requestVelocity:2, weatherSignal:{ isWeatherPeak:true, weatherCondition:''Thunderstorm'', severity:''severe'', weatherSurge:1.25 } }\\); console.log\\(''STORM: fare='' + storm.passenger.estimatedFare + '' surge='' + storm.passenger.surgeMultiplier + '' peak='' + storm.signals.peakReason + '' weather='' + storm.signals.weatherCondition\\); const demandPlusRain = m.calculateEstimatedFare\\({ vehicleType:''auto'', distanceKm:10, estimatedDurationMinutes:24, rideRequests:15, availableDrivers:8, requestVelocity:20, weatherSignal:{ isWeatherPeak:true, weatherCondition:''Rain'', severity:''mild'', weatherSurge:1.1 } }\\); console.log\\(''DEMAND+RAIN: fare='' + demandPlusRain.passenger.estimatedFare + '' surge='' + demandPlusRain.passenger.surgeMultiplier + '' demandSurge='' + demandPlusRain.signals.demandSurge + '' weatherSurge='' + demandPlusRain.signals.weatherSurge\\); }\\).catch\\(e => console.error\\(e.message\\)\\);\")",
-      "Bash(find /d/Akash_Personal/GO____Backends/src -type f -name *.go)"
+      "Bash(find /d/Akash_Personal/GO____Backends/src -type f -name *.go)",
+      "Bash(ls -la .env)",
+      "Bash(ls src/modules/rides/controllers/)",
+      "Bash(node -c src/server.js)",
+      "Bash(curl:*)",
+      "Bash(node --check src/infrastructure/database/postgres.js)",
+      "Bash(node --check src/modules/wallet/validators/walletValidator.js)",
+      "Bash(node --check src/modules/payments/validators/paymentValidator.js)",
+      "Bash(node --check src/modules/pricing/validators/pricingValidator.js)",
+      "Bash(node --check src/modules/subscription/validators/subscriptionValidator.js)",
+      "Bash(node -e \"import\\('socket.io-client'\\).then\\(m => console.log\\('socket.io-client version:', m.default?.version || 'installed'\\)\\).catch\\(\\(\\) => console.log\\('NOT installed'\\)\\)\")",
+      "WebFetch(domain:docs.cashfree.com)",
+      "WebFetch(domain:sandbox.cashfree.com)",
+      "WebFetch(domain:www.cashfree.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(node --check src/modules/users/routes/userRoutes.js)",
+      "Bash(node --check src/modules/users/controllers/recentPlacesController.js)",
+      "Bash(node --check src/modules/users/repositories/recentPlaces.repository.js)"
     ]
   }
 }

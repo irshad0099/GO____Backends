@@ -1,6 +1,11 @@
 import app from './app.js';
 import { ENV } from './config/envConfig.js';
 import { db } from './infrastructure/database/postgres.js';
+import redis from './config/redis.config.js';
+import { initializeSocketIO } from './config/websocketConfig.js';
+import { setupSocketHandlers } from './infrastructure/websocket/socket.server.js';
+import { startWorkers } from './infrastructure/queue/startWorkers.js';
+import { initPricingConfig } from './modules/pricing/services/pricingConfigLoader.js';
 
 const PORT = ENV.PORT || 5000;
 
@@ -12,23 +17,44 @@ console.log(`  PORT: ${PORT}`);
 console.log(`  API_PREFIX: '${ENV.API_PREFIX}'`);
 console.log('='.repeat(50));
 
-// IMPORTANT: Connect to database BEFORE starting server
 const startServer = async () => {
     try {
         // Connect to database
         await db.connect();
-        
+
+        // Redis connects automatically when imported - no need to call connect()
+        // Just ensure it's ready
+        if (!redis.status || redis.status === 'connecting') {
+            await new Promise(resolve => {
+                if (redis.status === 'ready') {
+                    resolve();
+                } else {
+                    redis.once('ready', resolve);
+                }
+            });
+        }
+
+        // Load pricing config from DB into in-memory cache (must be before any fare calc)
+        try {
+            await initPricingConfig();
+            console.log('✅ Pricing config loaded from DB');
+        } catch (e) {
+            console.error('❌ Pricing config load failed:', e.message);
+            throw e;
+        }
+
         // Now start the server with timeout
         const server = app.listen(PORT, () => {
             console.log(`\n🚀 Server started on http://localhost:${PORT}`);
             console.log(`⏱️  Request timeout: 30s`);
         });
         server.timeout = 30000;
-            
+
         // Log registered routes
         setTimeout(() => {
             console.log('\n📋 Registered Routes:');
             console.log('='.repeat(50));
+
             
             if (app._router && app._router.stack) {
                 let routeCount = 0;
@@ -54,13 +80,27 @@ const startServer = async () => {
             console.log('='.repeat(50));
         }, 500);
 
+        // Initialize Socket.IO
+        try {
+            initializeSocketIO(server);
+            setupSocketHandlers();
+            console.log('✅ Socket.IO initialized and handlers setup');
+        } catch (error) {
+            console.error('⚠️ Socket.IO initialization warning:', error.message);
+        }
+
+        // BullMQ workers start karo — background job processors
+        await startWorkers();
+
         // Graceful shutdown with longer timeout
         const gracefulShutdown = async () => {
             console.log('\n📥 Received shutdown signal...');
-            
+
             server.close(async () => {
                 console.log('✅ HTTP server closed');
                 await db.disconnect();
+                await redis.quit();
+                console.log('✅ Redis disconnected');
                 console.log('👋 Graceful shutdown completed');
                 process.exit(0);
             });

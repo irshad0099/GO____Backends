@@ -10,6 +10,7 @@ export const ENV = {
     BASE_URL: process.env.BASE_URL || 'http://localhost:5000',
     API_PREFIX: process.env.API_PREFIX || '/api/v1',
     
+    
     // Database
     DB_HOST: process.env.DB_HOST || 'localhost',
     DB_PORT: parseInt(process.env.DB_PORT) || 5432,
@@ -25,12 +26,26 @@ export const ENV = {
     REDIS_PORT: parseInt(process.env.REDIS_PORT) || 6379,
     REDIS_PASSWORD: process.env.REDIS_PASSWORD || '',
     REDIS_DB: parseInt(process.env.REDIS_DB) || 0,
-    UPSTASH_REDIS_URL: process.env.UPSTASH_REDIS_URL,
-    
+    // UPSTASH_REDIS_URL: process.env.UPSTASH_REDIS_URL || 'rediss://default:gQAAAAAAAU2PAAIncDI0MzI0MDJkNDQxMGM0YzJlOTMzMDRjMTNmODAxZGIzY3AyODUzOTE@picked-marten-85391.upstash.io:6379',
+
+    // NAYA - YEH RAKHO
+REDIS_USERNAME: process.env.REDIS_USERNAME || 'default',
+
+    // Firebase
+    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
+    FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL,
+    FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY,
+
     // JWT
+<<<<<<< HEAD
     JWT_SECRET: process.env.JWT_SECRET,  // NO DEFAULT - must be set in env
     JWT_ACCESS_EXPIRY: process.env.JWT_ACCESS_EXPIRY || '15m',
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,  // NO DEFAULT - must be set in env
+=======
+    JWT_SECRET: process.env.JWT_SECRET || 'gomobility_super_secret_key',
+    JWT_ACCESS_EXPIRY: process.env.JWT_ACCESS_EXPIRY || '30d',
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'gomobility_refresh_secret',
+>>>>>>> 14c146dabe2491c7238ceb55d507474f5b956c15
     JWT_REFRESH_EXPIRY: process.env.JWT_REFRESH_EXPIRY || '30d',
     
     // OTP
@@ -46,6 +61,9 @@ export const ENV = {
     TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
     TWILIO_PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER,
+    FAST2SMS_API_KEY: process.env.FAST2SMS_API_KEY,
+    AUTHKEY_API_KEY: process.env.AUTHKEY_API_KEY,
+    AUTHKEY_SID: process.env.AUTHKEY_SID,
     
     // Payment Gateway
     PAYMENT_GATEWAY: process.env.PAYMENT_GATEWAY || 'razorpay',
@@ -90,6 +108,10 @@ export const ENV = {
     // Agar key nahi hai → weather detection silently skip hoga
     OPENWEATHER_API_KEY: process.env.OPENWEATHER_API_KEY || '',
     WEATHER_CACHE_MINUTES: parseInt(process.env.WEATHER_CACHE_MINUTES) || 15,
+
+    // Google Maps
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+
     WEATHER_PEAK_CONDITIONS: process.env.WEATHER_PEAK_CONDITIONS?.split(',') || ['Rain', 'Drizzle', 'Thunderstorm', 'Snow', 'Squall', 'Tornado'],
     WEATHER_SEVERE_CONDITIONS: process.env.WEATHER_SEVERE_CONDITIONS?.split(',') || ['Thunderstorm', 'Snow', 'Squall', 'Tornado'],
     WEATHER_SURGE_MILD: parseFloat(process.env.WEATHER_SURGE_MILD) || 1.1,
@@ -100,6 +122,8 @@ export const ENV = {
     RATE_LIMIT_MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
     AUTH_RATE_LIMIT_MAX: parseInt(process.env.AUTH_RATE_LIMIT_MAX) || 5,
     OTP_RATE_LIMIT_MAX: parseInt(process.env.OTP_RATE_LIMIT_MAX) || 3,
+    
+
     
     // File Upload
     UPLOAD_PROVIDER: process.env.UPLOAD_PROVIDER || 'local',
@@ -124,8 +148,13 @@ export const ENV = {
     SMTP_PORT: parseInt(process.env.SMTP_PORT) || 587,
     SMTP_USER: process.env.SMTP_USER,
     SMTP_PASS: process.env.SMTP_PASS,
-    EMAIL_FROM: process.env.EMAIL_FROM || 'GoMobility <noreply@gomobility.com>',
+    // EMAIL_FROM: process.env.EMAIL_FROM || 'GoMobility <noreply@gomobility.com>',
     
+    EMAIL_FROM:      process.env.EMAIL_FROM      || 'mailatgomobility@gmail.com',
+EMAIL_FROM_NAME: process.env.EMAIL_FROM_NAME || 'GO Mobility',
+EMAIL_REPLY_TO:  process.env.EMAIL_REPLY_TO  || 'support@gomobility.co.in',
+
+
     // Logging
     LOG_LEVEL: process.env.LOG_LEVEL || 'debug',
     LOG_FILE: process.env.LOG_FILE || 'logs/app.log',
@@ -148,6 +177,48 @@ export const ENV = {
     CAR_BASE_FARE: parseFloat(process.env.CAR_BASE_FARE) || 50,
     CAR_PER_KM: parseFloat(process.env.CAR_PER_KM) || 15,
     CAR_MINIMUM_FARE: parseFloat(process.env.CAR_MINIMUM_FARE) || 90,
+
+    // XL
+XL_BASE_FARE:    parseFloat(process.env.XL_BASE_FARE)    || 80,
+XL_PER_KM:       parseFloat(process.env.XL_PER_KM)       || 20,
+XL_MINIMUM_FARE: parseFloat(process.env.XL_MINIMUM_FARE) || 120,
+SPEED_XL:        parseFloat(process.env.SPEED_XL)        || 30,
+PLATFORM_FEE_XL: parseFloat(process.env.PLATFORM_FEE_XL) || 8,
+WAITING_RATE_XL: parseFloat(process.env.WAITING_RATE_XL) || 2.5,
+TRAFFIC_RATE_XL: parseFloat(process.env.TRAFFIC_RATE_XL) || 2,
+PICKUP_COMP_XL:  parseFloat(process.env.PICKUP_COMP_XL)  || 9,
+CONV_FEE_XL_NONPEAK_MIN: parseFloat(process.env.CONV_FEE_XL_NONPEAK_MIN) || 25,
+CONV_FEE_XL_NONPEAK_MAX: parseFloat(process.env.CONV_FEE_XL_NONPEAK_MAX) || 30,
+CONV_FEE_XL_PEAK_MIN:    parseFloat(process.env.CONV_FEE_XL_PEAK_MIN)    || 40,
+CONV_FEE_XL_PEAK_MAX:    parseFloat(process.env.CONV_FEE_XL_PEAK_MAX)    || 60,
+
+// PREMIUM
+PREMIUM_BASE_FARE:    parseFloat(process.env.PREMIUM_BASE_FARE)    || 120,
+PREMIUM_PER_KM:       parseFloat(process.env.PREMIUM_PER_KM)       || 28,
+PREMIUM_MINIMUM_FARE: parseFloat(process.env.PREMIUM_MINIMUM_FARE) || 200,
+SPEED_PREMIUM:        parseFloat(process.env.SPEED_PREMIUM)        || 35,
+PLATFORM_FEE_PREMIUM: parseFloat(process.env.PLATFORM_FEE_PREMIUM) || 12,
+WAITING_RATE_PREMIUM: parseFloat(process.env.WAITING_RATE_PREMIUM) || 3,
+TRAFFIC_RATE_PREMIUM: parseFloat(process.env.TRAFFIC_RATE_PREMIUM) || 2.5,
+PICKUP_COMP_PREMIUM:  parseFloat(process.env.PICKUP_COMP_PREMIUM)  || 12,
+CONV_FEE_PREMIUM_NONPEAK_MIN: parseFloat(process.env.CONV_FEE_PREMIUM_NONPEAK_MIN) || 35,
+CONV_FEE_PREMIUM_NONPEAK_MAX: parseFloat(process.env.CONV_FEE_PREMIUM_NONPEAK_MAX) || 45,
+CONV_FEE_PREMIUM_PEAK_MIN:    parseFloat(process.env.CONV_FEE_PREMIUM_PEAK_MIN)    || 60,
+CONV_FEE_PREMIUM_PEAK_MAX:    parseFloat(process.env.CONV_FEE_PREMIUM_PEAK_MAX)    || 80,
+
+// LUXURY
+LUXURY_BASE_FARE:    parseFloat(process.env.LUXURY_BASE_FARE)    || 200,
+LUXURY_PER_KM:       parseFloat(process.env.LUXURY_PER_KM)       || 40,
+LUXURY_MINIMUM_FARE: parseFloat(process.env.LUXURY_MINIMUM_FARE) || 350,
+SPEED_LUXURY:        parseFloat(process.env.SPEED_LUXURY)        || 40,
+PLATFORM_FEE_LUXURY: parseFloat(process.env.PLATFORM_FEE_LUXURY) || 20,
+WAITING_RATE_LUXURY: parseFloat(process.env.WAITING_RATE_LUXURY) || 4,
+TRAFFIC_RATE_LUXURY: parseFloat(process.env.TRAFFIC_RATE_LUXURY) || 3,
+PICKUP_COMP_LUXURY:  parseFloat(process.env.PICKUP_COMP_LUXURY)  || 15,
+CONV_FEE_LUXURY_NONPEAK_MIN: parseFloat(process.env.CONV_FEE_LUXURY_NONPEAK_MIN) || 50,
+CONV_FEE_LUXURY_NONPEAK_MAX: parseFloat(process.env.CONV_FEE_LUXURY_NONPEAK_MAX) || 70,
+CONV_FEE_LUXURY_PEAK_MIN:    parseFloat(process.env.CONV_FEE_LUXURY_PEAK_MIN)    || 80,
+CONV_FEE_LUXURY_PEAK_MAX:    parseFloat(process.env.CONV_FEE_LUXURY_PEAK_MAX)    || 120,
 
     // Average Speed per Vehicle (km/h) — for duration estimation
     SPEED_BIKE: parseFloat(process.env.SPEED_BIKE) || 30,
@@ -200,7 +271,27 @@ export const ENV = {
     
     // Pagination
     PAGINATION_DEFAULT_LIMIT: parseInt(process.env.PAGINATION_DEFAULT_LIMIT) || 20,
-    PAGINATION_MAX_LIMIT: parseInt(process.env.PAGINATION_MAX_LIMIT) || 100
+    PAGINATION_MAX_LIMIT: parseInt(process.env.PAGINATION_MAX_LIMIT) || 100,
+
+    // Cashfree Verification Suite (KYC)
+    CASHFREE_ENV:                process.env.CASHFREE_ENV                || 'sandbox',
+    CASHFREE_CLIENT_ID:          process.env.CASHFREE_CLIENT_ID,
+    CASHFREE_CLIENT_SECRET:      process.env.CASHFREE_CLIENT_SECRET,
+    // RSA public key for x-cf-signature
+    // .env mein ek variable mein full PEM daal sakte ho, ya CASHFREE_PUBLIC_KEY2 mein sirf body
+    CASHFREE_PUBLIC_KEY: (() => {
+        const raw = process.env.CASHFREE_PUBLIC_KEY || '';
+        const body = process.env.CASHFREE_PUBLIC_KEY2 || '';
+        // Agar sirf header hai pehle var mein, aur body alag var mein
+        if (body) {
+            return `-----BEGIN PUBLIC KEY-----\n${body}\n-----END PUBLIC KEY-----`;
+        }
+        // Agar full key ek hi var mein hai (\\n escaped)
+        return raw.replace(/\\n/g, '\n');
+    })(),
+    CASHFREE_FACE_MATCH_THRESHOLD:    parseFloat(process.env.CASHFREE_FACE_MATCH_THRESHOLD) || 75,
+    CASHFREE_NAME_MATCH_THRESHOLD:    parseFloat(process.env.CASHFREE_NAME_MATCH_THRESHOLD) || 70,
+    DIGILOCKER_REDIRECT_URL:          process.env.DIGILOCKER_REDIRECT_URL || 'http://localhost:5000/api/v1/kyc/digilocker/callback',
 };
 
 // Validate required secrets in production

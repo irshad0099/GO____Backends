@@ -23,6 +23,39 @@ export const findDriverByUserId = async (userId) => {
 };
 
 
+export const updateVehicleDetail = async (driverId, updates) => {
+    try {
+        const setClause = [];
+        const values = [];
+        let paramIndex = 1;
+
+        Object.entries(updates).forEach(([key, value]) => {
+            if (value !== undefined) {
+                setClause.push(`${key} = $${paramIndex}`);
+                values.push(value);
+                paramIndex++;
+            }
+        });
+
+        if (setClause.length === 0) return null;
+
+        values.push(driverId);
+        const query = `
+            UPDATE driver_vehicle
+            SET ${setClause.join(', ')}
+            WHERE driver_id = $${paramIndex}
+            RETURNING *
+        `;
+
+        const { rows } = await db.query(query, values);
+        return rows[0];
+    } catch (error) {
+        logger.error('Update vehicle detail repository error:', error);
+        throw error;
+    }
+};
+
+
 export const insertAadhar = async (driverId, data) => {
     try {
         

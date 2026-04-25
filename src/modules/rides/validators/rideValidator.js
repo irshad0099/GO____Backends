@@ -4,7 +4,7 @@ import { body, param, query } from 'express-validator';
 export const validateVehicleTypeQuery = () => {
     return query('vehicleType')
         .notEmpty().withMessage('Vehicle type is required')
-        .isIn(['bike', 'auto', 'car']).withMessage('Vehicle type must be bike, auto, or car');
+        .isIn(['bike', 'auto', 'car', 'xl', 'premium', 'luxury']).withMessage('Vehicle type must be bike, auto, or car');
 };
 
 export const validateLatitudeQuery = (field = 'latitude') => {
@@ -36,7 +36,7 @@ export const validateLongitude = (field) => {
 export const validateVehicleType = () => {
     return body('vehicleType')
         .notEmpty().withMessage('Vehicle type is required')
-        .isIn(['bike', 'auto', 'car']).withMessage('Vehicle type must be bike, auto, or car');
+        .isIn(['bike', 'auto', 'car', 'xl', 'premium', 'luxury']).withMessage('Vehicle type must be bike, auto, or car');
 };
 
 // ==================== ADDRESS VALIDATOR ====================
@@ -48,17 +48,33 @@ export const validateAddress = (field) => {
 };
 
 // ==================== RIDE REQUEST VALIDATORS (array) ====================
+// export const requestRideValidators = [
+//     validateVehicleType(),
+//     body('pickupLatitude').notEmpty().isFloat({ min: -90, max: 90 }),
+//     body('pickupLongitude').notEmpty().isFloat({ min: -180, max: 180 }),
+//     body('pickupAddress').notEmpty().isString().isLength({ min: 5, max: 500 }),
+//     body('pickupLocationName').optional().isString().isLength({ max: 255 }),
+//     body('dropoffLatitude').notEmpty().isFloat({ min: -90, max: 90 }),
+//     body('dropoffLongitude').notEmpty().isFloat({ min: -180, max: 180 }),
+//     body('dropoffAddress').notEmpty().isString().isLength({ min: 5, max: 500 }),
+//     body('dropoffLocationName').optional().isString().isLength({ max: 255 }),
+//     body('paymentMethod').optional().isIn(['cash', 'card', 'wallet', 'upi']).default('cash'),
+//     body('couponCode').optional().isString().isLength({ min: 2, max: 50 }).withMessage('Invalid coupon code')
+// ];
+
+
 export const requestRideValidators = [
     validateVehicleType(),
-    body('pickupLatitude').notEmpty().isFloat({ min: -90, max: 90 }),
-    body('pickupLongitude').notEmpty().isFloat({ min: -180, max: 180 }),
+    body('pickupLatitude').optional().isFloat({ min: -90, max: 90 }).withMessage('Invalid pickupLatitude'),
+    body('pickupLongitude').optional().isFloat({ min: -180, max: 180 }).withMessage('Invalid pickupLongitude'),
     body('pickupAddress').notEmpty().isString().isLength({ min: 5, max: 500 }),
     body('pickupLocationName').optional().isString().isLength({ max: 255 }),
-    body('dropoffLatitude').notEmpty().isFloat({ min: -90, max: 90 }),
-    body('dropoffLongitude').notEmpty().isFloat({ min: -180, max: 180 }),
+    body('dropoffLatitude').optional().isFloat({ min: -90, max: 90 }).withMessage('Invalid dropoffLatitude'),
+    body('dropoffLongitude').optional().isFloat({ min: -180, max: 180 }).withMessage('Invalid dropoffLongitude'),
     body('dropoffAddress').notEmpty().isString().isLength({ min: 5, max: 500 }),
     body('dropoffLocationName').optional().isString().isLength({ max: 255 }),
-    body('paymentMethod').optional().isIn(['cash', 'card', 'wallet', 'upi']).default('cash')
+    body('paymentMethod').optional().isIn(['cash', 'card', 'wallet', 'upi']).default('cash'),
+    body('couponCode').optional().isString().isLength({ min: 2, max: 50 }).withMessage('Invalid coupon code')
 ];
 
 // ==================== ACCEPT RIDE VALIDATORS ====================

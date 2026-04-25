@@ -1,6 +1,7 @@
-import { pool } from '../../../infrastructure/database/postgres.js';
+import { db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 import { createSubscriptionPlan, cancelSubscription as cancelRazorpaySubscription, fetchSubscription as fetchRazorpaySubscription, createCustomer } from '../../../core/services/razorpayService.js';
+import redis from '../../../config/redis.config.js';
 import {
     getAllPlans,
     getPlanById,
@@ -20,6 +21,40 @@ import {
     createPlan,
     togglePlanStatus,
 } from '../repositories/subscriptionRepository.js';
+
+// ─── Redis Cache ──────────────────────────────────────────────────────────────
+const SUB_CACHE_KEY = (userId) => `subscription:active:${userId}`;
+const SUB_CACHE_TTL = 10 * 60; // 10 minutes
+
+const getCachedSubscription = async (userId) => {
+    try {
+        const data = await redis.get(SUB_CACHE_KEY(userId));
+        if (!data) return null;
+        logger.debug(`✅ Subscription cache HIT for user ${userId}`);
+        return JSON.parse(data);
+    } catch (error) {
+        logger.warn('Subscription Redis GET error:', error.message);
+        return null;
+    }
+};
+
+const setCachedSubscription = async (userId, data) => {
+    try {
+        await redis.setex(SUB_CACHE_KEY(userId), SUB_CACHE_TTL, JSON.stringify(data));
+        logger.debug(`💾 Subscription cached in Redis for user ${userId}`);
+    } catch (error) {
+        logger.warn('Subscription Redis SET error:', error.message);
+    }
+};
+
+const invalidateSubscriptionCache = async (userId) => {
+    try {
+        await redis.del(SUB_CACHE_KEY(userId));
+        logger.debug(`🗑 Subscription cache invalidated for user ${userId}`);
+    } catch (error) {
+        logger.warn('Subscription Redis DEL error:', error.message);
+    }
+};
 
 // ─── Formatters ───────────────────────────────────────────────────────────────
 
@@ -114,12 +149,23 @@ export const fetchPlanById = async (planId) => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const fetchActiveSubscription = async (userId) => {
+    // Check cache first
+    const cached = await getCachedSubscription(userId);
+    if (cached !== null) {
+        return cached;
+    }
+
+    // Cache miss - fetch from DB
     const sub = await getActiveSubscription(userId);
-    return {
+    const result = {
         success: true,
         data: sub ? formatSubscription(sub) : null,
         hasActiveSubscription: !!sub,
     };
+
+    // Cache the result
+    await setCachedSubscription(userId, result);
+    return result;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -134,7 +180,7 @@ export const purchaseSubscription = async (userId, {
     auto_renew,
     customer_details,
 }) => {
-    const client = await pool.connect();
+    const client = await db.getClient();
     try {
         await client.query('BEGIN');
 
@@ -217,6 +263,9 @@ export const purchaseSubscription = async (userId, {
 
         await client.query('COMMIT');
 
+        // Invalidate cache after new subscription
+        await invalidateSubscriptionCache(userId);
+
         logger.info(
             `[Subscription] New subscription | User: ${userId} | Plan: ${plan.name} | Razorpay: ${razorpaySubscriptionId} | Expires: ${expiresAt.toISOString()}`
         );
@@ -288,6 +337,9 @@ export const cancelSubscription = async (userId, { subscription_id, reason }) =>
         cancelReason: reason || 'Cancelled by user',
     });
 
+    // Invalidate cache after cancellation
+    await invalidateSubscriptionCache(userId);
+
     logger.info(`[Subscription] Cancelled | User: ${userId} | Sub: ${subscription_id}`);
 
     return {
@@ -322,6 +374,9 @@ export const toggleAutoRenew = async (userId, { subscription_id, auto_renew }) =
 
     const updated = await updateAutoRenew(subscription_id, userId, auto_renew);
 
+    // Invalidate cache after toggling auto-renew
+    await invalidateSubscriptionCache(userId);
+
     return {
         success: true,
         message: `Auto-renew ${auto_renew ? 'enabled' : 'disabled'} successfully`,
@@ -335,7 +390,7 @@ export const toggleAutoRenew = async (userId, { subscription_id, auto_renew }) =
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const applyRideBenefits = async (userId, rideAmount) => {
-    const client = await pool.connect();
+    const client = await db.getClient();
     try {
         await client.query('BEGIN');
 

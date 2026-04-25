@@ -5,13 +5,19 @@ import compression from 'compression';
 import hpp from 'hpp';
 import { ENV } from './config/envConfig.js';
 import routes from './routes/index.js';
+<<<<<<< HEAD
 import { requestIdMiddleware, requestLoggingMiddleware } from './core/middleware/requestId.middleware.js';
+=======
+import { globalErrorHandler, notFoundHandler } from './core/errors/globalErrorHandler.js';
+import { apiLoggerMiddleware } from './core/middleware/apiLogger.middleware.js';
+>>>>>>> 14c146dabe2491c7238ceb55d507474f5b956c15
 
 const app = express();
 
 console.log('✅ App created');
 console.log(`API Prefix: "${ENV.API_PREFIX}"`);
 
+<<<<<<< HEAD
 // Security middleware
 app.use(helmet({
     contentSecurityPolicy: {
@@ -23,6 +29,11 @@ app.use(helmet({
         },
     },
     crossOriginEmbedderPolicy: false
+=======
+// Parse JSON — rawBody saved for webhook signature verification
+app.use(express.json({
+    verify: (req, _res, buf) => { req.rawBody = buf; },
+>>>>>>> 14c146dabe2491c7238ceb55d507474f5b956c15
 }));
 
 // CORS configuration
@@ -47,6 +58,9 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(requestIdMiddleware);
 app.use(requestLoggingMiddleware);
 
+// DB me har request/response log karo
+app.use(apiLoggerMiddleware);
+
 // Mount routes
 console.log('🔄 Mounting routes...');
 app.use(ENV.API_PREFIX, routes);
@@ -54,7 +68,7 @@ console.log('✅ Routes mounted');
 
 // Root route
 app.get('/', (req, res) => {
-    res.json({ 
+    res.json({
         success: true,
         message: 'Server is running',
         prefix: ENV.API_PREFIX,
@@ -67,12 +81,11 @@ app.get('/', (req, res) => {
     });
 });
 
-// 404 handler
-app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: `Cannot ${req.method} ${req.url}`
-    });
-});
+// 404 handler — routes ke baad, error handler se pehle
+app.use(notFoundHandler);
+
+// Global error handler — MUST be last middleware (4 args: err, req, res, next)
+// Bina iske Express default HTML error page dikhata hai
+app.use(globalErrorHandler);
 
 export default app;

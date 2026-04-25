@@ -1,5 +1,6 @@
 import { ENV } from '../../config/envConfig.js';
 import logger from '../../core/logger/logger.js';
+import twilio from 'twilio';
 
 class SMSProvider {
     constructor() {
@@ -9,37 +10,93 @@ class SMSProvider {
 
     initializeProvider() {
         switch (this.provider) {
+            case 'msg91':
+                logger.info('🔌 Initializing MSG91 SMS Provider', {
+                    authKeyPresent: !!ENV.MSG91_AUTH_KEY,
+                    templateIdPresent: !!ENV.MSG91_TEMPLATE_ID,
+                    senderIdPresent: !!ENV.MSG91_SENDER_ID
+                });
+                this.client = null; // MSG91 uses HTTP API, no SDK needed
+                break;
             case 'twilio':
-                // Initialize Twilio
-                this.client = require('twilio')(
+                logger.info('🔌 Initializing Twilio SMS Provider', {
+                    accountSidPresent: !!ENV.TWILIO_ACCOUNT_SID,
+                    authTokenPresent: !!ENV.TWILIO_AUTH_TOKEN,
+                    phonePresent: !!ENV.TWILIO_PHONE_NUMBER
+                });
+                this.client = twilio(
                     ENV.TWILIO_ACCOUNT_SID,
                     ENV.TWILIO_AUTH_TOKEN
                 );
                 break;
+            case 'fast2sms':
+                logger.info('🔌 Initializing Fast2SMS Provider', {
+                    apiKeyPresent: !!ENV.FAST2SMS_API_KEY
+                });
+                this.client = null; // Fast2SMS uses HTTP API, no SDK needed
+                break;
+            case 'authkey':
+                logger.info('🔌 Initializing AuthKey SMS Provider', {
+                    authKeyPresent: !!ENV.AUTHKEY_API_KEY,
+                    sidPresent: !!ENV.AUTHKEY_SID
+                });
+                this.client = null; // AuthKey uses HTTP API
+                break;
             case 'console':
             default:
-                // Console logger for development
+                logger.info('🔌 SMS Provider initialized in CONSOLE mode (development)');
                 this.client = null;
                 break;
         }
     }
 
-    async sendSMS(phone, message) {
+    async sendSMS(phone, message, purpose = 'general') {
+        const startTime = Date.now();
+
         try {
             // Validate phone number (Indian format)
             if (!this.validatePhoneNumber(phone)) {
-                throw new Error('Invalid phone number format');
+                const error = new Error('Invalid phone number format');
+                logger.error('📱 SMS validation failed', {
+                    phone,
+                    purpose,
+                    error: error.message,
+                    duration: Date.now() - startTime
+                });
+                throw error;
             }
 
+            logger.debug('📤 SMS sending initiated', {
+                phone: phone.slice(-4), // Only log last 4 digits for privacy
+                provider: this.provider,
+                purpose,
+                messageLength: message.length
+            });
+
             switch (this.provider) {
+                case 'msg91':
+                    return await this.sendViaMSG91(phone, message, purpose);
                 case 'twilio':
-                    return await this.sendViaTwilio(phone, message);
+                    return await this.sendViaTwilio(phone, message, purpose);
+                case 'fast2sms':
+                    return await this.sendViaFast2SMS(phone, message, purpose);
+                case 'authkey':
+                    return await this.sendViaAuthKey(phone, message, purpose);
                 case 'console':
                 default:
-                    return this.logToConsole(phone, message);
+                    return this.logToConsole(phone, message, purpose);
             }
+            
         } catch (error) {
-            logger.error('SMS sending failed:', error);
+            console.log(error);
+            logger.error('❌ SMS sending failed', {
+                phone: phone.slice(-4),
+                provider: this.provider,
+                purpose,
+                errorCode: error.code,
+                errorMessage: error.message,
+                duration: Date.now() - startTime
+            });
             throw error;
         }
     }
@@ -50,30 +107,295 @@ class SMSProvider {
         return phoneRegex.test(phone.replace(/\D/g, ''));
     }
 
-    async sendViaTwilio(phone, message) {
+    async sendViaMSG91(phone, message, purpose = 'general') {
+        const startTime = Date.now();
+        const cleanPhone = phone.replace(/\D/g, '');
+
+        try {
+            if (!ENV.MSG91_AUTH_KEY) {
+                throw new Error('MSG91_AUTH_KEY not configured');
+            }
+
+            // MSG91 API endpoint - Using sendhttp.php (working endpoint)
+            const msg91Url = new URL('https://api.msg91.com/api/sendhttp.php');
+            msg91Url.searchParams.append('authkey', ENV.MSG91_AUTH_KEY);
+            msg91Url.searchParams.append('mobiles', `91${cleanPhone}`);
+            msg91Url.searchParams.append('message', message);
+            msg91Url.searchParams.append('route', '4'); // Promotional route (try this)
+            msg91Url.searchParams.append('sender', ENV.MSG91_SENDER_ID || 'GoMob');
+            logger.debug('📡 MSG91 API Request', {
+                endpoint: 'sendhttp.php',
+                phone: cleanPhone.slice(-4),
+                purpose,
+                authKeyPresent: !!ENV.MSG91_AUTH_KEY
+            });
+            
+            const response = await fetch(msg91Url.toString(), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            console.log(response);
+
+            const responseText = await response.text();
+            console.log(responseText)
+            logger.debug('📨 MSG91 API Response Received', {
+                status: response.status,
+                phone: cleanPhone.slice(-4),
+                purpose,
+                response: responseText.substring(0, 150),
+                duration: Date.now() - startTime
+            });
+
+            if (!response.ok) {
+                throw new Error(`MSG91 API error: ${response.status} - ${responseText}`);
+            }
+
+            // MSG91 sendhttp.php returns plain text
+            // Success: "Message sent successfully" or similar
+            // Error: "Invalid AuthKey" or error description
+            const isSuccess = responseText &&
+                !responseText.toLowerCase().includes('error') &&
+                !responseText.toLowerCase().includes('invalid') &&
+                response.status === 200;
+
+            if (isSuccess) {
+                logger.info('✅ SMS sent successfully via MSG91', {
+                    phone: cleanPhone.slice(-4),
+                    purpose,
+                    response: responseText.substring(0, 100),
+                    duration: Date.now() - startTime
+                });
+
+                return {
+                    success: true,
+                    provider: 'msg91',
+                    messageId: 'msg91_' + Date.now(),
+                    response: responseText
+                };
+            } else {
+                throw new Error(`MSG91 returned error: ${responseText}`);
+            }
+        } catch (error) {
+            logger.error('❌ MSG91 SMS failed', {
+                phone: cleanPhone.slice(-4),
+                purpose,
+                error: error.message,
+                stack: error.stack,
+                duration: Date.now() - startTime
+            });
+            throw error;
+        }
+    }
+
+    async sendViaTwilio(phone, message, purpose = 'general') {
+        const startTime = Date.now();
+
         try {
             const result = await this.client.messages.create({
                 body: message,
                 from: ENV.TWILIO_PHONE_NUMBER,
                 to: `+91${phone}` // Assuming Indian numbers
             });
-            
-            logger.info('SMS sent via Twilio:', { phone, sid: result.sid });
-            return { success: true, sid: result.sid };
+                console.log(result,"twilio");
+            logger.info('✅ SMS sent via Twilio', {
+                phone: phone.slice(-4),
+                sid: result.sid,
+                purpose,
+                duration: Date.now() - startTime
+            });
+            return { success: true, sid: result.sid, provider: 'twilio' };
         } catch (error) {
-            logger.error('Twilio SMS failed:', error);
+            logger.error('❌ Twilio SMS failed', {
+                phone: phone.slice(-4),
+                purpose,
+                error: error.message,
+
+                duration: Date.now() - startTime
+            });
             throw error;
         }
     }
 
-    logToConsole(phone, message) {
-        logger.info(`[SMS to ${phone}]: ${message}`);
-        return { success: true, simulated: true };
+    async sendViaFast2SMS(phone, message, purpose = 'general') {
+        const startTime = Date.now();
+        const cleanPhone = phone.replace(/\D/g, '');
+
+        try {
+            if (!ENV.FAST2SMS_API_KEY) {
+                throw new Error('FAST2SMS_API_KEY not configured');
+            }
+
+            // Fast2SMS API endpoint (v2)
+            const fast2smsUrl = 'https://www.fast2sms.com/dev/bulkV2';
+
+            const response = await fetch(fast2smsUrl, {
+                method: 'POST',
+                headers: {
+                    'authorization': ENV.FAST2SMS_API_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'route': purpose.includes('otp') ? 'otp' : 'p',
+                    'variables_values': message,
+                    'numbers': `91${cleanPhone}`
+                })
+            });
+
+            const responseText = await response.text();
+            console.log('Fast2SMS Full Response:', {
+                status: response.status,
+                headers: Object.fromEntries(response.headers.entries()),
+                body: responseText.substring(0, 500)
+            });
+            logger.debug('📨 Fast2SMS API Response Received', {
+                status: response.status,
+                phone: cleanPhone.slice(-4),
+                purpose,
+                rawResponse: responseText.substring(0, 150),
+                duration: Date.now() - startTime
+            });
+
+            let responseData;
+            try {
+                responseData = JSON.parse(responseText);
+            } catch (e) {
+                logger.error('❌ Fast2SMS returned non-JSON response:', {
+                    status: response.status,
+                    response: responseText.substring(0, 200)
+                });
+                throw new Error(`Fast2SMS API error: Invalid response format - ${responseText.substring(0, 100)}`);
+            }
+
+            if (responseData.return === true && response.ok) {
+                logger.info('✅ SMS sent successfully via Fast2SMS', {
+                    phone: cleanPhone.slice(-4),
+                    purpose,
+                    messageId: responseData.request_id,
+                    duration: Date.now() - startTime
+                });
+
+                return {
+                    success: true,
+                    provider: 'fast2sms',
+                    messageId: responseData.request_id || 'fast2sms_' + Date.now(),
+                    response: responseData
+                };
+            } else {
+                throw new Error(`Fast2SMS returned error: ${responseData.message || JSON.stringify(responseData)}`);
+            }
+        } catch (error) {
+            logger.error('❌ Fast2SMS SMS failed', {
+                phone: cleanPhone.slice(-4),
+                purpose,
+                error: error.message,
+                duration: Date.now() - startTime
+            });
+
+            throw error;
+        }
     }
 
-    async sendOTP(phone, otp) {
-        const message = `Your OTP for Ride Sharing app is: ${otp}. Valid for ${ENV.OTP_EXPIRY_MINUTES} minutes. Do not share this OTP with anyone.`;
-        return this.sendSMS(phone, message);
+    async sendViaAuthKey(phone, message, purpose = 'general') {
+        const startTime = Date.now();
+        const cleanPhone = phone.replace(/\D/g, '');
+
+        try {
+            if (!ENV.AUTHKEY_API_KEY) {
+                throw new Error('AUTHKEY_API_KEY not configured');
+            }
+            if (!ENV.AUTHKEY_SID) {
+                throw new Error('AUTHKEY_SID not configured');
+            }
+
+            // OTP extract karo message se
+            const otpMatch = message.match(/\d{6}/);
+            const otp = otpMatch ? otpMatch[0] : '';
+
+            const authKeyUrl = new URL('https://api.authkey.io/request');
+            authKeyUrl.searchParams.append('authkey', ENV.AUTHKEY_API_KEY);
+            authKeyUrl.searchParams.append('mobile', cleanPhone);
+            authKeyUrl.searchParams.append('country_code', '91');
+            authKeyUrl.searchParams.append('sid', ENV.AUTHKEY_SID);
+            authKeyUrl.searchParams.append('name', 'GoMobility');
+            authKeyUrl.searchParams.append('otp', otp);
+
+            logger.debug('📡 AuthKey API Request', {
+                endpoint: 'api.authkey.io/request',
+                phone: cleanPhone.slice(-4),
+                purpose,
+                authKeyPresent: !!ENV.AUTHKEY_API_KEY
+            });
+
+            const response = await fetch(authKeyUrl.toString(), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            console.log(response)
+            const responseText = await response.text();
+            console.log(responseText)
+            logger.debug('📨 AuthKey API Response Received', {
+                status: response.status,
+                phone: cleanPhone.slice(-4),
+                purpose,
+                response: responseText.substring(0, 150),
+                duration: Date.now() - startTime
+            });
+
+            let responseData;
+            try {
+                responseData = JSON.parse(responseText);
+            } catch (e) {
+                responseData = { Message: responseText };
+            }
+
+            // AuthKey 203 status pe bhi error deta hai — Message field check karo
+            if (!response.ok || response.status === 203 ||
+                (responseData.Message && responseData.Message.toLowerCase().includes('invalid'))) {
+                throw new Error(`AuthKey API error: ${response.status} - ${responseData.Message || responseText}`);
+            }
+
+            logger.info('✅ SMS sent successfully via AuthKey', {
+                phone: cleanPhone.slice(-4),
+                purpose,
+                response: responseText.substring(0, 100),
+                duration: Date.now() - startTime
+            });
+
+            return {
+                success: true,
+                provider: 'authkey',
+                messageId: responseData.requestId || 'authkey_' + Date.now(),
+                response: responseData
+            };
+        } catch (error) {
+            logger.error('❌ AuthKey SMS failed', {
+                phone: cleanPhone.slice(-4),
+                purpose,
+                error: error.message,
+                stack: error.stack,
+                duration: Date.now() - startTime
+            });
+            throw error;
+        }
+    }
+
+    logToConsole(phone, message, purpose = 'general') {
+        logger.info(`🔔 [CONSOLE MODE] SMS to ${phone.slice(-4)}:`, {
+            purpose,
+            message,
+            timestamp: new Date().toISOString()
+        });
+        return { success: true, simulated: true, provider: 'console' };
+    }
+
+    async sendOTP(phone, otp, purpose = 'signin') {
+        const message = `Your OTP for GoMobility is: ${otp}. Valid for ${ENV.OTP_EXPIRY_MINUTES} minutes. Do not share.`;
+
+        return this.sendSMS(phone, message, `otp_${purpose}`);
     }
 }
 

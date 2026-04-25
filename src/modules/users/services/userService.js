@@ -156,6 +156,20 @@ export const getUserWallet = async (userId) => {
     }
 };
 
+export const deleteAccount = async (userId) => {
+    try {
+        // Active ride hai to delete nahi hoga
+        const activeRide = await rideRepo.findActiveRideByPassenger(userId);
+        if (activeRide) throw new Error('Cannot delete account during an active ride');
+
+        await userRepo.softDeleteUser(userId);
+        return { message: 'Account deleted successfully' };
+    } catch (error) {
+        logger.error('Delete account service error:', error);
+        throw error;
+    }
+};
+
 export const addMoneyToWallet = async (userId, amount, paymentMethod) => {
     try {
         // Validate amount

@@ -1,0 +1,758 @@
+{
+  "info": {
+    "name": "GoMobility — KYC (Cashfree Sandbox)",
+    "_postman_id": "gomobility-kyc-v2",
+    "description": "Actual code se nikala hua — exact field names, validators ke hisab se.\n\n⚠️ KYC sirf DRIVER ke liye hai — passenger token se saare /kyc/* routes 403 denge.\n\nFlow:\n1. Signup (role=driver) → Verify Signup (token auto-set)\n2. KYC requests chalao\n\nServer: npm run dev",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url",       "value": "http://localhost:5000/api/v1", "type": "string" },
+    { "key": "access_token",   "value": "", "type": "string" },
+    { "key": "refresh_token",  "value": "", "type": "string" },
+    { "key": "aadhaar_ref_id", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "AUTH",
+      "item": [
+        {
+          "name": "Signup",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                "const j = pm.response.json();",
+                "pm.test('success true', () => pm.expect(j.success).to.be.true);",
+                "console.log('OTP bheja gaya. Server logs mein OTP dekho (SMS_PROVIDER=console hai).');"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"fullName\": \"Test Driver\",\n  \"role\": \"driver\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/auth/signup", "host": ["{{base_url}}"], "path": ["auth","signup"] },
+            "description": "KYC sirf driver ke liye hai — role=driver use karo.\nFields (validator se):\n- phone: 10-digit Indian (6-9 se shuru)\n- fullName: optional, 2-100 chars\n- email: optional\n- role: passenger | driver | admin"
+          }
+        },
+        {
+          "name": "Verify Signup → TOKEN SET",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                "const j = pm.response.json();",
+                "if (j.success && j.data?.accessToken) {",
+                "  pm.collectionVariables.set('access_token', j.data.accessToken);",
+                "  pm.collectionVariables.set('refresh_token', j.data.refreshToken || '');",
+                "  console.log('✅ access_token set!');",
+                "} else if (j.success && j.data?.access_token) {",
+                "  pm.collectionVariables.set('access_token', j.data.access_token);",
+                "  pm.collectionVariables.set('refresh_token', j.data.refresh_token || '');",
+                "  console.log('✅ access_token set!');",
+                "} else {",
+                "  console.log('❌ Token nahi mila. Full response:', JSON.stringify(j));",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"123456\",\n  \"fullName\": \"Test Driver\",\n  \"role\": \"driver\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/auth/verify-signup", "host": ["{{base_url}}"], "path": ["auth","verify-signup"] },
+            "description": "OTP server logs mein milega.\nFields (validator se):\n- phone, otp (6 digits), role — sab required\n- fullName, email — optional"
+          }
+        },
+        {
+          "name": "Signin (existing user)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                "console.log('OTP bheja gaya. Server logs dekho.');"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"role\": \"driver\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/auth/signin", "host": ["{{base_url}}"], "path": ["auth","signin"] }
+          }
+        },
+        {
+          "name": "Verify Signin → TOKEN SET",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const j = pm.response.json();",
+                "if (j.success && j.data?.accessToken) {",
+                "  pm.collectionVariables.set('access_token', j.data.accessToken);",
+                "  pm.collectionVariables.set('refresh_token', j.data.refreshToken || '');",
+                "  console.log('✅ access_token set!');",
+                "} else if (j.success && j.data?.access_token) {",
+                "  pm.collectionVariables.set('access_token', j.data.access_token);",
+                "  pm.collectionVariables.set('refresh_token', j.data.refresh_token || '');",
+                "  console.log('✅ access_token set!');",
+                "} else {",
+                "  console.log('❌ Token nahi mila:', JSON.stringify(j));",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"123456\",\n  \"role\": \"driver\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/auth/verify-signin", "host": ["{{base_url}}"], "path": ["auth","verify-signin"] }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const j = pm.response.json();",
+                "if (j.success && j.data?.accessToken) {",
+                "  pm.collectionVariables.set('access_token', j.data.accessToken);",
+                "  console.log('✅ Token refreshed!');",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/auth/refresh-token", "host": ["{{base_url}}"], "path": ["auth","refresh-token"] },
+            "description": "Field name: refreshToken (camelCase — validator mein yahi hai)"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/auth/logout", "host": ["{{base_url}}"], "path": ["auth","logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "KYC — Status (Driver only)",
+      "item": [
+        {
+          "name": "GET KYC Status",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                "const j = pm.response.json();",
+                "pm.test('success true', () => pm.expect(j.success).to.be.true);",
+                "if (j.data) {",
+                "  console.log('kyc_status:', j.data.kyc_status);",
+                "  console.log('aadhaar_status:', j.data.aadhaar_status);",
+                "  console.log('pan_status:', j.data.pan_status);",
+                "  console.log('bank_status:', j.data.bank_status);",
+                "  console.log('dl_status:', j.data.dl_status);",
+                "  console.log('rc_status:', j.data.rc_status);",
+                "  console.log('face_status:', j.data.face_status);",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/kyc/status", "host": ["{{base_url}}"], "path": ["kyc","status"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "KYC — Aadhaar (Driver only)",
+      "item": [
+        {
+          "name": "Step 1: Aadhaar OTP Bhejo",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                "const j = pm.response.json();",
+                "pm.test('success true', () => pm.expect(j.success).to.be.true);",
+                "// Service returns { message, refId }",
+                "if (j.data?.refId) {",
+                "  pm.collectionVariables.set('aadhaar_ref_id', j.data.refId);",
+                "  console.log('✅ refId saved:', j.data.refId);",
+                "  console.log('Ab Step 2 chalao — OTP Aadhaar-linked mobile pe gaya hai');",
+                "} else {",
+                "  console.log('❌ refId missing. Response:', JSON.stringify(j));",
+                "}",
+                "// Agar already verified hai",
+                "if (pm.response.code === 409) {",
+                "  console.log('ℹ️ Aadhaar already verified hai is user ke liye');",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"aadhaar_number\": \"655675523712\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/kyc/aadhaar/otp", "host": ["{{base_url}}"], "path": ["kyc","aadhaar","otp"] },
+            "description": "Controller reads: req.body.aadhaar_number\nService returns: { message, refId }\n\nSandbox valid Aadhaar numbers: 655675523712, 655675523711\nMax 3 attempts allowed — uske baad manual_review."
+          }
+        },
+        {
+          "name": "Step 2: Aadhaar OTP Verify",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                "const j = pm.response.json();",
+                "pm.test('success true', () => pm.expect(j.success).to.be.true);",
+                "if (j.success) {",
+                "  console.log('✅ Aadhaar verified!');",
+                "  console.log('aadhaar_status:', j.data?.aadhaar_status);",
+                "  console.log('aadhaar_name:', j.data?.aadhaar_name);",
+                "  console.log('aadhaar_dob:', j.data?.aadhaar_dob);",
+                "  console.log('aadhaar_gender:', j.data?.aadhaar_gender);",
+                "  console.log('aadhaar_state:', j.data?.aadhaar_state);",
+                "  console.log('aadhaar_number_masked:', j.data?.aadhaar_number_masked);",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ref_id\": \"{{aadhaar_ref_id}}\",\n  \"otp\": \"111000\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/kyc/aadhaar/verify", "host": ["{{base_url}}"], "path": ["kyc","aadhaar","verify"] },
+            "description": "Controller reads: req.body.ref_id, req.body.otp\nref_id Step 1 se auto-fill hota hai.\n\nSandbox OTP: 111000 (fixed across all requests)\n\nCashfree response mein status === 'VALID' hona chahiye."
+          }
+        }
+      ]
+    },
+    {
+      "name": "KYC — PAN (Driver only)",
+      "item": [
+        {
+          "name": "PAN Verify",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                "const j = pm.response.json();",
+                "pm.test('success true', () => pm.expect(j.success).to.be.true);",
+                "if (j.success) {",
+                "  console.log('✅ PAN verified!');",
+                "  console.log('pan_status:', j.data?.pan_status);",
+                "  console.log('pan_name:', j.data?.pan_name);",
+                "  console.log('pan_number_masked:', j.data?.pan_number_masked);",
+                "  console.log('pan_dob:', j.data?.pan_dob);",
+                "  console.log('kyc_status:', j.data?.kyc_status);",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pan_number\": \"ABCPV1234D\",\n  \"name\": \"Test User\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/kyc/pan", "host": ["{{base_url}}"], "path": ["kyc","pan"] },
+            "description": "Controller reads: req.body.pan_number, req.body.name\nNote: pan_number.toUpperCase() controller mein hota hai automatically.\n\nCashfree response mein status === 'VALID' hona chahiye."
+          }
+        }
+      ]
+    },
+    {
+      "name": "KYC — Bank Account (Driver only)",
+      "item": [
+        {
+          "name": "Bank Account Verify",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                "const j = pm.response.json();",
+                "pm.test('success true', () => pm.expect(j.success).to.be.true);",
+                "if (j.success) {",
+                "  console.log('✅ Bank verified!');",
+                "  console.log('bank_status:', j.data?.bank_status);",
+                "  console.log('bank_holder_name:', j.data?.bank_holder_name);",
+                "  console.log('bank_name:', j.data?.bank_name);",
+                "  console.log('bank_ifsc:', j.data?.bank_ifsc);",
+                "  console.log('bank_account_masked:', j.data?.bank_account_masked);",
+                "  console.log('kyc_status:', j.data?.kyc_status);",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account_number\": \"026291800001191\",\n  \"ifsc\": \"YESB0000262\",\n  \"name\": \"JOHN DOE\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/kyc/bank", "host": ["{{base_url}}"], "path": ["kyc","bank"] },
+            "description": "Controller reads: req.body.account_number, req.body.ifsc, req.body.name\nCashfree response mein account_status === 'VALID' hona chahiye.\nifsc.toUpperCase() service mein hota hai automatically."
+          }
+        }
+      ]
+    },
+    {
+      "name": "KYC — Driving License (Driver only)",
+      "item": [
+        {
+          "name": "Driving License Verify",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                "const j = pm.response.json();",
+                "pm.test('success true', () => pm.expect(j.success).to.be.true);",
+                "if (j.success) {",
+                "  console.log('✅ DL verified!');",
+                "  console.log('dl_status:', j.data?.dl_status);",
+                "  console.log('dl_verified_name:', j.data?.dl_verified_name);",
+                "  console.log('dl_verified_dob:', j.data?.dl_verified_dob);",
+                "  console.log('dl_issuing_authority:', j.data?.dl_issuing_authority);",
+                "  console.log('dl_number_masked:', j.data?.dl_number_masked);",
+                "  // Agar Aadhaar name se mismatch hua toh manual_review pe jaayega",
+                "  if (j.data?.dl_manual_review_reason) {",
+                "    console.log('⚠️ Manual review reason:', j.data.dl_manual_review_reason);",
+                "  }",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"license_number\": \"KA0120198900984\",\n  \"dob\": \"05-08-1994\",\n  \"name\": \"Test Driver\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/kyc/license", "host": ["{{base_url}}"], "path": ["kyc","license"] },
+            "description": "Controller reads: req.body.license_number, req.body.dob, req.body.name\nDOB format: DD-MM-YYYY\nMax 3 attempts.\n\nSandbox VALID DL: KA0120198900984, DOB: 05-08-1994\nSandbox INVALID DL: KA2320238908787, DOB: 04-09-1987\n\nNote: DL name aur Aadhaar name compare hota hai — mismatch hone pe manual_review."
+          }
+        }
+      ]
+    },
+    {
+      "name": "KYC — Vehicle RC (Driver only)",
+      "item": [
+        {
+          "name": "Vehicle RC Verify",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                "const j = pm.response.json();",
+                "pm.test('success true', () => pm.expect(j.success).to.be.true);",
+                "if (j.success) {",
+                "  console.log('✅ RC verified!');",
+                "  console.log('rc_status:', j.data?.rc_status);",
+                "  console.log('rc_owner_name:', j.data?.rc_owner_name);",
+                "  console.log('rc_vehicle_model:', j.data?.rc_vehicle_model);",
+                "  console.log('rc_fuel_type:', j.data?.rc_fuel_type);",
+                "  console.log('rc_vehicle_class:', j.data?.rc_vehicle_class);",
+                "  console.log('rc_registration_date:', j.data?.rc_registration_date);",
+                "  console.log('rc_number_masked:', j.data?.rc_number_masked);",
+                "  if (j.data?.rc_manual_review_reason) {",
+                "    console.log('⚠️ Manual review reason:', j.data.rc_manual_review_reason);",
+                "  }",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rc_number\": \"HJ01ME5678\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/kyc/rc", "host": ["{{base_url}}"], "path": ["kyc","rc"] },
+            "description": "Controller reads: req.body.rc_number\nMax 3 attempts.\n\nSandbox VALID RC: HJ01ME5678\nSandbox INVALID RC: HJ01ME5279, HJ01ME5679\n\nNote: RC owner name aur Aadhaar name compare hota hai — mismatch pe manual_review."
+          }
+        }
+      ]
+    },
+    {
+      "name": "KYC — Face Match (Driver only, Optional)",
+      "item": [
+        {
+          "name": "Face Match",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const j = pm.response.json();",
+                "if (j.success) {",
+                "  console.log('face_status:', j.data?.face_status);",
+                "  console.log('face_match_score:', j.data?.face_match_score, '/ 100');",
+                "  console.log('Threshold:', 75, '(CASHFREE_FACE_MATCH_THRESHOLD)');",
+                "  const passed = (j.data?.face_match_score || 0) >= 75;",
+                "  console.log('Face check:', passed ? 'PASS ✅' : 'FAIL ❌ (manual_review pe jayega)');",
+                "} else {",
+                "  console.log('Error:', j.message);",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"selfie\": \"<BASE64_SELFIE_HERE>\",\n  \"aadhaar_photo\": \"<BASE64_AADHAAR_PHOTO_HERE>\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/kyc/face", "host": ["{{base_url}}"], "path": ["kyc","face"] },
+            "description": "Controller reads: req.body.selfie, req.body.aadhaar_photo (dono base64)\n\nBase64 kaise banao (Node):\nconst b64 = require('fs').readFileSync('photo.jpg').toString('base64')\n\nSandbox tip: same image dono mein do → 100% match."
+          }
+        }
+      ]
+    },
+    {
+      "name": "ADMIN — Manual Reviews",
+      "item": [
+        {
+          "name": "List Manual Reviews",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const j = pm.response.json();",
+                "if (pm.response.code === 403) {",
+                "  console.log('ℹ️ Admin token chahiye. role=admin se signin karo.');",
+                "  return;",
+                "}",
+                "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                "console.log('Pending manual reviews:', j.data?.length);",
+                "if (j.data?.length > 0) {",
+                "  j.data.forEach(r => {",
+                "    console.log('user_id:', r.user_id, '| name:', r.full_name, '| phone:', r.phone_number);",
+                "    console.log('  reason:', r.manual_review_reason);",
+                "  });",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/kyc/admin/manual-reviews?page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["kyc","admin","manual-reviews"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "description": "Requires role=admin token.\nReturns rider_kyc rows joined with users (full_name, phone_number)\nwhere kyc_status = 'manual_review'"
+          }
+        },
+        {
+          "name": "Resolve — APPROVE",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const j = pm.response.json();",
+                "console.log('Resolve result:', JSON.stringify(j.data));",
+                "if (j.success) console.log('kyc_status:', j.data?.kyc_status);"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"approve\",\n  \"reason\": \"Documents manually verified\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/kyc/admin/manual-reviews/:user_id/resolve",
+              "host": ["{{base_url}}"],
+              "path": ["kyc","admin","manual-reviews",":user_id","resolve"],
+              "variable": [{ "key": "user_id", "value": "PASTE_USER_ID_HERE" }]
+            },
+            "description": "decision: 'approve' | 'reject' — yahi 2 valid values hain\nuser_id: manual reviews list se lo"
+          }
+        },
+        {
+          "name": "Resolve — REJECT",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"reject\",\n  \"reason\": \"Fake documents submitted\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/kyc/admin/manual-reviews/:user_id/resolve",
+              "host": ["{{base_url}}"],
+              "path": ["kyc","admin","manual-reviews",":user_id","resolve"],
+              "variable": [{ "key": "user_id", "value": "PASTE_USER_ID_HERE" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ERROR CASES",
+      "item": [
+        {
+          "name": "Passenger token → 403 (KYC driver-only hai)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('403 Forbidden', () => pm.response.to.have.status(403));",
+                "console.log('✅ Passenger ko KYC access nahi milna chahiye — 403 sahi hai');"
+              ]
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/kyc/status", "host": ["{{base_url}}"], "path": ["kyc","status"] },
+            "description": "Pehle passenger role se signin karo, phir yeh chalao.\ndriver ke alawa koi bhi role 403 paayega."
+          }
+        },
+        {
+          "name": "No token → 401",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));",
+                "console.log('✅ Auth guard kaam kar raha hai');"
+              ]
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/kyc/status", "host": ["{{base_url}}"], "path": ["kyc","status"] }
+          }
+        },
+        {
+          "name": "Signup — invalid phone → 400",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('422 or 400', () => pm.expect(pm.response.code).to.be.oneOf([400, 422]));",
+                "console.log('Validation error:', JSON.stringify(pm.response.json()));"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"12345\",\n  \"role\": \"passenger\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/auth/signup", "host": ["{{base_url}}"], "path": ["auth","signup"] }
+          }
+        },
+        {
+          "name": "Signup — invalid role → 400",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('422 or 400', () => pm.expect(pm.response.code).to.be.oneOf([400, 422]));",
+                "console.log('Validation error:', JSON.stringify(pm.response.json()));"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"role\": \"superuser\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/auth/signup", "host": ["{{base_url}}"], "path": ["auth","signup"] }
+          }
+        },
+        {
+          "name": "Aadhaar — already verified → 409",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('409 Conflict', () => pm.response.to.have.status(409));",
+                "console.log('Already verified response:', JSON.stringify(pm.response.json()));"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"aadhaar_number\": \"655675523712\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/kyc/aadhaar/otp", "host": ["{{base_url}}"], "path": ["kyc","aadhaar","otp"] },
+            "description": "Aadhaar already verify ho chuka ho toh 409 aana chahiye"
+          }
+        },
+        {
+          "name": "PAN — already verified → 409",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('409 Conflict', () => pm.response.to.have.status(409));",
+                "console.log(pm.response.json());"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pan_number\": \"ABCPV1234D\",\n  \"name\": \"Test User\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/kyc/pan", "host": ["{{base_url}}"], "path": ["kyc","pan"] }
+          }
+        },
+        {
+          "name": "Admin — wrong decision → 400",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const j = pm.response.json();",
+                "console.log('Wrong decision response:', JSON.stringify(j));",
+                "pm.test('Should fail', () => pm.expect(pm.response.code).to.be.oneOf([400, 403]));"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"maybe\",\n  \"reason\": \"not sure\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/kyc/admin/manual-reviews/:user_id/resolve",
+              "host": ["{{base_url}}"],
+              "path": ["kyc","admin","manual-reviews",":user_id","resolve"],
+              "variable": [{ "key": "user_id", "value": "1" }]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

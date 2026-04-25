@@ -11,15 +11,7 @@ import {
     adminHideReview,
     adminUnflagReview,
 } from '../services/reviewService.js';
-
-// ─── Error handler ────────────────────────────────────────────────────────────
-const handleError = (res, error) => {
-    logger.error(`[ReviewController] ${error.message}`);
-    return res.status(error.statusCode || 500).json({
-        success: false,
-        message: error.message || 'Internal server error',
-    });
-};
+import { sendError } from '../../../core/utils/response.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  POST /api/v1/reviews
@@ -30,7 +22,8 @@ export const submitReviewController = async (req, res) => {
         const result = await submitReview(req.user.id, req.body);
         return res.status(201).json(result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[ReviewController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -48,7 +41,8 @@ export const getUserReviews = async (req, res) => {
         });
         return res.status(200).json(result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[ReviewController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -61,7 +55,8 @@ export const getRatingSummaryController = async (req, res) => {
         const result = await fetchRatingSummary(parseInt(req.params.userId));
         return res.status(200).json(result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[ReviewController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -74,7 +69,8 @@ export const getRideReviews = async (req, res) => {
         const result = await fetchRideReviews(parseInt(req.params.rideId));
         return res.status(200).json(result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[ReviewController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -87,7 +83,8 @@ export const respondToReviewController = async (req, res) => {
         const result = await respondToReview(req.user.id, req.body);
         return res.status(201).json(result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[ReviewController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -100,7 +97,8 @@ export const flagReviewController = async (req, res) => {
         const result = await flagAReview(parseInt(req.params.reviewId));
         return res.status(200).json(result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[ReviewController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -113,7 +111,8 @@ export const getTagsController = (req, res) => {
         const result = getAvailableTags(req.query.reviewer_type);
         return res.status(200).json(result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[ReviewController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -131,7 +130,8 @@ export const getFlaggedReviewsController = async (req, res) => {
         });
         return res.status(200).json(result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[ReviewController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -141,7 +141,8 @@ export const hideReviewController = async (req, res) => {
         const result = await adminHideReview(parseInt(req.params.reviewId));
         return res.status(200).json(result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[ReviewController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };
 
@@ -151,6 +152,7 @@ export const unflagReviewController = async (req, res) => {
         const result = await adminUnflagReview(parseInt(req.params.reviewId));
         return res.status(200).json(result);
     } catch (error) {
-        return handleError(res, error);
+        logger.error(`[ReviewController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
     }
 };

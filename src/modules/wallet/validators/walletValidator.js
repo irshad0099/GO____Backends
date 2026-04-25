@@ -110,6 +110,8 @@ export const transactionFilterSchema = Joi.object({
         .messages({ 'date.min': 'endDate must be after startDate' }),
 });
 
+import { sendValidationError } from '../../../core/utils/response.js';
+
 // ─── Validation Middleware Factory ────────────────────────────────────────────
 export const validate = (schema, source = 'body') => (req, res, next) => {
     const data = source === 'query' ? req.query : req.body;
@@ -120,18 +122,12 @@ export const validate = (schema, source = 'body') => (req, res, next) => {
     });
 
     if (error) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors: error.details.map((d) => ({
-                field:   d.path.join('.'),
-                message: d.message,
-            })),
-        });
+        return sendValidationError(res, error.details.map(d => ({ field: d.path.join('.'), message: d.message })));
     }
 
     if (source === 'query') {
-        req.query = value;
+        // Express 5: req.query is a read-only getter, use defineProperty to override
+        Object.defineProperty(req, 'query', { value, writable: true, configurable: true });
     } else {
         req.body = value;
     }

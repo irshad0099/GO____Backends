@@ -21,6 +21,21 @@ const router = express.Router();
 
 router.use(authenticate);
 
+// ─── Scheduled Rides (Book for Later) ───────────────────────────────────────
+// POST /api/v1/rides/schedule
+router.post(
+    '/schedule',
+    authorize('passenger'),
+    joiValidate(scheduleRideSchema),
+    schedCtrl.scheduleRide
+);
+
+// GET /api/v1/rides/scheduled — my scheduled rides
+router.get('/scheduled', authorize('passenger'), schedCtrl.getMyScheduled);
+
+// DELETE /api/v1/rides/scheduled/:id — cancel scheduled ride
+router.delete('/scheduled/:id', authorize('passenger'), schedCtrl.cancelScheduled);
+
 // GET /nearby-drivers – uses QUERY validators
 router.get('/nearby-drivers',
     validate([
@@ -89,6 +104,14 @@ router.post(
     cancelCtrl.cancelRide
 );
 
+// ─── Ride OTP Generation ────────────────────────────────────────────────────
+// POST /api/v1/rides/:rideId/generate-otp — driver/system generates & sends OTP to passenger
+router.post(
+    '/:rideId/generate-otp',
+    authorize('driver'),
+    otpCtrl.generateOtp
+);
+
 // ─── Ride OTP Verification ──────────────────────────────────────────────────
 // POST /api/v1/rides/:rideId/verify-otp — driver enters passenger's OTP
 router.post(
@@ -102,6 +125,7 @@ router.post(
 // GET /api/v1/rides/:rideId/invoice — get receipt after ride
 router.get('/:rideId/invoice', invoiceCtrl.getInvoice);
 
+<<<<<<< HEAD
 // ─── Cash Collection (Driver confirms payment received) ────────────────────
 // Validation schema for cash collection
 const collectConfirmSchema = Joi.object({
@@ -127,12 +151,9 @@ router.post(
     joiValidate(scheduleRideSchema),
     schedCtrl.scheduleRide
 );
+=======
+>>>>>>> 14c146dabe2491c7238ceb55d507474f5b956c15
 
-// GET /api/v1/rides/scheduled — my scheduled rides
-router.get('/scheduled', authorize('passenger'), schedCtrl.getMyScheduled);
-
-// DELETE /api/v1/rides/scheduled/:id — cancel scheduled ride
-router.delete('/scheduled/:id', authorize('passenger'), schedCtrl.cancelScheduled);
 
 // ─── Ride Payments ─────────────────────────────────────────────────────
 // Mount payment-specific routes under /payments

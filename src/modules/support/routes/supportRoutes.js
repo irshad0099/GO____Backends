@@ -7,6 +7,12 @@ const router = express.Router();
 
 router.use(authenticate);
 
+// GET /api/v1/support/categories — browse by category list
+router.get('/categories', controller.getCategories);
+
+// GET /api/v1/support/search?q=refund — search tickets
+router.get('/search', controller.searchTickets);
+
 // POST /api/v1/support/tickets — create ticket
 router.post('/tickets', validate(createTicketSchema), controller.createTicket);
 

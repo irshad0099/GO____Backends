@@ -139,6 +139,25 @@ export const updateUser = async (id, updates) => {
     }
 };
 
+export const softDeleteUser = async (id) => {
+    try {
+        const result = await db.query(
+            `UPDATE users
+             SET is_active      = false,
+                 phone_number   = phone_number || '-deleted-' || $1,
+                 email          = CASE WHEN email IS NOT NULL THEN email || '-deleted-' || $1 ELSE NULL END,
+                 updated_at     = NOW()
+             WHERE id = $1
+             RETURNING id`,
+            [id]
+        );
+        return result.rows[0];
+    } catch (error) {
+        logger.error('Soft delete user repository error:', error);
+        throw error;
+    }
+};
+
 export const verifyUser = async (id) => {
     try {
         const result = await db.query(

@@ -5,62 +5,68 @@ import * as ctrl from '../controllers/kycController.js';
 
 const router = express.Router();
 
-// POST /api/v1/kyc/digilocker/webhook — Cashfree public callback (no auth)
-// Signature verified inside the service via x-webhook-signature + x-webhook-timestamp
-router.post('/digilocker/webhook', ctrl.handleDigilockerWebhook);
-
-// All KYC routes below require authentication
+// All KYC routes require auth
 router.use(authenticate);
 
-// ─── Driver KYC ───────────────────────────────────────────────────────────────
+// ─── Driver routes ────────────────────────────────────────────────────────────
 
-// GET  /api/v1/kyc/status — fetch current KYC status
+// GET  /api/v1/kyc/status
 router.get('/status', authorize('driver'), ctrl.getStatus);
 
-// POST /api/v1/kyc/ocr — unified Smart OCR endpoint
-// multipart/form-data: { document_type: PAN|AADHAAR|DRIVING_LICENCE|VEHICLE_RC, file: <image/PDF> }
+// POST /api/v1/kyc/submit  — AADHAAR | PAN | DRIVING_LICENCE | VEHICLE_RC
+// multipart/form-data: { document_type, file, file_back? }
+// file_back optional — AADHAAR ke liye address fetch karne ke liye
 router.post(
-    '/ocr',
+    '/submit',
     authorize('driver'),
-    kycUpload.single('file'),
+    kycUpload.fields([{ name: 'file', maxCount: 1 }, { name: 'file_back', maxCount: 1 }]),
     handleKycUploadError,
     enforcePdfSize,
-    ctrl.submitOcrDocument
+    ctrl.submitDocument
 );
 
-// POST /api/v1/kyc/bank — verify bank account
+// POST /api/v1/kyc/documents/:id/retry
+router.post(
+    '/documents/:id/retry',
+    authorize('driver'),
+    kycUpload.fields([{ name: 'file', maxCount: 1 }, { name: 'file_back', maxCount: 1 }]),
+    handleKycUploadError,
+    enforcePdfSize,
+    ctrl.retryDocument
+);
+
+// POST /api/v1/kyc/bank
 // Body: { account_number, ifsc, name }
 router.post('/bank', authorize('driver'), ctrl.submitBankAccount);
 
-// POST /api/v1/kyc/face — optional selfie face match
-// Body: { selfie (base64), aadhaar_photo (base64) }
-router.post('/face', authorize('driver'), ctrl.submitFaceMatch);
+// POST /api/v1/kyc/face-match  — selfie upload
+// multipart/form-data: { selfie: <image> }
+router.post(
+    '/face-match',
+    authorize('driver'),
+    kycUpload.single('selfie'),
+    handleKycUploadError,
+    ctrl.submitFaceMatch
+);
 
-// ─── DigiLocker (alternate verified path) ────────────────────────────────────
+// ─── Admin routes ─────────────────────────────────────────────────────────────
 
-// POST /api/v1/kyc/digilocker/verify — check if mobile/Aadhaar has a DigiLocker account
-// Body: { mobile_number } OR { aadhaar_number } (one required)
-router.post('/digilocker/verify', authorize('driver'), ctrl.submitDigilocker);
+// GET  /api/v1/kyc/admin/queue?type=AADHAAR&page=1&limit=20
+router.get('/admin/queue', authorize('admin'), ctrl.getReviewQueue);
 
-// POST /api/v1/kyc/digilocker/url — create a DigiLocker URL for document retrieval
-// Body: { document_requested: ['AADHAAR','PAN','DRIVING_LICENSE'], user_flow?: 'signup'|'signin' }
-router.post('/digilocker/url', authorize('driver'), ctrl.createDigilockerUrl);
+// GET  /api/v1/kyc/admin/documents/:id
+router.get('/admin/documents/:id', authorize('admin'), ctrl.getDocumentForAdmin);
 
-// GET  /api/v1/kyc/digilocker/status — poll verification status
-// Query: ?verification_id=... OR ?reference_id=...
-router.get('/digilocker/status', authorize('driver'), ctrl.getDigilockerStatus);
+// POST /api/v1/kyc/admin/documents/:id/approve
+router.post('/admin/documents/:id/approve', authorize('admin'), ctrl.approveDocument);
 
-// GET  /api/v1/kyc/digilocker/document/:document_type — fetch doc after consent (AADHAAR|PAN|DRIVING_LICENSE)
-// Query: ?verification_id=... OR ?reference_id=...
-router.get('/digilocker/document/:document_type', authorize('driver'), ctrl.getDigilockerDocument);
+// POST /api/v1/kyc/admin/documents/:id/reject
+router.post('/admin/documents/:id/reject', authorize('admin'), ctrl.rejectDocument);
 
-// ─── Admin KYC ────────────────────────────────────────────────────────────────
+// GET  /api/v1/kyc/admin/fraud-alerts?severity=HIGH
+router.get('/admin/fraud-alerts', authorize('admin'), ctrl.getFraudAlerts);
 
-// GET  /api/v1/kyc/admin/manual-reviews — list pending manual reviews
-router.get('/admin/manual-reviews', authorize('admin'), ctrl.listManualReviews);
-
-// POST /api/v1/kyc/admin/manual-reviews/:user_id/resolve
-// Body: { decision: 'approve'|'reject', reason }
-router.post('/admin/manual-reviews/:user_id/resolve', authorize('admin'), ctrl.resolveReview);
+// POST /api/v1/kyc/admin/drivers/:userId/suspend
+router.post('/admin/drivers/:userId/suspend', authorize('admin'), ctrl.suspendDriver);
 
 export default router;

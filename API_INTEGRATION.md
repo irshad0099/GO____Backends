@@ -132,17 +132,67 @@ Content-Type: application/json
 # DRIVER APP
 # ═══════════════════════════════════════
 
-## 🔐 AUTH (Same as Passenger)
+## 🔐 AUTH
+
+**Note:** For drivers, `POST /auth/verify-signin` and `POST /auth/verify-signup` responses include a `kyc` object with current KYC status.
 
 | Method | Endpoint | Body | Description |
 |--------|----------|------|-------------|
 | POST | `/auth/signup` | `{ phone, name, email? }` | Register karo |
-| POST | `/auth/verify-signup` | `{ phone, otp }` | OTP verify |
+| POST | `/auth/verify-signup` | `{ phone, otp }` | OTP verify, returns KYC status for drivers |
 | POST | `/auth/signin` | `{ phone }` | Login |
-| POST | `/auth/verify-signin` | `{ phone, otp }` | Login OTP verify |
+| POST | `/auth/verify-signin` | `{ phone, otp }` | Login OTP verify, returns KYC status for drivers |
 | POST | `/auth/refresh-token` | `{ refreshToken }` | Token refresh |
 | POST | `/auth/logout` | `{ refreshToken }` | Logout |
 | GET  | `/auth/me` | — | Profile |
+
+### Driver Login Response Example (for role: 'driver')
+```json
+{
+  "success": true,
+  "data": {
+    "accessToken": "...",
+    "refreshToken": "...",
+    "user": {
+      "id": "uuid",
+      "phone": "919876543210",
+      "email": "driver@example.com",
+      "fullName": "John Doe",
+      "role": "driver",
+      "isVerified": true,
+      "isActive": true
+    },
+    "kyc": {
+      "kycStatus": "in_progress",
+      "documentStatus": {
+        "aadhaar": true,
+        "pan": true,
+        "bank": false,
+        "license": false,
+        "vehicle": false
+      },
+      "allDocumentsSubmitted": false,
+      "isDriverVerified": false
+    }
+  }
+}
+```
+
+**KYC Status Values (Manual KYC):**
+- `not_started` — Koi document nahi submit hua
+- `in_progress` — Kuch documents submit aur verify ho gaye
+- `complete` — Sabhi 5 documents verified (aadhaar, pan, bank, license, vehicle)
+
+**documentStatus:** Each is `true` (verified) or `false` (not verified / not submitted)
+- `aadhaar` — Aadhaar verified?
+- `pan` — PAN verified?
+- `bank` — Bank account verified?
+- `license` — Driving license verified?
+- `vehicle` — Vehicle RC verified?
+
+**allDocumentsSubmitted:** `true` jab sab documents verify ho jayein
+
+**isDriverVerified:** `drivers.is_verified` field (admin final approval)
 
 ---
 

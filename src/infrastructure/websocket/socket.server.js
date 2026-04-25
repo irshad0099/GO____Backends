@@ -8,6 +8,8 @@ import {
     updateDriverLocation,
     getSocketUser
 } from './socket.events.js';
+import { calculateDistance, calculateDuration } from '../../core/utils/rideCalculator.js';
+import { findRideById } from '../../modules/rides/repositories/ride.repository.js';
 import {
     storeSessionInRedis,
     queueMessage,
@@ -137,6 +139,44 @@ export const setupSocketHandlers = () => {
                     speed: speed || 0,
                     timestamp: new Date().toISOString()
                 });
+
+                // ETA calculate karo aur passenger ko bhejo
+                try {
+                    const ride = await findRideById(rideId);
+                    if (ride) {
+                        let targetLat, targetLng, etaType;
+
+                        if (['driver_assigned', 'driver_arrived'].includes(ride.status)) {
+                            // Driver pickup pe aa raha hai
+                            targetLat = ride.pickup_latitude;
+                            targetLng = ride.pickup_longitude;
+                            etaType   = 'pickup';
+                        } else if (ride.status === 'in_progress') {
+                            // Ride chal rahi hai — dropoff tak ETA
+                            targetLat = ride.dropoff_latitude;
+                            targetLng = ride.dropoff_longitude;
+                            etaType   = 'dropoff';
+                        }
+
+                        if (targetLat && targetLng) {
+                            const distKm     = calculateDistance(latitude, longitude, targetLat, targetLng);
+                            const etaMinutes = calculateDuration(distKm, ride.vehicle_type);
+
+                            io.to(`ride:${rideId}`).emit('ride:eta_update', {
+                                rideId,
+                                etaMinutes,
+                                distanceKm: distKm,
+                                etaType,   // 'pickup' ya 'dropoff'
+                                message: etaType === 'pickup'
+                                    ? `Driver arriving in ${etaMinutes} min`
+                                    : `Reaching destination in ${etaMinutes} min`,
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                    }
+                } catch (etaErr) {
+                    logger.warn('ETA calculation failed:', etaErr.message);
+                }
 
                 logger.debug('📍 Location ping sent to ride room', {
                     driverId: user.userId,

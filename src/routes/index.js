@@ -23,7 +23,7 @@ import sosRoutes          from '../modules/sos/routes/sosRoutes.js';
 import couponRoutes       from '../modules/coupons/routes/couponRoutes.js';
 import supportRoutes      from '../modules/support/routes/supportRoutes.js';
 import kycRoutes          from '../modules/kyc/routes/kycRoutes.js';
-import driverKycRoutes    from '../modules/drivers/routes/driverKycRoutes.js';
+import notificationRoutes from '../modules/notifications/routes/notification.routes.js';
 
 const router = express.Router();
 
@@ -42,7 +42,7 @@ router.use('/sos',           sosRoutes);
 router.use('/coupons',       couponRoutes);
 router.use('/support',       supportRoutes);
 router.use('/kyc',           kycRoutes);
-router.use('/driver-kyc',    driverKycRoutes);
+router.use('/notifications', notificationRoutes);
 
 router.use('/admin',         adminRoutes);
 router.use('/admin/pricing', pricingAdminRoutes);

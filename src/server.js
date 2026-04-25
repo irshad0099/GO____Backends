@@ -174,7 +174,7 @@ const startServer = async () => {
         }
 
         // BullMQ workers start karo — background job processors
-        await startWorkers();
+        // await startWorkers();
 
         // Graceful shutdown
         const gracefulShutdown = async () => {

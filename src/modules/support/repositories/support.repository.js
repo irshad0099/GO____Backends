@@ -72,6 +72,23 @@ export const updateTicketStatus = async (id, status) => {
     }
 };
 
+export const searchTickets = async (userId, query) => {
+    try {
+        const { rows } = await db.query(
+            `SELECT * FROM support_tickets
+             WHERE user_id = $1
+               AND (subject ILIKE $2 OR description ILIKE $2)
+             ORDER BY created_at DESC
+             LIMIT 20`,
+            [userId, `%${query}%`]
+        );
+        return rows;
+    } catch (error) {
+        logger.error('Search support tickets repository error:', error);
+        throw error;
+    }
+};
+
 // ─── Messages ───────────────────────────────────────────────────────────────
 export const insertMessage = async (data) => {
     try {

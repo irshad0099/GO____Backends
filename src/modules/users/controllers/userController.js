@@ -77,3 +77,12 @@ export const addMoneyToWallet = async (req, res, next) => {
         next(error);
     }
 };
+
+export const deleteAccount = async (req, res, next) => {
+    try {
+        const data = await userService.deleteAccount(req.user.id);
+        sendResponse(res, 200, data.message, null);
+    } catch (error) {
+        next(error);
+    }
+};

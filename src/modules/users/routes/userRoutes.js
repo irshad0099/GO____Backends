@@ -6,9 +6,10 @@ import { upload } from '../../../core/middleware/upload.middleware.js';
 import { db } from '../../../infrastructure/database/postgres.js';
 
 // ─── New Feature Controllers ─────────────────────────────────────────────────
-import * as addressCtrl   from '../controllers/savedAddressController.js';
-import * as contactCtrl   from '../controllers/emergencyContactController.js';
-import * as referralCtrl  from '../controllers/referralController.js';
+import * as addressCtrl      from '../controllers/savedAddressController.js';
+import * as contactCtrl      from '../controllers/emergencyContactController.js';
+import * as referralCtrl     from '../controllers/referralController.js';
+import * as recentPlacesCtrl from '../controllers/recentPlacesController.js';
 import {
     addAddressSchema, updateAddressSchema,
     addContactSchema, applyReferralSchema,
@@ -118,6 +119,22 @@ router.post('/referral/apply', joiValidate(applyReferralSchema), referralCtrl.ap
 
 // GET /api/v1/users/referrals — my referral history
 router.get('/referrals', referralCtrl.getMyReferrals);
+
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  RECENT PLACES
+// ═════════════════════════════════════════════════════════════════════════════
+
+// GET /api/v1/users/recent-places?limit=10
+router.get('/recent-places', recentPlacesCtrl.getRecentPlaces);
+
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  DELETE ACCOUNT
+// ═════════════════════════════════════════════════════════════════════════════
+
+// DELETE /api/v1/users/account
+router.delete('/account', controller.deleteAccount);
 
 
 export default router;

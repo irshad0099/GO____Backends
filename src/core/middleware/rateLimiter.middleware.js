@@ -62,6 +62,7 @@
 // // Ride payment — 30 per hour per user
 // export const ridePaymentLimiter = rateLimit({
 //     windowMs: 60 * 60 * 1000, // 1 hour
+
 //     max: 30,
 //     keyGenerator: (req) => `ride_pay_${req.user?.id || ipKeyGenerator(req)}`,
 //     message: {

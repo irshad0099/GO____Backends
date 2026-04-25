@@ -29,3 +29,34 @@ export const replyToTicket = async (req, res, next) => {
         sendResponse(res, 201, 'Reply sent', data);
     } catch (error) { next(error); }
 };
+
+export const searchTickets = async (req, res, next) => {
+    try {
+        const { q } = req.query;
+        if (!q || q.trim().length < 2) {
+            return sendResponse(res, 200, '', []);
+        }
+        const data = await supportService.searchTickets(req.user.id, q.trim());
+        sendResponse(res, 200, '', data);
+    } catch (error) { next(error); }
+};
+
+export const getCategories = (req, res) => {
+    sendResponse(res, 200, '', [
+        {
+            id: 'trip_issues',
+            label: 'Trip Issues',
+            items: ['Wrong fare charged', 'Driver took wrong route', 'Lost item in cab']
+        },
+        {
+            id: 'payments_refunds',
+            label: 'Payments & Refunds',
+            items: ['Request refund', 'Payment failed', 'Wallet issues']
+        },
+        {
+            id: 'account_subscription',
+            label: 'Account & Subscription',
+            items: ['Manage subscription', 'Update profile', 'Delete account']
+        }
+    ]);
+};

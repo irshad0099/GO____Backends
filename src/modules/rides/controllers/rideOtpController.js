@@ -33,13 +33,18 @@ export const generateOtp = async (req, res, next) => {
     }
 };
 
-// Verify OTP entered by driver
+// Verify OTP entered by driver — OTP verified hone pe ride in_progress ho jaati hai
 export const verifyOtp = async (req, res, next) => {
     try {
         const rideId = parseInt(req.params.rideId);
+        const driverUserId = req.user.id;
+
         const data = await otpService.verifyRideOTP(rideId, req.body.otp);
 
         if (data.verified) {
+            // Ride status in_progress karo
+            await rideService.updateRideStatus(driverUserId, rideId, { status: 'in_progress' });
+
             try {
                 const io = getIO();
                 io.to(`ride:${rideId}`).emit('ride:otp_verified', {
@@ -49,16 +54,14 @@ export const verifyOtp = async (req, res, next) => {
                 });
                 io.to(`ride:${rideId}`).emit('ride:status_changed', {
                     rideId,
-                    status:    'started',
+                    status:    'in_progress',
                     timestamp: new Date().toISOString()
                 });
             } catch (sockErr) {
                 logger.warn(`Socket emit failed (ride:otp_verified): ${sockErr.message}`);
             }
-        }
 
-        if (data.verified) {
-            sendResponse(res, 200, '', data);
+            sendResponse(res, 200, 'Ride started', data);
         } else {
             sendError(res, 400, '', data);
         }

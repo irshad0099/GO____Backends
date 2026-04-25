@@ -1,6 +1,6 @@
 import * as userRepo from '../../users/repositories/user.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
-import * as driverKycService from '../../drivers/services/driverKycService.js';
+import * as kycService from '../../kyc/services/kycService.js';
 import * as otpService from './otpService.js';
 import * as tokenService from './tokenService.js';
 import { blacklistToken } from '../../../core/services/redisService.js';
@@ -109,16 +109,10 @@ export const verifySignup = async ({ phone, otp, email, fullName,role }) => {
         // For driver role, include KYC status
         if (role === 'driver') {
             try {
-                const kycStatus = await driverKycService.getKycStatusForLogin(user.id);
-                response.kyc = kycStatus;
+                response.kyc = await kycService.getKycStatusForLogin(user.id);
             } catch (kycError) {
                 logger.warn('Failed to fetch KYC status during signup:', { userId: user.id, error: kycError.message });
-                response.kyc = {
-                    kycStatus: 'not_started',
-                    currentStep: 'aadhaar',
-                    completedSteps: [],
-                    pendingSteps: ['aadhaar', 'pan', 'bank', 'license', 'vehicle']
-                };
+                response.kyc = { overallStatus: 'not_started', submittedDocs: 0, verifiedDocs: 0, canGoOnline: false, verifiedAt: null };
             }
         }
 

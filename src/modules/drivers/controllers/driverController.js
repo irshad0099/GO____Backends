@@ -16,73 +16,6 @@ export const register = async (req, res, next) => {
 };
 
 
-// add aadhar - detail
-export const addAadharDetail = async (req, res, next) => {
-    try {
-
-        const userId = req.user.id;
-        const aadhaarData = req.body;
-
-        const aadhaar = await driverService.addAadharDetail(userId, aadhaarData);
-
-        sendResponse(res, 201, 'Aadhaar uploaded successfully. Pending verification.', aadhaar);
-
-    } catch (error) {
-        next(error);
-    }
-};
-
-
-// pan detail verification
-export const addPanDetail = async (req, res, next) => {
-    try {
-
-        const userId = req.user.id;
-        const panData = req.body;
-
-        const pan = await driverService.addPanDetail(userId, panData);
-
-        sendResponse(res, 201, 'PAN details uploaded successfully. Pending verification.', pan);
-
-    } catch (error) {
-        next(error);
-    }
-};
-
-// bank detail verification
-export const addBankDetail = async (req, res, next) => {
-    try {
-
-        const userId = req.user.id;
-        const bankData = req.body;
-
-        const bank = await driverService.addBankDetail(userId, bankData);
-
-        sendResponse(res, 201, 'Bank details uploaded successfully. Pending verification.', bank);
-
-    } catch (error) {
-        next(error);
-    }
-};
-
-
-// license detail verification
-export const addLicenseDetail = async (req, res, next) => {
-  try {
-
-    const userId = req.user.id;
-    const licenseData = req.body;
-
-    const license = await driverService.addLicenseDetail(userId, licenseData);
-
-    sendResponse(res, 201, 'License details uploaded successfully. Pending verification.', license);
-
-  } catch (error) {
-    next(error);
-  }
-};
-
-
 // vehicle detail verification
 export const addVehicleDetail = async (req, res, next) => {
   try {
@@ -99,41 +32,6 @@ export const addVehicleDetail = async (req, res, next) => {
   }
 };
 
-
-// verify kyc
-export const verifyDriverDocument = async (req, res, next) => {
-  try {
- const userId = req.user.id;
-    const { driver_id, document_type, status, rejected_reason } = req.body;
-
-    const result = await driverService.verifyDriverDocument(userId,{
-      driver_id,
-      document_type,
-      status,
-      rejected_reason
-    });
-
-    sendResponse(res, 200, 'Document verification updated', result);
-
-  } catch (error) {
-    next(error);
-  }
-};
-
-
-export const getDriverDocument = async (req, res, next) => {
-  try {
- const userId = req.user.id;
-    const { driver_id } = req.params;
-
-    const result = await driverService.getDriverDocument(userId,driver_id);
-
-    sendResponse(res, 200, 'successfuly fetch document of driver', result);
-
-  } catch (error) {
-    next(error);
-  }
-};
 
 export const getProfile = async (req, res, next) => {
     try {
@@ -260,17 +158,3 @@ export const getDailyMetrics = async (req, res, next) => {
 
 
 
-export const uploadFile = async (req, res, next) => {
-  try {
-
-    if (!req.file) {
-      return sendError(res, 400, 'File is required');
-    }
-
-    sendResponse(res, 200, 'File uploaded successfully', { url: req.file.location });
-
-  } catch (error) {
-    logger.error('File upload error:', error);
-    next(error);
-  }
-};

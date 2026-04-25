@@ -1,0 +1,630 @@
+{
+  "info": {
+    "name": "GoMobility — KYC v2",
+    "_postman_id": "kyc-v2-collection",
+    "description": "KYC v2 — OCR-first, manual fallback.\n\nFlow:\n1. Auth — Driver: run 'Signin' → copy OTP from console/SMS → run 'Verify Signin' → token auto-saved to {{driverToken}}\n2. Auth — Admin: same flow with admin phone 9999999999\n3. Then run KYC requests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl",      "value": "http://localhost:5000", "type": "string" },
+    { "key": "driverToken",  "value": "",                      "type": "string" },
+    { "key": "adminToken",   "value": "",                      "type": "string" },
+    { "key": "driverOtp",    "value": "",                      "type": "string" },
+    { "key": "adminOtp",     "value": "",                      "type": "string" },
+    { "key": "docId",        "value": "1",                     "type": "string" },
+    { "key": "driverUserId", "value": "",                      "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth — Driver Login",
+      "item": [
+        {
+          "name": "1. Signin (send OTP)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"role\": \"driver\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/signin",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "signin"]
+            },
+            "description": "Sends OTP to the driver's phone. Check server console (SMS_PROVIDER=console) or SMS for the OTP.\n\nChange phone to your registered driver number."
+          }
+        },
+        {
+          "name": "2. Verify Signin (get token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.success && json.data && json.data.tokens) {",
+                  "  pm.collectionVariables.set('driverToken', json.data.tokens.accessToken);",
+                  "  pm.collectionVariables.set('driverUserId', json.data.user.id);",
+                  "  console.log('Driver token saved. userId:', json.data.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"{{driverOtp}}\",\n  \"role\": \"driver\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/verify-signin",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "verify-signin"]
+            },
+            "description": "Paste the OTP into {{driverOtp}} variable (or edit raw body directly).\n\nOn success: accessToken is auto-saved to {{driverToken}} and userId to {{driverUserId}} via the Tests script."
+          }
+        },
+        {
+          "name": "3. Me (verify token works)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{driverToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "me"]
+            },
+            "description": "Quick sanity check — confirms token is valid and shows logged-in user info."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth — Admin Login",
+      "item": [
+        {
+          "name": "1. Signin (send OTP)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9999999999\",\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/signin",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "signin"]
+            },
+            "description": "Admin phone is 9999999999 (seeded by migration 042). OTP appears in server console when SMS_PROVIDER=console."
+          }
+        },
+        {
+          "name": "2. Verify Signin (get token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.success && json.data && json.data.tokens) {",
+                  "  pm.collectionVariables.set('adminToken', json.data.tokens.accessToken);",
+                  "  console.log('Admin token saved');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9999999999\",\n  \"otp\": \"{{adminOtp}}\",\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/verify-signin",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "verify-signin"]
+            },
+            "description": "Paste OTP into {{adminOtp}} variable or edit body directly.\n\nOn success: adminToken is auto-saved to {{adminToken}} via Tests script."
+          }
+        },
+        {
+          "name": "3. Me (verify token works)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Driver — KYC",
+      "item": [
+        {
+          "name": "GET Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{driverToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "status"]
+            },
+            "description": "Returns overall KYC status + per-document status for all 6 doc types.\n\nResponse includes:\n- overallStatus: not_started | in_progress | pending_review | verified | rejected | suspended\n- canGoOnline: true only when all 6 docs verified\n- documents[]: one entry per type with status, attemptsLeft, rejectionReason"
+          }
+        },
+        {
+          "name": "Submit — AADHAAR",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{driverToken}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "AADHAAR",       "type": "text" },
+                { "key": "file",          "type": "file",            "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "submit"]
+            },
+            "description": "Upload Aadhaar (front image or PDF, max 5MB image / 1MB PDF).\n\nReturns:\n- status: auto_verified | manual_review | rejected\n- confidenceScore: 0-100\n- extractedData: { name, dob, gender, state, masked }\n- attemptsLeft: only if rejected"
+          }
+        },
+        {
+          "name": "Submit — PAN",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{driverToken}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "PAN",  "type": "text" },
+                { "key": "file",          "type": "file",  "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "submit"]
+            },
+            "description": "Upload PAN card. Cashfree verifies against govt DB.\n\nextractedData: { name, dob, masked, govt_verified }"
+          }
+        },
+        {
+          "name": "Submit — DRIVING_LICENCE",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{driverToken}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "DRIVING_LICENCE", "type": "text" },
+                { "key": "file",          "type": "file",              "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "submit"]
+            },
+            "description": "Upload Driving Licence. Hard-fail if expiry < 90 days.\n\nextractedData: { name, dob, expiry_date, issuing_authority, masked, govt_verified }"
+          }
+        },
+        {
+          "name": "Submit — VEHICLE_RC",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{driverToken}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "VEHICLE_RC", "type": "text" },
+                { "key": "file",          "type": "file",         "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "submit"]
+            },
+            "description": "Upload Vehicle RC.\n\nextractedData: { owner, model, fuel_type, reg_date, vehicle_class, masked }"
+          }
+        },
+        {
+          "name": "Submit — Bank Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization",  "value": "Bearer {{driverToken}}" },
+              { "key": "Content-Type",   "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account_number\": \"1234567890\",\n  \"ifsc\": \"HDFC0001234\",\n  \"name\": \"Rahul Sharma\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/bank",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "bank"]
+            },
+            "description": "Penny-drop bank verification.\n\nReturns auto_verified on success (VALID from Cashfree).\n\nextractedData: { account_masked, ifsc, holder_name, bank_name }"
+          }
+        },
+        {
+          "name": "Submit — Selfie (face review)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{driverToken}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "selfie", "type": "file", "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/face-match",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "face-match"]
+            },
+            "description": "Upload selfie. Aadhaar must already be verified.\n\nAlways returns status: manual_review — admin compares selfie vs Aadhaar visually and approves/rejects.\n\nPre-condition: AADHAAR doc must be auto_verified or approved."
+          }
+        },
+        {
+          "name": "Retry Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{driverToken}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/documents/{{docId}}/retry",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "documents", "{{docId}}", "retry"]
+            },
+            "description": "Retry a rejected document. Max 3 attempts per document type.\n\nSet `docId` variable to the documentId from the original submit response.\n\nFails with 400 if attempt_count >= 3 (driver must contact support)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin — KYC",
+      "item": [
+        {
+          "name": "GET Review Queue",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/admin/queue?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "admin", "queue"],
+              "query": [
+                { "key": "type",  "value": "",   "description": "Filter: AADHAAR | PAN | DRIVING_LICENCE | VEHICLE_RC | BANK_ACCOUNT | SELFIE (optional)", "disabled": true },
+                { "key": "page",  "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "description": "List all documents in manual_review state.\n\nOptional ?type=SELFIE to filter only selfie reviews.\n\nReturns: { items: [...], total: N }\nEach item includes user full_name, phone_number, file_url."
+          }
+        },
+        {
+          "name": "GET Review Queue — SELFIE only",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/admin/queue?type=SELFIE&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "admin", "queue"],
+              "query": [
+                { "key": "type",  "value": "SELFIE" },
+                { "key": "page",  "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "description": "All pending selfie reviews. extracted_data contains aadhaar_file_url so admin can compare both images side-by-side."
+          }
+        },
+        {
+          "name": "GET Document Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/admin/documents/{{docId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "admin", "documents", "{{docId}}"]
+            },
+            "description": "Full document detail for admin review.\n\nIncludes: extracted_data, file_url, user info, driver_overall_status, attempt_count, fraud_score."
+          }
+        },
+        {
+          "name": "Approve Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Verified manually — document clear and authentic\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/admin/documents/{{docId}}/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "admin", "documents", "{{docId}}", "approve"]
+            },
+            "description": "Approve a document in manual_review state.\n\nUpdates status → approved\nTriggers aggregate recompute (driver may become verified if all 6 done)."
+          }
+        },
+        {
+          "name": "Reject Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Face does not match Aadhaar photo\",\n  \"allowRetry\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/admin/documents/{{docId}}/reject",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "admin", "documents", "{{docId}}", "reject"]
+            },
+            "description": "Reject a document.\n\nallowRetry: true  → driver can retry (attempt_count < 3)\nallowRetry: false → forces attempt_count = 3, driver must contact support\n\nreason is shown to driver in the app."
+          }
+        },
+        {
+          "name": "Reject Document — No Retry",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Document appears fraudulent — tampered image\",\n  \"allowRetry\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/admin/documents/{{docId}}/reject",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "admin", "documents", "{{docId}}", "reject"]
+            },
+            "description": "Reject with no retry allowed. Sets attempt_count = 3 so driver cannot resubmit and must contact support."
+          }
+        },
+        {
+          "name": "GET Fraud Alerts",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/admin/fraud-alerts?severity=HIGH",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "admin", "fraud-alerts"],
+              "query": [
+                { "key": "severity", "value": "HIGH", "description": "HIGH | MEDIUM | LOW (optional — omit for all)" }
+              ]
+            },
+            "description": "All fraud flags.\n\nFlag types: DUPLICATE_NUMBER | NAME_MISMATCH | VELOCITY | TEMPLATE_TAMPERING | FACE_MISMATCH | EXPIRED_DOC | CROSS_DOC_MISMATCH\n\nReturns last 100 flags ordered by created_at DESC."
+          }
+        },
+        {
+          "name": "Suspend Driver",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Repeated fraudulent document submissions\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/admin/drivers/{{driverUserId}}/suspend",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "admin", "drivers", "{{driverUserId}}", "suspend"]
+            },
+            "description": "Manually suspend a driver.\n\nSets overall_status = suspended, records suspended_at + suspension_reason.\nDriver cannot go online after this."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Flow — Complete KYC (in order)",
+      "item": [
+        {
+          "name": "Step 1 — Submit AADHAAR",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{driverToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "AADHAAR", "type": "text" },
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "submit"]
+            }
+          }
+        },
+        {
+          "name": "Step 2 — Submit PAN",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{driverToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "PAN", "type": "text" },
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "submit"]
+            }
+          }
+        },
+        {
+          "name": "Step 3 — Submit DRIVING_LICENCE",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{driverToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "DRIVING_LICENCE", "type": "text" },
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "submit"]
+            }
+          }
+        },
+        {
+          "name": "Step 4 — Submit VEHICLE_RC",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{driverToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "VEHICLE_RC", "type": "text" },
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "submit"]
+            }
+          }
+        },
+        {
+          "name": "Step 5 — Submit Bank Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{driverToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account_number\": \"1234567890\",\n  \"ifsc\": \"HDFC0001234\",\n  \"name\": \"Rahul Sharma\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/bank",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "bank"]
+            }
+          }
+        },
+        {
+          "name": "Step 6 — Upload Selfie",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{driverToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "selfie", "type": "file", "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/face-match",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "face-match"]
+            }
+          }
+        },
+        {
+          "name": "Step 7 — Check Status",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{driverToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "status"]
+            }
+          }
+        },
+        {
+          "name": "Step 8 — Admin: Approve Selfie",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Selfie matches Aadhaar photo\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/kyc/admin/documents/{{docId}}/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "kyc", "admin", "documents", "{{docId}}", "approve"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -107,9 +107,9 @@ export const decideDocumentStatus = async ({
     total += vOk ? 20 : 0;              // 0 or 20
     if (!vOk) flags.push({ type: 'VELOCITY', severity: 'MEDIUM', details: {} });
 
-    // Cross-doc consistency (compare with verified Aadhaar name)
+    // Cross-doc consistency (compare with submitted Aadhaar name)
     const aadhaar = (existingDocs || []).find(d =>
-        d.document_type === 'AADHAAR' && ['auto_verified', 'approved'].includes(d.status)
+        d.document_type === 'AADHAAR' && ['auto_verified', 'approved', 'manual_review'].includes(d.status)
     );
     let crossScore = 100;
     if (aadhaar && extractedName) {
@@ -127,7 +127,7 @@ export const decideDocumentStatus = async ({
     const AUTO_T   = ENV.KYC_AUTO_THRESHOLD   || 85;
     const REVIEW_T = ENV.KYC_REVIEW_THRESHOLD || 60;
 
-    if (finalScore >= AUTO_T)   return { status: 'auto_verified', score: finalScore, flags, confidenceScore };
+    // All docs go to manual_review — admin is final approver
     if (finalScore >= REVIEW_T) return { status: 'manual_review', score: finalScore, flags, confidenceScore };
     return { status: 'rejected', score: finalScore, reason: 'Low confidence — please upload a clearer image', flags, confidenceScore };
 };

@@ -51,7 +51,15 @@ router.post(
 
 // ─── Admin routes ─────────────────────────────────────────────────────────────
 
-// GET  /api/v1/kyc/admin/queue?type=AADHAAR&page=1&limit=20
+// GET  /api/v1/kyc/admin/drivers?status=in_progress&page=1&limit=20
+// status: not_started | in_progress | pending_review | verified | rejected | suspended
+router.get('/admin/drivers', authorize('admin'), ctrl.getDriversKycList);
+
+// GET  /api/v1/kyc/admin/drivers/:userId  — full KYC detail for one driver
+router.get('/admin/drivers/:userId', authorize('admin'), ctrl.getDriverKycDetail);
+
+// GET  /api/v1/kyc/admin/queue?type=AADHAAR&status=manual_review&page=1&limit=20
+// status: manual_review (default) | rejected | all
 router.get('/admin/queue', authorize('admin'), ctrl.getReviewQueue);
 
 // GET  /api/v1/kyc/admin/documents/:id

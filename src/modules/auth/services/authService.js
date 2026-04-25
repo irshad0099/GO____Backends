@@ -287,7 +287,7 @@ export const verifySignin = async ({ phone, email, otp, ipAddress, userAgent, ro
 
         logger.info('User signed in successfully:', { userId: user.id, identifier });
 
-        return {
+        const response = {
             accessToken,
             refreshToken,
             user: {
@@ -300,6 +300,17 @@ export const verifySignin = async ({ phone, email, otp, ipAddress, userAgent, ro
                 isActive:  user.is_active
             }
         };
+
+        if (role === 'driver') {
+            try {
+                response.kyc = await kycService.getKycStatusForLogin(user.id);
+            } catch (kycError) {
+                logger.warn('Failed to fetch KYC status during signin:', { userId: user.id, error: kycError.message });
+                response.kyc = { overallStatus: 'not_started', submittedDocs: 0, verifiedDocs: 0, canGoOnline: false, verifiedAt: null, nextScreen: 'KYC_INTRO' };
+            }
+        }
+
+        return response;
     } catch (error) {
         logger.error('Verify signin service error:', error);
         throw error;

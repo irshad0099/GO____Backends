@@ -37,15 +37,9 @@ REDIS_USERNAME: process.env.REDIS_USERNAME || 'default',
     FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY,
 
     // JWT
-<<<<<<< HEAD
-    JWT_SECRET: process.env.JWT_SECRET,  // NO DEFAULT - must be set in env
-    JWT_ACCESS_EXPIRY: process.env.JWT_ACCESS_EXPIRY || '15m',
-    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,  // NO DEFAULT - must be set in env
-=======
     JWT_SECRET: process.env.JWT_SECRET || 'gomobility_super_secret_key',
     JWT_ACCESS_EXPIRY: process.env.JWT_ACCESS_EXPIRY || '30d',
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'gomobility_refresh_secret',
->>>>>>> 14c146dabe2491c7238ceb55d507474f5b956c15
     JWT_REFRESH_EXPIRY: process.env.JWT_REFRESH_EXPIRY || '30d',
     
     // OTP

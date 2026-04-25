@@ -1,27 +1,3 @@
-<<<<<<< HEAD
-import { pool } from '../../../infrastructure/database/postgres.js';
-import logger from '../../../core/logger/logger.js';
-import { NotFoundError } from '../../../core/errors/ApiError.js';
-import * as rideRepo from '../repositories/ride.repository.js';
-import * as driverRepo from '../../drivers/repositories/driver.repository.js';
-import { creditDriverEarnings } from '../../drivers/services/earningsService.js';
-import { updatePaymentOrderStatus, getActivePaymentOrderByRideId } from '../../payments/repositories/payment.Repository.js';
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  Cash Collection Service — Driver confirms cash/personal UPI collection
-//  Called when driver taps "Paise mil gaye" / "Collected" in app
-// ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * Confirm cash collection by driver
- * @param {number} driverUserId — driver user ID (from JWT)
- * @param {number} rideId — ride ID
- * @param {Object} data — { collection_method: 'cash' | 'personal_upi' }
- */
-export const confirmCashCollection = async (driverUserId, rideId, {
-    collection_method = 'cash'
-}) => {
-=======
 // ─────────────────────────────────────────────────────────────────────────────
 //  RIDE COLLECTION SERVICE
 //
@@ -135,115 +111,123 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
     const pendingOrder = await getActivePaymentOrderByRideId(rideId, 'ride_payment');
 
     // ── Do the work in a single transaction ──────────────────────────────────
->>>>>>> 14c146dabe2491c7238ceb55d507474f5b956c15
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
 
-<<<<<<< HEAD
-        // 1. Fetch ride with validation
-        const ride = await rideRepo.findRideById(rideId);
-        if (!ride) {
-            throw new NotFoundError('Ride not found');
+        if (pendingOrder) {
+            await updatePaymentOrderStatus(client, pendingOrder.id, 'failed', {
+                failureReason: `Switched to manual collection (${method}) by driver`,
+            });
+            logger.info(`[Collect] Cancelled pending online order ${pendingOrder.order_number} for ride ${rideId}`);
+
+            // If dynamic QR was active, try closing it
+            try {
+                await closeDynamicQR(rideId);
+            } catch (qrErr) {
+                logger.warn(`[Collect] QR close failed (non-critical): ${qrErr.message}`);
+            }
         }
 
-        // Verify driver is assigned to this ride
-        const driver = await driverRepo.findDriverByUserId(driverUserId);
-        if (!driver || ride.driver_id !== driver.id) {
-            throw new NotFoundError('You are not assigned to this ride');
-        }
-
-        // Only completed rides can have cash collected
-        if (ride.status !== 'completed') {
-            const err = new Error('Ride must be completed before collection');
-            err.statusCode = 400;
-            throw err;
-        }
-
-        // Check if already collected or paid
-        if (ride.payment_status === 'collected_by_driver') {
-            await client.query('ROLLBACK');
+        // ── 3. Idempotent insert into cash_collections ─────────────────────────
+        const existingCash = await cashRepo.getCashCollectionByRideId(client, rideId);
+        if (existingCash) {
+            await client.query('COMMIT');
             return {
                 success: true,
-                message: 'Collection already confirmed',
-                alreadyConfirmed: true,
+                message: 'Cash collection already recorded',
+                data: {
+                    rideId,
+                    method: existingCash.collection_method,
+                    finalFare,
+                    netEarnings,
+                    platformShareDue: platformFee,
+                    alreadyConfirmed: true,
+                },
             };
         }
 
-        if (ride.payment_status === 'paid') {
-            const err = new Error('Ride is already paid via online method');
-            err.statusCode = 400;
-            throw err;
-        }
+        await cashRepo.createCashCollection(client, {
+            rideId,
+            driverId: driver.id,
+            passengerId: ride.passenger_id,
+            finalFare,
+            platformFee,
+            netEarnings,
+            method,                 // 'cash' | 'personal_upi'
+            status: 'confirmed',  // default status
+        });
 
-        // 2. Calculate splits
-        const finalFare = parseFloat(ride.final_fare || ride.actual_fare || 0);
-        const commissionRate = parseFloat(ride.commission_rate || process.env.DEFAULT_COMMISSION_RATE || 0.20);
-        const platformFee = Math.round(finalFare * commissionRate * 100) / 100;
-        const netEarnings = Math.round((finalFare - platformFee) * 100) / 100;
-
-        // 3. Cancel any pending online payment order for this ride
-        const activeOrder = await getActivePaymentOrderByRideId(rideId, 'ride_payment');
-        if (activeOrder) {
-            await updatePaymentOrderStatus(client, activeOrder.id, 'cancelled', {
-                failureReason: 'Cancelled due to cash collection',
-            });
-            logger.info(`[Collection] Cancelled online order ${activeOrder.order_number} for ride ${rideId}`);
-        }
-
-        // 4. Update ride payment status
-        const updatedRide = await client.query(
+        // ── 4. Update rides row ─────────────────────────────────────────────────
+        await client.query(
             `UPDATE rides
-             SET payment_status = 'collected_by_driver',
-                 collection_method_actual = $1,
-                 platform_share = $2,
-                 collection_confirmed_at = CURRENT_TIMESTAMP,
-                 updated_at = CURRENT_TIMESTAMP
-             WHERE id = $3
-             RETURNING *`,
-            [collection_method, platformFee, rideId]
+                SET payment_status = 'collected_by_driver',
+                    collection_method_actual = $1,
+                    platform_share = $2,
+                    collection_confirmed_at = NOW(),
+                    updated_at = NOW()
+              WHERE id = $3`,
+            [method, platformFee, rideId]
         );
 
-        // 5. Credit driver earnings (this handles wallet credit + cash_balance update)
-        const earningsResult = await creditDriverEarnings({
-            driverUserId,
+        // ── 5. Credit driver wallet (net earnings) ─────────────────────────────
+        // IMPORTANT: Use the same wallet service as online payments for consistency
+        await creditDriverEarnings({
+            userId: driver.user_id,   // driver users table id
+            amount: netEarnings,
             rideId,
-            netEarnings,
-            platformFee,
-            paymentMethod: 'cash',
-            collectionMethodActual: collection_method,
+            description: `Earnings for ride #${ride.ride_number} (manual collection: ${method})`,
         });
+
+        // ── 6. Update driver cash_balance (platform share due) ─────────────────
+        if (platformFee > 0) {
+            await driverRepo.incrementDriverCashBalance(client, driver.id, platformFee);
+        }
 
         await client.query('COMMIT');
 
-        logger.info(
-            `[Collection] Cash confirmed | Driver: ${driver.id} | Ride: ${rideId} | Fare: ₹${finalFare} | Net: ₹${netEarnings}`
-        );
+        // ── 7. Async side effects (non-blocking) ───────────────────────────────
+        safeEmit(() => emitToPassenger(ride.passenger_id, 'ride:payment_settled', {
+            rideId,
+            amount: finalFare,
+            method,
+            platformFee,
+            message: `Driver confirmed ${method} payment received`,
+        }), 'passenger');
+
+        safeEmit(() => emitToDriver(driverUserId, 'driver:earnings_credited', {
+            rideId,
+            netEarnings,
+            method,
+            walletUpdated: true,
+        }), 'driver');
+
+        // Add notification job for receipt email/SMS
+        await addNotificationJob('send-collection-receipt', {
+            rideId,
+            passengerId: ride.passenger_id,
+            driverId: driver.id,
+            finalFare,
+            method,
+        });
+
+        logger.info(`[Collect] Manual collection confirmed | Ride: ${rideId} | Driver: ${driver.id} | Method: ${method} | Fare: ₹${finalFare}`);
 
         return {
             success: true,
             message: 'Cash collection confirmed successfully',
             data: {
-                ride: {
-                    id: updatedRide.rows[0].id,
-                    rideNumber: updatedRide.rows[0].ride_number,
-                    paymentStatus: updatedRide.rows[0].payment_status,
-                    collectionMethodActual: updatedRide.rows[0].collection_method_actual,
-                    collectionConfirmedAt: updatedRide.rows[0].collection_confirmed_at,
-                },
-                earnings: {
-                    finalFare,
-                    platformFee,
-                    netEarnings,
-                    commissionRate,
-                },
-                driverWallet: earningsResult.data?.walletBalance,
-                alreadyConfirmed: false,
+                rideId,
+                method,
+                finalFare,
+                netEarnings,
+                platformShareDue: platformFee,
+                cashBalanceUpdated: platformFee > 0,
             },
         };
     } catch (error) {
-        await client.query('ROLLBACK');
-        logger.error(`[Collection] confirmCashCollection error | Driver: ${driverUserId} | Ride: ${rideId}:`, error);
+        await client.query('ROLLBACK').catch(() => {});
+        logger.error(`[Collect] confirmManualCollection error | Ride: ${rideId}:`, error);
         throw error;
     } finally {
         client.release();
@@ -330,108 +314,4 @@ export const flagStaleCashCollections = async () => {
         logger.error('[Collection] flagStaleCashCollections error:', error);
         throw error;
     }
-=======
-        if (pendingOrder) {
-            await updatePaymentOrderStatus(client, pendingOrder.id, 'failed', {
-                failureReason: `Switched to manual collection (${method}) by driver`,
-            });
-            logger.info(`[Collect] cancelled online order ${pendingOrder.order_number} | ride: ${rideId}`);
-        }
-
-        // Ride record: passenger ko 'cash' hi dikha (public method), driver-side
-        // detail collection_method_actual pe audit hota hai (cash | personal_upi)
-        await client.query(
-            `UPDATE rides
-             SET payment_method             = 'cash',
-                 payment_status             = 'collected_by_driver',
-                 collection_method_actual   = $1,
-                 collection_confirmed_at    = NOW(),
-                 platform_share             = $3,
-                 updated_at                 = NOW()
-             WHERE id = $2`,
-            [method, rideId, platformFee],
-        );
-
-        // Driver cash balance — platform_share owed (driver ko deposit karna hoga)
-        await cashRepo.initCashBalance(driver.id);
-        if (platformFee > 0) {
-            await cashRepo.addToPending(client, driver.id, platformFee, finalFare);
-        }
-
-        await client.query('COMMIT');
-    } catch (err) {
-        await client.query('ROLLBACK');
-        logger.error(`[Collect] txn failed | ride: ${rideId} | ${err.message}`);
-        throw err;
-    } finally {
-        client.release();
-    }
-
-    // ── Close QR (network call, outside txn) ─────────────────────────────────
-    if (pendingOrder?.payment_method === 'upi_qr' && pendingOrder.gateway_order_id) {
-        await closeDynamicQR(pendingOrder.gateway_order_id);
-    }
-
-    // ── Driver wallet credit (netEarnings) — idempotent by ride_id + debit type
-    // payForRide (wallet payment) pehle se ride_id debit check karta hai; hamara
-    // creditDriverEarnings also idempotent-safe because worker path pehle hi
-    // NAHI chala tha (online method tha). But double-firing defense:
-    try {
-        await creditDriverEarnings(driverUserId, {
-            ride_id:     rideId,
-            amount:      netEarnings,
-            description: `Ride earnings #${rideId} (manual collect: ${method})`,
-        });
-    } catch (err) {
-        // If wallet credit fails after DB txn, log loudly — admin will reconcile.
-        // Not throwing because ride is already marked collected — re-trying would
-        // just emit duplicate events. Driver dashboard will show netEarnings.
-        logger.error(`[Collect] driver credit failed (post-commit) | ride: ${rideId} | ${err.message}`);
-    }
-
-    // ── Notifications ────────────────────────────────────────────────────────
-    safeEmit(() => emitToPassenger(ride.passenger_id, 'ride:payment_settled', {
-        rideId,
-        amount:        finalFare,
-        paymentMethod: method,
-        settledAt:     new Date(),
-        viaDriver:     true,
-    }), 'passenger:settled');
-
-    safeEmit(() => emitToDriver(driverUserId, 'ride:collection_confirmed', {
-        rideId,
-        amount:         finalFare,
-        netEarnings,
-        platformShareDue: platformFee,
-        method,
-    }), 'driver:confirmed');
-
-    if (ride.passenger_fcm_token) {
-        await addNotificationJob('ride-collected-manual', {
-            fcmToken: ride.passenger_fcm_token,
-            title:    'Payment Received',
-            body:     `Your driver confirmed ₹${finalFare} received`,
-            data: {
-                type:   'ride_collected_manual',
-                rideId: String(rideId),
-                method,
-            },
-        });
-    }
-
-    logger.info(`[Collect] confirmed | ride: ${rideId} | method: ${method} | fare: ₹${finalFare} | platformDue: ₹${platformFee}`);
-
-    return {
-        success: true,
-        message: `₹${finalFare} collection confirmed`,
-        data: {
-            rideId,
-            method,
-            finalFare,
-            netEarnings,
-            platformShareDue: platformFee,
-            cashBalanceUpdated: platformFee > 0,
-        },
-    };
->>>>>>> 14c146dabe2491c7238ceb55d507474f5b956c15
 };

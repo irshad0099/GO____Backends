@@ -5,19 +5,27 @@ import compression from 'compression';
 import hpp from 'hpp';
 import { ENV } from './config/envConfig.js';
 import routes from './routes/index.js';
-<<<<<<< HEAD
-import { requestIdMiddleware, requestLoggingMiddleware } from './core/middleware/requestId.middleware.js';
-=======
 import { globalErrorHandler, notFoundHandler } from './core/errors/globalErrorHandler.js';
 import { apiLoggerMiddleware } from './core/middleware/apiLogger.middleware.js';
->>>>>>> 14c146dabe2491c7238ceb55d507474f5b956c15
 
 const app = express();
 
 console.log('✅ App created');
 console.log(`API Prefix: "${ENV.API_PREFIX}"`);
 
-<<<<<<< HEAD
+// Parse JSON — rawBody saved for webhook signature verification
+app.use(express.json({
+    verify: (req, _res, buf) => { req.rawBody = buf; },
+}));
+
+// CORS configuration
+app.use(cors({
+    origin: ENV.CORS_ORIGIN === '*' ? true : ENV.CORS_ORIGIN.split(','),
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID']
+}));
+
 // Security middleware
 app.use(helmet({
     contentSecurityPolicy: {
@@ -29,19 +37,6 @@ app.use(helmet({
         },
     },
     crossOriginEmbedderPolicy: false
-=======
-// Parse JSON — rawBody saved for webhook signature verification
-app.use(express.json({
-    verify: (req, _res, buf) => { req.rawBody = buf; },
->>>>>>> 14c146dabe2491c7238ceb55d507474f5b956c15
-}));
-
-// CORS configuration
-app.use(cors({
-    origin: ENV.CORS_ORIGIN === '*' ? true : ENV.CORS_ORIGIN.split(','),
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID']
 }));
 
 // Compression middleware
@@ -53,10 +48,6 @@ app.use(hpp());
 // Body parser with size limit
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-
-// Request ID tracking (must be before request logging)
-app.use(requestIdMiddleware);
-app.use(requestLoggingMiddleware);
 
 // DB me har request/response log karo
 app.use(apiLoggerMiddleware);

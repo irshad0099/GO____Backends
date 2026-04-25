@@ -1,11 +1,7 @@
 import crypto from 'crypto';
 import { pool } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
-<<<<<<< HEAD
-import { createRazorpayOrder, verifyRazorpayPayment, createRazorpayRefund } from '../../../core/services/razorpayService.js';
-=======
 import { addPaymentPostActionJob } from '../../../infrastructure/queue/payment.queue.js';
->>>>>>> 14c146dabe2491c7238ceb55d507474f5b956c15
 import {
     createPaymentOrder,
     getPaymentOrderById,

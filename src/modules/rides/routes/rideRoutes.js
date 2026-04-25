@@ -10,12 +10,10 @@ import * as cancelCtrl    from '../controllers/rideCancellationController.js';
 import * as otpCtrl       from '../controllers/rideOtpController.js';
 import * as invoiceCtrl   from '../controllers/rideInvoiceController.js';
 import * as schedCtrl     from '../controllers/scheduledRideController.js';
-import * as collectionCtrl from '../controllers/rideCollectionController.js';
 import {
     cancelRideSchema, verifyOtpSchema, scheduleRideSchema,
     validate as joiValidate,
 } from '../validators/rideNewFeatures.validator.js';
-import Joi from 'joi';
 
 const router = express.Router();
 
@@ -124,36 +122,6 @@ router.post(
 // ─── Ride Invoice ───────────────────────────────────────────────────────────
 // GET /api/v1/rides/:rideId/invoice — get receipt after ride
 router.get('/:rideId/invoice', invoiceCtrl.getInvoice);
-
-<<<<<<< HEAD
-// ─── Cash Collection (Driver confirms payment received) ────────────────────
-// Validation schema for cash collection
-const collectConfirmSchema = Joi.object({
-    collection_method: Joi.string().valid('cash', 'personal_upi').default('cash'),
-});
-
-// POST /api/v1/rides/:rideId/collect-confirm — driver confirms cash collection
-router.post(
-    '/:rideId/collect-confirm',
-    authorize('driver'),
-    joiValidate(collectConfirmSchema),
-    collectionCtrl.confirmCollection
-);
-
-// GET /api/v1/rides/:rideId/collection-status — get collection status
-router.get('/:rideId/collection-status', collectionCtrl.getCollectionStatus);
-
-// ─── Scheduled Rides (Book for Later) ───────────────────────────────────────
-// POST /api/v1/rides/schedule
-router.post(
-    '/schedule',
-    authorize('passenger'),
-    joiValidate(scheduleRideSchema),
-    schedCtrl.scheduleRide
-);
-=======
->>>>>>> 14c146dabe2491c7238ceb55d507474f5b956c15
-
 
 // ─── Ride Payments ─────────────────────────────────────────────────────
 // Mount payment-specific routes under /payments

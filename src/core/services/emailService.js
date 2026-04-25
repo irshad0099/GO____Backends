@@ -22,38 +22,10 @@ if (process.env.SENDGRID_API_KEY) {
 const REPLY_TO = process.env.EMAIL_REPLY_TO || 'support@gomobility.co.in';
 
 // ─── Base Sender ──────────────────────────────────────────────────────────────
-// const sendEmail = async ({ to, subject, html, text }) => {
-//     if (!process.env.SENDGRID_API_KEY) {
-//         logger.warn(`[Email] SendGrid not configured — skipping email to ${to}`);
-//         return { success: false, reason: 'not_configured' };
-//     }
-//     try {
-//         await sgMail.send({
-//             to,
-//             from:    FROM,
-//             replyTo: REPLY_TO,
-//             subject,
-//             html,
-//             text: text || subject,
-//         });
-//         logger.info(`[Email] Sent: "${subject}" → ${to}`);
-//         return { success: true };
-//     } catch (error) {
-//         logger.error(`[Email] Failed to send to ${to}: ${JSON.stringify({
-//             message:  error?.message,
-//             code:     error?.code,
-//             status:   error?.response?.status,
-//             body:     error?.response?.body,
-//         })}`);
-//         return { success: false, error: error.message };
-//     }
-// };
-
 
 const sendEmail = async ({ to, subject, html, text }) => {
     // FROM andar define karo — har call pe fresh value milegi
-    console.log('DEBUG EMAIL_FROM:', process.env.EMAIL_FROM);
-console.log('DEBUG FROM email:', process.env.EMAIL_FROM || 'mailatgomobility@gmail.com');
+    
     const FROM = {
         email: process.env.EMAIL_FROM || 'mailatgomobility@gmail.com',
         name:  process.env.EMAIL_FROM_NAME || 'GO Mobility',

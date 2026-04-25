@@ -12,7 +12,7 @@ import {
     getRefundByRideId,
     getWalletTransactions,
     getTransactionCount,
-} from '../repositories/wallet.repository.js';
+} from '../repositories/wallet.Repository.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

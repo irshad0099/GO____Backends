@@ -606,3 +606,14 @@ error: password authentication failed for user "postgres"
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
     at async Database.connect (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/infrastructure/database/postgres.js:35:28)
     at async startServer (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/server.js:22:9)
+2026-04-15 10:02:53 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-15 10:06:52 [INFO]: PostgreSQL disconnected
+2026-04-15 10:06:56 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-15 10:17:03 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-15 10:17:22 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-16 13:02:02 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-16 13:34:09 [INFO]: PostgreSQL disconnected
+2026-04-16 13:34:21 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-16 13:50:45 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-24 16:37:04 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-24 16:39:56 [INFO]: ✅ PostgreSQL connected successfully

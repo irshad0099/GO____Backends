@@ -124,20 +124,21 @@ export const createSubscription = async (client, data) => {
     const {
         userId, planId, status, startedAt, expiresAt,
         autoRenew, paymentMethod, transactionId, freeRidesResetAt,
+        razorpaySubscriptionId,
     } = data;
 
     const result = await client.query(
         `INSERT INTO user_subscriptions (
             user_id, plan_id, status, started_at, expires_at,
             auto_renew, payment_method, transaction_id,
-            free_rides_used, free_rides_reset_at,
+            free_rides_used, free_rides_reset_at, razorpay_subscription_id,
             created_at, updated_at
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,0,$9, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,0,$9,$10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         RETURNING *`,
         [
             userId, planId, status || 'active', startedAt, expiresAt,
             autoRenew ?? true, paymentMethod || null, transactionId || null,
-            freeRidesResetAt,
+            freeRidesResetAt, razorpaySubscriptionId || null,
         ]
     );
     return result.rows[0];

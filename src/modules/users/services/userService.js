@@ -1,6 +1,6 @@
 import * as userRepo from '../repositories/user.repository.js';
 import * as rideRepo from '../../rides/repositories/ride.repository.js';
-import * as walletRepo from '../../wallet/repositories/wallet.repository.js';
+import * as walletRepo from '../../wallet/repositories/wallet.Repository.js';
 import { NotFoundError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 

@@ -1,12 +1,14 @@
 import * as rideRepo from '../repositories/ride.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
-import * as walletRepo from '../../wallet/repositories/wallet.repository.js';
+import * as walletRepo from '../../wallet/repositories/wallet.Repository.js';
 import * as rideCalculator from '../../../core/utils/rideCalculator.js';
 import { getWeatherSignal } from '../../../core/utils/weatherService.js';
 import { ApiError, NotFoundError, ConflictError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 import { ENV } from '../../../config/envConfig.js';
 import { db } from '../../../infrastructure/database/postgres.js';
+import { payForRide } from '../../wallet/services/walletService.js';
+import { creditDriverEarnings } from '../../drivers/services/earningsService.js';
 
 // ─── Helper: gather REAL demand + weather signals ───────────────────────────
 const gatherDemandSignals = async (vehicleType, latitude, longitude) => {
@@ -306,6 +308,43 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             });
 
             logger.info(`Ride ${rideId} final fare: ₹${finalResult.passenger.finalFare} (estimated: ₹${ride.estimated_fare})`);
+
+            // ── AUTO WALLET PAYMENT ──
+            // If payment method is wallet, auto-deduct and mark as paid immediately
+            if (ride.payment_method === 'wallet') {
+                try {
+                    const passenger = await rideRepo.findPassengerById(ride.passenger_id);
+                    if (passenger) {
+                        // Process wallet payment
+                        const walletPayment = await payForRide(passenger.user_id, {
+                            ride_id: rideId,
+                            amount: finalResult.passenger.finalFare,
+                            description: `Payment for ride #${ride.ride_number}`,
+                        });
+
+                        if (walletPayment.success) {
+                            // Update ride payment status to paid
+                            additionalFields.payment_status = 'paid';
+
+                            // Credit driver earnings immediately
+                            await creditDriverEarnings({
+                                driverUserId: driver.user_id,
+                                rideId,
+                                netEarnings: finalResult.driver.netEarnings,
+                                platformFee: finalResult.driver.platformFee,
+                                paymentMethod: 'wallet',
+                            });
+
+                            logger.info(`[Ride] Auto wallet payment successful | Ride: ${rideId} | Amount: ₹${finalResult.passenger.finalFare}`);
+                        }
+                    }
+                } catch (walletError) {
+                    // Wallet payment failed (insufficient balance etc.)
+                    // Keep payment_status as 'pending', let frontend handle retry
+                    logger.warn(`[Ride] Auto wallet payment failed | Ride: ${rideId}:`, walletError.message);
+                    // Don't throw — ride is still completed, payment remains pending
+                }
+            }
         }
 
         const updatedRide = await rideRepo.updateRideStatus(rideId, status, additionalFields);

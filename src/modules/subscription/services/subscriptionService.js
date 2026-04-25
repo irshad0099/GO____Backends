@@ -1,5 +1,6 @@
 import { pool } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
+import { createSubscriptionPlan, cancelSubscription as cancelRazorpaySubscription, fetchSubscription as fetchRazorpaySubscription, createCustomer } from '../../../core/services/razorpayService.js';
 import {
     getAllPlans,
     getPlanById,
@@ -65,6 +66,7 @@ const formatSubscription = (s) => ({
     freeRidesUsed:       s.free_rides_used,
     freeRidesResetAt:    s.free_rides_reset_at || null,
     paymentMethod:       s.payment_method  || null,
+    razorpaySubscriptionId: s.razorpay_subscription_id || null,
     createdAt:           s.created_at,
 });
 
@@ -130,6 +132,7 @@ export const purchaseSubscription = async (userId, {
     payment_gateway,
     gateway_transaction_id,
     auto_renew,
+    customer_details,
 }) => {
     const client = await pool.connect();
     try {
@@ -162,6 +165,29 @@ export const purchaseSubscription = async (userId, {
         const freeRidesResetAt = new Date();
         freeRidesResetAt.setDate(freeRidesResetAt.getDate() + 30);
 
+        let razorpaySubscriptionId = null;
+        let gatewayTransactionId = null;
+
+        // For Razorpay recurring payments
+        if (payment_method === 'card' && payment_gateway === 'razorpay' && auto_renew) {
+            // Create Razorpay customer if not exists
+            const customer = await createCustomer(customer_details || {
+                name: `User ${userId}`,
+                email: `user${userId}@example.com`,
+                phone: '9999999999',
+            });
+
+            // Create Razorpay subscription plan
+            const razorpayPlan = await createSubscriptionPlan({
+                name: plan.name,
+                description: plan.description || `${plan.name} subscription`,
+                price: parseFloat(plan.price),
+                period: 'monthly',
+            }, customer.data);
+
+            razorpaySubscriptionId = razorpayPlan.data.id;
+        }
+
         // Create subscription record
         const subscription = await createSubscription(client, {
             userId,
@@ -172,6 +198,7 @@ export const purchaseSubscription = async (userId, {
             autoRenew:       auto_renew ?? true,
             paymentMethod:   payment_method,
             freeRidesResetAt,
+            razorpaySubscriptionId,
         });
 
         // Record payment
@@ -191,7 +218,7 @@ export const purchaseSubscription = async (userId, {
         await client.query('COMMIT');
 
         logger.info(
-            `[Subscription] New subscription | User: ${userId} | Plan: ${plan.name} | Expires: ${expiresAt.toISOString()}`
+            `[Subscription] New subscription | User: ${userId} | Plan: ${plan.name} | Razorpay: ${razorpaySubscriptionId} | Expires: ${expiresAt.toISOString()}`
         );
 
         return {
@@ -205,6 +232,7 @@ export const purchaseSubscription = async (userId, {
                     startedAt:      subscription.started_at,
                     expiresAt:      subscription.expires_at,
                     autoRenew:      subscription.auto_renew,
+                    razorpaySubscriptionId: razorpaySubscriptionId,
                     benefits: {
                         rideDiscountPercent: parseFloat(plan.ride_discount_percent),
                         freeRidesPerMonth:   plan.free_rides_per_month,
@@ -214,6 +242,8 @@ export const purchaseSubscription = async (userId, {
                     },
                 },
                 payment: formatPayment(payment),
+                requiresRazorpay: !!razorpaySubscriptionId,
+                razorpaySubscriptionId,
             },
         };
     } catch (error) {
@@ -241,6 +271,17 @@ export const cancelSubscription = async (userId, { subscription_id, reason }) =>
         const err = new Error(`Subscription is already ${sub.status}`);
         err.statusCode = 400;
         throw err;
+    }
+
+    // Cancel Razorpay subscription if exists
+    if (sub.razorpay_subscription_id) {
+        try {
+            await cancelRazorpaySubscription(sub.razorpay_subscription_id, false);
+            logger.info(`[Subscription] Razorpay subscription cancelled | Sub: ${sub.razorpay_subscription_id}`);
+        } catch (error) {
+            logger.error(`[Subscription] Failed to cancel Razorpay subscription:`, error);
+            // Don't fail whole operation if Razorpay cancellation fails
+        }
     }
 
     const updated = await updateSubscriptionStatus(subscription_id, 'cancelled', {

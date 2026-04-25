@@ -1,12 +1,14 @@
 import crypto from 'crypto';
 import { pool } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
+import { createRazorpayOrder, verifyRazorpayPayment, createRazorpayRefund } from '../../../core/services/razorpayService.js';
 import {
     createPaymentOrder,
     getPaymentOrderById,
     getPaymentOrderByNumber,
     getPaymentOrderByGatewayOrderId,
     getPaymentOrderByRideId,
+    getActivePaymentOrderByRideId,
     updatePaymentOrderStatus,
     getUserPaymentOrders,
     getUserPaymentOrdersCount,
@@ -200,10 +202,13 @@ export const createOrder = async (userId, {
         // For UPI / card — create gateway order (Razorpay/Stripe)
         const expiresAt = new Date(Date.now() + ORDER_EXPIRY_MINUTES * 60 * 1000);
 
-        // TODO: Call Razorpay/Stripe API to create order and get gateway_order_id
-        // const gatewayOrder = await razorpayService.createOrder({ amount: amount * 100, currency: 'INR' });
-        // const gatewayOrderId = gatewayOrder.id;
-        const gatewayOrderId = `gw_order_${Date.now()}`; // placeholder — replace with real gateway call
+        // Call Razorpay API to create order
+        const razorpayOrder = await createRazorpayOrder(amount, 'INR', `receipt_${Date.now()}`, {
+            purpose: PURPOSE_LABELS[purpose],
+            user_id: userId,
+            ride_id: ride_id || null,
+        });
+        const gatewayOrderId = razorpayOrder.data.id;
 
         const order = await createPaymentOrder(client, {
             orderNumber:    generateOrderNumber(),
@@ -405,8 +410,19 @@ export const processRefund = async (userId, {
         }
 
         // Source refund (bank/card) — initiate via gateway
-        // TODO: await razorpayService.createRefund({ payment_id: order.gateway_payment_id, amount: amount * 100 });
-        logger.info(`[Payment] Source refund initiated ₹${amount} | User: ${userId} | Refund: ${refund.refund_number}`);
+        if (order.gateway_payment_id) {
+            const razorpayRefund = await createRazorpayRefund(order.gateway_payment_id, amount, {
+                reason: reason || 'Customer requested refund',
+                order_number: order_number,
+                user_id: userId,
+            });
+            
+            // Update refund with gateway refund ID
+            await updateRefundStatus(client, refund.id, 'success', {
+                processedAt: new Date(),
+                gatewayRefundId: razorpayRefund.data.id,
+            });
+        }
 
         return {
             success: true,

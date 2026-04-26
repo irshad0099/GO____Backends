@@ -113,7 +113,8 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
             fileBuffer,
             fileName,
             mimeType,
-            doVerification: ['PAN', 'DRIVING_LICENCE'].includes(docType),
+            // PAN → NSDL, DL → Sarathi, RC → VAHAN (insurance + fitness + permit bhi milega)
+            doVerification: ['PAN', 'DRIVING_LICENCE', 'VEHICLE_RC'].includes(docType),
         });
     } catch (err) {
         const msg = err.response?.data?.message || `${docType} OCR service error`;
@@ -206,18 +207,60 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
         case 'VEHICLE_RC': {
             docNumber     = fields.registration_number || fields.rc_number;
             extractedName = fields.owner_name || fields.owner;
+
+            // VAHAN verification details (Cashfree doVerification=true se aate hain)
+            const vahanDetails = vdet.rc_details || vdet.vehicle_details || {};
+            const insuranceExpiry  = vahanDetails.insurance_expiry  || vahanDetails.insurance_upto  || null;
+            const fitnessExpiry    = vahanDetails.fitness_expiry     || vahanDetails.fitness_upto    || null;
+            const permitExpiry     = vahanDetails.permit_expiry      || vahanDetails.permit_upto     || null;
+            const rcStatus         = vahanDetails.rc_status          || vdet.status                  || null;
+            const isPucc           = vahanDetails.pucc_upto          || null;
+
+            // Insurance expired check — VAHAN se aaya to hard fail
+            const minDays = ENV.KYC_INSURANCE_EXPIRY_MIN_DAYS || 30;
+            let insuranceDaysLeft = null;
+            if (insuranceExpiry) {
+                insuranceDaysLeft = Math.floor((new Date(insuranceExpiry).getTime() - Date.now()) / 86400000);
+                if (insuranceDaysLeft < 0) {
+                    await repo.updateDocument(doc.id, {
+                        status: 'rejected',
+                        rejectionReason: 'Vehicle insurance has expired (verified via VAHAN)',
+                    });
+                    await repo.recomputeAggregate(userId);
+                    throw Object.assign(new Error('Vehicle insurance has expired. Please renew and resubmit.'), { statusCode: 422 });
+                }
+                if (insuranceDaysLeft < minDays) {
+                    await repo.addFraudFlag(doc.id, 'INSURANCE_EXPIRING_SOON', 'MEDIUM',
+                        { insurance_expiry: insuranceExpiry, days_left: insuranceDaysLeft });
+                }
+            }
+
+            // Fitness expired check
+            if (fitnessExpiry && new Date(fitnessExpiry) < new Date()) {
+                await repo.addFraudFlag(doc.id, 'FITNESS_EXPIRED', 'HIGH',
+                    { fitness_expiry: fitnessExpiry });
+            }
+
             extractedData = {
                 owner:                extractedName || null,
                 relation_name:        fields.relation_name || null,
-                vehicle_model:        fields.vehicle_model || null,
-                vehicle_type:         fields.vehicle_type  || null,
+                vehicle_model:        fields.vehicle_model || vahanDetails.vehicle_model || null,
+                vehicle_type:         fields.vehicle_type  || vahanDetails.vehicle_class  || null,
                 manufacturer:         fields.manufacturer_name || null,
                 manufacturing_date:   fields.manufacturing_date || null,
-                registration_date:    fields.registration_date || null,
-                registration_validity:fields.registration_validity || null,
-                chassis_number:       fields.chassis_number || null,
-                engine_number:        fields.engine_number  || null,
+                registration_date:    fields.registration_date || vahanDetails.reg_date || null,
+                registration_validity:fields.registration_validity || vahanDetails.reg_valid_upto || null,
+                chassis_number:       fields.chassis_number || vahanDetails.chassis_no || null,
+                engine_number:        fields.engine_number  || vahanDetails.engine_no  || null,
                 address:              fields.address || null,
+                // VAHAN-verified insurance + fitness details
+                insurance_expiry:     insuranceExpiry,
+                insurance_days_left:  insuranceDaysLeft,
+                fitness_expiry:       fitnessExpiry,
+                permit_expiry:        permitExpiry,
+                pucc_expiry:          isPucc,
+                rc_status:            rcStatus,
+                vahan_verified:       !!vahanDetails.rc_status,
                 masked:               docNumber ? String(docNumber).toUpperCase() : null,
             };
             break;
@@ -376,26 +419,30 @@ export const submitBankAccount = async (userId, accountNumber, ifsc, name) => {
     };
 
     const updatedDoc = await repo.updateDocument(doc.id, {
-        status:          'manual_review',
+        status:          'auto_verified',
         extractedData:   JSON.stringify(extractedData),
         confidenceScore: 100,
         documentNumber:  String(accountNumber).slice(-4),
         documentHash:    docHash,
+        verifiedAt:      new Date(),
     });
 
-    await repo.addAuditLog({ userId, docId: doc.id, action: 'MANUAL_REVIEW_ASSIGNED', actorType: 'system', actorId: null,
-        beforeState: { status: 'pending' }, afterState: { status: 'manual_review' } });
+    await repo.addAuditLog({ userId, docId: doc.id, action: 'AUTO_VERIFIED', actorType: 'system', actorId: null,
+        beforeState: { status: 'pending' }, afterState: { status: 'auto_verified' } });
 
-    await repo.recomputeAggregate(userId);
+    const aggregate = await repo.recomputeAggregate(userId);
 
-    kycNotify.notifyDocSubmitted(userId, 'BANK_ACCOUNT', 'manual_review', 0, null).catch(() => {});
+    kycNotify.notifyDocSubmitted(userId, 'BANK_ACCOUNT', 'auto_verified', 0, null).catch(() => {});
+    if (aggregate?.overall_status === 'verified') {
+        kycNotify.notifyKycComplete(userId).catch(() => {});
+    }
 
     return {
         documentId:   updatedDoc.id,
         documentType: 'BANK_ACCOUNT',
-        status:       'manual_review',
+        status:       'auto_verified',
         extractedData,
-        message:      'Bank account details submitted for review. You\'ll be notified once verified.',
+        message:      'Bank account verified successfully.',
     };
 };
 
@@ -481,10 +528,9 @@ export const submitFaceMatch = async (userId, { fileBuffer, mimeType }) => {
 
     let status, auditAction, message;
     if (similarityPct >= FACE_AUTO_T) {
-        // High confidence — still goes to manual_review, admin is final approver
-        status      = 'manual_review';
-        auditAction = 'MANUAL_REVIEW_ASSIGNED';
-        message     = 'Selfie submitted for review. You\'ll be notified once verified.';
+        status      = 'auto_verified';
+        auditAction = 'AUTO_VERIFIED';
+        message     = 'Selfie verified successfully.';
     } else if (similarityPct >= FACE_REVIEW_T) {
         status      = 'manual_review';
         auditAction = 'MANUAL_REVIEW_ASSIGNED';

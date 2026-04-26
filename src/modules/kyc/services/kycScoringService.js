@@ -127,7 +127,9 @@ export const decideDocumentStatus = async ({
     const AUTO_T   = ENV.KYC_AUTO_THRESHOLD   || 85;
     const REVIEW_T = ENV.KYC_REVIEW_THRESHOLD || 60;
 
-    // All docs go to manual_review — admin is final approver
-    if (finalScore >= REVIEW_T) return { status: 'manual_review', score: finalScore, flags, confidenceScore };
+    if (flags.length === 0 && finalScore >= AUTO_T)
+        return { status: 'auto_verified', score: finalScore, flags, confidenceScore };
+    if (finalScore >= REVIEW_T)
+        return { status: 'manual_review', score: finalScore, flags, confidenceScore };
     return { status: 'rejected', score: finalScore, reason: 'Low confidence — please upload a clearer image', flags, confidenceScore };
 };

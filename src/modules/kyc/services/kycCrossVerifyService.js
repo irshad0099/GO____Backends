@@ -178,6 +178,38 @@ export const runCrossVerify = async (userId) => {
             }
         }
 
+        // ── 7. Insurance validity (VAHAN-verified, RC submission pe milta hai) ─
+        const insuranceExpiry  = get('VEHICLE_RC', 'insurance_expiry');
+        const vahanVerified    = get('VEHICLE_RC', 'vahan_verified');
+        if (insuranceExpiry) {
+            if (isExpired(insuranceExpiry)) {
+                failed.push({ check: 'insurance_expired', value: insuranceExpiry,
+                    note: 'Vehicle insurance has expired (VAHAN data)' });
+            } else {
+                const insDaysLeft = Math.floor((new Date(insuranceExpiry).getTime() - Date.now()) / 86400000);
+                if (insDaysLeft < 30) {
+                    warnings.push({ check: 'insurance_expiring_soon', value: insuranceExpiry,
+                        days_left: insDaysLeft, note: 'Insurance expires within 30 days — driver should renew soon' });
+                } else {
+                    passed.push({ check: 'insurance_valid', value: insuranceExpiry, days_left: insDaysLeft });
+                }
+            }
+        } else if (vahanVerified) {
+            // VAHAN verify hua lekin insurance data nahi aaya → soft warning
+            warnings.push({ check: 'insurance_expiry', note: 'Insurance expiry not available from VAHAN' });
+        }
+
+        // ── 8. Fitness certificate (commercial vehicles ke liye mandatory) ─────
+        const fitnessExpiry = get('VEHICLE_RC', 'fitness_expiry');
+        if (fitnessExpiry) {
+            if (isExpired(fitnessExpiry)) {
+                failed.push({ check: 'fitness_expired', value: fitnessExpiry,
+                    note: 'Fitness certificate has expired (VAHAN data)' });
+            } else {
+                passed.push({ check: 'fitness_valid', value: fitnessExpiry });
+            }
+        }
+
         // RC owner name — soft warning only (kisi ki bhi gaadi ho sakti hai)
         const rcOwner = get('VEHICLE_RC', 'owner');
         if (rcOwner && aadhaarName) {
@@ -213,10 +245,12 @@ export const runCrossVerify = async (userId) => {
         // Failed checks ke liye fraud flags add karo + docs ko manual_review mein daalo
         for (const f of failed) {
             let docType = null;
-            if (f.check.includes('pan'))       docType = 'PAN';
-            else if (f.check.includes('dl'))   docType = 'DRIVING_LICENCE';
-            else if (f.check.includes('rc'))   docType = 'VEHICLE_RC';
-            else if (f.check.includes('aadhaar')) docType = 'AADHAAR';
+            if (f.check.includes('pan'))                       docType = 'PAN';
+            else if (f.check.includes('dl'))                   docType = 'DRIVING_LICENCE';
+            else if (f.check.includes('rc') ||
+                     f.check.includes('insurance') ||
+                     f.check.includes('fitness'))               docType = 'VEHICLE_RC';
+            else if (f.check.includes('aadhaar'))              docType = 'AADHAAR';
 
             if (docType && docMap[docType] && ['auto_verified', 'manual_review'].includes(docMap[docType].status)) {
                 await repo.updateDocument(docMap[docType].id, { status: 'manual_review' });

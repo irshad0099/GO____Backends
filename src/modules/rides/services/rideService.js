@@ -803,6 +803,14 @@ if (ride.passenger_email) {
         subscriptionDiscount: Number(ride.subscription_discount) || 0,
         couponDiscount:       Number(ride.coupon_discount) || 0,
         isFreeRide:           ride.is_free_ride || false,
+        // ── Naye fields ──────────────────────────────────
+        isPeak:               ride.is_peak || false,
+        fareBeforeGst:        Number(ride.fare_before_gst) || null,
+        timeFare:             Number(ride.time_fare) || 0,
+        waitingCharges:       Number(additionalFields.waiting_charges) || 0,
+        pickupCompensation:   Number(additionalFields.pickup_compensation) || 0,
+        trafficCompensation:  Number(additionalFields.traffic_compensation) || 0,
+        gstOnFare:            Number(ride.gst_on_fare) || 0,
     }).catch(err => logger.error('Receipt email error:', err));
 }
 

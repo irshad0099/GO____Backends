@@ -127,8 +127,8 @@ export const updateUser = async (id, updates) => {
             UPDATE users 
             SET ${setClause.join(', ')}, updated_at = NOW()
             WHERE id = $${paramIndex}
-            RETURNING id, phone_number, email, full_name, profile_picture, 
-                      role, is_verified, is_active, last_login, created_at, updated_at
+           RETURNING id, phone_number, email, full_name, profile_picture, 
+          role, is_verified, is_active, last_login, created_at, updated_at, fcm_token
         `;
 
         const result = await db.query(query, values);

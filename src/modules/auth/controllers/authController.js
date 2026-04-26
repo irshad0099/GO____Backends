@@ -1,6 +1,7 @@
 import * as authService from '../services/authService.js';
 import logger from '../../../core/logger/logger.js';
 import { sendResponse } from '../../../core/utils/response.js';
+import * as userRepo from '../../users/repositories/user.repository.js';
 
 export const signup = async (req, res, next) => {
     try {
@@ -151,6 +152,21 @@ export const refreshToken = async (req, res, next) => {
 export const me = async (req, res, next) => {
     try {
         sendResponse(res, 200, '', { user: req.user });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
+export const updateFcmToken = async (req, res, next) => {
+    try {
+        const { fcm_token } = req.body;
+        if (!fcm_token) {
+            return res.status(400).json({ success: false, message: 'FCM token required' });
+        }
+        await userRepo.updateUser(req.user.id, { fcm_token });
+        res.status(200).json({ success: true, message: 'FCM token updated successfully' });
     } catch (error) {
         next(error);
     }

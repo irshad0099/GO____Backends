@@ -1,6 +1,17 @@
 import { db } from '../../../infrastructure/database/postgres.js';
+import logger from '../../../core/logger/logger.js';
 
 const ALL_DOC_TYPES = ['AADHAAR', 'PAN', 'DRIVING_LICENCE', 'VEHICLE_RC', 'BANK_ACCOUNT', 'SELFIE'];
+
+// Lazy import — circular dependency avoid karne ke liye
+let _runCrossVerify = null;
+const getCrossVerify = async () => {
+    if (!_runCrossVerify) {
+        const mod = await import('../services/kycCrossVerifyService.js');
+        _runCrossVerify = mod.runCrossVerify;
+    }
+    return _runCrossVerify;
+};
 
 // ─── Document CRUD ────────────────────────────────────────────────────────────
 
@@ -123,6 +134,13 @@ export const upsertKycStatus = async (userId, data) => {
     return rows[0];
 };
 
+export const savePreCheckReport = async (userId, report) => {
+    await db.query(
+        `UPDATE driver_kyc_status SET pre_check_report = $1 WHERE user_id = $2`,
+        [JSON.stringify(report), userId]
+    );
+};
+
 // ─── Fraud flags ──────────────────────────────────────────────────────────────
 
 export const addFraudFlag = async (docId, flagType, severity, details) => {
@@ -131,6 +149,14 @@ export const addFraudFlag = async (docId, flagType, severity, details) => {
          VALUES ($1, $2, $3, $4)`,
         [docId, flagType, severity, JSON.stringify(details || {})]
     );
+};
+
+export const getFraudFlagsForDoc = async (docId) => {
+    const { rows } = await db.query(
+        `SELECT * FROM kyc_fraud_flags WHERE document_id = $1`,
+        [docId]
+    );
+    return rows;
 };
 
 export const getFraudFlags = async (severity) => {
@@ -162,21 +188,76 @@ export const addAuditLog = async ({ userId, docId, action, actorType, actorId, b
 
 // ─── Admin queue ──────────────────────────────────────────────────────────────
 
-export const listReviewQueue = async (type, page, limit) => {
+// ─── Admin driver list ────────────────────────────────────────────────────────
+
+export const listDriversForAdmin = async (overallStatus, page, limit) => {
     const offset = (page - 1) * limit;
+    const { rows } = await db.query(
+        `SELECT dks.user_id, dks.overall_status, dks.submitted_docs_count, dks.verified_docs_count,
+                dks.last_activity_at, dks.verified_at, dks.suspended_at, dks.suspension_reason,
+                u.full_name, u.phone_number, u.email
+         FROM driver_kyc_status dks
+         JOIN users u ON u.id = dks.user_id
+         WHERE ($1::text IS NULL OR dks.overall_status = $1)
+         ORDER BY dks.last_activity_at DESC
+         LIMIT $2 OFFSET $3`,
+        [overallStatus || null, limit, offset]
+    );
+    const { rows: countRows } = await db.query(
+        `SELECT COUNT(*) FROM driver_kyc_status
+         WHERE ($1::text IS NULL OR overall_status = $1)`,
+        [overallStatus || null]
+    );
+    return { items: rows, total: parseInt(countRows[0].count, 10) };
+};
+
+export const getDriverKycDetail = async (userId) => {
+    const { rows: userRows } = await db.query(
+        `SELECT u.id, u.full_name, u.phone_number, u.email,
+                dks.overall_status, dks.submitted_docs_count, dks.verified_docs_count,
+                dks.last_activity_at, dks.verified_at, dks.suspended_at,
+                dks.suspension_reason, dks.pre_check_report
+         FROM users u
+         LEFT JOIN driver_kyc_status dks ON dks.user_id = u.id
+         WHERE u.id = $1`,
+        [userId]
+    );
+    if (!userRows[0]) return null;
+
+    const { rows: docs } = await db.query(
+        `SELECT kd.*, au.full_name AS reviewed_by_name
+         FROM kyc_documents kd
+         LEFT JOIN users au ON au.id = kd.reviewed_by
+         WHERE kd.user_id = $1
+         ORDER BY kd.document_type`,
+        [userId]
+    );
+
+    return { driver: userRows[0], documents: docs };
+};
+
+export const listReviewQueue = async (type, statusFilter, page, limit) => {
+    const offset = (page - 1) * limit;
+    // statusFilter: 'manual_review' (default) | 'rejected' | 'all'
+    const statusClause = statusFilter === 'all'
+        ? `kd.status IN ('manual_review', 'rejected')`
+        : statusFilter === 'rejected'
+            ? `kd.status = 'rejected'`
+            : `kd.status = 'manual_review'`;
+
     const { rows } = await db.query(
         `SELECT kd.*, u.full_name, u.phone_number
          FROM kyc_documents kd
          JOIN users u ON u.id = kd.user_id
-         WHERE kd.status = 'manual_review'
+         WHERE ${statusClause}
            AND ($1::text IS NULL OR kd.document_type = $1)
          ORDER BY kd.updated_at ASC
          LIMIT $2 OFFSET $3`,
         [type || null, limit, offset]
     );
     const { rows: countRows } = await db.query(
-        `SELECT COUNT(*) FROM kyc_documents
-         WHERE status = 'manual_review' AND ($1::text IS NULL OR document_type = $1)`,
+        `SELECT COUNT(*) FROM kyc_documents kd
+         WHERE ${statusClause} AND ($1::text IS NULL OR document_type = $1)`,
         [type || null]
     );
     return { items: rows, total: parseInt(countRows[0].count, 10) };
@@ -255,11 +336,22 @@ export const recomputeAggregate = async (userId) => {
         }
     }
 
-    return upsertKycStatus(userId, {
+    const result = await upsertKycStatus(userId, {
         overallStatus,
         submittedDocsCount: submittedCount,
         verifiedDocsCount:  verifiedCount,
         verifiedAt:   overallStatus === 'verified' ? new Date() : null,
         suspendedAt:  overallStatus === 'suspended' ? new Date() : null,
     });
+
+    // Jab saare 6 docs submit ho jayein → cross-verify run karo (background, non-blocking)
+    const allSubmitted = ALL_DOC_TYPES.every(t => docs.find(d => d.document_type === t));
+    if (allSubmitted && overallStatus !== 'verified') {
+        getCrossVerify()
+            .then(fn => fn(userId))
+            .then(() => recomputeAggregate(userId)) // cross-verify ke baad status recompute
+            .catch(err => logger.error(`[KYC] Cross-verify trigger failed user=${userId}:`, err));
+    }
+
+    return result;
 };

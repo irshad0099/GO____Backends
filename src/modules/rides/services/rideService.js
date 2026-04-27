@@ -37,6 +37,7 @@ import {
     notifyDriverArrival
 } from '../../../infrastructure/websocket/assignment.handler.js';
 import { addRideCompletionJob, addNotificationJob } from '../../../infrastructure/queue/rideQueue.js';
+import { startRideTracking, getActualDistance, clearRideTracking } from '../../../infrastructure/websocket/rideTracking.js';
 
 const safeEmit = (fn, label) => {
     try { fn(); } catch (err) { logger.warn(`Socket emit failed (${label}): ${err.message}`); }
@@ -403,12 +404,23 @@ const calculateCompletionFare = async (ride) => {
         actualDurationMinutes = (new Date(ride.completed_at) - new Date(ride.started_at)) / 60000;
     }
 
+    // GPS-tracked actual distance — fallback to estimated if tracking failed/unreliable
+    const trackedKm        = await getActualDistance(ride.id);
+    const estimatedKm      = Number(ride.distance_km) || 0;
+    const finalDistanceKm  = trackedKm ?? estimatedKm;
+
+    if (trackedKm !== null) {
+        logger.info(`[Fare] rideId=${ride.id} using GPS distance: ${trackedKm}km (estimated was ${estimatedKm}km)`);
+    } else {
+        logger.warn(`[Fare] rideId=${ride.id} GPS tracking unavailable, using estimated: ${estimatedKm}km`);
+    }
+
     const pickupDistanceKm     = Number(ride.driver_pickup_distance_km) || 0;
     const driverDailyRideCount = await rideRepo.getDriverDailyRideCount(ride.driver_id);
 
     return rideCalculator.calculateFinalRideFare({
         vehicleType:              ride.vehicle_type,
-        distanceKm:               Number(ride.distance_km) || 0,
+        distanceKm:               finalDistanceKm,
         estimatedDurationMinutes: Number(ride.duration_minutes) || 0,
         actualDurationMinutes,
         waitedMinutes,
@@ -649,6 +661,13 @@ if (status === 'cancelled') {
 
         // ── FCM 3c: Ride started (queued) ────────────────────────────────────
         if (status === 'in_progress') {
+            // GPS distance tracking shuru karo — driver ki current location se
+            const driverLat = Number(driver.current_latitude);
+            const driverLon = Number(driver.current_longitude);
+            if (driverLat && driverLon) {
+                startRideTracking(rideId, driverLat, driverLon).catch(() => {});
+            }
+
             if (ride.passenger_fcm_token) {
                 await addNotificationJob('ride-started', {
                     fcmToken: ride.passenger_fcm_token,
@@ -687,6 +706,13 @@ if (status === 'cancelled') {
             additionalFields.pickup_compensation  = finalResult.driver.pickupDistanceCompensation ?? 0;
             additionalFields.waiting_charges      = finalResult.driver.waitingEarnings ?? 0;
             additionalFields.traffic_compensation = finalResult.driver.trafficDelayCompensation ?? 0;
+
+            // GPS-tracked actual distance save karo (null hoga agar tracking fail hua)
+            const trackedKmFinal = await getActualDistance(rideId);
+            if (trackedKmFinal !== null) {
+                additionalFields.actual_distance_km = trackedKmFinal;
+            }
+            clearRideTracking(rideId).catch(() => {});
 
             // SYNC: driver ko immediately off-duty karo — naya ride accept kar sake
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });

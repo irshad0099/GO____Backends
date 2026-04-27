@@ -99,10 +99,31 @@ export const submitFaceMatch = async (req, res) => {
 
 // ─── Admin endpoints ───────────────────────────────────────────────────────────
 
+export const getDriversKycList = async (req, res) => {
+    try {
+        const { status, page = 1, limit = 20 } = req.query;
+        const data = await kycService.getDriversKycList(status || null, Number(page), Number(limit));
+        sendResponse(res, 200, '', data);
+    } catch (err) {
+        logger.error('[KYC] getDriversKycList error:', err);
+        sendError(res, err.statusCode || 500, err.message);
+    }
+};
+
+export const getDriverKycDetail = async (req, res) => {
+    try {
+        const data = await kycService.getDriverKycDetail(req.params.userId);
+        sendResponse(res, 200, '', data);
+    } catch (err) {
+        logger.error('[KYC] getDriverKycDetail error:', err);
+        sendError(res, err.statusCode || 500, err.message);
+    }
+};
+
 export const getReviewQueue = async (req, res) => {
     try {
-        const { type, page = 1, limit = 20 } = req.query;
-        const data = await kycService.getReviewQueue(type || null, Number(page), Number(limit));
+        const { type, status, page = 1, limit = 20 } = req.query;
+        const data = await kycService.getReviewQueue(type || null, status || 'manual_review', Number(page), Number(limit));
         sendResponse(res, 200, '', data);
     } catch (err) {
         logger.error('[KYC] getReviewQueue error:', err);

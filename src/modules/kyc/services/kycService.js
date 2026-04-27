@@ -1,7 +1,8 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import * as cf from './cashfreeService.js';
 import * as repo from '../repositories/kycDocuments.repository.js';
 import * as scoring from './kycScoringService.js';
+import * as kycNotify from './kycNotificationService.js';
 import { ENV } from '../../../config/envConfig.js';
 import logger from '../../../core/logger/logger.js';
 import { ConflictError, ValidationError, NotFoundError } from '../../../core/errors/ApiError.js';
@@ -29,6 +30,20 @@ const uploadKycFile = async (userId, docType, buffer, mimeType) => {
         ContentType: mimeType,
     }));
     return `https://${S3_BUCKET}.s3.${ENV.AWS_REGION}.amazonaws.com/${key}`;
+};
+
+// S3 URL se file download karke Buffer return karo
+const downloadFromS3 = async (fileUrl) => {
+    // URL format: https://{bucket}.s3.{region}.amazonaws.com/{key}
+    const url = new URL(fileUrl);
+    const key = url.pathname.slice(1); // leading slash hata do
+    const command = new GetObjectCommand({ Bucket: S3_BUCKET, Key: key });
+    const response = await s3.send(command);
+    const chunks = [];
+    for await (const chunk of response.Body) {
+        chunks.push(chunk);
+    }
+    return Buffer.concat(chunks);
 };
 
 // ─── User profile helper ──────────────────────────────────────────────────────
@@ -98,7 +113,8 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
             fileBuffer,
             fileName,
             mimeType,
-            doVerification: ['PAN', 'DRIVING_LICENCE'].includes(docType),
+            // PAN → NSDL, DL → Sarathi, RC → VAHAN (insurance + fitness + permit bhi milega)
+            doVerification: ['PAN', 'DRIVING_LICENCE', 'VEHICLE_RC'].includes(docType),
         });
     } catch (err) {
         const msg = err.response?.data?.message || `${docType} OCR service error`;
@@ -191,18 +207,60 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
         case 'VEHICLE_RC': {
             docNumber     = fields.registration_number || fields.rc_number;
             extractedName = fields.owner_name || fields.owner;
+
+            // VAHAN verification details (Cashfree doVerification=true se aate hain)
+            const vahanDetails = vdet.rc_details || vdet.vehicle_details || {};
+            const insuranceExpiry  = vahanDetails.insurance_expiry  || vahanDetails.insurance_upto  || null;
+            const fitnessExpiry    = vahanDetails.fitness_expiry     || vahanDetails.fitness_upto    || null;
+            const permitExpiry     = vahanDetails.permit_expiry      || vahanDetails.permit_upto     || null;
+            const rcStatus         = vahanDetails.rc_status          || vdet.status                  || null;
+            const isPucc           = vahanDetails.pucc_upto          || null;
+
+            // Insurance expired check — VAHAN se aaya to hard fail
+            const minDays = ENV.KYC_INSURANCE_EXPIRY_MIN_DAYS || 30;
+            let insuranceDaysLeft = null;
+            if (insuranceExpiry) {
+                insuranceDaysLeft = Math.floor((new Date(insuranceExpiry).getTime() - Date.now()) / 86400000);
+                if (insuranceDaysLeft < 0) {
+                    await repo.updateDocument(doc.id, {
+                        status: 'rejected',
+                        rejectionReason: 'Vehicle insurance has expired (verified via VAHAN)',
+                    });
+                    await repo.recomputeAggregate(userId);
+                    throw Object.assign(new Error('Vehicle insurance has expired. Please renew and resubmit.'), { statusCode: 422 });
+                }
+                if (insuranceDaysLeft < minDays) {
+                    await repo.addFraudFlag(doc.id, 'INSURANCE_EXPIRING_SOON', 'MEDIUM',
+                        { insurance_expiry: insuranceExpiry, days_left: insuranceDaysLeft });
+                }
+            }
+
+            // Fitness expired check
+            if (fitnessExpiry && new Date(fitnessExpiry) < new Date()) {
+                await repo.addFraudFlag(doc.id, 'FITNESS_EXPIRED', 'HIGH',
+                    { fitness_expiry: fitnessExpiry });
+            }
+
             extractedData = {
                 owner:                extractedName || null,
                 relation_name:        fields.relation_name || null,
-                vehicle_model:        fields.vehicle_model || null,
-                vehicle_type:         fields.vehicle_type  || null,
+                vehicle_model:        fields.vehicle_model || vahanDetails.vehicle_model || null,
+                vehicle_type:         fields.vehicle_type  || vahanDetails.vehicle_class  || null,
                 manufacturer:         fields.manufacturer_name || null,
                 manufacturing_date:   fields.manufacturing_date || null,
-                registration_date:    fields.registration_date || null,
-                registration_validity:fields.registration_validity || null,
-                chassis_number:       fields.chassis_number || null,
-                engine_number:        fields.engine_number  || null,
+                registration_date:    fields.registration_date || vahanDetails.reg_date || null,
+                registration_validity:fields.registration_validity || vahanDetails.reg_valid_upto || null,
+                chassis_number:       fields.chassis_number || vahanDetails.chassis_no || null,
+                engine_number:        fields.engine_number  || vahanDetails.engine_no  || null,
                 address:              fields.address || null,
+                // VAHAN-verified insurance + fitness details
+                insurance_expiry:     insuranceExpiry,
+                insurance_days_left:  insuranceDaysLeft,
+                fitness_expiry:       fitnessExpiry,
+                permit_expiry:        permitExpiry,
+                pucc_expiry:          isPucc,
+                rc_status:            rcStatus,
+                vahan_verified:       !!vahanDetails.rc_status,
                 masked:               docNumber ? String(docNumber).toUpperCase() : null,
             };
             break;
@@ -268,7 +326,13 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
         throw new ConflictError('This document is already registered with another account');
     }
 
-    await repo.recomputeAggregate(userId);
+    const aggregate = await repo.recomputeAggregate(userId);
+
+    const attemptsLeft = decision.status === 'rejected' ? Math.max(0, 3 - updatedDoc.attempt_count) : undefined;
+    kycNotify.notifyDocSubmitted(userId, docType, updatedDoc.status, attemptsLeft ?? 0, decision.reason).catch(() => {});
+    if (aggregate?.overall_status === 'verified') {
+        kycNotify.notifyKycComplete(userId).catch(() => {});
+    }
 
     return {
         documentId:      updatedDoc.id,
@@ -281,7 +345,7 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
                             : decision.status === 'manual_review'
                                 ? 'Document submitted for manual review. You\'ll be notified within 24 hours.'
                                 : decision.reason || 'Document rejected',
-        attemptsLeft:    decision.status === 'rejected' ? Math.max(0, 3 - updatedDoc.attempt_count) : undefined,
+        attemptsLeft,
     };
 };
 
@@ -366,18 +430,23 @@ export const submitBankAccount = async (userId, accountNumber, ifsc, name) => {
     await repo.addAuditLog({ userId, docId: doc.id, action: 'AUTO_VERIFIED', actorType: 'system', actorId: null,
         beforeState: { status: 'pending' }, afterState: { status: 'auto_verified' } });
 
-    await repo.recomputeAggregate(userId);
+    const aggregate = await repo.recomputeAggregate(userId);
+
+    kycNotify.notifyDocSubmitted(userId, 'BANK_ACCOUNT', 'auto_verified', 0, null).catch(() => {});
+    if (aggregate?.overall_status === 'verified') {
+        kycNotify.notifyKycComplete(userId).catch(() => {});
+    }
 
     return {
         documentId:   updatedDoc.id,
         documentType: 'BANK_ACCOUNT',
         status:       'auto_verified',
         extractedData,
-        message:      'Bank account verified successfully',
+        message:      'Bank account verified successfully.',
     };
 };
 
-// ─── Selfie upload (admin reviews manually) ───────────────────────────────────
+// ─── Selfie + Cashfree face match ─────────────────────────────────────────────
 
 export const submitFaceMatch = async (userId, { fileBuffer, mimeType }) => {
     const aadhaarDoc = await repo.getDocByUserAndType(userId, 'AADHAAR');
@@ -386,14 +455,14 @@ export const submitFaceMatch = async (userId, { fileBuffer, mimeType }) => {
     }
 
     const existing = await repo.getDocByUserAndType(userId, 'SELFIE');
-    if (existing && ['approved'].includes(existing.status)) {
-        throw new ConflictError('Selfie already approved');
+    if (existing && ['auto_verified', 'approved'].includes(existing.status)) {
+        throw new ConflictError('Selfie already verified');
     }
     if (existing && existing.status === 'rejected' && existing.attempt_count >= 3) {
         throw new ValidationError('Maximum selfie retries reached. Please contact support.');
     }
 
-    // Upload selfie to S3
+    // Selfie S3 pe upload karo
     let selfieUrl;
     try {
         selfieUrl = await uploadKycFile(userId, 'SELFIE', fileBuffer, mimeType);
@@ -402,26 +471,116 @@ export const submitFaceMatch = async (userId, { fileBuffer, mimeType }) => {
         throw new ValidationError('Selfie upload failed. Please try again.');
     }
 
-    // Always goes to manual_review — admin compares selfie vs Aadhaar visually
     const doc = await repo.createDocument(userId, 'SELFIE', 'FACE_MATCH', selfieUrl);
 
+    await repo.addAuditLog({ userId, docId: doc.id, action: 'SUBMITTED',
+        actorType: 'driver', actorId: userId,
+        beforeState: existing ? { status: existing.status } : null,
+        afterState: { status: 'pending' } });
+
+    // Aadhaar front S3 se download karo
+    let aadhaarBuffer;
+    try {
+        aadhaarBuffer = await downloadFromS3(aadhaarDoc.file_url);
+    } catch (err) {
+        logger.error(`[KYC] Aadhaar S3 download failed user=${userId}:`, err);
+        // S3 fail hone pe manual_review mein daalo
+        await repo.updateDocument(doc.id, {
+            status:        'manual_review',
+            extractedData: JSON.stringify({ aadhaar_doc_id: aadhaarDoc.id, aadhaar_file_url: aadhaarDoc.file_url, fallback_reason: 'aadhaar_download_failed' }),
+        });
+        await repo.recomputeAggregate(userId);
+        kycNotify.notifyDocSubmitted(userId, 'SELFIE', 'manual_review', 0, null).catch(() => {});
+        return { documentId: doc.id, documentType: 'SELFIE', status: 'manual_review',
+            message: 'Selfie submitted for admin review. You\'ll be notified within 24 hours.' };
+    }
+
+    // Dono images base64 karo
+    const selfieBase64  = fileBuffer.toString('base64');
+    const aadhaarBase64 = aadhaarBuffer.toString('base64');
+
+    // Cashfree face match call karo
+    let cfResp;
+    try {
+        cfResp = await cf.matchFace(selfieBase64, aadhaarBase64);
+        logger.info(`[KYC] Face match response user=${userId}:`, cfResp);
+    } catch (err) {
+        logger.error(`[KYC] Face match API failed user=${userId}:`, err);
+        // API fail → manual_review
+        await repo.updateDocument(doc.id, {
+            status:        'manual_review',
+            extractedData: JSON.stringify({ aadhaar_doc_id: aadhaarDoc.id, aadhaar_file_url: aadhaarDoc.file_url, fallback_reason: 'cashfree_api_error' }),
+        });
+        await repo.addAuditLog({ userId, docId: doc.id, action: 'MANUAL_REVIEW_ASSIGNED',
+            actorType: 'system', actorId: null, beforeState: null, afterState: { status: 'manual_review', reason: 'api_error' } });
+        await repo.recomputeAggregate(userId);
+        kycNotify.notifyDocSubmitted(userId, 'SELFIE', 'manual_review', 0, null).catch(() => {});
+        return { documentId: doc.id, documentType: 'SELFIE', status: 'manual_review',
+            message: 'Selfie submitted for admin review. You\'ll be notified within 24 hours.' };
+    }
+
+    // Score extract karo — Cashfree similarity 0-1 float deta hai
+    const similarityRaw = cfResp.similarity ?? cfResp.confidence ?? cfResp.match_score ?? 0;
+    const similarityPct = similarityRaw <= 1 ? Math.round(similarityRaw * 100) : Math.round(similarityRaw);
+
+    const FACE_AUTO_T   = ENV.CASHFREE_FACE_MATCH_THRESHOLD || 75; // >= 75 → auto_verified
+    const FACE_REVIEW_T = 60;                                        // >= 60 → manual_review
+
+    let status, auditAction, message;
+    if (similarityPct >= FACE_AUTO_T) {
+        status      = 'auto_verified';
+        auditAction = 'AUTO_VERIFIED';
+        message     = 'Selfie verified successfully.';
+    } else if (similarityPct >= FACE_REVIEW_T) {
+        status      = 'manual_review';
+        auditAction = 'MANUAL_REVIEW_ASSIGNED';
+        message     = 'Selfie submitted for admin review. You\'ll be notified within 24 hours.';
+    } else {
+        status      = 'rejected';
+        auditAction = 'REJECTED';
+        message     = 'Face does not match Aadhaar. Please upload a clear selfie.';
+    }
+
+    const extractedData = {
+        similarity_score:  similarityPct,
+        aadhaar_doc_id:    aadhaarDoc.id,
+        aadhaar_file_url:  aadhaarDoc.file_url,
+        cashfree_ocr:      cfResp,
+    };
+
+    if (status === 'rejected') {
+        await repo.addFraudFlag(doc.id, 'FACE_MISMATCH', similarityPct < 40 ? 'HIGH' : 'MEDIUM',
+            { similarity: similarityPct, threshold: FACE_AUTO_T });
+    }
+
     const updatedDoc = await repo.updateDocument(doc.id, {
-        status:          'manual_review',
-        extractedData:   JSON.stringify({ aadhaar_doc_id: aadhaarDoc.id, aadhaar_file_url: aadhaarDoc.file_url }),
-        confidenceScore: null,
+        status,
+        extractedData:   JSON.stringify(extractedData),
+        confidenceScore: similarityPct,
+        verifiedAt:      status === 'auto_verified' ? new Date() : null,
     });
 
-    await repo.addAuditLog({ userId, docId: doc.id, action: 'MANUAL_REVIEW_ASSIGNED',
+    await repo.addAuditLog({ userId, docId: doc.id, action: auditAction,
         actorType: 'system', actorId: null,
-        beforeState: null, afterState: { status: 'manual_review' } });
+        beforeState: { status: 'pending' },
+        afterState:  { status, similarity: similarityPct } });
 
-    await repo.recomputeAggregate(userId);
+    const aggregate = await repo.recomputeAggregate(userId);
+
+    const selfieAttemptsLeft = status === 'rejected' ? Math.max(0, 3 - updatedDoc.attempt_count) : 0;
+    kycNotify.notifyDocSubmitted(userId, 'SELFIE', status, selfieAttemptsLeft,
+        status === 'rejected' ? 'Face does not match Aadhaar' : null).catch(() => {});
+    if (aggregate?.overall_status === 'verified') {
+        kycNotify.notifyKycComplete(userId).catch(() => {});
+    }
 
     return {
-        documentId:   updatedDoc.id,
-        documentType: 'SELFIE',
-        status:       'manual_review',
-        message:      'Selfie submitted for admin review. You\'ll be notified within 24 hours.',
+        documentId:      updatedDoc.id,
+        documentType:    'SELFIE',
+        status,
+        confidenceScore: similarityPct,
+        message,
+        attemptsLeft:    status === 'rejected' ? selfieAttemptsLeft : undefined,
     };
 };
 
@@ -471,22 +630,43 @@ export const getKycStatus = async (userId) => {
     };
 };
 
-// Minimal version for login response
+// Minimal version for login response — includes nextScreen hint for frontend routing
 export const getKycStatusForLogin = async (userId) => {
     const overall = await repo.getKycStatus(userId);
+    const status  = overall?.overall_status || 'not_started';
+
+    // Frontend screen routing hint
+    const nextScreen =
+        status === 'verified'       ? 'HOME' :
+        status === 'suspended'      ? 'ACCOUNT_SUSPENDED' :
+        status === 'pending_review' ? 'KYC_UNDER_REVIEW' :
+        status === 'rejected'       ? 'KYC_RETRY' :
+        status === 'in_progress'    ? 'KYC_UPLOAD' :
+                                      'KYC_INTRO';   // not_started
+
     return {
-        overallStatus: overall?.overall_status || 'not_started',
+        overallStatus: status,
         submittedDocs: overall?.submitted_docs_count || 0,
         verifiedDocs:  overall?.verified_docs_count  || 0,
-        canGoOnline:   overall?.overall_status === 'verified',
+        canGoOnline:   status === 'verified',
         verifiedAt:    overall?.verified_at || null,
+        nextScreen,
     };
 };
 
 // ─── Admin ────────────────────────────────────────────────────────────────────
 
-export const getReviewQueue = async (type, page, limit) =>
-    repo.listReviewQueue(type, page, limit);
+export const getReviewQueue = async (type, statusFilter, page, limit) =>
+    repo.listReviewQueue(type, statusFilter, page, limit);
+
+export const getDriversKycList = async (overallStatus, page, limit) =>
+    repo.listDriversForAdmin(overallStatus, page, limit);
+
+export const getDriverKycDetail = async (userId) => {
+    const detail = await repo.getDriverKycDetail(userId);
+    if (!detail) throw new NotFoundError('Driver not found');
+    return detail;
+};
 
 export const getDocumentForAdmin = async (docId) => {
     const doc = await repo.getDocForAdmin(docId);
@@ -494,25 +674,102 @@ export const getDocumentForAdmin = async (docId) => {
     return doc;
 };
 
+// Hard restrictions admin cannot bypass
+const HARD_RESTRICTION_MSG = {
+    AGE_UNDER_18:       'Cannot approve — driver is under 18 years of age',
+    DUPLICATE_DOC:      'Cannot approve — document is already registered with another account',
+    DOC_TAMPERED:       'Cannot approve — document tampering confirmed by verification system',
+    PAN_INACTIVE:       'Cannot approve — PAN is inactive in government records (status must be active)',
+    DL_NOT_ACTIVE:      'Cannot approve — Driving Licence is not active in government records',
+    RC_EXPIRED:         'Cannot approve — Vehicle RC registration has expired',
+};
+
+const calcAge = (dobStr) => {
+    if (!dobStr) return null;
+    const dob = new Date(String(dobStr).slice(0, 10));
+    if (isNaN(dob.getTime())) return null;
+    return Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 3600 * 1000));
+};
+
 export const approveDocument = async (docId, adminId, notes) => {
     const doc = await repo.getDocById(docId);
     if (!doc) throw new NotFoundError('Document not found');
-    if (!['manual_review', 'pending'].includes(doc.status)) {
-        throw new ValidationError(`Document is in ${doc.status} state, cannot approve`);
+    if (doc.status === 'approved') {
+        throw new ValidationError('Document is already approved');
     }
+    // Admin-rejected (reviewed_by is set) → admin cannot re-approve, decision is final
+    // System-rejected (reviewed_by is null) → admin CAN override
+    if (doc.status === 'rejected' && doc.reviewed_by) {
+        throw new ValidationError('Document was rejected by admin — decision is final. Ask a supervisor to handle this case.');
+    }
+
+    const extracted = typeof doc.extracted_data === 'string'
+        ? JSON.parse(doc.extracted_data)
+        : (doc.extracted_data || {});
+    const cfFraud = extracted.cashfree_ocr?.fraud_checks || {};
+
+    // ── Hard restriction checks ───────────────────────────────────────────────
+
+    // 1. Document tampering (is_overwritten or is_photo_imposed)
+    if (cfFraud.is_overwritten || cfFraud.is_photo_imposed) {
+        throw new ValidationError(HARD_RESTRICTION_MSG.DOC_TAMPERED);
+    }
+
+    // 2. Duplicate document flag
+    const fraudFlags = await repo.getFraudFlagsForDoc(docId);
+    if (fraudFlags.some(f => f.flag_type === 'DUPLICATE_NUMBER')) {
+        throw new ValidationError(HARD_RESTRICTION_MSG.DUPLICATE_DOC);
+    }
+
+    // 3. Age < 18 (DL DOB)
+    if (doc.document_type === 'DRIVING_LICENCE') {
+        const age = calcAge(extracted.dob);
+        if (age !== null && age < 18) {
+            throw new ValidationError(HARD_RESTRICTION_MSG.AGE_UNDER_18);
+        }
+        // 4. DL not active in govt records
+        if (extracted.dl_status && extracted.dl_status !== 'ACTIVE') {
+            throw new ValidationError(HARD_RESTRICTION_MSG.DL_NOT_ACTIVE);
+        }
+    }
+
+    // 5. PAN inactive
+    if (doc.document_type === 'PAN' && extracted.pan_status && extracted.pan_status !== 'E') {
+        throw new ValidationError(HARD_RESTRICTION_MSG.PAN_INACTIVE);
+    }
+
+    // 6. RC expired
+    if (doc.document_type === 'VEHICLE_RC') {
+        const validity = extracted.registration_validity;
+        if (validity && new Date(validity) < new Date()) {
+            throw new ValidationError(HARD_RESTRICTION_MSG.RC_EXPIRED);
+        }
+    }
+
+    // ── Approve ───────────────────────────────────────────────────────────────
 
     const updated = await repo.adminUpdateDoc(docId, 'approved', adminId, null);
     await repo.addAuditLog({ userId: doc.user_id, docId, action: 'APPROVED',
         actorType: 'admin', actorId: adminId,
         beforeState: { status: doc.status }, afterState: { status: 'approved', notes } });
 
-    await repo.recomputeAggregate(doc.user_id);
+    const aggregate = await repo.recomputeAggregate(doc.user_id);
+    kycNotify.notifyAdminApproved(doc.user_id, doc.document_type).catch(() => {});
+    if (aggregate?.overall_status === 'verified') {
+        kycNotify.notifyKycComplete(doc.user_id).catch(() => {});
+    }
     return updated;
 };
 
 export const rejectDocument = async (docId, adminId, reason, allowRetry) => {
     const doc = await repo.getDocById(docId);
     if (!doc) throw new NotFoundError('Document not found');
+    if (doc.status === 'approved') {
+        throw new ValidationError('Document is already approved — cannot reject an approved document');
+    }
+    if (doc.status === 'rejected') {
+        throw new ValidationError('Document is already rejected');
+    }
 
     const updated = await repo.adminUpdateDoc(docId, 'rejected', adminId, reason);
     await repo.addAuditLog({ userId: doc.user_id, docId, action: 'REJECTED',
@@ -525,6 +782,8 @@ export const rejectDocument = async (docId, adminId, reason, allowRetry) => {
     }
 
     await repo.recomputeAggregate(doc.user_id);
+    const attemptsLeft = allowRetry ? Math.max(0, 3 - (updated.attempt_count || 0)) : 0;
+    kycNotify.notifyAdminRejected(doc.user_id, doc.document_type, reason, attemptsLeft).catch(() => {});
     return updated;
 };
 

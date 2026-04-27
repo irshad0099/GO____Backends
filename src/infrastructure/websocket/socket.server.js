@@ -17,6 +17,7 @@ import {
     storeActiveRideSession,
     getActiveRideSession
 } from './reconnection.handler.js';
+import { addTrackingPoint } from './rideTracking.js';
 
 /**
  * Setup all socket event handlers
@@ -176,6 +177,16 @@ export const setupSocketHandlers = () => {
                     }
                 } catch (etaErr) {
                     logger.warn('ETA calculation failed:', etaErr.message);
+                }
+
+                // Actual distance track karo — sirf in_progress rides ke liye
+                try {
+                    const rideForTracking = await findRideById(rideId);
+                    if (rideForTracking?.status === 'in_progress') {
+                        await addTrackingPoint(rideId, latitude, longitude);
+                    }
+                } catch (trackErr) {
+                    logger.warn('Distance tracking failed:', trackErr.message);
                 }
 
                 logger.debug('📍 Location ping sent to ride room', {

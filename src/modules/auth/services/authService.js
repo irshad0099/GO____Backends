@@ -123,27 +123,7 @@ export const verifySignup = async ({ phone, otp, email, fullName,role }) => {
     }
 };
 
-// export const signin = async (phone,role) => {
-//     try {
-//         // Check if user exists
-//         const user = await userRepo.findUserByPhoneAndRole(phone,role);
-//         if (!user) {
-//             throw new NotFoundError('User not found. Please sign up first.');
-//         }
 
-//         if (!user.is_active) {
-//             throw new AuthError('Account is deactivated. Please contact support.');
-//         }
-
-//         // Send OTP
-//         const result = await otpService.sendOTP(phone, 'signin');
-
-//         return result;
-//     } catch (error) {
-//         logger.error('Signin service error:', error);
-//         throw error;
-//     }
-// };
 
 
 export const signin = async (phone, email, role) => {
@@ -189,70 +169,6 @@ export const signin = async (phone, email, role) => {
     }
 };
 
-// export const verifySignin = async ({ phone, otp, ipAddress, userAgent,role }) => {
-//     try {
-//         // Verify OTP
-//         await otpService.verifyOTP(phone, otp, 'signin');
-
-//         // Get user
-//         const user = await userRepo.findUserByPhoneAndRole(phone,role);
-//         if (!user) {
-//             throw new NotFoundError('User not found');
-//         }
-
-//         if (!user.is_active) {
-//             throw new AuthError('Account is deactivated. Please contact support.');
-//         }
-
-//         // Update last login
-//         await userRepo.updateUser(user.id, {
-//             last_login: new Date()
-//         });
-
-//         // Generate tokens
-//         const accessToken = tokenService.generateAccessToken(user);
-//         const refreshToken = tokenService.generateRefreshToken(user);
-
-//         // Create session
-//         await sessionRepo.createSession({
-//             userId: user.id,
-//             refreshToken,
-//             ipAddress,
-//             userAgent
-//         });
-
-//         logger.info('User signed in successfully:', { userId: user.id, phone });
-
-//         return {
-//             accessToken,
-//             refreshToken,
-//             user: {
-//                 id: user.id,
-//                 phone: user.phone_number,
-//                 email: user.email,
-//                 fullName: user.full_name,
-//                 role: user.role,
-//                 isVerified: user.is_verified,
-//                 isActive: user.is_active
-//             }
-//         };
-//     } catch (error) {
-//         logger.error('Verify signin service error:', error);
-//         throw error;
-//     }
-// };
-
-// export const logout = async (refreshToken) => {
-//     try {
-//         // Delete session
-//         await sessionRepo.deleteSession(refreshToken);
-
-//         return { message: 'Logged out successfully' };
-//     } catch (error) {
-//         logger.error('Logout service error:', error);
-//         throw error;
-//     }
-// };
 
 
 export const verifySignin = async ({ phone, email, otp, ipAddress, userAgent, role }) => {

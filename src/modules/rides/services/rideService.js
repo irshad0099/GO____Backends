@@ -439,32 +439,6 @@ const calculateCompletionFare = async (ride) => {
 // ═════════════════════════════════════════════════════════════════════════════
 //  FIND NEARBY DRIVERS
 // ═════════════════════════════════════════════════════════════════════════════
-// export const findNearbyDrivers = async (vehicleType, latitude, longitude) => {
-//     try {
-//         const drivers = await rideRepo.findNearbyDrivers(
-//             vehicleType, latitude, longitude,
-//             ENV.DEFAULT_SEARCH_RADIUS_KM || 5
-//         );
-
-//         return drivers.map(driver => ({
-//             id:            driver.id,
-//             name:          driver.full_name,
-//             vehicleType:   driver.vehicle_type,
-//             vehicleNumber: driver.vehicle_number,
-//             vehicleModel:  driver.vehicle_model,
-//             vehicleColor:  driver.vehicle_color,
-//             rating:        parseFloat(driver.rating || 0).toFixed(1),
-//             distance:      parseFloat(driver.distance).toFixed(1),
-//             location: {
-//                 latitude:  driver.current_latitude,
-//                 longitude: driver.current_longitude
-//             }
-//         }));
-//     } catch (error) {
-//         logger.error('Find nearby drivers service error:', error);
-//         throw error;
-//     }
-// };
 
 
 
@@ -525,12 +499,7 @@ export const acceptRide = async (driverUserId, rideId) => {
         if (!ride) throw new NotFoundError('Ride not found');
         if (ride.status !== 'requested') throw new ConflictError('Ride is no longer available');
 
-        // const pickupDistanceKm = (driver.current_latitude && driver.current_longitude)
-        //     ? rideCalculator.calculateDistance(
-        //         driver.current_latitude, driver.current_longitude,
-        //         ride.pickup_latitude, ride.pickup_longitude
-        //       )
-        //     : 0;
+    
 
         const etaResult = (driver.current_latitude && driver.current_longitude)
     ? await getDriverETA(
@@ -665,25 +634,8 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
 
         let additionalFields = {};
 
-        // ── FCM 3a: Ride cancelled (queued) ──────────────────────────────────
-        // if (status === 'cancelled') {
-        //     additionalFields.cancelled_by        = 'driver';
-        //     additionalFields.cancellation_reason = cancellationReason || 'Driver cancelled';
-        //     await driverRepo.updateDriver(driver.id, { is_on_duty: false });
-
-        //     if (ride.passenger_fcm_token) {
-        //         await addNotificationJob('ride-cancelled', {
-        //             fcmToken: ride.passenger_fcm_token,
-        //             title:    'Ride Cancelled',
-        //             body:     'Your driver cancelled the ride. Please book again.',
-        //             data: {
-        //                 type:   'ride_cancelled',
-        //                 rideId: String(rideId),
-        //                 reason: cancellationReason || 'Driver cancelled',
-        //             },
-        //         });
-        //     }
-        // }
+        
+        
 
 
         // ── FCM 3a: Ride cancelled (queued) ──────────────────────────────────

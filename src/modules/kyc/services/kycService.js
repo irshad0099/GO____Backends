@@ -797,3 +797,20 @@ export const suspendDriverByAdmin = async (targetUserId, adminId, reason) => {
         beforeState: null, afterState: { reason } });
     return updated;
 };
+
+
+
+export const getHowManyDocUploadedByFlag = async (userId) => {
+    const docs = await repo.getDocsByUser(userId);
+    const docMap = {};
+    docs.forEach(d => { docMap[d.document_type] = d; });
+
+    const result = {};
+    for (const type of ALL_DOC_TYPES) {
+        const key = type.toLowerCase();
+        const doc = docMap[type];
+        result[key]          = !!doc;
+        result[`${key}_status`] = doc?.status || null;
+    }
+    return result;
+};

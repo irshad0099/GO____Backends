@@ -44,6 +44,29 @@ export const acceptRide = async (req, res, next) => {
     }
 };
 
+export const rejectRide = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const { rideId } = req.params;
+        const { reason_code = 'other' } = req.body;
+
+        const result = await rideService.rejectRide(userId, rideId, reason_code);
+
+        sendResponse(res, 200, 'Ride declined', result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getDriverRideSummary = async (req, res, next) => {
+    try {
+        const result = await rideService.getDriverRideSummary(req.user.id, req.params.rideId);
+        sendResponse(res, 200, '', result);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const updateRideStatus = async (req, res, next) => {
     try {
         const userId = req.user.id;

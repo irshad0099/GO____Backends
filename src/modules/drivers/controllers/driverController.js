@@ -87,9 +87,9 @@ export const toggleAvailability = async (req, res, next) => {
 export const getRideHistory = async (req, res, next) => {
     try {
         const userId = req.user.id;
-        const { page = 1, limit = 10, status } = req.query;
+        const { page = 1, limit = 10, status, period } = req.query;
 
-        const history = await driverService.getDriverRideHistory(userId, { page, limit, status });
+        const history = await driverService.getDriverRideHistory(userId, { page, limit, status, period });
 
         sendResponse(res, 200, '', history);
     } catch (error) {

@@ -14,6 +14,16 @@ export const getStatus = async (req, res) => {
     }
 };
 
+export const getDocUploadFlags = async (req, res) => {
+    try {
+        const data = await kycService.getHowManyDocUploadedByFlag(req.user.id);
+        sendResponse(res, 200, '', data);
+    } catch (err) {
+        logger.error('[KYC] getDocUploadFlags error:', err);
+        sendError(res, err.statusCode || 500, err.message);
+    }
+};
+
 export const submitDocument = async (req, res) => {
     try {
         const frontFile = req.files?.file?.[0] || req.file;

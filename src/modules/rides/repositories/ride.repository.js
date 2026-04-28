@@ -881,7 +881,7 @@ export const findRidesByPassenger = async (passengerId, { limit = 10, offset = 0
     }
 };
 
-export const findRidesByDriver = async (driverId, { limit = 10, offset = 0, status } = {}) => {
+export const findRidesByDriver = async (driverId, { limit = 10, offset = 0, status, dateFrom, dateTo } = {}) => {
     try {
         let query = `
             SELECT r.*,
@@ -896,6 +896,18 @@ export const findRidesByDriver = async (driverId, { limit = 10, offset = 0, stat
         if (status) {
             query += ` AND r.status = $${paramIndex}`;
             params.push(status);
+            paramIndex++;
+        }
+
+        if (dateFrom) {
+            query += ` AND r.requested_at >= $${paramIndex}`;
+            params.push(dateFrom);
+            paramIndex++;
+        }
+
+        if (dateTo) {
+            query += ` AND r.requested_at <= $${paramIndex}`;
+            params.push(dateTo);
             paramIndex++;
         }
 
@@ -923,11 +935,14 @@ export const countRidesByPassenger = async (passengerId, status) => {
     }
 };
 
-export const countRidesByDriver = async (driverId, status) => {
+export const countRidesByDriver = async (driverId, status, dateFrom, dateTo) => {
     try {
         let query  = `SELECT COUNT(*) FROM rides WHERE driver_id = $1`;
         const params = [driverId];
-        if (status) { query += ` AND status = $2`; params.push(status); }
+        let paramIndex = 2;
+        if (status)   { query += ` AND status = $${paramIndex}`; params.push(status); paramIndex++; }
+        if (dateFrom) { query += ` AND requested_at >= $${paramIndex}`; params.push(dateFrom); paramIndex++; }
+        if (dateTo)   { query += ` AND requested_at <= $${paramIndex}`; params.push(dateTo); paramIndex++; }
         const result = await db.query(query, params);
         return parseInt(result.rows[0].count);
     } catch (error) {

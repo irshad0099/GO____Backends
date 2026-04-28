@@ -1,4 +1,5 @@
 import * as cancelService from '../services/rideCancellationService.js';
+
 import { getIO } from '../../../config/websocketConfig.js';
 import logger from '../../../core/logger/logger.js';
 import { sendResponse } from '../../../core/utils/response.js';
@@ -19,6 +20,28 @@ export const cancelRide = async (req, res, next) => {
             });
         } catch (sockErr) {
             logger.warn(`Socket emit failed (ride:cancelled): ${sockErr.message}`);
+        }
+
+        sendResponse(res, 200, '', data);
+    } catch (error) { next(error); }
+};
+
+export const driverCancelRide = async (req, res, next) => {
+    try {
+        const rideId = parseInt(req.params.rideId);
+        const data = await cancelService.driverCancelRide(req.user.id, rideId);
+
+        try {
+            const io = getIO();
+            io.to(`ride:${rideId}`).emit('ride:status_changed', {
+                rideId,
+                status:      'cancelled',
+                cancelledBy: 'driver',
+                reason:      'emergency',
+                timestamp:   new Date().toISOString()
+            });
+        } catch (sockErr) {
+            logger.warn(`Socket emit failed (driver cancel): ${sockErr.message}`);
         }
 
         sendResponse(res, 200, '', data);

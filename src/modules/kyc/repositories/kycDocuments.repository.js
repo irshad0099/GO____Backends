@@ -72,6 +72,7 @@ export const getDocsByUser = async (userId) => {
     return rows;
 };
 
+
 export const getDocByUserAndType = async (userId, docType) => {
     const { rows } = await db.query(
         `SELECT * FROM kyc_documents WHERE user_id = $1 AND document_type = $2`,

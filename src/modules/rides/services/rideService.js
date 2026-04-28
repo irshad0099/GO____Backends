@@ -621,6 +621,33 @@ const etaMinutes = etaResult.etaMinutes;
 };
 
 // ═════════════════════════════════════════════════════════════════════════════
+//  REJECT RIDE
+// ═════════════════════════════════════════════════════════════════════════════
+export const rejectRide = async (driverUserId, rideId, reasonCode = 'other') => {
+    try {
+        const driver = await driverRepo.findDriverByUserId(driverUserId);
+        if (!driver) throw new NotFoundError('Driver not found');
+
+        const ride = await rideRepo.findRideById(rideId);
+        if (!ride) throw new NotFoundError('Ride not found');
+        if (ride.status !== 'requested') throw new ApiError(400, 'Ride is no longer available');
+
+        await db.query(
+            `INSERT INTO ride_rejections (ride_id, driver_id, reason_code)
+             VALUES ($1, $2, $3)
+             ON CONFLICT DO NOTHING`,
+            [rideId, driver.id, reasonCode]
+        );
+
+        logger.info(`[rejectRide] driver=${driver.id} rejected ride=${rideId}`);
+        return { rideId, rejected: true };
+    } catch (error) {
+        logger.error('Reject ride service error:', error);
+        throw error;
+    }
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
 //  UPDATE RIDE STATUS
 // ═════════════════════════════════════════════════════════════════════════════
 export const updateRideStatus = async (driverUserId, rideId, statusData) => {
@@ -983,6 +1010,43 @@ export const getCurrentRide = async (userId, userRole) => {
         return { hasActiveRide: true, ride: formatRideResponse(ride) };
     } catch (error) {
         logger.error('Get current ride service error:', error);
+        throw error;
+    }
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  DRIVER RIDE SUMMARY (trip completed screen)
+// ═════════════════════════════════════════════════════════════════════════════
+export const getDriverRideSummary = async (driverUserId, rideId) => {
+    try {
+        const driver = await driverRepo.findDriverByUserId(driverUserId);
+        if (!driver) throw new NotFoundError('Driver not found');
+
+        const ride = await rideRepo.findRideById(rideId);
+        if (!ride) throw new NotFoundError('Ride not found');
+        if (ride.driver_id !== driver.id) throw new ApiError(403, 'This ride is not yours');
+        if (ride.status !== 'completed') throw new ApiError(400, 'Ride not completed yet');
+
+        const tripFare      = parseFloat(ride.actual_fare || ride.estimated_fare || 0);
+        const waitBonus     = parseFloat(ride.waiting_charges || 0);
+        const platformFee   = parseFloat(ride.platform_share || 0);
+        const netEarnings   = Math.max(0, tripFare + waitBonus - platformFee);
+
+        return {
+            rideId,
+            pickup:          ride.pickup_address,
+            dropoff:         ride.dropoff_address,
+            distanceKm:      parseFloat(ride.actual_distance_km || ride.distance_km || 0),
+            durationMinutes: ride.duration_minutes,
+            earnings: {
+                tripFare,
+                waitTimeBonus: waitBonus,
+                platformFee,
+                netEarnings,
+            },
+        };
+    } catch (error) {
+        logger.error('Get driver ride summary error:', error);
         throw error;
     }
 };

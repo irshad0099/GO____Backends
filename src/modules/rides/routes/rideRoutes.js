@@ -63,6 +63,11 @@ router.post('/:rideId/accept',
     controller.acceptRide
 );
 
+router.post('/:rideId/reject',
+    authorize('driver'),
+    controller.rejectRide
+);
+
 router.patch('/:rideId/status',
     authorize('driver'),
     validate(validator.updateRideStatusValidators),
@@ -101,6 +106,14 @@ router.post(
     cancelCtrl.cancelRide
 );
 
+// ─── Emergency Cancel (Driver) ───────────────────────────────────────────────
+// POST /api/v1/rides/:rideId/driver-cancel
+router.post(
+    '/:rideId/driver-cancel',
+    authorize('driver'),
+    cancelCtrl.driverCancelRide
+);
+
 // ─── Ride OTP Generation ────────────────────────────────────────────────────
 // POST /api/v1/rides/:rideId/generate-otp — driver/system generates & sends OTP to passenger
 router.post(
@@ -121,6 +134,9 @@ router.post(
 // ─── Ride Invoice ───────────────────────────────────────────────────────────
 // GET /api/v1/rides/:rideId/invoice — get receipt after ride
 router.get('/:rideId/invoice', invoiceCtrl.getInvoice);
+
+// GET /api/v1/rides/:rideId/driver-summary — trip completed screen ke liye
+router.get('/:rideId/driver-summary', authorize('driver'), controller.getDriverRideSummary);
 
 
 

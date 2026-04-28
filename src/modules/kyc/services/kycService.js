@@ -113,14 +113,15 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
             fileBuffer,
             fileName,
             mimeType,
-            // PAN → NSDL, DL → Sarathi, RC → VAHAN (insurance + fitness + permit bhi milega)
-            doVerification: ['PAN', 'DRIVING_LICENCE', 'VEHICLE_RC'].includes(docType),
+            // PAN → NSDL, DL → Sarathi (RC verification Cashfree support nahi karta)
+            doVerification: ['PAN', 'DRIVING_LICENCE'].includes(docType),
         });
     } catch (err) {
-        const msg = err.response?.data?.message || `${docType} OCR service error`;
+        const msg = err.response?.data?.message || err.response?.data?.code || `${docType} OCR service error`;
         await repo.updateDocument(doc.id, { status: 'rejected', rejectionReason: msg });
         await repo.recomputeAggregate(userId);
-        throw Object.assign(new Error(msg), { statusCode: 422 });
+        const left = Math.max(0, 3 - (doc.attempt_count || 1));
+        throw Object.assign(new Error(msg), { statusCode: 422, documentId: doc.id, canRetry: left > 0, attemptsLeft: left });
     }
 
     // Extract fields per doc type
@@ -208,60 +209,32 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
             docNumber     = fields.registration_number || fields.rc_number;
             extractedName = fields.owner_name || fields.owner;
 
-            // VAHAN verification details (Cashfree doVerification=true se aate hain)
-            const vahanDetails = vdet.rc_details || vdet.vehicle_details || {};
-            const insuranceExpiry  = vahanDetails.insurance_expiry  || vahanDetails.insurance_upto  || null;
-            const fitnessExpiry    = vahanDetails.fitness_expiry     || vahanDetails.fitness_upto    || null;
-            const permitExpiry     = vahanDetails.permit_expiry      || vahanDetails.permit_upto     || null;
-            const rcStatus         = vahanDetails.rc_status          || vdet.status                  || null;
-            const isPucc           = vahanDetails.pucc_upto          || null;
-
-            // Insurance expired check — VAHAN se aaya to hard fail
-            const minDays = ENV.KYC_INSURANCE_EXPIRY_MIN_DAYS || 30;
-            let insuranceDaysLeft = null;
-            if (insuranceExpiry) {
-                insuranceDaysLeft = Math.floor((new Date(insuranceExpiry).getTime() - Date.now()) / 86400000);
-                if (insuranceDaysLeft < 0) {
-                    await repo.updateDocument(doc.id, {
-                        status: 'rejected',
-                        rejectionReason: 'Vehicle insurance has expired (verified via VAHAN)',
-                    });
-                    await repo.recomputeAggregate(userId);
-                    throw Object.assign(new Error('Vehicle insurance has expired. Please renew and resubmit.'), { statusCode: 422 });
-                }
-                if (insuranceDaysLeft < minDays) {
-                    await repo.addFraudFlag(doc.id, 'INSURANCE_EXPIRING_SOON', 'MEDIUM',
-                        { insurance_expiry: insuranceExpiry, days_left: insuranceDaysLeft });
-                }
-            }
-
-            // Fitness expired check
-            if (fitnessExpiry && new Date(fitnessExpiry) < new Date()) {
-                await repo.addFraudFlag(doc.id, 'FITNESS_EXPIRED', 'HIGH',
-                    { fitness_expiry: fitnessExpiry });
-            }
+            // TODO: VAHAN API se insurance/fitness/permit verify karna hai — abhi skip
+            const insuranceExpiry  = null;
+            const insuranceDaysLeft = null;
+            const fitnessExpiry    = null;
+            const permitExpiry     = null;
+            const puccExpiry       = null;
 
             extractedData = {
-                owner:                extractedName || null,
-                relation_name:        fields.relation_name || null,
-                vehicle_model:        fields.vehicle_model || vahanDetails.vehicle_model || null,
-                vehicle_type:         fields.vehicle_type  || vahanDetails.vehicle_class  || null,
-                manufacturer:         fields.manufacturer_name || null,
-                manufacturing_date:   fields.manufacturing_date || null,
-                registration_date:    fields.registration_date || vahanDetails.reg_date || null,
-                registration_validity:fields.registration_validity || vahanDetails.reg_valid_upto || null,
-                chassis_number:       fields.chassis_number || vahanDetails.chassis_no || null,
-                engine_number:        fields.engine_number  || vahanDetails.engine_no  || null,
-                address:              fields.address || null,
-                // VAHAN-verified insurance + fitness details
-                insurance_expiry:     insuranceExpiry,
-                insurance_days_left:  insuranceDaysLeft,
-                fitness_expiry:       fitnessExpiry,
-                permit_expiry:        permitExpiry,
-                pucc_expiry:          isPucc,
-                rc_status:            rcStatus,
-                vahan_verified:       !!vahanDetails.rc_status,
-                masked:               docNumber ? String(docNumber).toUpperCase() : null,
+                owner:                 extractedName || null,
+                relation_name:         fields.relation_name || null,
+                vehicle_model:         fields.vehicle_model || null,
+                vehicle_type:          fields.vehicle_type  || null,
+                manufacturer:          fields.manufacturer_name || null,
+                manufacturing_date:    fields.manufacturing_date || null,
+                registration_date:     fields.registration_date || null,
+                registration_validity: fields.registration_validity || fields.reg_valid_upto || null,
+                chassis_number:        fields.chassis_number || null,
+                engine_number:         fields.engine_number  || null,
+                address:               fields.address || null,
+                insurance_expiry:      insuranceExpiry,
+                insurance_days_left:   insuranceDaysLeft,
+                fitness_expiry:        fitnessExpiry,
+                permit_expiry:         permitExpiry,
+                pucc_expiry:           puccExpiry,
+                vahan_verified:        false,
+                masked:                docNumber ? String(docNumber).toUpperCase() : null,
             };
             break;
         }
@@ -270,10 +243,14 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
     // Cashfree ka poora response store karo — verification system banane mein kaam aayega
     extractedData.cashfree_ocr = cfResp;
 
+    const docAttemptsLeft = () => Math.max(0, 3 - (doc.attempt_count || 1));
+
     if (!docNumber) {
         await repo.updateDocument(doc.id, { status: 'rejected', rejectionReason: `Could not extract ${docType} number from image` });
         await repo.recomputeAggregate(userId);
-        throw Object.assign(new Error(`Could not extract ${docType} number. Please upload a clearer image.`), { statusCode: 422 });
+        throw Object.assign(new Error(`Could not extract ${docType} number. Please upload a clearer image.`), {
+            statusCode: 422, documentId: doc.id, canRetry: docAttemptsLeft() > 0, attemptsLeft: docAttemptsLeft(),
+        });
     }
 
     // Govt DB check (PAN + DL only — hard fail)
@@ -281,7 +258,9 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
         const reason = `${docType} not found or invalid in government records`;
         await repo.updateDocument(doc.id, { status: 'rejected', rejectionReason: reason });
         await repo.recomputeAggregate(userId);
-        throw Object.assign(new Error(reason), { statusCode: 422 });
+        throw Object.assign(new Error(reason), {
+            statusCode: 422, documentId: doc.id, canRetry: docAttemptsLeft() > 0, attemptsLeft: docAttemptsLeft(),
+        });
     }
 
     // Duplicate hash check
@@ -364,33 +343,61 @@ export const retryDocument = async (docId, userId, { fileBuffer, fileName, mimeT
 // ─── Bank account (penny-drop) ────────────────────────────────────────────────
 
 export const submitBankAccount = async (userId, accountNumber, ifsc, name) => {
+    // Input validation — Cashfree rejects before even creating a doc row
+    if (!accountNumber || String(accountNumber).trim().length < 6) {
+        throw new ValidationError('Invalid account number');
+    }
+    const ifscClean = String(ifsc).trim().toUpperCase();
+    if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifscClean)) {
+        throw new ValidationError('Invalid IFSC code — must be 11 characters with 0 as the 5th character (e.g. SBIN0001234)');
+    }
+
     const existing = await repo.getDocByUserAndType(userId, 'BANK_ACCOUNT');
     if (existing && ['auto_verified', 'approved'].includes(existing.status)) {
         throw new ConflictError('Bank account already verified');
     }
     if (existing && existing.status === 'rejected' && existing.attempt_count >= 3) {
-        throw new ValidationError('Maximum retries reached for bank verification. Please contact support.');
+        throw Object.assign(
+            new ValidationError('Maximum retries reached for bank verification. Please contact support.'),
+            { documentId: existing.id, canRetry: false, attemptsLeft: 0 }
+        );
     }
 
     const doc = await repo.createDocument(userId, 'BANK_ACCOUNT', 'PENNY_DROP', null);
     await repo.addAuditLog({ userId, docId: doc.id, action: 'SUBMITTED', actorType: 'driver', actorId: userId,
         beforeState: null, afterState: { status: 'pending' } });
 
+    const attemptsLeft = () => Math.max(0, 3 - (doc.attempt_count || 1));
+
     let cfResp;
     try {
-        cfResp = await cf.verifyBankAccount(accountNumber, ifsc, name);
-        console.log('Cashfree bank verification response:', cfResp);
+        cfResp = await cf.verifyBankAccount(accountNumber, ifscClean, name);
     } catch (err) {
-        await repo.updateDocument(doc.id, { status: 'rejected', rejectionReason: 'Bank verification service error' });
+        // Extract actual Cashfree error message if available
+        const cfMsg = err.response?.data?.message || err.response?.data?.code || null;
+        const reason = cfMsg || 'Bank verification service error';
+        await repo.updateDocument(doc.id, { status: 'rejected', rejectionReason: reason });
         await repo.recomputeAggregate(userId);
-        throw Object.assign(new Error('Bank account verification failed'), { statusCode: 422 });
+        throw Object.assign(new Error(reason), {
+            statusCode: err.response?.status === 400 ? 422 : 422,
+            documentId:   doc.id,
+            canRetry:     attemptsLeft() > 0,
+            attemptsLeft: attemptsLeft(),
+        });
     }
 
     if (cfResp.account_status !== 'VALID') {
-        const reason = 'Bank account invalid or details do not match';
+        const reason = cfResp.account_status_code
+            ? `Bank account rejected: ${cfResp.account_status_code}`
+            : 'Bank account invalid or details do not match';
         await repo.updateDocument(doc.id, { status: 'rejected', rejectionReason: reason });
         await repo.recomputeAggregate(userId);
-        throw Object.assign(new Error(reason), { statusCode: 422 });
+        throw Object.assign(new Error(reason), {
+            statusCode:   422,
+            documentId:   doc.id,
+            canRetry:     attemptsLeft() > 0,
+            attemptsLeft: attemptsLeft(),
+        });
     }
 
     const docHash = scoring.hashDocNumber(accountNumber);
@@ -398,7 +405,10 @@ export const submitBankAccount = async (userId, accountNumber, ifsc, name) => {
     if (isDup) {
         await repo.updateDocument(doc.id, { status: 'rejected', rejectionReason: 'Account already registered' });
         await repo.recomputeAggregate(userId);
-        throw new ConflictError('This bank account is already registered with another account');
+        throw Object.assign(
+            new ConflictError('This bank account is already registered with another account'),
+            { documentId: doc.id, canRetry: false, attemptsLeft: 0 }
+        );
     }
 
     const extractedData = {

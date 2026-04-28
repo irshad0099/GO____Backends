@@ -2,6 +2,15 @@ import * as kycService from '../services/kycService.js';
 import logger from '../../../core/logger/logger.js';
 import { sendResponse, sendError } from '../../../core/utils/response.js';
 
+// Pulls retry metadata from service-thrown errors so frontend can act on them
+const buildErrorData = (err) => {
+    const data = {};
+    if (err.documentId   !== undefined) data.documentId   = err.documentId;
+    if (err.canRetry     !== undefined) data.canRetry     = err.canRetry;
+    if (err.attemptsLeft !== undefined) data.attemptsLeft = err.attemptsLeft;
+    return Object.keys(data).length ? data : null;
+};
+
 // ─── Driver endpoints ──────────────────────────────────────────────────────────
 
 export const getStatus = async (req, res) => {
@@ -47,8 +56,9 @@ export const submitDocument = async (req, res) => {
         res.status(httpStatus).json({ success: data.status !== 'rejected', data });
     } catch (err) {
         logger.error('[KYC] submitDocument error:', err);
-        if (err.statusCode === 409) return sendError(res, 409, err.message);
-        sendError(res, err.statusCode || 500, err.message);
+        const extra = buildErrorData(err);
+        if (err.statusCode === 409) return sendError(res, 409, err.message, extra);
+        sendError(res, err.statusCode || 500, err.message, extra);
     }
 };
 
@@ -87,8 +97,9 @@ export const submitBankAccount = async (req, res) => {
         sendResponse(res, 200, data.message, data);
     } catch (err) {
         logger.error('[KYC] submitBankAccount error:', err);
-        if (err.statusCode === 409) return sendError(res, 409, err.message);
-        sendError(res, err.statusCode || 500, err.message);
+        const extra = buildErrorData(err);
+        if (err.statusCode === 409) return sendError(res, 409, err.message, extra);
+        sendError(res, err.statusCode || 500, err.message, extra);
     }
 };
 

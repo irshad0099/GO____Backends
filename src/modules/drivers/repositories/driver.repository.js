@@ -223,3 +223,38 @@ export const findAvailableDrivers = async (vehicleType, latitude, longitude, rad
         throw error;
     }
 };
+
+export const getDriverEarnings = async (driverId, startDate, endDate) => {
+    try {
+        const { rows } = await db.query(
+            `SELECT
+                COALESCE(SUM(CASE WHEN r.status = 'completed' THEN r.actual_fare ELSE 0 END), 0)      AS total_earnings,
+                COUNT(*) FILTER (WHERE r.status = 'completed')                                         AS rides_completed,
+                COALESCE(SUM(CASE WHEN r.status = 'completed' THEN r.duration_minutes ELSE 0 END), 0) AS time_online_minutes,
+                COALESCE(SUM(ri.platform_fee), 0)                                                      AS platform_fees_paid,
+                json_agg(
+                    json_build_object(
+                        'date', DATE(COALESCE(r.completed_at, r.requested_at)),
+                        'earnings', COALESCE(r.actual_fare, 0)
+                    ) ORDER BY r.requested_at DESC
+                ) FILTER (WHERE r.status = 'completed') AS breakdown
+             FROM rides r
+             LEFT JOIN ride_invoices ri ON ri.ride_id = r.id
+             WHERE r.driver_id = $1
+               AND r.requested_at >= $2
+               AND r.requested_at <= $3`,
+            [driverId, startDate, endDate]
+        );
+        const row = rows[0];
+        return {
+            total:             parseFloat(row.total_earnings),
+            rides:             parseInt(row.rides_completed),
+            timeOnlineMinutes: parseInt(row.time_online_minutes),
+            platformFeesPaid:  parseFloat(row.platform_fees_paid),
+            breakdown:         row.breakdown || [],
+        };
+    } catch (error) {
+        logger.error('Get driver earnings repository error:', error);
+        throw error;
+    }
+};

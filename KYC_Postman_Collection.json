@@ -1,0 +1,431 @@
+{
+  "info": {
+    "name": "GoMobility — KYC APIs",
+    "description": "Driver KYC (Know Your Customer) APIs for GoMobility ride-hailing app.\n\n## Setup\n1. Set collection variable `BASE_URL` = `http://localhost:3000/api/v1`\n2. Set collection variable `DRIVER_TOKEN` = JWT token from login response\n3. Set collection variable `ADMIN_TOKEN` = JWT token from admin login\n\n## KYC Flow (Driver)\n1. Login → check `kyc.nextScreen` to decide which screen to show\n2. GET /kyc/status → full document-wise status\n3. POST /kyc/submit → upload each document (AADHAAR, PAN, DRIVING_LICENCE, VEHICLE_RC)\n4. POST /kyc/bank → verify bank account\n5. POST /kyc/face-match → upload selfie (only after Aadhaar verified)\n6. Poll GET /kyc/status until `overallStatus = 'verified'`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "BASE_URL", "value": "http://localhost:3000/api/v1" },
+    { "key": "DRIVER_TOKEN", "value": "your_driver_jwt_token_here" },
+    { "key": "ADMIN_TOKEN", "value": "your_admin_jwt_token_here" },
+    { "key": "DOC_ID", "value": "1" },
+    { "key": "DRIVER_USER_ID", "value": "123" }
+  ],
+  "item": [
+    {
+      "name": "🔑 Auth (Reference)",
+      "description": "Login se milta hai KYC status — driver login response mein `kyc` object hota hai",
+      "item": [
+        {
+          "name": "Driver Login → includes KYC nextScreen",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{BASE_URL}}/auth/verify-otp", "host": ["{{BASE_URL}}"], "path": ["auth", "verify-otp"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"1234\",\n  \"role\": \"driver\"\n}"
+            },
+            "description": "## Login Response mein KYC info\n\nDriver login hone ke baad response mein `kyc` object aata hai. Frontend isko padh ke decide karta hai ki kaun si screen dikhani hai.\n\n### `kyc.nextScreen` values → Screen routing:\n| nextScreen | Kaun si screen dikhao |\n|---|---|\n| `HOME` | Driver home screen (KYC complete, go online ho sakta hai) |\n| `KYC_INTRO` | KYC shuru karne ki intro screen (pehli baar) |\n| `KYC_UPLOAD` | Document upload screen (kuch docs baaki hain) |\n| `KYC_UNDER_REVIEW` | \"Documents under review\" waiting screen |\n| `KYC_RETRY` | Koi doc reject hua, retry karo |\n| `ACCOUNT_SUSPENDED` | Account suspend ho gaya, support se contact karo |\n\n### `kyc.canGoOnline`\n- `true` → Driver go-online button enable karo\n- `false` → Button disable rakho, KYC complete karo pehle\n\n### Example Response:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"accessToken\": \"eyJ...\",\n    \"refreshToken\": \"eyJ...\",\n    \"user\": {\n      \"id\": 123,\n      \"phone\": \"9876543210\",\n      \"fullName\": \"Ramesh Kumar\",\n      \"role\": \"driver\"\n    },\n    \"kyc\": {\n      \"overallStatus\": \"in_progress\",\n      \"submittedDocs\": 2,\n      \"verifiedDocs\": 1,\n      \"canGoOnline\": false,\n      \"verifiedAt\": null,\n      \"nextScreen\": \"KYC_UPLOAD\"\n    }\n  }\n}\n```"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📋 Driver — KYC Status",
+      "item": [
+        {
+          "name": "GET KYC Status (Full)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/status",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "status"]
+            },
+            "description": "## GET /kyc/status\n\nDriver ke saare documents ka status ek saath milta hai. Frontend is API ko call karta hai KYC progress screen pe.\n\n### Response Fields:\n\n**`overallStatus`** — Driver ka overall KYC state:\n| Value | Matlab |\n|---|---|\n| `not_started` | Koi bhi document submit nahi hua |\n| `in_progress` | Kuch documents submit hain, saare nahi |\n| `pending_review` | Saare docs submit, admin review kar raha hai |\n| `verified` | KYC complete, driver go-online ho sakta hai |\n| `rejected` | Koi doc reject hua, retry karo |\n| `suspended` | 3 baar se zyada fail → account suspend |\n\n**`canGoOnline`** — `true` sirf tab jab `overallStatus = 'verified'`\n\n**`documents[]`** — Har ek document (AADHAAR, PAN, DRIVING_LICENCE, VEHICLE_RC, BANK_ACCOUNT, SELFIE) ki entry:\n\n| Field | Values | Matlab |\n|---|---|---|\n| `status` | `not_submitted` | Upload nahi ki |\n| | `pending` | Processing ho raha hai |\n| | `auto_verified` | Auto verify ho gaya ✅ |\n| | `approved` | Admin ne approve kiya ✅ |\n| | `manual_review` | Admin dekh raha hai ⏳ |\n| | `rejected` | Reject hua ❌ |\n| `canRetry` | `true/false` | Retry button dikhao ya nahi |\n| `attemptsLeft` | `0-3` | Kitne retry baaki hain |\n| `rejectionReason` | string | Reject kyun hua (user ko dikhao) |\n\n**`nextAction`** — String message: \"Please upload Aadhaar\" etc. — user ko guide karne ke liye.\n\n### Frontend Document Upload Order (Recommended):\n1. AADHAAR (pehle ye karo — selfie ke liye zaruri)\n2. PAN\n3. DRIVING_LICENCE\n4. VEHICLE_RC\n5. BANK_ACCOUNT\n6. SELFIE (sirf AADHAAR verify hone ke baad)\n\n### Example Success Response:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"overallStatus\": \"in_progress\",\n    \"submittedDocsCount\": 3,\n    \"verifiedDocsCount\": 2,\n    \"canGoOnline\": false,\n    \"nextAction\": \"Please upload Vehicle RC\",\n    \"documents\": [\n      {\n        \"type\": \"AADHAAR\",\n        \"documentId\": 1,\n        \"status\": \"auto_verified\",\n        \"confidenceScore\": 92,\n        \"canRetry\": false\n      },\n      {\n        \"type\": \"PAN\",\n        \"documentId\": 2,\n        \"status\": \"auto_verified\",\n        \"confidenceScore\": 88,\n        \"canRetry\": false\n      },\n      {\n        \"type\": \"DRIVING_LICENCE\",\n        \"documentId\": 3,\n        \"status\": \"rejected\",\n        \"confidenceScore\": 45,\n        \"canRetry\": true,\n        \"attemptsLeft\": 2,\n        \"rejectionReason\": \"Image not clear. Please upload a sharper image.\"\n      },\n      {\n        \"type\": \"VEHICLE_RC\",\n        \"status\": \"not_submitted\",\n        \"canRetry\": true\n      },\n      {\n        \"type\": \"BANK_ACCOUNT\",\n        \"status\": \"not_submitted\",\n        \"canRetry\": true\n      },\n      {\n        \"type\": \"SELFIE\",\n        \"status\": \"not_submitted\",\n        \"canRetry\": true\n      }\n    ]\n  }\n}\n```"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📄 Driver — Document Upload",
+      "item": [
+        {
+          "name": "Submit Aadhaar (Front Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/submit",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "submit"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "AADHAAR", "type": "text" },
+                { "key": "file", "type": "file", "src": "/path/to/aadhaar_front.jpg", "description": "Aadhaar front side — JPG/PNG/PDF, max 10MB" }
+              ]
+            },
+            "description": "## POST /kyc/submit — Aadhaar Upload (sirf front)\n\n**Content-Type:** `multipart/form-data`\n\n**Form Fields:**\n| Field | Required | Values |\n|---|---|---|\n| `document_type` | ✅ | `AADHAAR` |\n| `file` | ✅ | Aadhaar front image (JPG/PNG/PDF, max 10MB) |\n| `file_back` | ❌ Optional | Aadhaar back side (address extract ke liye) |\n\n**Auto-extracted data:**\n- Name, DOB, Gender, State\n- Masked Aadhaar number (XXXX XXXX 1234)\n\n**Status flow:**\n- `auto_verified` → Document valid hai, verified ✅\n- `manual_review` → Thodi doubt, admin dekh lega ⏳\n- `rejected` (422) → Image unclear / invalid document ❌\n\n### Success Response (200):\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"documentId\": 1,\n    \"documentType\": \"AADHAAR\",\n    \"status\": \"auto_verified\",\n    \"confidenceScore\": 92,\n    \"extractedData\": {\n      \"name\": \"Ramesh Kumar\",\n      \"dob\": \"1990-05-15\",\n      \"gender\": \"M\",\n      \"state\": \"Maharashtra\",\n      \"masked\": \"XXXX XXXX 5678\"\n    },\n    \"message\": \"AADHAAR verified successfully\"\n  }\n}\n```\n\n### Rejection Response (422):\n```json\n{\n  \"success\": false,\n  \"data\": {\n    \"documentId\": 1,\n    \"documentType\": \"AADHAAR\",\n    \"status\": \"rejected\",\n    \"message\": \"Could not extract Aadhaar number. Please upload a clearer image.\",\n    \"attemptsLeft\": 2\n  }\n}\n```\n\n### Error Cases:\n| HTTP | Reason |\n|---|---|\n| 400 | `file` ya `document_type` missing |\n| 409 | Already verified (naye upload ki zarurat nahi) |\n| 422 | Image unclear / invalid |\n| 500 | S3 upload ya OCR service error |"
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Aadhaar (Front + Back)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/submit",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "submit"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "AADHAAR", "type": "text" },
+                { "key": "file", "type": "file", "src": "/path/to/aadhaar_front.jpg", "description": "Aadhaar front" },
+                { "key": "file_back", "type": "file", "src": "/path/to/aadhaar_back.jpg", "description": "Aadhaar back (address ke liye)" }
+              ]
+            },
+            "description": "## POST /kyc/submit — Aadhaar (Front + Back)\n\nBack side bhejne se address, pin code, district bhi extract hota hai — recommended.\n\n### Extra fields in extractedData:\n```json\n{\n  \"name\": \"Ramesh Kumar\",\n  \"dob\": \"1990-05-15\",\n  \"gender\": \"M\",\n  \"state\": \"Maharashtra\",\n  \"address\": \"123, Gandhi Nagar, Pune\",\n  \"pin_code\": \"411001\",\n  \"district\": \"Pune\",\n  \"masked\": \"XXXX XXXX 5678\"\n}\n```"
+          },
+          "response": []
+        },
+        {
+          "name": "Submit PAN",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/submit",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "submit"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "PAN", "type": "text" },
+                { "key": "file", "type": "file", "src": "/path/to/pan.jpg" }
+              ]
+            },
+            "description": "## POST /kyc/submit — PAN Card\n\n**Content-Type:** `multipart/form-data`\n\nPAN OCR ke baad **NSDL government database** se verify hota hai.\n\n**Auto-extracted data:**\n- Name, Father name, DOB\n- Masked PAN (ABCXXXXX1)\n- Govt verification status\n- Aadhaar seeding status\n\n### Success Response (200):\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"documentId\": 2,\n    \"documentType\": \"PAN\",\n    \"status\": \"auto_verified\",\n    \"confidenceScore\": 88,\n    \"extractedData\": {\n      \"name\": \"RAMESH KUMAR\",\n      \"father\": \"SURESH KUMAR\",\n      \"dob\": \"15/05/1990\",\n      \"masked\": \"ABCXXXXX1\",\n      \"govt_verified\": true,\n      \"pan_status\": \"E\",\n      \"aadhaar_linked\": true\n    },\n    \"message\": \"PAN verified successfully\"\n  }\n}\n```\n\n### Rejection (422) — PAN invalid in govt records:\n```json\n{\n  \"success\": false,\n  \"message\": \"PAN not found or invalid in government records\"\n}\n```\n\n### Error Cases:\n| HTTP | Reason |\n|---|---|\n| 409 | PAN already verified |\n| 422 | Invalid PAN / govt records mein nahi mila |"
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Driving Licence",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/submit",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "submit"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "DRIVING_LICENCE", "type": "text" },
+                { "key": "file", "type": "file", "src": "/path/to/dl.jpg" }
+              ]
+            },
+            "description": "## POST /kyc/submit — Driving Licence\n\nDL OCR ke baad **Sarathi (MoRTH) database** se verify hota hai.\n\n**Auto-extracted data:**\n- Name, Guardian, DOB, Blood Group\n- Expiry date, Issue date\n- Licence status (ACTIVE/INACTIVE)\n\n### Success Response (200):\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"documentId\": 3,\n    \"documentType\": \"DRIVING_LICENCE\",\n    \"status\": \"auto_verified\",\n    \"confidenceScore\": 85,\n    \"extractedData\": {\n      \"name\": \"Ramesh Kumar\",\n      \"dob\": \"1990-05-15\",\n      \"blood_group\": \"B+\",\n      \"expiry_date\": \"2030-05-14\",\n      \"issue_date\": \"2010-05-15\",\n      \"masked\": \"XXXX5678\",\n      \"govt_verified\": true,\n      \"dl_status\": \"ACTIVE\"\n    },\n    \"message\": \"DRIVING_LICENCE verified successfully\"\n  }\n}\n```\n\n### Rejection — DL not active:\n```json\n{\n  \"success\": false,\n  \"message\": \"DRIVING_LICENCE not found or invalid in government records\"\n}\n```\n\n### Hard Fails (Admin cannot override):\n- Driver age < 18\n- DL status not ACTIVE in Sarathi"
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Vehicle RC",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/submit",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "submit"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document_type", "value": "VEHICLE_RC", "type": "text" },
+                { "key": "file", "type": "file", "src": "/path/to/rc.jpg" }
+              ]
+            },
+            "description": "## POST /kyc/submit — Vehicle RC\n\nRC **VAHAN (MoRTH) database** se verify hoti hai — insurance, fitness, permit bhi check hota hai.\n\n**Auto-extracted + VAHAN verified data:**\n- Owner name, Vehicle model, Type\n- Registration date & validity\n- Insurance expiry (agar expired → hard reject)\n- Fitness expiry, Permit expiry\n- PUCC expiry\n- RC Status\n\n### Success Response (200):\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"documentId\": 4,\n    \"documentType\": \"VEHICLE_RC\",\n    \"status\": \"auto_verified\",\n    \"confidenceScore\": 90,\n    \"extractedData\": {\n      \"owner\": \"Ramesh Kumar\",\n      \"vehicle_model\": \"HONDA ACTIVA 6G\",\n      \"vehicle_type\": \"Motor Cycle\",\n      \"registration_date\": \"2022-03-10\",\n      \"registration_validity\": \"2037-03-09\",\n      \"insurance_expiry\": \"2025-03-09\",\n      \"insurance_days_left\": 180,\n      \"fitness_expiry\": \"2032-03-09\",\n      \"rc_status\": \"ACTIVE\",\n      \"vahan_verified\": true,\n      \"masked\": \"MH12AB1234\"\n    },\n    \"message\": \"VEHICLE_RC verified successfully\"\n  }\n}\n```\n\n### Hard Rejection — Insurance Expired (422):\n```json\n{\n  \"success\": false,\n  \"message\": \"Vehicle insurance has expired. Please renew and resubmit.\"\n}\n```\n\n### Warning (soft flag — uploaded but flagged):\nInsurance expiry < 30 days → `INSURANCE_EXPIRING_SOON` fraud flag lagta hai, but document accept hota hai."
+          },
+          "response": []
+        },
+        {
+          "name": "Retry Rejected Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/documents/{{DOC_ID}}/retry",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "documents", "{{DOC_ID}}", "retry"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": "/path/to/new_document.jpg" }
+              ]
+            },
+            "description": "## POST /kyc/documents/:id/retry\n\nRejected document ko dobara upload karo. **Max 3 attempts** allowed hain.\n\n**Path Param:** `id` — document ID (GET /kyc/status response mein milta hai)\n\n**Ye API sirf tab kaam karti hai jab:**\n- `status = 'rejected'`\n- `canRetry = true` (attemptsLeft > 0)\n\n### Frontend Logic:\n```\nif (doc.status === 'rejected' && doc.canRetry) {\n  // Retry button dikhao\n  // POST /kyc/documents/{doc.documentId}/retry\n}\nif (doc.attemptsLeft === 0) {\n  // \"Contact Support\" dikhao\n}\n```\n\n### Success Response (200) — same as /submit:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"documentId\": 3,\n    \"documentType\": \"DRIVING_LICENCE\",\n    \"status\": \"auto_verified\",\n    \"message\": \"DRIVING_LICENCE verified successfully\"\n  }\n}\n```\n\n### Error Cases:\n| HTTP | Reason |\n|---|---|\n| 400 | `file` missing |\n| 400 | Document rejected nahi tha (retry allowed nahi) |\n| 400 | 3 attempts ho chuke (contact support) |\n| 404 | Document ID nahi mila |"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🏦 Driver — Bank Account",
+      "item": [
+        {
+          "name": "Submit Bank Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/bank",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "bank"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account_number\": \"1234567890\",\n  \"ifsc\": \"HDFC0001234\",\n  \"name\": \"Ramesh Kumar\"\n}"
+            },
+            "description": "## POST /kyc/bank\n\nBank account verify karo **Cashfree penny-drop** se. File upload nahi hoti — sirf JSON body.\n\n**Content-Type:** `application/json`\n\n**Required Fields:**\n| Field | Type | Description |\n|---|---|---|\n| `account_number` | string | Bank account number |\n| `ifsc` | string | IFSC code (uppercase) |\n| `name` | string | Account holder name (driver ke naam se match hona chahiye) |\n\n**Penny-drop verification:**\n- Cashfree 1 rupee transfer karke account validate karta hai\n- Name match score bhi check hota hai\n\n### Success Response (200) — always `auto_verified`:\n```json\n{\n  \"success\": true,\n  \"message\": \"Bank account verified successfully.\",\n  \"data\": {\n    \"documentId\": 5,\n    \"documentType\": \"BANK_ACCOUNT\",\n    \"status\": \"auto_verified\",\n    \"extractedData\": {\n      \"account_masked\": \"XXXX7890\",\n      \"ifsc\": \"HDFC0001234\",\n      \"holder_name\": \"RAMESH KUMAR\",\n      \"bank_name\": \"HDFC Bank\",\n      \"branch\": \"Pune Main Branch\",\n      \"city\": \"Pune\",\n      \"name_match_score\": 95,\n      \"name_match_result\": \"STRONG_MATCH\"\n    },\n    \"message\": \"Bank account verified successfully.\"\n  }\n}\n```\n\n### Error Cases:\n| HTTP | Reason |\n|---|---|\n| 400 | `account_number`/`ifsc`/`name` missing |\n| 409 | Bank account already verified |\n| 409 | Ye account kisi aur driver ke saath register hai |\n| 422 | Account invalid ya details match nahi karte |"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🤳 Driver — Selfie / Face Match",
+      "item": [
+        {
+          "name": "Submit Selfie (Face Match with Aadhaar)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/face-match",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "face-match"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "selfie", "type": "file", "src": "/path/to/selfie.jpg", "description": "Face photo — JPG/PNG, clear background" }
+              ]
+            },
+            "description": "## POST /kyc/face-match\n\nDriver ka selfie upload karo — Cashfree AI se Aadhaar photo ke saath face match hota hai.\n\n**IMPORTANT:** Ye API tabhi kaam karti hai jab Aadhaar `auto_verified` ya `approved` ho. Pehle Aadhaar karo.\n\n**Form Field:** `selfie` — Driver ka clear selfie (JPG/PNG)\n\n**Matching Thresholds:**\n| Score | Status | Matlab |\n|---|---|---|\n| >= 75% | `auto_verified` | Face match ✅ |\n| 60-74% | `manual_review` | Admin manually dekh lega ⏳ |\n| < 60% | `rejected` | Face match fail ❌ |\n\n### Success Response (200) — auto_verified:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"documentId\": 6,\n    \"documentType\": \"SELFIE\",\n    \"status\": \"auto_verified\",\n    \"confidenceScore\": 87,\n    \"message\": \"Selfie verified successfully.\"\n  }\n}\n```\n\n### Manual Review Response (200):\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"documentId\": 6,\n    \"documentType\": \"SELFIE\",\n    \"status\": \"manual_review\",\n    \"confidenceScore\": 65,\n    \"message\": \"Selfie submitted for admin review. You'll be notified within 24 hours.\"\n  }\n}\n```\n\n### Face Mismatch Response (422):\n```json\n{\n  \"success\": false,\n  \"data\": {\n    \"documentId\": 6,\n    \"documentType\": \"SELFIE\",\n    \"status\": \"rejected\",\n    \"confidenceScore\": 35,\n    \"message\": \"Face does not match Aadhaar. Please upload a clear selfie.\",\n    \"attemptsLeft\": 2\n  }\n}\n```\n\n### Error Cases:\n| HTTP | Reason |\n|---|---|\n| 400 | Aadhaar pehle complete karo |\n| 400 | `selfie` file missing |\n| 409 | Selfie already verified |"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🛡️ Admin — KYC Management",
+      "item": [
+        {
+          "name": "List All Drivers KYC",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/admin/drivers?status=in_progress&page=1&limit=20",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "admin", "drivers"],
+              "query": [
+                { "key": "status", "value": "in_progress", "description": "Filter: not_started | in_progress | pending_review | verified | rejected | suspended" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "description": "## GET /kyc/admin/drivers\n\nSaare drivers ki KYC list with filters.\n\n**Query Params:**\n| Param | Values | Default |\n|---|---|---|\n| `status` | `not_started`, `in_progress`, `pending_review`, `verified`, `rejected`, `suspended` | All |\n| `page` | number | 1 |\n| `limit` | number | 20 |\n\n### Response:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"items\": [\n      {\n        \"user_id\": 123,\n        \"full_name\": \"Ramesh Kumar\",\n        \"phone_number\": \"9876543210\",\n        \"email\": \"ramesh@example.com\",\n        \"overall_status\": \"in_progress\",\n        \"submitted_docs_count\": 3,\n        \"verified_docs_count\": 2,\n        \"last_activity_at\": \"2024-01-15T10:30:00Z\",\n        \"verified_at\": null\n      }\n    ],\n    \"total\": 150\n  }\n}\n```"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Driver KYC Detail (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/admin/drivers/{{DRIVER_USER_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "admin", "drivers", "{{DRIVER_USER_ID}}"]
+            },
+            "description": "## GET /kyc/admin/drivers/:userId\n\nEk specific driver ka poora KYC detail — saare documents ke saath.\n\n### Response:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"driver\": {\n      \"id\": 123,\n      \"full_name\": \"Ramesh Kumar\",\n      \"phone_number\": \"9876543210\",\n      \"overall_status\": \"pending_review\",\n      \"submitted_docs_count\": 6,\n      \"verified_docs_count\": 5,\n      \"verified_at\": null,\n      \"pre_check_report\": { ... }\n    },\n    \"documents\": [\n      {\n        \"id\": 1,\n        \"document_type\": \"AADHAAR\",\n        \"status\": \"auto_verified\",\n        \"file_url\": \"https://s3.amazonaws.com/...\",\n        \"extracted_data\": { \"name\": \"Ramesh Kumar\", \"masked\": \"XXXX XXXX 5678\" },\n        \"confidence_score\": 92,\n        \"attempt_count\": 1,\n        \"verified_at\": \"2024-01-15T09:00:00Z\",\n        \"reviewed_by_name\": null\n      }\n    ]\n  }\n}\n```"
+          },
+          "response": []
+        },
+        {
+          "name": "Manual Review Queue",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/admin/queue?type=AADHAAR&status=manual_review&page=1&limit=20",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "admin", "queue"],
+              "query": [
+                { "key": "type", "value": "AADHAAR", "description": "Optional: AADHAAR | PAN | DRIVING_LICENCE | VEHICLE_RC | BANK_ACCOUNT | SELFIE" },
+                { "key": "status", "value": "manual_review", "description": "manual_review (default) | rejected | all" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "description": "## GET /kyc/admin/queue\n\nAdmin review queue — jo documents manually review ki zarurat hain.\n\nDefault `status=manual_review` — ye wo docs hain jo auto-verify nahi hue aur admin ko approve/reject karna hai.\n\n### Response:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"items\": [\n      {\n        \"id\": 5,\n        \"user_id\": 123,\n        \"full_name\": \"Ramesh Kumar\",\n        \"phone_number\": \"9876543210\",\n        \"document_type\": \"DRIVING_LICENCE\",\n        \"status\": \"manual_review\",\n        \"file_url\": \"https://s3.amazonaws.com/...\",\n        \"confidence_score\": 55,\n        \"attempt_count\": 1,\n        \"updated_at\": \"2024-01-15T10:00:00Z\"\n      }\n    ],\n    \"total\": 12\n  }\n}\n```"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Document (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/admin/documents/{{DOC_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "admin", "documents", "{{DOC_ID}}"]
+            },
+            "description": "## GET /kyc/admin/documents/:id\n\nEk specific document ka poora detail — extracted data, file URL, fraud flags sab.\n\n### Response:\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"id\": 3,\n    \"user_id\": 123,\n    \"full_name\": \"Ramesh Kumar\",\n    \"phone_number\": \"9876543210\",\n    \"document_type\": \"DRIVING_LICENCE\",\n    \"status\": \"manual_review\",\n    \"file_url\": \"https://s3.amazonaws.com/kyc/123/driving_licence/1234567890.jpg\",\n    \"extracted_data\": {\n      \"name\": \"Ramesh Kumar\",\n      \"dob\": \"1990-05-15\",\n      \"expiry_date\": \"2030-05-14\",\n      \"dl_status\": \"ACTIVE\",\n      \"govt_verified\": true\n    },\n    \"confidence_score\": 55,\n    \"fraud_score\": 0,\n    \"attempt_count\": 1,\n    \"driver_overall_status\": \"in_progress\"\n  }\n}\n```"
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/admin/documents/{{DOC_ID}}/approve",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "admin", "documents", "{{DOC_ID}}", "approve"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Manually verified — document clear hai\"\n}"
+            },
+            "description": "## POST /kyc/admin/documents/:id/approve\n\nAdmin manually document approve karta hai.\n\n**Body:** `{ \"notes\": \"optional notes\" }`\n\n**Hard restrictions (ye cases mein approve NAHI hoga):**\n- Document tampered hai (is_overwritten / is_photo_imposed)\n- Duplicate document (doosre user ke saath registered)\n- Driver age < 18 (DL se DOB check)\n- DL status ACTIVE nahi\n- PAN status active nahi\n- Vehicle RC expired\n\n### Success Response (200):\n```json\n{\n  \"success\": true,\n  \"message\": \"Document approved\",\n  \"data\": {\n    \"id\": 3,\n    \"status\": \"approved\",\n    \"reviewed_by\": 999,\n    \"verified_at\": \"2024-01-15T11:00:00Z\"\n  }\n}\n```\n\n### Error (422) — Hard restriction:\n```json\n{\n  \"success\": false,\n  \"message\": \"Cannot approve — driver is under 18 years of age\"\n}\n```\n\n**Side effect:** Agar sab 6 docs verify ho jate hain, driver ko `KYC_COMPLETE` notification milti hai aur `overallStatus = 'verified'` ho jaata hai."
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/admin/documents/{{DOC_ID}}/reject",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "admin", "documents", "{{DOC_ID}}", "reject"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Document blur hai, clear image upload karo\",\n  \"allowRetry\": true\n}"
+            },
+            "description": "## POST /kyc/admin/documents/:id/reject\n\nAdmin manually document reject karta hai.\n\n**Body:**\n| Field | Required | Description |\n|---|---|---|\n| `reason` | ✅ | Reject reason (driver ko dikhega) |\n| `allowRetry` | ❌ | Default `true`. `false` karo toh driver retry nahi kar sakta (permanent block) |\n\n### Success Response (200):\n```json\n{\n  \"success\": true,\n  \"message\": \"Document rejected\",\n  \"data\": {\n    \"id\": 3,\n    \"status\": \"rejected\",\n    \"rejection_reason\": \"Document blur hai, clear image upload karo\"\n  }\n}\n```\n\n**Note:** Admin-rejected documents ko admin dobara approve nahi kar sakta. Decision final hota hai.\n\n**`allowRetry: false` effect:** Driver ki attempts 3 ho jaati hain, matlab contact support ke siva koi option nahi."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Fraud Alerts",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/admin/fraud-alerts?severity=HIGH",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "admin", "fraud-alerts"],
+              "query": [
+                { "key": "severity", "value": "HIGH", "description": "Optional: HIGH | MEDIUM | LOW" }
+              ]
+            },
+            "description": "## GET /kyc/admin/fraud-alerts\n\nSystem-flagged suspicious documents.\n\n**Fraud Flag Types:**\n| Flag | Severity | Matlab |\n|---|---|---|\n| `FACE_MISMATCH` | HIGH/MEDIUM | Selfie Aadhaar se match nahi ki |\n| `DUPLICATE_NUMBER` | HIGH | Ye document number kisi aur user ka bhi hai |\n| `INSURANCE_EXPIRING_SOON` | MEDIUM | RC insurance 30 din mein expire |\n| `FITNESS_EXPIRED` | HIGH | Vehicle fitness certificate expired |\n\n### Response:\n```json\n{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"document_id\": 3,\n      \"document_type\": \"DRIVING_LICENCE\",\n      \"user_id\": 123,\n      \"full_name\": \"Ramesh Kumar\",\n      \"phone_number\": \"9876543210\",\n      \"flag_type\": \"DUPLICATE_NUMBER\",\n      \"severity\": \"HIGH\",\n      \"details\": {},\n      \"created_at\": \"2024-01-15T10:00:00Z\"\n    }\n  ]\n}\n```"
+          },
+          "response": []
+        },
+        {
+          "name": "Suspend Driver",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/kyc/admin/drivers/{{DRIVER_USER_ID}}/suspend",
+              "host": ["{{BASE_URL}}"],
+              "path": ["kyc", "admin", "drivers", "{{DRIVER_USER_ID}}", "suspend"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Fraudulent documents submitted multiple times\"\n}"
+            },
+            "description": "## POST /kyc/admin/drivers/:userId/suspend\n\nDriver ka account suspend karo — login ke baad `nextScreen = 'ACCOUNT_SUSPENDED'` aayega.\n\n**Body:** `{ \"reason\": \"...\" }` (required)\n\n### Response:\n```json\n{\n  \"success\": true,\n  \"message\": \"Driver suspended\",\n  \"data\": {\n    \"user_id\": 123,\n    \"overall_status\": \"suspended\",\n    \"suspended_at\": \"2024-01-15T12:00:00Z\",\n    \"suspension_reason\": \"Fraudulent documents submitted multiple times\"\n  }\n}\n```"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📱 Frontend Integration Guide",
+      "description": "Ye folder sirf reference ke liye hai — actual API calls nahi hain. Frontend team ke liye screen routing logic.",
+      "item": [
+        {
+          "name": "LOGIN FLOW — Screen Routing Logic",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "about:blank", "host": ["about:blank"] },
+            "description": "# Driver App — Login ke baad Screen Routing\n\n## Step 1: Login API call karo\n```\nPOST /api/v1/auth/verify-otp\nBody: { phone, otp, role: 'driver' }\n```\n\n## Step 2: Response mein `kyc.nextScreen` dekho\n\n```javascript\nconst { data } = await loginAPI(phone, otp);\nconst { nextScreen, canGoOnline } = data.kyc;\n\nswitch (nextScreen) {\n  case 'HOME':\n    // KYC complete! Driver home screen pe bhejo\n    // canGoOnline = true → Go Online button enable karo\n    navigate('DriverHome');\n    break;\n\n  case 'KYC_INTRO':\n    // Pehli baar — KYC explain karo\n    // 6 documents ki list dikhao\n    navigate('KycIntroScreen');\n    break;\n\n  case 'KYC_UPLOAD':\n    // Kuch docs baaki hain\n    // GET /kyc/status call karo aur jo 'not_submitted' hai use dikhao\n    navigate('KycUploadScreen');\n    break;\n\n  case 'KYC_UNDER_REVIEW':\n    // Saare docs submit, admin review kar raha hai\n    // \"We're verifying your documents, usually 24 hours\" dikhao\n    navigate('KycUnderReviewScreen');\n    break;\n\n  case 'KYC_RETRY':\n    // Koi doc reject hua\n    // GET /kyc/status karo, rejected docs dikhao with rejectionReason\n    navigate('KycRetryScreen');\n    break;\n\n  case 'ACCOUNT_SUSPENDED':\n    // Account suspend — support number dikhao\n    navigate('AccountSuspendedScreen');\n    break;\n}\n```\n\n## Step 3: KYC Upload Screen mein\n```javascript\n// GET /kyc/status call karo\nconst status = await getKycStatus();\n\n// Documents order (recommended):\nconst docOrder = ['AADHAAR', 'PAN', 'DRIVING_LICENCE', 'VEHICLE_RC', 'BANK_ACCOUNT', 'SELFIE'];\n\n// Har doc ke liye:\ndocOrder.forEach(docType => {\n  const doc = status.documents.find(d => d.type === docType);\n\n  if (!doc || doc.status === 'not_submitted') {\n    // Upload button dikhao\n    // SELFIE ke liye: Aadhaar verified hone ke baad hi enable karo\n  }\n\n  if (doc?.status === 'auto_verified' || doc?.status === 'approved') {\n    // Green tick ✅ dikhao\n  }\n\n  if (doc?.status === 'manual_review') {\n    // \"Under review\" ⏳ dikhao\n  }\n\n  if (doc?.status === 'rejected') {\n    if (doc.canRetry) {\n      // Retry button dikhao + rejectionReason message\n    } else {\n      // \"Max retries reached — contact support\" dikhao\n    }\n  }\n});\n\n// Overall progress:\n// status.verifiedDocsCount / 6 documents\n```\n\n## Document Upload — Kaunsa API kab:\n| Situation | API |\n|---|---|\n| Pehli baar upload | POST /kyc/submit |\n| Rejected doc dubara | POST /kyc/documents/:id/retry |\n| Bank details | POST /kyc/bank (JSON, no file) |\n| Selfie | POST /kyc/face-match |\n\n## Status Badge Colors:\n| Status | Color | Icon |\n|---|---|---|\n| `not_submitted` | Grey | Upload icon |\n| `pending` | Yellow | Loading spinner |\n| `auto_verified` / `approved` | Green | ✅ |\n| `manual_review` | Blue | ⏳ Clock |\n| `rejected` | Red | ❌ + Retry button |"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

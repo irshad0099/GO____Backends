@@ -262,7 +262,7 @@ export const toggleAvailability = async (userId, isAvailable) => {
     }
 };
 
-export const getDriverRideHistory = async (userId, { page = 1, limit = 10, status }) => {
+export const getDriverRideHistory = async (userId, { page = 1, limit = 10, status, period }) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);
 
@@ -272,15 +272,24 @@ export const getDriverRideHistory = async (userId, { page = 1, limit = 10, statu
 
         const offset = (page - 1) * limit;
 
+        let dateFrom, dateTo;
+        if (period) {
+            dateTo = new Date();
+            dateFrom = new Date();
+            if (period === 'today')         { dateFrom.setHours(0, 0, 0, 0); }
+            else if (period === 'week')     { dateFrom.setDate(dateFrom.getDate() - 7); }
+            else if (period === 'month')    { dateFrom.setMonth(dateFrom.getMonth() - 1); }
+        }
+
         const rides = await rideRepo.findRidesByDriver(driver.id, {
             status,
             limit,
             offset,
-            orderBy: 'requested_at',
-            orderDir: 'DESC'
+            dateFrom,
+            dateTo,
         });
 
-        const total = await rideRepo.countRidesByDriver(driver.id, status);
+        const total = await rideRepo.countRidesByDriver(driver.id, status, dateFrom, dateTo);
 
         return {
             rides: rides.map(ride => ({
@@ -329,15 +338,18 @@ export const getDriverEarnings = async (userId, period = 'weekly') => {
         const endDate = new Date();
 
         switch (period) {
+            case 'today':
             case 'daily':
                 startDate = new Date();
                 startDate.setHours(0, 0, 0, 0);
                 break;
             case 'weekly':
+            case 'week':
                 startDate = new Date();
                 startDate.setDate(startDate.getDate() - 7);
                 break;
             case 'monthly':
+            case 'month':
                 startDate = new Date();
                 startDate.setMonth(startDate.getMonth() - 1);
                 break;
@@ -352,13 +364,19 @@ export const getDriverEarnings = async (userId, period = 'weekly') => {
 
         const earnings = await driverRepo.getDriverEarnings(driver.id, startDate, endDate);
 
+        const daysDiff = Math.max(1, Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)));
+
         return {
-            totalEarnings: earnings.total,
-            ridesCompleted: earnings.rides,
+            totalEarnings:     earnings.total,
+            ridesCompleted:    earnings.rides,
+            timeOnlineMinutes: earnings.timeOnlineMinutes,
+            platformFeesPaid:  earnings.platformFeesPaid,
+            averagePerRide:    earnings.rides > 0 ? Math.round(earnings.total / earnings.rides) : 0,
+            avgRidesPerDay:    Math.round(earnings.rides / daysDiff),
             period,
             startDate,
             endDate,
-            breakdown: earnings.breakdown
+            breakdown:         earnings.breakdown,
         };
     } catch (error) {
         logger.error('Get driver earnings service error:', error);

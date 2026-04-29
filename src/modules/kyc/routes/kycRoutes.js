@@ -13,6 +13,9 @@ router.use(authenticate);
 // GET  /api/v1/kyc/status
 router.get('/status', authorize('driver'), ctrl.getStatus);
 
+// GET  /api/v1/kyc/doc-flags  — which docs uploaded (true/false) + their status
+router.get('/doc-flags', authorize('driver'), ctrl.getDocUploadFlags);
+
 // POST /api/v1/kyc/submit  — AADHAAR | PAN | DRIVING_LICENCE | VEHICLE_RC
 // multipart/form-data: { document_type, file, file_back? }
 // file_back optional — AADHAAR ke liye address fetch karne ke liye

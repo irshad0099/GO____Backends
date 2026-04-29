@@ -6,6 +6,7 @@ import { initializeSocketIO } from './config/websocketConfig.js';
 import { setupSocketHandlers } from './infrastructure/websocket/socket.server.js';
 import { startWorkers } from './infrastructure/queue/startWorkers.js';
 import { initPricingConfig } from './modules/pricing/services/pricingConfigLoader.js';
+import './core/services/firebaseService.js';
 
 const PORT = ENV.PORT || 5000;
 

@@ -7,7 +7,6 @@ import { saveDriverLocation, getDriverLocation } from '../../../core/services/re
 
 export const registerDriver = async (userId, driverData) => {
     try {
-        // Check if already registered as driver
         const existingDriver = await driverRepo.findDriverByUserId(userId);
         if (existingDriver) {
             return {
@@ -21,10 +20,7 @@ export const registerDriver = async (userId, driverData) => {
             };
         }
 
-        // Create driver profile
-        const driver = await driverRepo.createDriver({
-            userId
-        });
+        const driver = await driverRepo.createDriver({ userId });
 
         return {
             id: driver.id,
@@ -41,85 +37,6 @@ export const registerDriver = async (userId, driverData) => {
     }
 };
 
-export const addAadharDetail = async (userId, aadhaarData) => {
-    try {
-        const driver = await driverRepo.findDriverByUserId(userId);
-
-        if (!driver) {
-            throw new NotFoundError('Driver profile');
-        }
-
-        const aadhaar = await driverRepo.insertAadhar(driver.id, aadhaarData);
-        await driverRepo.updateDriver(driver.id, { is_verified: false });
-
-        return aadhaar;
-}   catch (error) {
-        
-            logger.error('Add Aadhar detail service error:', error);
-            throw error;
-    }
-}
-
-
-export const addPanDetail = async (userId, panData) => {
-        try {
-        const driver = await driverRepo.findDriverByUserId(userId);
-
-        if (!driver) {
-            throw new NotFoundError('Driver profile');
-        }
-
-        const pan = await driverRepo.insertPan(driver.id, panData);
-        await driverRepo.updateDriver(driver.id, { is_verified: false });
-
-        return pan;
-    } catch (error) {
-             logger.error('Add pan detail service error:', error);
-        throw error;
-        }
-};
-
-
-
-
-export const addBankDetail = async (userId, bankData) => {
-        try {
-    const driver = await driverRepo.findDriverByUserId(userId);
-
-    if (!driver) {
-        throw new NotFoundError('Driver profile');
-    }
-
-    const bank = await driverRepo.insertBank(driver.id, bankData);
-    await driverRepo.updateDriver(driver.id, { is_verified: false });
-
-    return bank;
-       } catch (error) {
-                logger.error('Add bank detail service error:', error);
-        throw error;    
-        }
-};
-
-
-export const addLicenseDetail = async (userId, licenseData) => {
-    try{
-        const driver = await driverRepo.findDriverByUserId(userId);
-
-        if (!driver) {
-            throw new NotFoundError('Driver profile');
-        }
-
-        const license = await driverRepo.insertLicense(driver.id, licenseData);
-        await driverRepo.updateDriver(driver.id, { is_verified: false });
-
-        return license;
-} catch (error) {
-    logger.error('Add license detail service error:', error);
-    throw error;
-}   
-};
-
-
 export const addVehicleDetail = async (userId, vehicleData) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);
@@ -132,85 +49,8 @@ export const addVehicleDetail = async (userId, vehicleData) => {
         await driverRepo.updateDriver(driver.id, { is_verified: false });
 
         return vehicle;
-       
     } catch (error) {
         logger.error('Add vehicle detail service error:', error);
-        throw error;
-    }
-};
-
-
-export const verifyDriverDocument = async (userId,{
-  driver_id,
-  document_type,
-  status,
-  rejected_reason
-}) => {
-    try{
-  const driver = await driverRepo.findDriverByUserId(userId);
-
-  if (!driver) {
-    throw new Error("Driver not found");
-  }
-  if(driver.id !== parseInt(driver_id)) {
-    throw new Error("Unauthorized: Driver ID mismatch");
-  }
-  const tableMap = {
-    aadhaar: "driver_aadhaar",
-    pan: "driver_pan",
-    bank: "driver_bank",
-    license: "driver_license",
-    vehicle: "driver_vehicle"
-  };
-
-  const tableName = tableMap[document_type];
-
-  if (!tableName) {
-    throw new Error("Invalid document type");
-  }
-
-  const result = await driverRepo.verifyDriverDocument(
-    tableName,
-    driver_id,
-    status,
-    rejected_reason
-  );
-
-  if(!result) {
-    throw new Error("Document not found or driver not found or update failed");
-  }
-  // optional: check if all docs verified
-  const allDocsVerified = await driverRepo.checkAllDocumentsVerified(driver_id);
-
-  if (allDocsVerified) {
-    await driverRepo.markDriverVerified(driver_id);
-  }
-
-  return result;
-}catch(error){
-  logger.error('driver KYC Update service error:', error);
-        throw error;
-    }
-};
-
-
-
-
-
-export const getDriverDocument = async (userId,driver_id) => {
-    try{
-  const driver = await driverRepo.findDriverByUserId(userId);
-
- if (!driver) {
-    throw new Error("Driver not found");
-  }
-
-    const result = await driverRepo.getDriverDocument(driver_id || driver.id);
-
-
-  return result;
-}catch(error){
-  logger.error('driver KYC Update service error:', error);
         throw error;
     }
 };
@@ -218,11 +58,11 @@ export const getDriverDocument = async (userId,driver_id) => {
 // export const getDriverProfile = async (userId) => {
 //     try {
 //         const driver = await driverRepo.findDriverByUserId(userId);
-        
+//
 //         if (!driver) {
 //             throw new NotFoundError('Driver profile');
 //         }
-
+//
 //         return {
 //             id: driver.id,
 //             userId: driver.user_id,
@@ -256,7 +96,7 @@ export const getDriverProfile = async (userId) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);
         if (!driver) throw new NotFoundError('Driver profile');
- 
+
         // ── Redis se live location fetch karo (fast) ──────────────────────────
         let currentLocation = null;
         const redisLocation = await getDriverLocation(driver.id);
@@ -265,7 +105,7 @@ export const getDriverProfile = async (userId) => {
         } else if (driver.current_latitude && driver.current_longitude) {
             currentLocation = { latitude: driver.current_latitude, longitude: driver.current_longitude };
         }
- 
+
         return {
             id:             driver.id,
             userId:         driver.user_id,
@@ -273,8 +113,6 @@ export const getDriverProfile = async (userId) => {
             vehicleNumber:  driver.vehicle_number,
             vehicleModel:   driver.vehicle_model,
             vehicleColor:   driver.vehicle_color,
-            licenseNumber:  driver.license_number,
-            licenseExpiry:  driver.license_expiry,
             isVerified:     driver.is_verified,
             isAvailable:    driver.is_available,
             isOnDuty:       driver.is_on_duty,
@@ -295,15 +133,14 @@ export const getDriverProfile = async (userId) => {
 export const updateDriverProfile = async (userId, updates) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);
-        
+
         if (!driver) {
             throw new NotFoundError('Driver profile');
         }
 
-        // Validate allowed updates for unverified drivers
         const allowedUpdates = ['vehicleModel', 'vehicleColor'];
         const filteredUpdates = {};
-        
+
         Object.keys(updates).forEach(key => {
             if (allowedUpdates.includes(key)) {
                 filteredUpdates[key] = updates[key];
@@ -338,20 +175,20 @@ export const updateDriverProfile = async (userId, updates) => {
 // export const updateDriverLocation = async (userId, latitude, longitude) => {
 //     try {
 //         const driver = await driverRepo.findDriverByUserId(userId);
-        
+//
 //         if (!driver) {
 //             throw new NotFoundError('Driver profile');
 //         }
-
+//
 //         if (!driver.is_verified) {
 //             throw new ApiError(403, 'Driver not verified');
 //         }
-
+//
 //         const updatedDriver = await driverRepo.updateDriver(driver.id, {
 //             current_latitude: latitude,
 //             current_longitude: longitude
 //         });
-
+//
 //         return {
 //             latitude: updatedDriver.current_latitude,
 //             longitude: updatedDriver.current_longitude,
@@ -368,18 +205,18 @@ export const updateDriverLocation = async (userId, latitude, longitude) => {
         const driver = await driverRepo.findDriverByUserId(userId);
         if (!driver) throw new NotFoundError('Driver profile');
         if (!driver.is_verified) throw new ApiError(403, 'Driver not verified');
- 
+
         // ── Redis mein location save karo (30 sec expiry — real-time) ─────────
         await saveDriverLocation(driver.id, latitude, longitude);
- 
+
         // ── DB mein bhi update karo (permanent record) ────────────────────────
         const updatedDriver = await driverRepo.updateDriver(driver.id, {
             current_latitude:  latitude,
             current_longitude: longitude
         });
- 
+
         logger.info(`Driver ${driver.id} location updated: ${latitude}, ${longitude}`);
- 
+
         return {
             latitude:  updatedDriver.current_latitude,
             longitude: updatedDriver.current_longitude,
@@ -392,11 +229,10 @@ export const updateDriverLocation = async (userId, latitude, longitude) => {
     }
 };
 
-
 export const toggleAvailability = async (userId, isAvailable) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);
-        
+
         if (!driver) {
             throw new NotFoundError('Driver profile');
         }
@@ -405,7 +241,6 @@ export const toggleAvailability = async (userId, isAvailable) => {
             throw new ApiError(403, 'Driver not verified');
         }
 
-        // Check if driver is on a ride
         if (isAvailable && driver.is_on_duty) {
             const activeRide = await rideRepo.findActiveRideByDriver(driver.id);
             if (activeRide) {
@@ -427,25 +262,34 @@ export const toggleAvailability = async (userId, isAvailable) => {
     }
 };
 
-export const getDriverRideHistory = async (userId, { page = 1, limit = 10, status }) => {
+export const getDriverRideHistory = async (userId, { page = 1, limit = 10, status, period }) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);
-        
+
         if (!driver) {
             throw new NotFoundError('Driver profile');
         }
 
         const offset = (page - 1) * limit;
-        
+
+        let dateFrom, dateTo;
+        if (period) {
+            dateTo = new Date();
+            dateFrom = new Date();
+            if (period === 'today')         { dateFrom.setHours(0, 0, 0, 0); }
+            else if (period === 'week')     { dateFrom.setDate(dateFrom.getDate() - 7); }
+            else if (period === 'month')    { dateFrom.setMonth(dateFrom.getMonth() - 1); }
+        }
+
         const rides = await rideRepo.findRidesByDriver(driver.id, {
             status,
             limit,
             offset,
-            orderBy: 'requested_at',
-            orderDir: 'DESC'
+            dateFrom,
+            dateTo,
         });
 
-        const total = await rideRepo.countRidesByDriver(driver.id, status);
+        const total = await rideRepo.countRidesByDriver(driver.id, status, dateFrom, dateTo);
 
         return {
             rides: rides.map(ride => ({
@@ -485,7 +329,7 @@ export const getDriverRideHistory = async (userId, { page = 1, limit = 10, statu
 export const getDriverEarnings = async (userId, period = 'weekly') => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);
-        
+
         if (!driver) {
             throw new NotFoundError('Driver profile');
         }
@@ -494,15 +338,18 @@ export const getDriverEarnings = async (userId, period = 'weekly') => {
         const endDate = new Date();
 
         switch (period) {
+            case 'today':
             case 'daily':
                 startDate = new Date();
                 startDate.setHours(0, 0, 0, 0);
                 break;
             case 'weekly':
+            case 'week':
                 startDate = new Date();
                 startDate.setDate(startDate.getDate() - 7);
                 break;
             case 'monthly':
+            case 'month':
                 startDate = new Date();
                 startDate.setMonth(startDate.getMonth() - 1);
                 break;
@@ -517,13 +364,19 @@ export const getDriverEarnings = async (userId, period = 'weekly') => {
 
         const earnings = await driverRepo.getDriverEarnings(driver.id, startDate, endDate);
 
+        const daysDiff = Math.max(1, Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)));
+
         return {
-            totalEarnings: earnings.total,
-            ridesCompleted: earnings.rides,
+            totalEarnings:     earnings.total,
+            ridesCompleted:    earnings.rides,
+            timeOnlineMinutes: earnings.timeOnlineMinutes,
+            platformFeesPaid:  earnings.platformFeesPaid,
+            averagePerRide:    earnings.rides > 0 ? Math.round(earnings.total / earnings.rides) : 0,
+            avgRidesPerDay:    Math.round(earnings.rides / daysDiff),
             period,
             startDate,
             endDate,
-            breakdown: earnings.breakdown
+            breakdown:         earnings.breakdown,
         };
     } catch (error) {
         logger.error('Get driver earnings service error:', error);
@@ -534,7 +387,7 @@ export const getDriverEarnings = async (userId, period = 'weekly') => {
 export const getCurrentRide = async (userId) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);
-        
+
         if (!driver) {
             throw new NotFoundError('Driver profile');
         }
@@ -657,4 +510,3 @@ export const getDriverDailyMetrics = async (userId, days = 7) => {
         throw error;
     }
 };
-

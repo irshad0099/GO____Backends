@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS notifications (
     id            SERIAL PRIMARY KEY,
-    user_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id       UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     type          VARCHAR(50) NOT NULL,
     title         VARCHAR(255) NOT NULL,
     body          TEXT NOT NULL,

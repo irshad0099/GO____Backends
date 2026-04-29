@@ -1,989 +1,960 @@
-# GO Mobility — Price Algorithm: Kaise Kaam Karta Hai (Full Documentation)
-
-Yeh document explain karta hai ki GO Mobility ka pricing algorithm backend mein kahan-kahan spread hai, kaunsi file mein kya ho rha hai, estimated fare kaise nikalta hai, final fare kaise nikalta hai, passenger ko kya dikhta hai, driver ko kya dikhta hai — with real test cases.
+# GO Mobility — Pricing Engine: Complete Guide
+### Stakeholders + Developers dono ke liye | v4.0 | April 2026
 
 ---
 
-## 1. Files Ka Overview — Kahan Kya Hai
+# PART A — NON-TECHNICAL GUIDE
+### (Business / Product / Stakeholders ke liye — koi code nahi)
 
-### File Structure:
+---
+
+## A1. Fare Kab Decide Hota Hai
+
+```
+Passenger ride book karta hai
+    → Estimated fare dikhta hai aur LOCK ho jaata hai
+
+Ride complete hoti hai
+    → Final fare calculate hota hai (actual waiting + traffic se)
+```
+
+> **Important:** Surge multiplier, convenience fee, aur isPeak (peak tha ya nahi) — yeh teen cheezein
+> booking ke time LOCK ho jaati hain. Ride ke beech demand 3x ho jaaye, toofan aa jaaye — fare base
+> nahi badlega. Sirf waiting charges aur traffic bonus real-time mein add hote hain.
+
+---
+
+## A2. Passenger Ka Fare Kaise Banta Hai
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  BASE FARE          →  Vehicle type ka fixed start charge
+│  + DISTANCE FARE    →  km × rate per km
+│  + WAITING CHARGES  →  7 min grace ke BAAD (driver ko bhi milta hai)
+│                    ──────────────────────────────────────
+│  = PRE-SURGE SUBTOTAL
+│  × SURGE            →  1.0x to 1.75x (peak/demand/weather)
+│                    ──────────────────────────────────────
+│  = RIDE AMOUNT      (minimum fare se NEECHE nahi jayega)
+│  + CONVENIENCE FEE  →  Platform charge (peak/off-peak + distance tier)
+│  + GST              →  5% on fare (jab enabled ho)
+│                    ──────────────────────────────────────
+│  = PASSENGER PAYS
+└──────────────────────────────────────────────────────────┘
+```
+
+### Saare Vehicle Types Ke Rates (DB Mein Hain — Admin Change Kar Sakta Hai):
+
+| | Bike | Auto | Car | XL | Premium | Luxury |
+|--|------|------|-----|-----|---------|--------|
+| **Base Fare** | ₹20 | ₹30 | ₹50 | ₹80 | ₹120 | ₹200 |
+| **Per KM** | ₹8 | ₹12 | ₹15 | ₹20 | ₹28 | ₹40 |
+| **Minimum Fare** | ₹35 | ₹50 | ₹90 | ₹120 | ₹200 | ₹350 |
+| **Seats** | 1 | 3 | 4 | 6-7 | 4 (luxury) | 4 (BMW/Merc class) |
+
+---
+
+## A3. Convenience Fee — Distance Se Badlti Hai
+
+Sirf km ka hisaab nahi — **kitni door wali ride hai** uske hisaab se fee ka tier badlta hai:
+
+| Distance Band | Multiplier | Matlab |
+|---|---|---|
+| 0–3 km (Short) | 0.75x | Base se thodi kam (short hop) |
+| 3–7 km (Standard) | 1.0x | Normal base fee |
+| 7–15 km (Long) | 1.2x | Thodi zyada |
+| 15+ km (Very Long) | 1.4x | Long haul surcharge |
+
+**Aur peak vs off-peak base alag hoti hai:**
+
+| Vehicle | Off-Peak Base | Peak Base |
+|---|---|---|
+| Bike | ₹5 | ₹10 |
+| Auto | ₹10 | ₹20 |
+| Car | ₹20 | ₹35 |
+| XL | ₹30 | ₹55 |
+| Premium | ₹40 | ₹70 |
+| Luxury | ₹60 | ₹100 |
+
+**Final convenience fee = base × distance multiplier**
+
+```
+Example: Auto, 5 km (standard tier 1.0x), off-peak
+  = ₹10 × 1.0 = ₹10
+
+Example: Car, 10 km (long tier 1.2x), peak
+  = ₹35 × 1.2 = ₹42
+```
+
+---
+
+## A4. Surge — Kab Aur Kitna
+
+System **3 signals** check karta hai:
+
+### Signal 1 — Time (Ghadi Dekhta Hai)
+```
+Subah  8 AM – 10 AM  →  Morning Peak
+Shaam  6 PM –  9 PM  →  Evening Peak
+Baaki sab            →  Off-peak
+```
+Peak time mein sirf convenience fee ka peak band lagta hai. Surge alag se demand se aata hai.
+
+### Signal 2 — Demand (Aas-paas Ki Activity)
+```
+Demand / Drivers = Ratio
+
+Ratio ≤ 1.1          →  No surge (1.0x)
+Ratio 1.1 – 1.3      →  Gradual surge (1.1x – 1.2x)
+Ratio > 1.3          →  Progressive surge (capped at 1.75x)
+```
+
+**Volume Guard:** Area mein 5 se kam requests hain to surge nahi lagega, chahe ratio kitna bhi ho.
+
+```
+Example:
+  2 requests, 1 driver → ratio 2.0 → lekin 2 < 5 threshold → NO SURGE
+  20 requests, 10 drivers → ratio 2.0, volume ≥ 5 → SURGE LAGEGA
+```
+
+### Signal 3 — Weather (Live Mausam Check)
+```
+Clear/Cloudy/Fog   →  1.0x (no surge)
+Baarish/Drizzle    →  1.1x
+Toofan/Heavy Snow  →  1.25x
+```
+
+### Teen Signals Milke Final Surge:
+```
+Demand Surge aur Weather Surge STACK NAHI HOTE — jo bada ho woh lagta hai.
+
+Final Surge = max(Demand Surge, Weather Surge)
+Absolute cap = 1.75x (non-subscriber)
+```
+
+| Situation | Demand | Weather | Final |
+|---|---|---|---|
+| Normal din, clear | 1.0x | 1.0x | **1.0x** |
+| Sirf baarish, low demand | 1.0x | 1.1x | **1.1x** |
+| High demand, clear | 1.43x | 1.0x | **1.43x** |
+| High demand + baarish | 1.43x | 1.1x | **1.43x** (demand jeet gaya) |
+| Low demand + toofan | 1.0x | 1.25x | **1.25x** (weather jeet gaya) |
+| Extreme + toofan | 1.75x | 1.25x | **1.75x** (capped) |
+
+---
+
+## A5. Driver Ki Kamai — Alag Formula
+
+```
+DRIVER KAMAI = RIDE FARE (floor amount)
+             - Platform Fee   (company ka hissa, per ride)
+             - GST on fee     (jab GST enabled ho)
+             + Pickup Bonus   (door se aaya to)
+             + Waiting Bonus  (passenger late aaya to)
+             + Traffic Bonus  (jam mein phansa to)
+```
+
+### Platform Fee (Driver Se Katta Hai):
+| Vehicle | Per Ride | Daily Cap |
+|---|---|---|
+| Bike | ₹1 | Pehli 10 rides tak |
+| Auto | ₹1.5 | Pehli 10 rides tak |
+| Car | ₹5 | Pehli 10 rides tak |
+| XL | ₹8 | Pehli 10 rides tak |
+| Premium | ₹12 | Pehli 10 rides tak |
+| Luxury | ₹20 | Pehli 10 rides tak |
+
+**11th ride se koi fee nahi — poora fare driver ka.**
+
+### Waiting Bonus (Driver Ko — Passenger Bhi Deta Hai):
+```
+Pehle 7 minute BILKUL FREE (grace period)
+Uske baad:
+  Bike    → ₹1/min
+  Auto    → ₹1.5/min
+  Car     → ₹2/min
+  XL      → ₹2.5/min
+  Premium → ₹3/min
+  Luxury  → ₹4/min
+```
+
+### Traffic Delay Bonus (Sirf Driver Ko — Passenger Ka Fare Nahi Badhta):
+```
+Estimated time + 30 min tak koi extra nahi
+Uske baad:
+  Bike    → ₹0.5/min
+  Auto    → ₹1/min
+  Car     → ₹1.5/min
+  XL      → ₹2/min
+  Premium → ₹2.5/min
+  Luxury  → ₹3/min
+```
+
+### Pickup Bonus (Driver Ko — Passenger Ka Fare Nahi Badhta):
+```
+Pehle 2.5 km FREE (free zone)
+Uske baad:
+  Bike    → ₹2/extra km
+  Auto    → ₹3/extra km
+  Car     → ₹4/extra km
+  XL      → ₹5/extra km
+  Premium → ₹6/extra km
+  Luxury  → ₹8/extra km
+```
+
+---
+
+## A6. Subscription Plans
+
+### Plans Aur Benefits:
+
+| Plan | Keemat | Free Rides/Month | Conv Fee Discount | Surge Cap |
+|---|---|---|---|---|
+| **Basic Pass** | ₹99/month | 0 | ≤6km FREE, beyond 50% off | 1.25x max |
+| **Prime Pass** | ₹199/month | 2 | ≤6km FREE, beyond 50% off | 1.25x max |
+| **Elite Pass** | ₹399/month | 4 | ≤6km FREE, beyond 50% off | **1.1x max** |
+| **Annual Pass** | ₹999/year | 2 | ≤6km FREE, beyond 50% off | 1.25x max |
+
+> Free rides har 30 din mein automatically reset hoti hain.
+
+### Convenience Fee Discount Kaise Kaam Karta Hai:
+```
+Subscriber ke liye convenience fee:
+
+Ride ≤ 6 km  →  Convenience fee = ₹0 (completely free!)
+Ride > 6 km  →  Standard fee ka 50% off milta hai
+
+Non-subscriber:
+  Auto, 5 km, off-peak → ₹10 × 1.0 = ₹10 lagega
+Subscriber (Basic/Prime/Elite/Annual):
+  Auto, 5 km → ₹0 (under 6km free zone!)
+  Auto, 10 km → ₹10 × 1.2 × 50% = ₹6 (half of standard ₹12)
+```
+
+### Surge Cap Kaise Kaam Karta Hai:
+```
+Normal demand surge: 1.48x chal raha hai
+
+Basic/Prime/Annual subscriber: max 1.25x lagega (1.48 cap ho ke 1.25)
+Elite subscriber: max 1.1x lagega (1.48 cap ho ke 1.1)
+Non-subscriber: 1.48x lagega (global cap 1.75x)
+```
+
+### Priority Order (Kya Pehle Lagta Hai):
+```
+1. Free ride available hai? → Fare = ₹0, coupon skip hoga
+2. Free ride nahi hai → Convenience fee discount apply karo
+3. Coupon → uske baad
+```
+
+---
+
+## A7. Real Examples — Har Scenario
+
+---
+
+### Example 1 — Simple Auto Ride, Normal Din, Koi Peak Nahi
+
+- Auto, 5 km, dopahar 2 baje, clear sky
+- 3 requests, 8 drivers, no subscription
+
+```
+Peak Check:
+  Time: 2 PM → Normal ✗
+  Demand: 3 < 5 minimum → No surge ✗
+  Weather: Clear ✗
+  → Surge = 1.0x, isPeak = false
+
+Fare:
+  Base        = ₹30
+  Distance    = 5 km × ₹12 = ₹60
+  Subtotal    = ₹90 × 1.0 = ₹90
+  Conv Fee    = ₹10 × 1.0 (standard tier) = ₹10  [off-peak base]
+  ─────────────────────────────
+  Passenger   = ₹100
+
+Driver:
+  ₹90 − ₹1.5 (platform fee) = ₹88.5
+```
+
+---
+
+### Example 2 — Same Ride, Morning Peak (8 AM), Low Demand
+
+- Auto, 5 km, subah 8 baje, clear sky
+- 3 requests, 8 drivers (too few for demand surge)
+
+```
+Peak Check:
+  Time: 8 AM → Morning Peak ✓
+  Demand: 3 < 5 minimum → No demand surge ✗
+  Weather: Clear ✗
+  → isPeak = true (fee changes), Surge = 1.0x
+
+Fare:
+  Base        = ₹30
+  Distance    = 5 km × ₹12 = ₹60
+  Subtotal    = ₹90 × 1.0 = ₹90
+  Conv Fee    = ₹20 × 1.0 (standard tier) = ₹20  [PEAK base]
+  ─────────────────────────────
+  Passenger   = ₹110
+
+Difference from Example 1: ₹10 zyada — sirf peak convenience fee ki wajah se.
+Surge nahi laga, kyunki demand volume low tha.
+```
+
+---
+
+### Example 3 — Morning Peak + High Demand + Baarish (Sab Active)
+
+- Auto, 5 km, subah 9 baje
+- Baarish, 20 requests, 10 drivers
+
+```
+Peak Check:
+  Time: 9 AM → Morning Peak ✓
+  Demand: 20 ≥ 5, ratio = 2.0 → Demand surge 1.48x ✓
+  Weather: Baarish → 1.1x ✓
+  → Surge = max(1.48, 1.1) = 1.48x
+
+Fare:
+  Base        = ₹30
+  Distance    = 5 km × ₹12 = ₹60
+  Subtotal    = ₹90 × 1.48 = ₹133.2
+  Conv Fee    = ₹20 × 1.0 = ₹20  [peak base]
+  ─────────────────────────────
+  Passenger   = ₹153.2
+
+Driver:
+  ₹133.2 − ₹1.5 = ₹131.7
+```
+
+---
+
+### Example 4 — Sirf Toofan, Demand Low
+
+- Car, 10 km, dopahar 3 baje
+- Toofan, lekin sirf 4 requests, 8 drivers
+
+```
+Peak Check:
+  Time: 3 PM → Normal ✗
+  Demand: 4 < 5 minimum → No demand surge ✗
+  Weather: Toofan → 1.25x ✓
+  → Surge = 1.25x, isPeak = false
+
+Fare:
+  Base        = ₹50
+  Distance    = 10 km × ₹15 = ₹150
+  Subtotal    = ₹200 × 1.25 = ₹250
+  Conv Fee    = ₹20 × 1.2 (long tier) = ₹24  [off-peak base]
+  ─────────────────────────────
+  Passenger   = ₹274
+
+Bina toofan: ₹200 + ₹24 = ₹224
+Toofan ne ₹50 add kiya.
+```
+
+---
+
+### Example 5 — Rider Ne Wait Karaya (7 Min Grace)
+
+- Auto, 8 km, shaam peak, no surge
+- Driver 15 minute wait kiya (7 min free, 8 min charged)
+
+```
+Estimated Fare (booking time):
+  Base + Distance + Conv = (30 + 96) × 1.0 + 20 = ₹146
+  Waiting = ₹0 (estimate mein nahi hota)
+  Dikhta hai: ~₹146
+
+Final Fare (ride complete pe):
+  Waiting = 8 min × ₹1.5 = ₹12 (sirf 8 min charged, 7 free)
+  Total   = (30 + 96 + 12) × 1.0 + 20 = ₹158
+
+  Passenger dega: ₹158
+  Driver kamai:   ₹138 (fare) − ₹1.5 (fee) + ₹12 (waiting) = ₹148.5
+```
+
+---
+
+### Example 6 — Traffic Jam (Driver Ko Bonus, Passenger Ko Nahi)
+
+- Car, 20 km, estimated 35 min
+- Actual 90 min lagi (traffic jam)
+- Traffic grace: 35 + 30 = 65 min tak free → 25 min overage
+
+```
+Final Fare:
+  Base + Distance + Conv = (50 + 300) × 1.0 + 24 = ₹374
+  Passenger pays: ₹374  (traffic se fare nahi bada)
+
+Driver Kamai:
+  ₹350 (fare floor) − ₹5 (platform fee) + ₹37.5 (25 min × ₹1.5) = ₹382.5
+  Traffic bonus sirf driver ko gaya — passenger pe koi extra nahi.
+```
+
+---
+
+### Example 7 — Subscription Wala User (Elite Pass, 10 km)
+
+- Auto, 10 km, peak demand surge 1.43x chal raha hai
+- User ke paas Elite Pass (surge cap 1.1x, conv fee discount)
+
+```
+Bina Subscription:
+  Base + Distance = ₹30 + ₹120 = ₹150
+  × Surge 1.43 = ₹214.5
+  + Conv Fee = ₹20 × 1.2 (long tier) = ₹24  [peak]
+  Total = ₹238.5
+
+Elite Pass Ke Saath:
+  Surge cap = 1.1x (1.43 ko 1.1 pe rok diya)
+  Base + Distance = ₹150 × 1.1 = ₹165
+  Conv Fee: 10 km > 6km free zone
+    Standard = ₹20 × 1.2 = ₹24 → 50% off = ₹12
+  Total = ₹165 + ₹12 = ₹177
+
+Elite ne bachaye: ₹238.5 − ₹177 = ₹61.5 ek ride mein!
+```
+
+---
+
+### Example 8 — Prime Pass + Free Ride + Coupon
+
+- User ke paas 1 free ride bachi hai (Prime Pass)
+- ₹30 off coupon bhi hai
+
+```
+Fare calculate hua: ₹180
+Free ride apply → Fare = ₹0
+Coupon? → SKIP (already ₹0 — coupon kahan lagega?)
+
+Final: ₹0
+Coupon waste nahi hoga — system ne use kiya hi nahi.
+```
+
+---
+
+### Example 9 — Subscription + Coupon Dono (Free Ride Nahi Bachi)
+
+- Car, 10 km, normal time, no surge
+- Annual Pass (conv fee discount) + SAVE20 coupon (₹20 off)
+
+```
+Normal conv fee: ₹20 × 1.2 = ₹24
+Annual subscriber: 10 km > 6km → 50% off → ₹12
+
+Base fare: (50 + 150) × 1.0 = ₹200
++ Conv fee after subscription = ₹12
+After subscription = ₹212
+
+Coupon (SAVE20): ₹212 − ₹20 = ₹192
+
+Sequence: Subscription pehle, coupon baad mein.
+```
+
+---
+
+### Example 10 — Pickup Bonus (Driver Bahut Door Se Aaya)
+
+- Bike ride, driver 6 km door se aaya
+- Free zone = 2.5 km → Extra = 3.5 km
+
+```
+Pickup Compensation:
+  3.5 km × ₹2/km = ₹7
+
+Passenger ka fare: koi change nahi
+Driver ko extra: ₹7 upar se
+```
+
+---
+
+### Example 11 — Short Ride, Minimum Fare Rule
+
+- Auto, 1 km, normal din
+
+```
+Base ₹30 + Distance ₹12 = ₹42
+Minimum fare = ₹50
+
+₹42 < ₹50 → Minimum fare apply → Passenger pays ₹50
+```
+
+---
+
+### Example 12 — Driver Ki 11th Ride (Platform Fee Cap)
+
+- Auto driver, aaj 10 rides kar chuka hai
+- 11th ride ka fare: ₹200
+
+```
+Rides 1–10:  ₹200 − ₹1.5 (platform fee) = ₹198.5
+Ride 11+:    ₹200 − ₹0   (cap reached!)  = ₹200
+
+Jitni zyada rides, utna better driver ke liye.
+```
+
+---
+
+### Example 13 — Cancellation Penalty
+
+- Driver 200m door hai, rider cancel karta hai
+
+```
+Threshold = 300m. Driver 200m < 300m → Penalty LAGEGI.
+
+₹50 rider se deduct
+  Driver ko: ₹40 (80%)
+  Platform:  ₹10 (20%)
+```
+
+- Driver 700m door hai, rider cancel karta hai
+
+```
+700m > 300m → Free cancellation. Driver abhi itna door hai to fair nahi.
+```
+
+---
+
+### Example 14 — GPS Real-Time Distance (Actual vs Estimated)
+
+Pehle: Google Maps ka estimated distance use hota tha.
+Ab: Driver ka GPS actual chali distance track karta hai.
+
+```
+OTP confirm → GPS tracking shuru (Redis mein)
+↓
+Har driver location ping → distance accumulate (10m se kam ignore — GPS jitter)
+↓
+Ride complete → Actual GPS distance from Redis use karo
+  Agar GPS unreliable (< 2 pings ya < 100m total) → estimated distance fallback
+
+Example:
+  Google Maps ne kaha: 8 km
+  Driver ne shortcut liya: Actual 6.2 km tracked
+  → Passenger ne 6.2 km ka fare diya, 8 ka nahi ✓
+```
+
+---
+
+## A8. Kya Kabhi Nahi Badlega Ride Ke Beech
+
+```
+Locked at booking time:
+  ✓ Surge multiplier
+  ✓ Convenience fee
+  ✓ isPeak flag
+  ✓ Subscriber tier + benefits
+
+Real-time mein add hota hai:
+  → Waiting charges (actual minutes logged)
+  → Traffic delay bonus (sirf driver ko)
+```
+
+---
+
+## A9. Quick Reference Table
+
+| Situation | Passenger | Driver |
+|---|---|---|
+| Normal din, off-peak | Standard fare | Standard kamai |
+| Peak time (8-10, 6-9) | Conv fee zyada | Same |
+| High demand surge | Fare × surge (locked at booking) | More kamai |
+| Baarish | 1.1x surge | More kamai |
+| Toofan | 1.25x surge | More kamai |
+| Rider ne wait karaya (>7min) | Waiting charge add | + Waiting bonus |
+| Traffic jam | Koi extra nahi | + Traffic bonus |
+| Driver door se aaya | Koi extra nahi | + Pickup bonus |
+| Basic/Prime/Annual sub | Conv fee 50% off (>6km), surge 1.25x max | Same |
+| Elite sub | Conv fee 50% off, surge 1.1x max | Same |
+| Free ride | ₹0 | Company pays |
+| 11th+ ride (driver) | Same | Platform fee free |
+| Cancellation (driver <300m) | ₹50 penalty | ₹40 milta hai |
+| Short ride | Minimum fare | Minimum se kam nahi |
+
+---
+---
+
+# PART B — TECHNICAL GUIDE
+### (Developers ke liye — Architecture, Code Flow, Files)
+
+---
+
+## B1. Architecture — Sab Kuch DB-Driven Hai
+
+**Koi hardcoded pricing value code mein nahi hai.** Sab kuch PostgreSQL mein hai.
+Admin dashboard se koi bhi value change karo — 5 minute mein cache refresh ho jaata hai, deploy nahi karna.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  PostgreSQL — 7 Pricing Tables                                      │
+│  (source of truth — seed in migration 040_create_pricing_config.sql)│
+└────────────────────────┬────────────────────────────────────────────┘
+                         │ App boot pe / cache miss pe
+                         ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  pricingConfigLoader.js                                             │
+│  - buildSnapshot() — 6 parallel DB queries                         │
+│  - In-memory CACHE object (TTL: 300s from pricing_settings)        │
+│  - getPricingConfig() — sync accessor (throws if not init'd)       │
+│  - ensurePricingConfig() — async-safe (deduplicates concurrent     │
+│    loads with LOAD_PROMISE)                                         │
+└────────────────────────┬────────────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  rideCalculator.js — Pure fare math (no DB calls, no side effects)  │
+│  Functions:                                                         │
+│  - calculateEstimatedFare()   — booking time                       │
+│  - calculateFinalRideFare()   — completion time                    │
+│  - calculateConvenienceFee()  — subscriber-aware                   │
+│  - calculateSurgeByDemandSupply()                                   │
+│  - calculateWaitingCharges()                                        │
+│  - calculateTrafficDelayCompensation()                             │
+│  - calculatePickupCompensation()                                   │
+│  - calculatePlatformFee()                                          │
+│  - calculateGst()                                                  │
+│  - detectPeak()                                                    │
+└────────────────────────┬────────────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  rideService.js — Orchestrator                                      │
+│  - gatherDemandSignals() — DB + Redis + Weather API                │
+│  - requestRide() — estimate + lock + save                          │
+│  - updateRideStatus() — status transitions, GPS tracking           │
+│  - calculateCompletionFare() — final fare at completion            │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## B2. DB Tables — Kya Kahan Hai
+
+### `pricing_vehicle_config` — Har vehicle ka base data
+```sql
+vehicle_type          -- 'bike','auto','car','xl','premium','luxury'
+base_fare             -- Fixed start charge
+per_km_rate           -- Per km rate
+minimum_fare          -- Floor fare
+platform_fee          -- Per ride company cut
+platform_fee_daily_cap -- Ride count cap (default 10)
+avg_speed_kmph        -- For ETA calculation
+pickup_free_km        -- Free pickup radius (2.5 km default)
+pickup_rate_per_km    -- Rate beyond free radius
+waiting_grace_minutes -- Free waiting window (7 min)
+waiting_rate_per_min  -- Charge after grace
+traffic_grace_minutes -- Traffic free buffer (30 min)
+traffic_rate_per_min  -- Rate after traffic grace
+```
+
+### `pricing_convenience_fee` — Peak vs off-peak base
+```sql
+vehicle_type    -- FK to pricing_vehicle_config
+off_peak_base   -- Base convenience fee (normal time)
+peak_base       -- Base convenience fee (peak time)
+```
+Joined automatically in `fetchVehicleConfigs()` query.
+
+### `pricing_distance_tiers` — Distance multipliers (global, all vehicles)
+```sql
+tier_name    -- 'short','standard','long','very_long'
+min_km       -- Band start
+max_km       -- Band end (NULL = unbounded)
+multiplier   -- Applied on conv fee base (0.75 / 1.0 / 1.2 / 1.4)
+```
+
+### `pricing_subscriber_rules` — Per subscription tier
+```sql
+tier_name            -- 'none','basic','standard','premium','annual'
+free_km              -- Free conv fee zone (6 km for all subscribers)
+discount_pct_beyond  -- % off beyond free_km (50% for all subscribers)
+surge_cap            -- Max surge this tier sees (1.25 / 1.1 for elite)
+```
+
+### `pricing_gst_config` — Single row toggle
+```sql
+gst_enabled        -- FALSE by default (toggle when GST registration done)
+rider_rate_pct     -- 5.00 (SAC 9964)
+platform_rate_pct  -- 18.00 (SAC 9985)
+```
+
+### `pricing_penalty_config` — Driver offense rules
+```sql
+offense_type      -- 'wrong_vehicle_rc','category_misrep','route_deviation','excess_cancellation'
+offense_count     -- 1st, 2nd, 3rd offense
+penalty_amount    -- Wallet deduction
+suspension_days   -- 0 = no suspension
+requires_rekyc    -- Force re-verification
+is_permanent_ban  -- Account termination
+rider_refund_amount -- Refund to passenger on this offense
+```
+
+### `pricing_settings` — Misc key-value knobs
+```
+surge_max_multiplier        -- 1.75 (global surge cap)
+peak_ratio_threshold        -- 1.2 (demand/supply ratio to trigger)
+peak_velocity_threshold     -- 18 (req/min velocity trigger)
+min_demand_requests         -- 5 (volume guard)
+peak_hours_morning_start/end -- 8, 10
+peak_hours_evening_start/end -- 18, 21
+weather_surge_mild/severe   -- 1.1, 1.25
+cancellation_penalty        -- 50
+cancellation_distance_threshold -- 300 (meters)
+cancellation_driver_share_pct   -- 80
+cancellation_platform_share_pct -- 20
+config_cache_ttl_seconds    -- 300 (5 min in-memory cache)
+```
+
+---
+
+## B3. Code Flow — requestRide()
+
+```
+POST /api/v1/rides/request
+  → rideController
+    → rideService.requestRide()
+
+1. Active ride check (conflict guard)
+
+2. Geocoding (address → lat/lng if needed)
+
+3. Google Maps API — getDistanceAndDuration()
+   Returns: distanceKm, durationMinutes
+
+4. gatherDemandSignals()
+   Parallel:
+   - rideRepo.countRecentRideRequests()    → rideRequests
+   - rideRepo.getRequestVelocity()         → requestVelocity
+   - getCachedNearbyDrivers() / findNearby → nearbyDrivers (Redis cached)
+   - getWeatherSignal()                    → weatherSignal (OpenWeather API)
+
+5. subscriptionService.getActiveSubscription()
+   → subscriberTier, isSubscribed, freeRidesLeft
+
+6. rideCalculator.calculateEstimatedFare({
+     vehicleType, distanceKm, pickupDistanceKm,
+     rideRequests, availableDrivers, requestVelocity,
+     weatherSignal,
+     subscriberTier, isSubscribed,
+     driverDailyRideCount
+   })
+   → fare.passenger.estimatedFare
+   → fare.signals.surgeMultiplier
+   → fare.passenger.convenienceFee
+   → fare.passenger.isPeak
+
+7. rideRepo.create() — save ride with locked fields:
+   locked_is_subscribed, locked_subscriber_tier,
+   locked_surge_cap, locked_is_peak,
+   locked_convenience_fee, surge_multiplier
+
+8. Socket emit → nearby drivers (emitRideRequest)
+   FCM push → nearby drivers
+
+9. Return estimatedFare to passenger
+```
+
+---
+
+## B4. Code Flow — updateRideStatus() → in_progress
+
+```
+Driver confirms OTP → status: 'in_progress'
+
+  → startRideTracking(rideId, driverLat, driverLon)
+     Redis hash: ride:tracking:{rideId}
+       lastLat, lastLon, totalKm=0, pingCount=0
+       TTL: 7200s (2 hours)
+
+  → Socket emit ride:status_changed to ride room
+  → FCM to passenger
+```
+
+---
+
+## B5. Code Flow — driver:location_update (Socket)
+
+```
+socket.on('driver:location_update', { latitude, longitude, rideId })
+
+1. updateDriverLocation() → Redis
+
+2. io.to(`ride:${rideId}`).emit('driver:map_ping', ...)
+   (ONLY to that ride's room — NOT io.emit broadcast)
+
+3. ETA calculation:
+   - findRideById() → ride.status, target lat/lng
+   - calculateDistance() → distKm
+   - calculateDuration() → etaMinutes (uses avgSpeedKmph from DB)
+   - io.to(`ride:${rideId}`).emit('ride:eta_update', ...)
+
+4. GPS tracking (only if in_progress):
+   - addTrackingPoint(rideId, lat, lon)
+     → calculateDistance from lastLat/lastLon
+     → if segment < 0.01 km → skip (GPS jitter)
+     → update Redis totalKm, lastLat, lastLon
+     → TTL refresh
+```
+
+---
+
+## B6. Code Flow — calculateCompletionFare()
+
+```
+Driver completes ride → status: 'completed'
+
+1. getActualDistance(rideId) from Redis
+   - Returns null if: < 2 pings OR totalKm < 0.1 (unreliable GPS)
+   - Returns tracked km (2 decimal places)
+
+2. trackedKm = actualKm ?? ride.distance_km (estimated fallback)
+
+3. rideCalculator.calculateFinalRideFare({
+     vehicleType,
+     distanceKm: trackedKm,           ← actual GPS or estimated
+     waitedMinutes,                   ← from ride.waited_minutes
+     actualDurationMinutes,           ← from ride.actual_duration
+     estimatedDurationMinutes,
+     surgeMultiplier: ride.surge_multiplier,
+     lockedConvenienceFee: ride.locked_convenience_fee,
+     lockedIsPeak: ride.locked_is_peak,
+     lockedSubscriberTier,
+     lockedIsSubscribed,
+     lockedSurgeCap: ride.locked_surge_cap,
+     driverDailyRideCount,
+     pickupDistanceKm: ride.driver_pickup_distance_km
+   })
+
+4. Save to rides:
+   actual_distance_km = trackedKm
+   fare_before_gst, passenger_total
+   gst_on_fare, gst_on_platform_fee
+   waiting_charges, traffic_compensation, pickup_compensation
+
+5. clearRideTracking(rideId) → delete Redis key
+
+6. Wallet debit (passenger), Wallet credit (driver)
+7. Invoice create
+8. FCM + Socket notify both parties
+```
+
+---
+
+## B7. Fare Formula — Exact Math
+
+```
+distanceFare      = distanceKm × perKmRate
+
+preSurge          = baseFare + distanceFare + waitingCharges
+surgedFare        = preSurge × surgeMultiplier
+fareFloor         = max(surgedFare, minimumFare)
+
+convenieceFee     = convenienceBase(peak/offPeak) × distanceTierMultiplier
+                    [subscriber: free if ≤freeKm, else (1 - discountPct) × standardFee]
+
+fareBeforeGst     = fareFloor + convenienceFee
+
+gstOnFare         = fareBeforeGst × 5% (if enabled)
+passengerTotal    = fareBeforeGst + gstOnFare
+
+gstOnPlatformFee  = platformFee × 18% (if enabled)
+driverNet         = fareFloor
+                    - platformFee
+                    - gstOnPlatformFee
+                    + pickupCompensation
+                    + waitingCharges
+                    + trafficDelayCompensation
+
+NOTE: convenienceFee is NOT in driverNet — it's GO's revenue only.
+NOTE: waitingCharges is in BOTH passenger total (via preSurge) AND driver net.
+NOTE: pickupCompensation and trafficComp are in driver net only — passenger doesn't pay these.
+```
+
+---
+
+## B8. Admin — Pricing Change Karna
+
+All pricing is updatable via Admin API without deploy:
+
+```
+PATCH /api/v1/admin/pricing/vehicle/:vehicleType
+  Body: { base_fare, per_km_rate, waiting_grace_minutes, ... }
+  → pricingConfig.repository.updateVehicleConfig()
+  → reloadPricingConfig()  ← cache invalidate + rebuild
+
+PATCH /api/v1/admin/pricing/convenience-fee/:vehicleType
+  Body: { off_peak_base, peak_base }
+  → updateConvenienceFee()
+
+PATCH /api/v1/admin/pricing/subscriber-rules/:tierName
+  Body: { free_km, discount_pct_beyond, surge_cap }
+  → updateSubscriberRule()
+
+PATCH /api/v1/admin/pricing/gst
+  Body: { gst_enabled, rider_rate_pct, platform_rate_pct }
+  → updateGstConfig()
+
+PUT /api/v1/admin/pricing/settings/:key
+  Body: { value, value_type }
+  → upsertSetting()
+```
+
+Cache TTL is `config_cache_ttl_seconds` setting (default 300s).
+After admin update, `reloadPricingConfig()` is called immediately — no wait needed.
+
+---
+
+## B9. File Map — Kahan Kya Hai
 
 ```
 src/
-  config/
-    envConfig.js                          ← SAB pricing values yahan se aati hain (ENV)
-  core/
-    utils/
-      rideCalculator.js                   ← MAIN CALCULATOR — sab formulas yahan hain
-      weatherService.js                   ← WEATHER API — OpenWeatherMap se real-time weather
-  modules/
-    rides/
-      routes/rideRoutes.js                ← API endpoints define hain
-      controllers/rideController.js       ← Request handle karta hai, service ko call karta hai
-      services/rideService.js             ← BUSINESS LOGIC — demand + weather signals, estimated/final fare
-      repositories/ride.repository.js     ← DB QUERIES — real demand count, drivers, rides
-```
-
-### Kaunsi File Mein Kya Calculate Ho Rha Hai:
-
-| File | Kya karta hai |
-|------|--------------|
-| `envConfig.js` | Sab rates, thresholds, fees, peak hours, weather config — sab `.env` se padhta hai. Kuch bhi hardcode nahi. |
-| `rideCalculator.js` | Pure math: peak detect karna (time + demand + weather), surge calculate karna, fare formula, waiting charges, cancellation, etc. |
-| `weatherService.js` | OpenWeatherMap API se real-time weather fetch karta hai, 15 min cache rakhta hai, rain/storm detect karta hai. |
-| `ride.repository.js` | Database se real data laata hai — last 10 min ki ride requests, per-minute velocity, nearby drivers, driver ki aaj ki rides. |
-| `rideService.js` | Sab combine karta hai — DB se demand signals laao, weather signal laao, calculator ko bhejo, fare nikalo, ride create karo, completion pe final fare nikalo. |
-| `rideController.js` | HTTP request handle karta hai, body se data uthata hai, service ko call karta hai, JSON response bhejta hai. |
-
----
-
-## 2. Pricing Flow — Step by Step
-
-### 2A. ESTIMATED FARE (Jab Rider Ride Request Karta Hai ya calculate-fare API call karta hai)
-
-```
-Rider ne app pe pickup/dropoff select kiya
-         |
-         v
-POST /api/v1/rides/calculate-fare   (estimate — booking nahi hoti)
-  ya
-POST /api/v1/rides/request          (actual booking — ride create hoti hai)
-         |
-         v
-rideController.js → rideService.calculateFare() ya requestRide()
-         |
-         v
-Step 1: Distance nikalo (Haversine formula — pickup se dropoff lat/lng)
-Step 2: Duration nikalo (distance / average speed from ENV)
-Step 3: PARALLEL mein 4 signals fetch karo:
-         |
-         ├── countRecentRideRequests()  → last 10 min mein kitni rides request hui is area mein?
-         ├── getRequestVelocity()       → last 5 min mein per minute kitni requests aa rhi hain?
-         ├── findNearbyDrivers()        → kitne drivers available hain radius mein?
-         └── getWeatherSignal()         → OpenWeatherMap se current weather (Rain? Storm? Clear?)
-         |
-         v
-Step 4: Peak Detect karo (TIME + DEMAND + WEATHER combined):
-         |
-         ├── Time Peak: Kya abhi 8-10 AM ya 6-9 PM hai?
-         ├── Demand Peak: Kya requests >= 5 (volume guard) AND ratio >= 1.2?
-         ├── Weather Peak: Kya Rain/Thunderstorm/Snow chal rha hai?
-         └── Combined: isPeak = TimePeak OR DemandPeak OR WeatherPeak
-         |
-         v
-Step 5: Surge calculate karo:
-         |
-         ├── Demand Surge: volume guard + ratio based (1.0x - 1.75x)
-         ├── Weather Surge: Rain = 1.1x, Thunderstorm = 1.25x
-         ├── Final Surge = max(demandSurge, weatherSurge) — higher wala use hota hai
-         └── Cap: 1.75x maximum ALWAYS
-         |
-         v
-Step 6: ESTIMATED FARE FORMULA:
-         |
-         Estimated Fare = max(
-             (BaseFare + DistanceFare + ConvenienceFee) x Surge,
-             MinimumFare
-         )
-         |
-         v
-Step 7: (sirf /request pe) Ride DB mein save karo:
-         ├── surge_multiplier LOCK hota hai
-         ├── convenience_fee LOCK hoti hai (request time wali peak/non-peak value)
-         ├── is_peak LOCK hota hai
-         └── demand_supply_ratio save hota hai
-Step 8: Subscription benefits check karo (free ride / discount / surge protection)
-Step 9: Coupon apply karo (SIRF agar free ride nahi hai — subscription first, coupon second)
-Step 10: Response bhejo — passenger ko fare breakdown + driver ko earnings breakdown
-```
-
-### 2B. FINAL FARE (Jab Ride Complete Hoti Hai)
-
-```
-Driver ne "Complete Ride" dabaya
-         |
-         v
-PATCH /api/v1/rides/:rideId/status  { status: "completed" }
-         |
-         v
-rideService.updateRideStatus()
-         |
-         v
-Step 1: Ride ka data DB se laao (timestamps include)
-Step 2: ACTUAL values calculate karo:
-         |
-         ├── waitedMinutes = started_at - driver_arrived_at  (real waiting)
-         └── actualDuration = completed_at - started_at      (real ride time)
-         |
-         v
-Step 3: LOCKED values use karo (request time wale, recalculate NAHI karte):
-         ├── surge_multiplier → ride.surge_multiplier
-         ├── convenience_fee  → ride.convenience_fee  (LOCKED — peak/non-peak consistent)
-         └── is_peak          → ride.is_peak
-         |
-         v
-Step 4: FINAL FARE FORMULA:
-         |
-         Final Fare = max(
-             (BaseFare + DistanceFare + WaitingCharges + LockedConvenienceFee) x LockedSurge,
-             MinimumFare
-         )
-         |
-         v
-Step 5: Driver earnings calculate karo:
-         |
-         Driver Net = FinalFare - PlatformFee + PickupCompensation + WaitingEarnings + TrafficCompensation
-         |
-         v
-Step 6: DB mein actual_fare aur final_fare update karo
-Step 7: Driver ki total_rides aur total_earnings update karo
-Step 8: Agar coupon tha → coupon_usages mein record karo (current_uses increment)
+├── modules/pricing/
+│   ├── services/
+│   │   ├── pricingConfigLoader.js   ← DB → in-memory cache, all getters
+│   │   └── Pricingservice.js        ← calculateFare API handler logic
+│   ├── repositories/
+│   │   └── pricingConfig.repository.js  ← Raw SQL: fetch + update functions
+│   ├── controllers/
+│   │   ├── pricingController.js     ← GET /calculate-fare
+│   │   └── pricingAdminController.js← PATCH admin endpoints
+│   └── routes/
+│       ├── pricingRoutes.js
+│       └── pricingAdminRoutes.js
+│
+├── core/utils/
+│   └── rideCalculator.js            ← Pure fare math (uses pricingConfigLoader)
+│
+├── modules/rides/services/
+│   └── rideService.js               ← requestRide, updateRideStatus, completion
+│
+├── infrastructure/websocket/
+│   ├── socket.server.js             ← driver:location_update → addTrackingPoint
+│   └── rideTracking.js              ← Redis GPS accumulation (start/add/get/clear)
+│
+└── infrastructure/database/migrations/
+    ├── 040_create_pricing_config.sql ← All 7 pricing tables + full seed data
+    ├── 041_alter_rides_for_pricing_v3.sql ← Locked fields, GST cols, pending_recoveries
+    ├── 047_add_actual_distance_to_rides.sql ← actual_distance_km column
+    └── 048_update_subscription_plans.sql   ← Free rides + discount values update
 ```
 
 ---
 
-## 3. Peak Detection — Kaise Decide Hota Hai Peak Hai Ya Nahi
+## B10. Critical Rules — Jo Break Karna Mana Hai
 
-### 4 Layers:
-
-#### Layer 1: Time-based Peak
-```
-Morning Peak: 8 AM - 10 AM   (ENV se configurable)
-Evening Peak: 6 PM - 9 PM    (ENV se configurable)
-
-Agar current time in windows mein hai → isTimePeak = true
-```
-
-#### Layer 2: Demand-based Peak (with Volume Guard)
-```
-Step 1: rideRequests >= MIN_DEMAND_REQUESTS (default 5)?
-        Agar NAHI → demand peak = false, CHAHE ratio kitna bhi ho
-
-Step 2: Agar HAA → check:
-        - demandSupplyRatio >= 1.2?  (rideRequests / availableDrivers)
-        - requestVelocity >= 18?     (requests per minute)
-        Agar koi bhi true → isDemandPeak = true
-```
-
-**Kyun Volume Guard Zaroori Hai:**
-```
-Bina volume guard:  2 requests / 1 driver = ratio 2.0 → PEAK (galat!)
-With volume guard:  2 requests / 1 driver = volume 2 < 5 → NOT PEAK (sahi!)
-                    20 requests / 10 drivers = ratio 2.0, volume 20 >= 5 → PEAK (sahi!)
-```
-
-#### Layer 3: Weather-based Peak (Real-time API)
-```
-OpenWeatherMap API se current weather fetch hota hai pickup location ka.
-
-Weather Peak conditions (ENV se configurable):
-  - Rain, Drizzle          → Mild weather peak (surge 1.1x)
-  - Thunderstorm, Snow     → Severe weather peak (surge 1.25x)
-  - Squall, Tornado        → Severe weather peak (surge 1.25x)
-  - Clear, Clouds, Mist    → No weather peak
-
-Response 15 min cached rehta hai (~11km area ke liye) — har request pe API nahi call hoti.
-Agar API key nahi hai ya API down hai → weather silently skip hota hai, koi error nahi.
-```
-
-#### Layer 4: Combined Decision
-```
-isPeak = isTimePeak OR isDemandPeak OR isWeatherPeak
-
-Peak Reasons (can combine):
-- "peak_hour"                         → sirf time peak
-- "high_demand"                       → sirf demand peak
-- "bad_weather"                       → sirf weather peak
-- "peak_hour_and_high_demand"         → time + demand
-- "peak_hour_and_bad_weather"         → time + weather
-- "high_demand_and_bad_weather"       → demand + weather
-- "peak_hour_and_high_demand_and_bad_weather" → teeno peak
-- "normal_load"                       → kuch nahi
-```
-
-#### Peak Ka Effect:
-| Signal | Surge Badhta Hai? | Convenience Fee Badhti Hai? |
-|--------|-------------------|---------------------------|
-| Sirf Time Peak | NAHI | HAA (peak band use hota hai) |
-| Sirf Demand Peak | HAA (demand surge) | HAA |
-| Sirf Weather Peak | HAA (weather surge 1.1x/1.25x) | HAA |
-| Demand + Weather | HAA (higher of both) | HAA |
-| No Peak | NAHI | NAHI (non-peak band) |
+1. **Convenience fee is post-surge** — `fareBeforeGst = fareFloor + convFee`, not before
+2. **convFee is NOT in driverNet** — driver sirf `fareFloor` se kamaata hai, convFee nahi
+3. **Subscriber tier at ride time se lock hota hai** — mid-ride subscription expire hone se fare nahi badlega
+4. **Location ping to ride room only** — `io.to('ride:${rideId}').emit(...)` use karo, `io.emit(...)` nahi. Dono (driver + passenger) ko ride:join karna mandatory hai.
+5. **GPS tracking sirf in_progress mein** — `startRideTracking` sirf OTP confirm pe, `addTrackingPoint` sirf `status === 'in_progress'` pe
+6. **Pricing config throw karta hai agar init nahi hua** — `initPricingConfig()` app boot pe call hona zaroori hai (server.js mein hai)
+7. **Pickup compensation passenger total mein nahi** — driver-only compensation hai
+8. **Traffic compensation passenger total mein nahi** — driver-only bonus hai
 
 ---
 
-## 4. Surge Algorithm — Detail
-
-### Demand Surge:
-```
-demandSupplyRatio = rideRequests / availableDrivers
-
-Volume Guard: agar rideRequests < 5 → demand surge = 1.0x
-
-Agar volume sufficient hai:
-  ratio <= 1.1  →  surge = 1.0x  (no surge)
-  ratio 1.1-1.3 →  surge = 1.1x - 1.2x  (linear increase)
-  ratio > 1.3   →  surge = 1.2x + progressive increase
-  MAXIMUM CAP   →  1.75x (kabhi bhi isse zyada nahi hoga)
-```
-
-### Weather Surge:
-```
-Clear/Clouds    → 1.0x  (no weather surge)
-Rain/Drizzle    → 1.1x  (mild, ENV: WEATHER_SURGE_MILD)
-Thunderstorm    → 1.25x (severe, ENV: WEATHER_SURGE_SEVERE)
-Snow/Squall     → 1.25x (severe)
-```
-
-### Final Surge = max(demandSurge, weatherSurge)
-Dono stack NAHI hote — jo zyada hai woh apply hota hai. Cap 1.75x.
-
-**Examples:**
-| Scenario | Demand Surge | Weather Surge | Final Surge |
-|----------|-------------|---------------|-------------|
-| Normal day, 2 req/1 drv | 1.0x (low volume) | 1.0x (clear) | **1.0x** |
-| Rain, low demand | 1.0x | 1.1x | **1.1x** (weather wins) |
-| Thunderstorm, low demand | 1.0x | 1.25x | **1.25x** (weather wins) |
-| High demand, clear | 1.43x | 1.0x | **1.43x** (demand wins) |
-| High demand + rain | 1.43x | 1.1x | **1.43x** (demand already higher) |
-| Low demand + thunderstorm | 1.0x | 1.25x | **1.25x** (weather wins) |
-| 30 req / 10 drv + storm | 1.75x (capped) | 1.25x | **1.75x** (demand wins, capped) |
-
----
-
-## 5. Fare Components — Sab Kuch Detail Mein
-
-### 5A. Base Fare + Distance Fare (ENV se)
-| Vehicle | Base Fare | Per KM | Minimum Fare |
-|---------|-----------|--------|-------------|
-| Bike | Rs.20 | Rs.8/km | Rs.35 |
-| Auto | Rs.30 | Rs.12/km | Rs.50 |
-| Car/Cab | Rs.50 | Rs.15/km | Rs.90 |
-
-### 5B. Convenience Fee (Peak vs Non-Peak, ENV se)
-| Vehicle | Non-Peak | Peak |
-|---------|----------|------|
-| Bike | Rs.5 | Rs.10 - Rs.12 |
-| Auto | Rs.12 - Rs.15 | Rs.20 - Rs.25 |
-| Car | Rs.20 - Rs.25 | Rs.30 - Rs.50 |
-
-Peak band mein exact value demand ratio ke basis pe decide hoti hai (low ratio = min, high ratio = max).
-Peak trigger hota hai agar TIME peak hai, ya DEMAND peak hai, ya WEATHER peak hai — koi bhi ek hone pe peak band use hoga.
-
-### 5C. Waiting Charges (Final Fare Mein — actual wait se)
-```
-Grace Period: Pehle 3 minute FREE
-Uske baad:
-  Bike: Rs.1/min
-  Auto: Rs.1.5/min
-  Car:  Rs.2/min
-```
-
-### 5D. Traffic Delay Compensation (Driver ko milta hai)
-```
-Grace: Estimated time + 30 minutes tak koi charge nahi
-Uske baad:
-  Bike: Rs.0.5/min
-  Auto: Rs.1/min
-  Car:  Rs.1.5/min
-```
-
-### 5E. Pickup Distance Compensation (Driver ko milta hai)
-```
-2.5 km tak FREE (default search radius)
-Uske baad:
-  Bike: Rs.3/extra km
-  Auto: Rs.5/extra km
-  Car:  Rs.7/extra km
-```
-
-### 5F. Platform Fee (Driver se katta hai)
-```
-Bike: Rs.1/ride
-Auto: Rs.1.5/ride
-Car:  Rs.5/ride
-Daily Cap: Pehle 10 rides tak hi charge hota hai. 11th ride se FREE.
-```
-
-### 5G. Cancellation Penalty
-```
-Agar rider cancel kare jab driver 500m ke andar hai:
-  Penalty: Rs.50
-  Driver ko: Rs.40 (80%)
-  Platform ko: Rs.10 (20%)
-
-Agar driver 500m se zyada dur hai: No penalty
-```
-
----
-
-## 6. Passenger Ko Kya Dikhta Hai vs Driver Ko Kya Dikhta Hai
-
-### PASSENGER dekhta hai (Ride Request pe):
-```json
-{
-  "estimatedFare": 187,           ← "Aapki ride ka estimated fare"
-  "baseFare": 30,                 ← "Base charge"
-  "distanceFare": 120,            ← "10 km x Rs.12/km"
-  "convenienceFee": 20,           ← "Platform convenience fee"
-  "surgeMultiplier": 1.1,         ← "Barish hai, thoda surge"
-  "waitingCharges": 0,            ← estimate pe 0, final mein actual
-  "isPeak": true,                 ← "Peak chal rha hai"
-  "peakReason": "peak_hour_and_bad_weather"
-}
-```
-
-### DRIVER dekhta hai (Ride Accept pe):
-```json
-{
-  "grossFare": 187,               ← "Ride ka total fare"
-  "platformFee": 1.5,             ← "Platform fee katega"
-  "pickupDistanceCompensation": 0,← "Extra pickup compensation" (agar dur se aaya)
-  "waitingEarnings": 0,           ← "Waiting ke paise" (final mein actual)
-  "trafficDelayCompensation": 0,  ← "Traffic delay ke paise" (final mein actual)
-  "netEarnings": 185.5,           ← "Aapki kamai: Rs.185.5"
-  "dailyRideCount": 3,            ← "Aaj ki 3rd ride"
-  "platformFeeCapRide": 10        ← "10 rides ke baad platform fee free"
-}
-```
-
-### SIGNALS mein yeh dikhta hai (debug/admin ke liye):
-```json
-{
-  "demandSupplyRatio": 0.3,
-  "requestVelocity": 2,
-  "surgeCap": 1.75,
-  "demandSurge": 1.0,
-  "weatherSurge": 1.1,
-  "appliedSurge": 1.1,
-  "isPeak": true,
-  "peakReason": "peak_hour_and_bad_weather",
-  "isTimePeak": true,
-  "timeWindow": "morning_peak",
-  "isDemandPeak": false,
-  "isWeatherPeak": true,
-  "weatherCondition": "Rain",
-  "weatherSeverity": "mild"
-}
-```
-
-### COMPLETION pe (Final Fare):
-
-**PASSENGER ko dikhta hai:**
-```
-"Aapka final fare: Rs.165"
-  - Base: Rs.30
-  - Distance: Rs.120
-  - Waiting (2 min charged): Rs.3
-  - Convenience: Rs.12
-  - Surge: 1.0x
-```
-
-**DRIVER ko dikhta hai:**
-```
-"Aapki kamai: Rs.166.5"
-  - Ride fare: Rs.165
-  - Platform fee: -Rs.1.5
-  - Waiting earnings: +Rs.3
-  - Traffic compensation: Rs.0
-  - Pickup compensation: Rs.0
-```
-
----
-
-## 7. TEST CASES — Real Numbers
-
-### TEST CASE 1: Normal Auto Ride — Peak Hour, Low Demand, No Rain
-
-**Scenario:**
-- Vehicle: Auto
-- Distance: 10 km, Duration: ~24 min
-- Time: 9 AM (morning peak)
-- Weather: Clear (no weather peak)
-- Area mein: 3 ride requests, 10 drivers available
-- Pickup distance: 1.5 km
-- Driver ki aaj ki 3rd ride
-
-**ESTIMATED FARE (ride request pe):**
-```
-Peak Detection:
-  - Time Peak: YES (9 AM = morning peak)
-  - Demand Peak: NO (3 requests < 5 minimum volume)
-  - Weather Peak: NO (Clear sky)
-  - Combined: isPeak = YES (reason: "peak_hour")
-  - Demand Surge: 1.0x (low volume)
-  - Weather Surge: 1.0x (clear)
-  - Applied Surge: 1.0x
-
-Calculation:
-  BaseFare     = Rs.30
-  DistanceFare = 10 km x Rs.12 = Rs.120
-  ConvFee      = Rs.20 (peak band, but min value kyunki low ratio)
-  Surge        = 1.0x
-
-  EstimatedFare = (30 + 120 + 20) x 1.0 = Rs.170
-```
-
-| | Passenger Dekhta Hai | Driver Dekhta Hai |
-|---|---|---|
-| Fare | Rs.170 (estimated) | Rs.170 (gross) |
-| Surge | 1.0x (no surge) | — |
-| Convenience | Rs.20 | — |
-| Platform Fee | — | -Rs.1.5 |
-| Pickup Comp | — | Rs.0 (1.5km < 2.5km free) |
-| **Net** | **Rs.170 pay karega** | **Rs.168.5 milega** |
-
-**FINAL FARE (ride complete pe):**
-- Rider ne 5 min wait karaya (3 min grace, 2 min charged)
-- Ride 30 min mein complete hui (no traffic delay)
-
-```
-  WaitingCharges = 2 min x Rs.1.5 = Rs.3
-  ConvFee        = Rs.20 (LOCKED from request time — peak band, kyunki 9AM time peak tha)
-  Note: Purana bug: surge=1.0 se non-peak infer karta tha → Rs.12 (GALAT)
-        Fix: convenience_fee request time pe lock hoti hai → Rs.20 (SAHI)
-
-  FinalFare = (30 + 120 + 3 + 20) x 1.0 = Rs.173
-```
-
-| | Passenger Final | Driver Final |
-|---|---|---|
-| Fare | Rs.173 | Rs.173 (gross) |
-| Waiting | Rs.3 charged | Rs.3 earned |
-| Platform Fee | — | -Rs.1.5 |
-| **Net** | **Rs.173 pay karega** | **Rs.174.5 milega** |
-
----
-
-### TEST CASE 2: Bike Ride — Peak Hour + High Demand + Rain (Surge Active)
-
-**Scenario:**
-- Vehicle: Bike
-- Distance: 5 km, Duration: ~10 min
-- Time: 9 AM (morning peak)
-- Weather: Rain (mild weather peak, surge 1.1x)
-- Area mein: 20 ride requests, 10 drivers available, velocity 25 req/min
-- Pickup distance: 4 km (driver dur se aa rha)
-- Driver ki aaj ki 8th ride
-
-**ESTIMATED FARE (ride request pe):**
-```
-Peak Detection:
-  - Time Peak: YES (9 AM)
-  - Demand Peak: YES (20 requests >= 5, ratio 2.0 >= 1.2, velocity 25 >= 18)
-  - Weather Peak: YES (Rain = mild)
-  - Combined: isPeak = YES (reason: "peak_hour_and_high_demand_and_bad_weather")
-  - Demand Surge: 1.48x (ratio 2.0 → progressive formula)
-  - Weather Surge: 1.1x (rain = mild)
-  - Applied Surge: 1.48x (demand wins — max of 1.48 vs 1.1)
-
-Calculation:
-  BaseFare     = Rs.20
-  DistanceFare = 5 km x Rs.8 = Rs.40
-  ConvFee      = Rs.11.33 (peak band Rs.10-12, scaled by ratio)
-  Surge        = 1.48x
-
-  EstimatedFare = (20 + 40 + 11.33) x 1.48 = Rs.106 (rounded)
-```
-
-| | Passenger Dekhta Hai | Driver Dekhta Hai |
-|---|---|---|
-| Fare | Rs.106 (estimated) | Rs.106 (gross) |
-| Surge | 1.48x | — |
-| Convenience | Rs.11.33 | — |
-| Platform Fee | — | -Rs.1 |
-| Pickup Comp | — | +Rs.4.50 (4km - 2.5km = 1.5km x Rs.3) |
-| **Net** | **Rs.106 pay karega** | **Rs.109.5 milega** |
-
-**FINAL FARE (ride complete pe):**
-- Rider ne 8 min wait karaya (3 min grace, 5 min charged)
-- Ride 15 min mein complete hui
-- Surge locked at 1.48x (request time wala — estimate wala hi use hoga)
-
-```
-  WaitingCharges = 5 min x Rs.1 = Rs.5
-  ConvFee        = Rs.11.33 (LOCKED from request time — peak band, demand ratio 2.0)
-
-  FinalFare = (20 + 40 + 5 + 11.33) x 1.48 = Rs.113 (rounded)
-```
-
-| | Passenger Final | Driver Final |
-|---|---|---|
-| Fare | Rs.113 | Rs.113 (gross) |
-| Waiting | Rs.5 charged | Rs.5 earned |
-| Platform Fee | — | -Rs.1 |
-| Pickup Comp | — | +Rs.4.50 |
-| **Net** | **Rs.113 pay karega** | **Rs.121.5 milega** |
-
----
-
-### TEST CASE 3: Car Ride — Thunderstorm + Low Demand (Weather Surge Wins)
-
-**Scenario:**
-- Vehicle: Car/Cab
-- Distance: 15 km, Duration: ~26 min
-- Time: 2 PM (off-peak hours)
-- Weather: Thunderstorm (severe weather peak, surge 1.25x)
-- Area mein: 4 ride requests, 8 drivers (low demand, volume < 5)
-- Pickup distance: 2 km
-- Driver ki aaj ki 6th ride
-
-**ESTIMATED FARE (ride request pe):**
-```
-Peak Detection:
-  - Time Peak: NO (2 PM = off-peak)
-  - Demand Peak: NO (4 requests < 5 minimum volume)
-  - Weather Peak: YES (Thunderstorm = severe)
-  - Combined: isPeak = YES (reason: "bad_weather")
-  - Demand Surge: 1.0x (low volume, no demand surge)
-  - Weather Surge: 1.25x (thunderstorm = severe)
-  - Applied Surge: 1.25x (weather wins)
-
-Calculation:
-  BaseFare     = Rs.50
-  DistanceFare = 15 km x Rs.15 = Rs.225
-  ConvFee      = Rs.30 (peak band Rs.30-50, min value kyunki low ratio)
-  Surge        = 1.25x
-
-  EstimatedFare = (50 + 225 + 30) x 1.25 = Rs.381 (rounded)
-```
-
-| | Passenger Dekhta Hai | Driver Dekhta Hai |
-|---|---|---|
-| Fare | Rs.381 (estimated) | Rs.381 (gross) |
-| Surge | 1.25x (thunderstorm) | — |
-| Weather | Thunderstorm | — |
-| Convenience | Rs.30 | — |
-| Platform Fee | — | -Rs.5 |
-| Pickup Comp | — | Rs.0 (2km < 2.5km free) |
-| **Net** | **Rs.381 pay karega** | **Rs.376 milega** |
-
-**Yeh case important hai:** Off-peak hour hai, demand bhi low hai, lekin SIRF thunderstorm ki wajah se 1.25x surge lag rha hai. Bina weather detection ke fare Rs.305 hota (no surge). Weather ne Rs.76 extra add kiya.
-
----
-
-### TEST CASE 4: Car Ride — Peak Hour + Extreme Demand + Traffic Jam
-
-**Scenario:**
-- Vehicle: Car/Cab
-- Distance: 25 km, Duration: ~43 min estimated
-- Time: 9 AM (morning peak)
-- Weather: Clear
-- Area mein: 30 ride requests, 10 drivers available, velocity 30 req/min
-- Pickup distance: 5 km (driver bahut dur se aa rha)
-- Driver ki aaj ki 12th ride (platform fee cap already reached!)
-- Actual ride duration: 90 min (MASSIVE traffic jam)
-- Rider ne 2 min wait karaya (grace mein, koi charge nahi)
-
-**ESTIMATED FARE (ride request pe):**
-```
-Peak Detection:
-  - Time Peak: YES (9 AM)
-  - Demand Peak: YES (30 req >= 5, ratio 3.0, velocity 30)
-  - Weather Peak: NO (Clear)
-  - Combined: "peak_hour_and_high_demand"
-  - Demand Surge: 1.75x (MAX CAP hit)
-  - Weather Surge: 1.0x
-  - Applied Surge: 1.75x
-
-Calculation:
-  BaseFare     = Rs.50
-  DistanceFare = 25 km x Rs.15 = Rs.375
-  ConvFee      = Rs.50 (peak band max Rs.30-50, full max at high ratio)
-  Surge        = 1.75x
-
-  EstimatedFare = (50 + 375 + 50) x 1.75 = Rs.831 (rounded)
-```
-
-| | Passenger Dekhta Hai | Driver Dekhta Hai |
-|---|---|---|
-| Fare | Rs.831 (estimated) | Rs.831 (gross) |
-| Surge | 1.75x (MAX) | — |
-| Convenience | Rs.50 | — |
-| Platform Fee | — | Rs.0 (12th ride > 10 cap, FREE!) |
-| Pickup Comp | — | +Rs.17.50 (5km - 2.5km = 2.5km x Rs.7) |
-| **Net** | **Rs.831 pay karega** | **Rs.848.5 milega** |
-
-**FINAL FARE (ride complete pe):**
-- 2 min wait (grace mein, 0 charge)
-- 90 min actual duration (estimated 43 + 30 grace = 73 min tak free, 17 min traffic overage)
-- Surge locked at 1.75x
-
-```
-  WaitingCharges   = 0 (2 min < 3 min grace)
-  ConvFee          = Rs.50 (LOCKED from request time — demand ratio 3.0 → max band)
-  Note: Purana bug: lockedSurge=1.75 pass karta tha → Rs.40 milta tha (GALAT)
-        Fix: request time ki locked convenience_fee = Rs.50 (SAHI)
-  TrafficOverage   = 90 - (43+30) = 17 min overage
-  TrafficComp      = 17 x Rs.1.5 = Rs.25.5 (DRIVER ko milega)
-
-  FinalFare = (50 + 375 + 0 + 50) x 1.75 = Rs.831 (rounded)
-
-  Driver Net = 831 - 0(no platform fee) + 17.5(pickup) + 0(waiting) + 25.5(traffic) = Rs.874
-```
-
-| | Passenger Final | Driver Final |
-|---|---|---|
-| Fare | Rs.831 | Rs.831 (gross) |
-| Waiting | Rs.0 (grace mein) | Rs.0 |
-| Platform Fee | — | Rs.0 (cap reached) |
-| Pickup Comp | — | +Rs.17.50 |
-| Traffic Comp | — | +Rs.25.50 (17 min extra) |
-| **Net** | **Rs.831 pay karega** | **Rs.874 milega** |
-
-**Important:** Traffic delay compensation SIRF driver ko milta hai. Passenger ka fare traffic se nahi badhta (unfair hoga rider ke liye). Driver ko yeh extra platform deta hai as protection.
-
----
-
-## 8. Cancellation Scenario
-
-### Case A: Driver 300m dur hai, rider cancel karta hai
-```
-300m <= 500m threshold → Penalty lagega
-  Rider se: Rs.50 kata jayega
-  Driver ko: Rs.40 milega (80%)
-  Platform ko: Rs.10 milega (20%)
-```
-
-### Case B: Driver 700m dur hai, rider cancel karta hai
-```
-700m > 500m threshold → No penalty
-  Rider se: Rs.0
-  Driver ko: Rs.0
-  Free cancellation
-```
-
----
-
-## 9. Platform Fee Daily Cap — Example
-
-| Ride # | Platform Fee | Driver Actually Pays |
-|--------|-------------|---------------------|
-| 1st | Rs.1.5 (auto) | Rs.1.5 |
-| 5th | Rs.1.5 | Rs.1.5 |
-| 10th | Rs.1.5 | Rs.1.5 (last charged ride) |
-| 11th | Rs.0 | Rs.0 (FREE! cap reached) |
-| 15th | Rs.0 | Rs.0 (FREE!) |
-| 20th | Rs.0 | Rs.0 (FREE all day!) |
-
-Driver jitni zyada rides karega, utna fayda — 10 ke baad no commission!
-
----
-
-## 10. Weather Service — Kaise Kaam Karta Hai
-
-### Architecture:
-```
-Fare request aaya (pickup lat/lng ke saath)
-         |
-         v
-weatherService.getWeatherSignal(lat, lng)
-         |
-         ├── Cache check (15 min, ~11km area)
-         │   ├── Cache HIT → cached data return (no API call)
-         │   └── Cache MISS → OpenWeatherMap API call
-         │                            |
-         │                            v
-         │              https://api.openweathermap.org/data/2.5/weather
-         │                            |
-         │                            v
-         │              Response: { weather: [{ main: "Rain" }], temp, humidity }
-         │                            |
-         │                            v
-         │              Cache mein save karo (15 min ke liye)
-         |
-         v
-Return: { isWeatherPeak: true, weatherCondition: "Rain", severity: "mild", weatherSurge: 1.1 }
-```
-
-### Weather Conditions → Surge Mapping:
-| Weather | Peak? | Severity | Surge |
-|---------|-------|----------|-------|
-| Clear | NO | none | 1.0x |
-| Clouds | NO | none | 1.0x |
-| Mist/Haze/Fog | NO | none | 1.0x |
-| Drizzle | YES | mild | 1.1x |
-| Rain | YES | mild | 1.1x |
-| Thunderstorm | YES | severe | 1.25x |
-| Snow | YES | severe | 1.25x |
-| Squall | YES | severe | 1.25x |
-| Tornado | YES | severe | 1.25x |
-
-### Failsafe:
-- API key nahi hai → weather skip, no error
-- API down hai → weather skip, no error, log warning
-- Cache expired → fresh API call
-- Sab conditions ENV se configurable
-
----
-
-## 11. Key Business Rules — Summary
-
-| Rule | Detail |
-|------|--------|
-| Surge tab hi lagta hai | Jab REAL demand sufficient ho (>= 5 requests) AND ratio high ho, YA weather kharab ho |
-| 2 request / 1 driver = no surge | Volume guard prevent karta hai false surge |
-| Time peak = higher convenience fee | But NO surge. Peak hours mein convenience fee peak band se aati hai |
-| Weather peak = surge + peak fee | Rain 1.1x, Thunderstorm 1.25x. Convenience fee bhi peak band se |
-| Demand + Weather stack nahi hote | max(demandSurge, weatherSurge) — jo zyada woh apply |
-| Surge LOCK hota hai | Request time pe jo surge tha, wahi final fare mein use hoga. Ride ke beech mein change nahi hota |
-| Convenience fee bhi LOCK hoti hai | Request time ki peak/non-peak band value DB mein save hoti hai. Final fare mein wahi use hoti hai — recalculate nahi hoti |
-| Subscription PEHLE apply hota hai | Free ride ya % discount subscription se aata hai. Coupon uske baad |
-| Free ride pe coupon nahi lagta | Subscription free ride = Rs.0 fare. Coupon apply karna meaningless hoga |
-| Surge protection subscription benefit | Agar plan mein surge_protection=true hai toh surge force 1.0x ho jata hai |
-| Waiting 3 min free | Driver arrive hone ke baad 3 min grace, uske baad per min charge |
-| Traffic 30 min grace | Estimated + 30 min tak koi extra charge nahi |
-| Traffic comp sirf driver ko | Passenger ka fare traffic se nahi badhta, driver ko platform compensate karta hai |
-| Platform fee cap 10 rides | Pehle 10 rides tak fee lagti hai, uske baad free |
-| Minimum fare always apply | Chahe distance kitna bhi kam ho, minimum fare se neeche nahi jayega |
-| Driver assignment atomic hai | High traffic mein bhi ek ride sirf ek driver ko milegi (DB-level lock) |
-| Sab ENV se configurable | Koi bhi value .env file se change kar sakte ho bina code change kiye |
-
----
-
-## 12. ENV Variables — Quick Reference
-
-```env
-# Vehicle Pricing
-BIKE_BASE_FARE=20          AUTO_BASE_FARE=30          CAR_BASE_FARE=50
-BIKE_PER_KM=8              AUTO_PER_KM=12             CAR_PER_KM=15
-BIKE_MINIMUM_FARE=35       AUTO_MINIMUM_FARE=50       CAR_MINIMUM_FARE=90
-
-# Surge
-SURGE_MAX_MULTIPLIER=1.75
-PEAK_RATIO_THRESHOLD=1.2
-PEAK_VELOCITY_THRESHOLD=18
-MIN_DEMAND_REQUESTS=5
-DEMAND_WINDOW_MINUTES=10
-VELOCITY_WINDOW_MINUTES=5
-
-# Peak Hours
-PEAK_HOURS_MORNING_START=8    PEAK_HOURS_MORNING_END=10
-PEAK_HOURS_EVENING_START=18   PEAK_HOURS_EVENING_END=21
-
-# Weather (Plug & Play — sirf API key set karo)
-OPENWEATHER_API_KEY=your_key_here
-WEATHER_CACHE_MINUTES=15
-WEATHER_PEAK_CONDITIONS=Rain,Drizzle,Thunderstorm,Snow,Squall,Tornado
-WEATHER_SEVERE_CONDITIONS=Thunderstorm,Snow,Squall,Tornado
-WEATHER_SURGE_MILD=1.1
-WEATHER_SURGE_SEVERE=1.25
-
-# Platform Fee
-PLATFORM_FEE_BIKE=1    PLATFORM_FEE_AUTO=1.5    PLATFORM_FEE_CAR=5
-PLATFORM_FEE_DAILY_CAP=10
-
-# Waiting
-WAITING_GRACE_MINUTES=3
-WAITING_RATE_BIKE=1    WAITING_RATE_AUTO=1.5    WAITING_RATE_CAR=2
-
-# Traffic Delay
-TRAFFIC_GRACE_BUFFER_MINUTES=30
-TRAFFIC_RATE_BIKE=0.5    TRAFFIC_RATE_AUTO=1    TRAFFIC_RATE_CAR=1.5
-
-# Pickup Compensation
-PICKUP_BASE_RADIUS_KM=2.5
-PICKUP_COMP_BIKE=3    PICKUP_COMP_AUTO=5    PICKUP_COMP_CAR=7
-
-# Convenience Fee (peak/non-peak bands per vehicle)
-CONV_FEE_BIKE_NONPEAK_MIN=5     CONV_FEE_BIKE_NONPEAK_MAX=5
-CONV_FEE_BIKE_PEAK_MIN=10       CONV_FEE_BIKE_PEAK_MAX=12
-CONV_FEE_AUTO_NONPEAK_MIN=12    CONV_FEE_AUTO_NONPEAK_MAX=15
-CONV_FEE_AUTO_PEAK_MIN=20       CONV_FEE_AUTO_PEAK_MAX=25
-CONV_FEE_CAR_NONPEAK_MIN=20     CONV_FEE_CAR_NONPEAK_MAX=25
-CONV_FEE_CAR_PEAK_MIN=30        CONV_FEE_CAR_PEAK_MAX=50
-
-# Cancellation
-CANCELLATION_PENALTY=50
-CANCELLATION_DISTANCE_THRESHOLD=500
-CANCELLATION_DRIVER_SHARE_PERCENT=80
-CANCELLATION_PLATFORM_SHARE_PERCENT=20
-
-# Speed (for duration estimation)
-SPEED_BIKE=30    SPEED_AUTO=25    SPEED_CAR=35
-```
-
-Koi bhi value change karo `.env` mein — code touch karne ki zaroorat nahi. Server restart pe naye rates apply ho jayenge.
-
----
-
-## 13. API Endpoints — Pricing Related
-
-| Method | Endpoint | Kya Karta Hai | Request Body |
-|--------|----------|--------------|-------------|
-| POST | `/api/v1/rides/calculate-fare` | Fare estimate (booking nahi hoti) | `{ vehicleType, pickupLatitude, pickupLongitude, dropoffLatitude, dropoffLongitude }` |
-| POST | `/api/v1/rides/request` | Ride book karo + estimated fare | Same as above + `pickupAddress, dropoffAddress, paymentMethod` |
-| PATCH | `/api/v1/rides/:rideId/status` | Status update — "completed" pe final fare | `{ status: "completed" }` |
-| GET | `/api/v1/rides/:rideId` | Ride details — estimated + final fare | — |
-
-`calculate-fare` aur `request` — dono **same formula, same flow** use karte hain. Bas `calculate-fare` sirf dikhata hai, `request` DB mein ride bhi create karta hai.
-
----
-
-## 14. Subscription Benefits — Pricing Pe Impact
-
-Subscription plan ke 4 pricing benefits hain:
-
-### Free Rides (Priority 1)
-```
-User ke paas free rides bacha hai?
-  YES → fare = Rs.0 (coupon bhi nahi lagega)
-  NO  → discount ya surge protection check karo
-```
-
-### Surge Protection
-```
-Plan mein surge_protection = true?
-  YES → surge force 1.0x (demand/weather ignore hota hai)
-        Recalculate hota hai bina surge ke
-  NO  → normal surge apply
-```
-
-### Ride Discount %
-```
-Surge protection nahi, free rides nahi?
-  → plan ki ride_discount_percent se discount lagao
-  → discountAmount = estimatedFare × (discountPercent/100)
-```
-
-### Coupon + Subscription Priority
-```
-Rule: Subscription PEHLE, Coupon BAAD MEIN
-
-Flow:
-  1. Subscription benefit apply karo (estimatedFare update)
-  2. Agar isFreeRide = true → coupon SKIP
-  3. Agar isFreeRide = false → coupon apply on discounted fare
-```
-
-**Example:**
-| Scenario | Original | Sub Discount | Sub Final | Coupon | Final |
-|----------|----------|-------------|-----------|--------|-------|
-| Gold plan (20% off) + SAVE10 coupon | Rs.200 | Rs.40 | Rs.160 | Rs.10 | **Rs.150** |
-| Free ride + coupon | Rs.200 | Rs.200 | Rs.0 | SKIP | **Rs.0** |
-| No subscription + coupon | Rs.200 | — | Rs.200 | Rs.20 | **Rs.180** |
-
----
-
-## 15. High Traffic — Concurrency Safety
-
-### Problem (pehle):
-```
-Driver 1 aur Driver 2 dono ek saath ek ride accept karne ki koshish karte hain:
-
-Request A: findActiveRide(driver1) → null → OK
-Request B: findActiveRide(driver2) → null → OK  [same time]
-Request A: assignDriver(ride, driver1) → success
-Request B: assignDriver(ride, driver2) → success  ← DONO ASSIGN HO JAATE THE!
-```
-
-### Fix (ab):
-```
-assignDriverToRide() ab DB transaction mein chalta hai:
-
-BEGIN TRANSACTION
-  SELECT * FROM drivers WHERE id=$1 AND is_on_duty=false FOR UPDATE
-  ← Row lock lag jaata hai — dusra request wait karta hai
-  
-  UPDATE rides SET driver_id=$1 WHERE id=$2 AND status='requested'
-  ← Agar ride already assigned → rowCount=0 → ROLLBACK
-COMMIT
-
-Result: High traffic mein bhi guaranteed ek ride = ek driver
-```
-
----
-
-## NOTE: Weather API Integration — Kahan Set Karna Hai
-
-Weather feature **Plug & Play** hai. Activate karne ke liye:
-
-**Step 1:** OpenWeatherMap pe free account banao: https://openweathermap.org/api
-- Sign up karo
-- "Current Weather Data" free tier select karo (1000 calls/day free)
-- API Keys section se apni key copy karo
-
-**Step 2:** `.env` file mein yeh ek line add karo:
-```env
-OPENWEATHER_API_KEY=your_actual_api_key_here
-```
-
-**Step 3:** Server restart karo. Bas. Weather detection auto-activate ho jayega.
-
-**Agar key nahi doge** → weather feature silently disabled rehta hai, koi error nahi aayega, baaki sab normal chalega (time + demand based peak detection kaam karti rehti hai).
-
-**File jahan weather API integrated hai:**
-```
-src/core/utils/weatherService.js     ← API call + cache logic
-src/modules/rides/services/rideService.js  ← gatherDemandSignals() mein parallel call
-src/core/utils/rideCalculator.js     ← detectPeak() + calculateEstimatedFare() mein weather signal use
-src/config/envConfig.js              ← OPENWEATHER_API_KEY + weather thresholds
-```
-
-
-Sab kuch check kiya end-to-end:                                                                                                      
-   
-  ┌──────────────────────────────────────────┬───────────────────────────────────────────┐                                             
-  │                Component                 │                  Status                   │                                           
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Distance (Haversine)                     │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Duration (ENV speed)                     │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Demand signals (DB se parallel)          │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Volume guard (min 5 requests)            │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Time peak detection                      │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Demand surge formula                     │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Weather surge (max, not stacked)         │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Surge cap 1.75x                          │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Convenience fee (peak/non-peak band)     │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ ConvenienceFee LOCKED at request time    │ ✅ Fixed                                  │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ isPeak LOCKED at request time            │ ✅ Fixed                                  │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Waiting charges (3 min grace)            │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Traffic delay comp (30 min grace)        │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Pickup compensation (2.5km free)         │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Platform fee + daily cap                 │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Minimum fare guarantee                   │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Cancellation penalty (500m check)        │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Subscription apply karta hai             │ ✅ Fixed                                  │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Surge protection (single call)           │ ✅ Fixed (double deduction bug hata diya) │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Coupon priority (sub first)              │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Free ride pe coupon block                │ ✅ Sahi                                   │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Discounts final_fare mein bhi lagti hain │ ✅ Fixed                                  │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Driver pickup distance actual            │ ✅ Fixed                                  │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Atomic driver assignment                 │ ✅ Fixed                                  │
-  ├──────────────────────────────────────────┼───────────────────────────────────────────┤
-  │ Coupon usage record on completion        │ ✅ Sahi                                   │
-  └──────────────────────────────────────────┴───────────────────────────────────────────┘
-
-  Kya missing hai? Sirf 1 cheez:
-
-  Area-wise / City-wise pricing — abhi sab cities ka same rate hai. Agar Mumbai aur Tier-2 city ka alag rate chahiye toh ek
-  city_pricing table banana padega. Yeh future scope hai, core algo ke liye zaroori nahi.
-
-  Baaki sab — sahi aur complete hai. 🎯
----
-
-*Last Updated: April 2026*
-*Algorithm Version: v4.0 — v3.0 + Locked ConvenienceFee + Subscription Benefits + Coupon Priority + Atomic Driver Assignment + Driver Pickup Distance Tracking*
+*Last Updated: April 2026 — GO Mobility Pricing Engine v4.0*
+*DB-driven — koi bhi fare value change karne ke liye admin API use karo, code edit mat karo*

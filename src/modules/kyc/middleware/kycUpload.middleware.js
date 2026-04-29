@@ -21,11 +21,14 @@ export const kycUpload = multer({
 
 // PDF wale request pe 1MB cap check karo (multer ka single limit 5MB hai — PDF ke liye alag check)
 export const enforcePdfSize = (req, res, next) => {
-    if (req.file?.mimetype === 'application/pdf' && req.file.size > 1 * 1024 * 1024) {
-        return res.status(400).json({
-            success: false,
-            message: 'PDF files must be under 1MB. Use an image for better performance.',
-        });
+    const files = req.file ? [req.file] : Object.values(req.files || {}).flat();
+    for (const f of files) {
+        if (f.mimetype === 'application/pdf' && f.size > 1 * 1024 * 1024) {
+            return res.status(400).json({
+                success: false,
+                message: 'PDF files must be under 1MB. Use an image for better performance.',
+            });
+        }
     }
     next();
 };

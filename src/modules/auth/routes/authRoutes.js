@@ -1,9 +1,13 @@
+
+
+
 import express from 'express';
 import * as controller from '../controllers/authController.js';
 import { authenticate } from '../../../core/middleware/auth.middleware.js';
 import { validate } from '../../../core/middleware/validation.middleware.js';
 import { authLimiter, otpLimiter } from '../../../core/middleware/rateLimiter.middleware.js';
-import * as validator from '../validators/authValidator.js'; 
+import * as validator from '../validators/authValidator.js';
+
 
 const router = express.Router();
 
@@ -56,4 +60,5 @@ router.get(
     controller.me
 );
 
+router.post('/fcm-token', authenticate, controller.updateFcmToken);
 export default router;

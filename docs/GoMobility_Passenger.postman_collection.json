@@ -1,0 +1,1088 @@
+{
+  "info": {
+    "_postman_id": "a7c1f20b-9e3d-4b2c-8c1a-passenger0001",
+    "name": "GoMobility — Passenger App",
+    "description": "Passenger app ke saare REST APIs (verified against actual backend routes on 2026-04-25).\n\n## Setup\n1. Collection variables tab kholo aur `baseUrl` set karo (e.g. `http://localhost:3000/api/v1`).\n2. `Auth → Verify Signin (Login)` chalao — accessToken & refreshToken auto-save ho jaayenge collection variables mein.\n3. Baaki saare 🔒 requests automatically `Bearer {{accessToken}}` use karenge.\n\n## Important corrections vs old doc (PASSENGER_API.md)\n- ❌ `/auth/send-otp` / `/auth/verify-otp` — exist nahi karte. Use `/auth/signin` aur `/auth/verify-signin`.\n- ✅ OTP **6 digits** hai (4 nahi).\n- ✅ Wallet add money ke do tareeke hain — `/users/wallet/add` (simple) ya `/wallet/recharge` (full payment-order flow).\n- ✅ Subscription mein `auto-renew`, `history`, single plan detail bhi hai.\n- ✅ Coupons mein `apply` endpoint bhi hai (sirf available list nahi).\n- ✅ Payments mein saved methods CRUD bhi hai.\n\n## Response shape (sab endpoints)\n```json\n// Success\n{ \"success\": true, \"message\": \"...\", \"data\": { ... } }\n// Error\n{ \"success\": false, \"message\": \"Error description\" }\n```\n\n## Socket events\nPostman se socket.io test nahi hota. Last folder `🔌 Socket Events (Reference)` mein client ke saare events documented hain — frontend ko reference ke liye.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api/v1", "type": "string" },
+    { "key": "accessToken", "value": "", "type": "string" },
+    { "key": "refreshToken", "value": "", "type": "string" },
+    { "key": "phone", "value": "9876543210", "type": "string" },
+    { "key": "otp", "value": "123456", "type": "string" },
+    { "key": "rideId", "value": "1", "type": "string" },
+    { "key": "addressId", "value": "1", "type": "string" },
+    { "key": "contactId", "value": "1", "type": "string" },
+    { "key": "ticketId", "value": "1", "type": "string" },
+    { "key": "alertId", "value": "1", "type": "string" },
+    { "key": "planId", "value": "1", "type": "string" },
+    { "key": "subscriptionId", "value": "1", "type": "string" },
+    { "key": "orderNumber", "value": "ORD12345", "type": "string" },
+    { "key": "txnNumber", "value": "TXN12345", "type": "string" },
+    { "key": "methodId", "value": "1", "type": "string" },
+    { "key": "notificationId", "value": "1", "type": "string" },
+    { "key": "reviewId", "value": "1", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "description": "OTP-based signup/signin. OTP **6 digits** hai. SMS provider `ENV.SMS_PROVIDER` se control hota hai (dev mein `console` — OTP terminal mein print hota hai).",
+      "item": [
+        {
+          "name": "Signup (Send OTP — new user)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/signup", "host": ["{{baseUrl}}"], "path": ["auth", "signup"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{phone}}\",\n  \"role\": \"passenger\",\n  \"fullName\": \"Rahul Sharma\",\n  \"email\": \"rahul@example.com\"\n}"
+            },
+            "description": "Naya user register karte time OTP bhejta hai.\n\n**Body fields**\n- `phone` (required): 10-digit Indian (`^[6-9]\\d{9}$`)\n- `role` (required): `passenger` | `driver` | `admin`\n- `fullName` (optional): 2-100 chars\n- `email` (optional): valid email\n\n**Response**\n```json\n{ \"success\": true, \"message\": \"OTP sent successfully\", \"data\": { \"message\": \"OTP sent to your phone\", \"expiryInMinutes\": 5 } }\n```\n\n**Frontend kya kare**: OTP screen pe le jao, 6-digit input dikhao, 5 min ka countdown chalao."
+          }
+        },
+        {
+          "name": "Verify Signup (OTP — new user)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const j = pm.response.json();",
+                  "  if (j?.data?.accessToken)  pm.collectionVariables.set('accessToken',  j.data.accessToken);",
+                  "  if (j?.data?.refreshToken) pm.collectionVariables.set('refreshToken', j.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/verify-signup", "host": ["{{baseUrl}}"], "path": ["auth", "verify-signup"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{phone}}\",\n  \"otp\": \"{{otp}}\",\n  \"role\": \"passenger\",\n  \"fullName\": \"Rahul Sharma\",\n  \"email\": \"rahul@example.com\"\n}"
+            },
+            "description": "OTP verify karke account create karta hai.\n\n**Response (201)**\n```json\n{\n  \"success\": true,\n  \"message\": \"Account created successfully\",\n  \"data\": {\n    \"accessToken\": \"...\",   // 15 min validity\n    \"refreshToken\": \"...\",  // 30 days validity\n    \"user\": { \"id\": 12, \"phone\": \"...\", \"role\": \"passenger\", \"fullName\": \"...\" }\n  }\n}\n```\n\n**Frontend kya kare**: Tokens secure storage (Keychain / EncryptedSharedPreferences) mein save karo. `accessToken` har request ke `Authorization: Bearer ...` header mein bhejo."
+          }
+        },
+        {
+          "name": "Signin (Send OTP — existing user)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/signin", "host": ["{{baseUrl}}"], "path": ["auth", "signin"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{phone}}\",\n  \"role\": \"passenger\"\n}"
+            },
+            "description": "Existing user ke liye login OTP bhejta hai.\n\n**Body fields**\n- `phone` OR `email` (kam se kam ek required)\n- `role` (required): `passenger` | `driver` | `admin`\n\n**Response**\n```json\n{ \"success\": true, \"message\": \"OTP sent successfully\", \"data\": { \"message\": \"OTP sent\", \"expiryInMinutes\": 5 } }\n```\n\n⚠️ Yeh wahi endpoint hai jo old doc mein `/auth/send-otp` likha tha — actually `/auth/signin` hai."
+          }
+        },
+        {
+          "name": "Verify Signin (Login)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Auto-save tokens for the rest of the collection",
+                  "if (pm.response.code === 200) {",
+                  "  const j = pm.response.json();",
+                  "  if (j?.data?.accessToken)  pm.collectionVariables.set('accessToken',  j.data.accessToken);",
+                  "  if (j?.data?.refreshToken) pm.collectionVariables.set('refreshToken', j.data.refreshToken);",
+                  "  console.log('✅ Tokens saved to collection variables');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/verify-signin", "host": ["{{baseUrl}}"], "path": ["auth", "verify-signin"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{phone}}\",\n  \"otp\": \"{{otp}}\",\n  \"role\": \"passenger\"\n}"
+            },
+            "description": "OTP verify karke login complete karta hai.\n\n**Response (200)**\n```json\n{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"accessToken\": \"...\",\n    \"refreshToken\": \"...\",\n    \"user\": { \"id\": 12, \"role\": \"passenger\", ... }\n    // driver role ke liye `kycStatus` bhi milta hai\n  }\n}\n```\n\n💡 Test script automatically tokens ko collection variables mein save kar deti hai — baaki requests turant chal jaayengi."
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const j = pm.response.json();",
+                  "  if (j?.data?.accessToken)  pm.collectionVariables.set('accessToken',  j.data.accessToken);",
+                  "  if (j?.data?.refreshToken) pm.collectionVariables.set('refreshToken', j.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/refresh-token", "host": ["{{baseUrl}}"], "path": ["auth", "refresh-token"] },
+            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" },
+            "description": "Access token expire hone par naya pair leta hai.\n\n**Frontend strategy**: Jab koi protected API `401` de, refresh-token call karo, naya `accessToken` save karo, original request retry karo. Agar yeh bhi `401` de — user ko login screen pe bhejo.\n\n**Response**\n```json\n{ \"success\": true, \"message\": \"Token refreshed successfully\", \"data\": { \"accessToken\": \"...\", \"refreshToken\": \"...\" } }\n```"
+          }
+        },
+        {
+          "name": "Logout 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/logout", "host": ["{{baseUrl}}"], "path": ["auth", "logout"] },
+            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" },
+            "description": "Session delete karta hai aur access token blacklist (24h) karta hai. Frontend ko local tokens bhi clear karne hain."
+          }
+        },
+        {
+          "name": "Me (Current User) 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] },
+            "description": "Current logged-in user ki info — token valid hai ya nahi check karne ke liye useful (app start pe)."
+          }
+        },
+        {
+          "name": "Save FCM Token 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/fcm-token", "host": ["{{baseUrl}}"], "path": ["users", "fcm-token"] },
+            "body": { "mode": "raw", "raw": "{\n  \"fcm_token\": \"device_fcm_token_xyz\"\n}" },
+            "description": "Login ke turant baad call karo. Iske bina push notifications nahi aayengi.\n\n**Response**: `{ success: true, message: 'FCM token saved successfully' }`"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏠 Home Screen",
+      "item": [
+        {
+          "name": "Nearby Drivers (Map markers) 🔒",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/rides/nearby-drivers?latitude=28.61&longitude=77.20&vehicleType=auto",
+              "host": ["{{baseUrl}}"],
+              "path": ["rides", "nearby-drivers"],
+              "query": [
+                { "key": "latitude",    "value": "28.61", "description": "Pickup latitude" },
+                { "key": "longitude",   "value": "77.20", "description": "Pickup longitude" },
+                { "key": "vehicleType", "value": "auto",  "description": "bike | auto | car (optional — sab vehicle types if omitted)" }
+              ]
+            },
+            "description": "5 km radius mein available drivers — Redis cache se fast.\n\n**Response**\n```json\n{ \"success\": true, \"data\": { \"count\": 4, \"drivers\": [ { \"driverId\": 7, \"latitude\": 28.612, \"longitude\": 77.205, \"vehicleType\": \"auto\", \"distance\": 0.45 } ] } }\n```\n\n**Frontend**: Map pe markers drop karo. Polling mat karo — Redis fresh data deta hai but har 10-15s ka throttle rakho."
+          }
+        },
+        {
+          "name": "User Profile 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/profile", "host": ["{{baseUrl}}"], "path": ["users", "profile"] },
+            "description": "Header avatar/name, settings screen ke liye.\n\n**Response data**: `{ id, fullName, phone, email, profilePicture, walletBalance?, createdAt }`"
+          }
+        },
+        {
+          "name": "Saved Places (Home/Work chips) 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/addresses", "host": ["{{baseUrl}}"], "path": ["users", "addresses"] },
+            "description": "Pickup/drop sheet mein quick chips — Home, Work, Other.\n\n**Response data**: `[{ id, label, address, latitude, longitude }]`. Label commonly: `Home` | `Work` | custom string."
+          }
+        },
+        {
+          "name": "Recent Places 🔒",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/recent-places?limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "recent-places"],
+              "query": [{ "key": "limit", "value": "10" }]
+            },
+            "description": "Past completed rides ke unique drop locations. Search sheet mein 'Recent' section ke liye.\n\n**Response data**: `[{ address, latitude, longitude, lastUsedAt }]`"
+          }
+        },
+        {
+          "name": "Notifications Unread Count 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/notifications/unread-count", "host": ["{{baseUrl}}"], "path": ["notifications", "unread-count"] },
+            "description": "Bell icon badge ke liye.\n\n**Response data**: `{ unreadCount: 3 }`"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🚖 Ride Booking",
+      "item": [
+        {
+          "name": "Fare Estimate — All Vehicle Types",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pricing/all-estimates?pickup_lat=28.61&pickup_lng=77.20&drop_lat=28.70&drop_lng=77.10",
+              "host": ["{{baseUrl}}"],
+              "path": ["pricing", "all-estimates"],
+              "query": [
+                { "key": "pickup_lat", "value": "28.61" },
+                { "key": "pickup_lng", "value": "77.20" },
+                { "key": "drop_lat",   "value": "28.70" },
+                { "key": "drop_lng",   "value": "77.10" }
+              ]
+            },
+            "description": "Vehicle selection screen — saare types ka fare ek saath.\n\n**Response data**\n```json\n{\n  \"distance_km\": 12.3,\n  \"duration_min\": 28,\n  \"estimates\": [\n    { \"vehicleType\": \"bike\",     \"baseFare\": 30, \"totalFare\": 95, \"surge\": 1.0, \"eta\": 3 },\n    { \"vehicleType\": \"auto\",     \"baseFare\": 40, \"totalFare\": 145, \"surge\": 1.2, \"eta\": 5 },\n    { \"vehicleType\": \"economy\",  \"baseFare\": 60, \"totalFare\": 230, \"surge\": 1.0, \"eta\": 4 },\n    { \"vehicleType\": \"xl\",       \"baseFare\": 100, \"totalFare\": 380, \"surge\": 1.0, \"eta\": 7 },\n    { \"vehicleType\": \"executive\", \"baseFare\": 150, \"totalFare\": 520, \"surge\": 1.0, \"eta\": 9 }\n  ]\n}\n```\n\n**Frontend**: Surge `>1.0` aaye to red badge dikhao."
+          }
+        },
+        {
+          "name": "Fare Estimate — Single Type (optional)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pricing/estimate?pickup_lat=28.61&pickup_lng=77.20&drop_lat=28.70&drop_lng=77.10&vehicle_type=auto",
+              "host": ["{{baseUrl}}"],
+              "path": ["pricing", "estimate"],
+              "query": [
+                { "key": "pickup_lat",   "value": "28.61" },
+                { "key": "pickup_lng",   "value": "77.20" },
+                { "key": "drop_lat",     "value": "28.70" },
+                { "key": "drop_lng",     "value": "77.10" },
+                { "key": "vehicle_type", "value": "auto" }
+              ]
+            },
+            "description": "Sirf ek vehicle type ka fare. Most apps `all-estimates` use karte hain — yeh sirf detail page ke liye."
+          }
+        },
+        {
+          "name": "Surge Info (optional)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pricing/surge?lat=28.61&lng=77.20",
+              "host": ["{{baseUrl}}"],
+              "path": ["pricing", "surge"],
+              "query": [
+                { "key": "lat", "value": "28.61" },
+                { "key": "lng", "value": "77.20" }
+              ]
+            },
+            "description": "Sirf surge multiplier — agar app-level 'surge in your area' banner dikhana ho."
+          }
+        },
+        {
+          "name": "Available Coupons 🔒",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/coupons/available?vehicleType=auto",
+              "host": ["{{baseUrl}}"],
+              "path": ["coupons", "available"],
+              "query": [{ "key": "vehicleType", "value": "auto", "description": "Optional — vehicle-specific coupons" }]
+            },
+            "description": "Apply Coupon screen mein dikhane ke liye list.\n\n**Response data**: `[{ code, title, description, discountType: 'flat'|'percent', discountValue, minOrderAmount, maxDiscount, expiresAt }]`"
+          }
+        },
+        {
+          "name": "Apply Coupon (Validate before booking) 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/coupons/apply", "host": ["{{baseUrl}}"], "path": ["coupons", "apply"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"SAVE20\",\n  \"fareAmount\": 230,\n  \"vehicleType\": \"auto\"\n}"
+            },
+            "description": "User code type karke 'Apply' dabaye to is endpoint se validate karo. Discount preview yahan se aata hai.\n\n**Response data**: `{ valid: true, discount: 46, finalFare: 184, message: 'Coupon applied' }` ya error if invalid."
+          }
+        },
+        {
+          "name": "Request Ride (Confirm) 🔒",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const j = pm.response.json();",
+                  "  const id = j?.data?.ride?.id || j?.data?.rideId || j?.data?.id;",
+                  "  if (id) pm.collectionVariables.set('rideId', String(id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/rides/request", "host": ["{{baseUrl}}"], "path": ["rides", "request"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pickupLatitude\": 28.61,\n  \"pickupLongitude\": 77.20,\n  \"pickupAddress\": \"123 MG Road, Bangalore\",\n  \"dropoffLatitude\": 28.70,\n  \"dropoffLongitude\": 77.10,\n  \"dropoffAddress\": \"MG Road Metro Station\",\n  \"vehicleType\": \"auto\",\n  \"paymentMethod\": \"upi\",\n  \"couponCode\": \"SAVE20\"\n}"
+            },
+            "description": "Confirm Ride button.\n\n**vehicleType options**: `bike` | `auto` | `economy` | `xl` | `executive`\n**paymentMethod options**: `cash` | `wallet` | `upi` | `card`\n\n**Response (201)**\n```json\n{ \"success\": true, \"message\": \"Ride requested successfully\", \"data\": { \"ride\": { \"id\": 42, \"status\": \"searching\", ... }, \"fare\": { ... } } }\n```\n\n**Frontend kya kare**:\n1. `rideId` save karo.\n2. Socket pe `ride:join` emit karo: `{ rideId }`.\n3. Searching screen dikhao + listen karo: `ride:driver_assigned` (mil gaya), `ride:no_driver_found` (timeout)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "📅 Scheduled Rides (Book for Later)",
+      "item": [
+        {
+          "name": "Schedule a Ride 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/rides/schedule", "host": ["{{baseUrl}}"], "path": ["rides", "schedule"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pickupLatitude\": 28.61,\n  \"pickupLongitude\": 77.20,\n  \"pickupAddress\": \"123 MG Road\",\n  \"dropoffLatitude\": 28.70,\n  \"dropoffLongitude\": 77.10,\n  \"dropoffAddress\": \"Airport\",\n  \"vehicleType\": \"auto\",\n  \"scheduledAt\": \"2026-04-26T08:00:00Z\"\n}"
+            },
+            "description": "`scheduledAt` ISO-8601 UTC timestamp hona chahiye, future date."
+          }
+        },
+        {
+          "name": "My Scheduled Rides 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/rides/scheduled", "host": ["{{baseUrl}}"], "path": ["rides", "scheduled"] },
+            "description": "Upcoming scheduled rides list."
+          }
+        },
+        {
+          "name": "Cancel Scheduled Ride 🔒",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/rides/scheduled/{{rideId}}", "host": ["{{baseUrl}}"], "path": ["rides", "scheduled", "{{rideId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🛣️ Ride Tracking & Details",
+      "item": [
+        {
+          "name": "Current Active Ride 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/rides/current", "host": ["{{baseUrl}}"], "path": ["rides", "current"] },
+            "description": "App reopen hone par bottom-sheet restore ke liye. Agar koi active ride nahi to `data: null`.\n\nStatus `driver_assigned` ya `driver_arrived` mein passenger ko `otp` field bhi milta hai."
+          }
+        },
+        {
+          "name": "Ride Details (incl. OTP) 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/rides/{{rideId}}", "host": ["{{baseUrl}}"], "path": ["rides", "{{rideId}}"] },
+            "description": "Driver info, vehicle, pickup/drop, fare, status, OTP (jab applicable).\n\n**Status flow**: `searching` → `driver_assigned` → `driver_arrived` → `in_progress` → `completed` (ya `cancelled`).\n\n**Frontend**: OTP sirf passenger ko driver-arrived screen pe dikhao — driver iss OTP ko apni app mein enter karega."
+          }
+        },
+        {
+          "name": "Cancel Ride 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/rides/{{rideId}}/cancel", "host": ["{{baseUrl}}"], "path": ["rides", "{{rideId}}", "cancel"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"changed_mind\"\n}"
+            },
+            "description": "Driver arrive hone tak cancel ho sakta hai. Late cancel pe cancellation fee lag sakta hai (response mein `cancellationFee` field).\n\n**reason options (suggest UI)**: `changed_mind` | `driver_late` | `wrong_pickup` | `safety_concern` | `other`"
+          }
+        },
+        {
+          "name": "Ride Invoice (after complete) 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/rides/{{rideId}}/invoice", "host": ["{{baseUrl}}"], "path": ["rides", "{{rideId}}", "invoice"] },
+            "description": "Receipt screen.\n\n**Response data**\n```json\n{\n  \"rideId\": 42,\n  \"baseFare\": 40,\n  \"distanceFare\": 80,\n  \"timeFare\": 25,\n  \"convenienceFee\": 10,\n  \"surgeMultiplier\": 1.2,\n  \"couponDiscount\": 30,\n  \"subscriptionDiscount\": 10,\n  \"taxes\": 8,\n  \"total\": 123,\n  \"paymentMethod\": \"upi\",\n  \"paymentStatus\": \"paid\"\n}\n```"
+          }
+        },
+        {
+          "name": "Rate Driver 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/rides/{{rideId}}/rate", "host": ["{{baseUrl}}"], "path": ["rides", "{{rideId}}", "rate"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"review\": \"Great ride\"\n}"
+            },
+            "description": "Sirf ride complete hone ke baad. `rating` 1-5. Tags ke liye `/reviews/tags` use karke chips dikhao + alag se `/reviews` POST kar sakte ho richer review ke liye."
+          }
+        },
+        {
+          "name": "Ride History 🔒",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/rides/history?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "rides", "history"],
+              "query": [
+                { "key": "page",  "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "Past rides — paginated.\n\n**Frontend**: Infinite scroll ya pagination — `meta: { totalPages, currentPage }` use karo."
+          }
+        }
+      ]
+    },
+    {
+      "name": "🆘 SOS",
+      "item": [
+        {
+          "name": "Trigger SOS (Red button) 🔒",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const j = pm.response.json();",
+                  "  const id = j?.data?.alertId || j?.data?.id;",
+                  "  if (id) pm.collectionVariables.set('alertId', String(id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/sos", "host": ["{{baseUrl}}"], "path": ["sos"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ride_id\": {{rideId}},\n  \"latitude\": 28.61,\n  \"longitude\": 77.20\n}"
+            },
+            "description": "Emergency contacts ko SMS + admin ko notify karta hai.\n\n**Response data**: `{ alertId, status: 'active', ... }`. UI mein big red banner + `Cancel SOS` button dikhao."
+          }
+        },
+        {
+          "name": "Cancel SOS (False alarm) 🔒",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/sos/{{alertId}}/cancel", "host": ["{{baseUrl}}"], "path": ["sos", "{{alertId}}", "cancel"] },
+            "description": "Alert ko `false_alarm` mark karta hai. Trigger ke 30 sec baad confirmation modal: 'Cancel if false alarm'."
+          }
+        },
+        {
+          "name": "My SOS History 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/sos/history", "host": ["{{baseUrl}}"], "path": ["sos", "history"] },
+            "description": "Past SOS triggers — settings/safety screen mein."
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔔 Notifications",
+      "item": [
+        {
+          "name": "List 🔒",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/notifications?limit=20&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"],
+              "query": [
+                { "key": "limit",  "value": "20" },
+                { "key": "offset", "value": "0" }
+              ]
+            },
+            "description": "Today / Yesterday / Earlier groups mein sorted.\n\n**Response data**: `{ groups: { today: [...], yesterday: [...], earlier: [...] } }` — har item: `{ id, title, body, isRead, createdAt, type }`."
+          }
+        },
+        {
+          "name": "Unread Count 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/notifications/unread-count", "host": ["{{baseUrl}}"], "path": ["notifications", "unread-count"] }
+          }
+        },
+        {
+          "name": "Mark Single Read 🔒",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/notifications/{{notificationId}}/read", "host": ["{{baseUrl}}"], "path": ["notifications", "{{notificationId}}", "read"] },
+            "description": "User ne notification tap kiya — yeh hit karo."
+          }
+        },
+        {
+          "name": "Mark All Read 🔒",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/notifications/read-all", "host": ["{{baseUrl}}"], "path": ["notifications", "read-all"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💳 Payments",
+      "item": [
+        {
+          "name": "Create Payment Order 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/payments/orders", "host": ["{{baseUrl}}"], "path": ["payments", "orders"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 230,\n  \"purpose\": \"ride\",\n  \"rideId\": {{rideId}},\n  \"paymentMethod\": \"upi\"\n}"
+            },
+            "description": "Step 1 — payment order create karta hai.\n\n**purpose options**: `ride` | `wallet_recharge` | `subscription`\n**paymentMethod**: `cash` | `wallet` | `upi` | `card`\n\n**Response**\n- `cash` ya `wallet` → auto-confirmed, `paymentStatus: 'paid'`\n- `upi` / `card` → `gateway_order_id` milta hai. Razorpay SDK isko use karke checkout open karega."
+          }
+        },
+        {
+          "name": "Verify Payment (Razorpay callback) 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/payments/verify", "host": ["{{baseUrl}}"], "path": ["payments", "verify"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"razorpay_order_id\": \"order_xyz\",\n  \"razorpay_payment_id\": \"pay_abc\",\n  \"razorpay_signature\": \"signature_hash\"\n}"
+            },
+            "description": "Step 2 — Razorpay SDK success callback se yeh 3 fields aate hain. Backend signature verify karke payment confirm karta hai. Bina iske payment incomplete rahega."
+          }
+        },
+        {
+          "name": "Payment History 🔒",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/payments/history?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "history"],
+              "query": [
+                { "key": "page",   "value": "1" },
+                { "key": "limit",  "value": "10" },
+                { "key": "status", "value": "paid",     "disabled": true, "description": "paid | pending | failed | refunded" },
+                { "key": "purpose","value": "ride",     "disabled": true, "description": "ride | wallet_recharge | subscription" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Single Order Detail 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/payments/orders/{{orderNumber}}", "host": ["{{baseUrl}}"], "path": ["payments", "orders", "{{orderNumber}}"] },
+            "description": "Order + linked refunds (agar ho)."
+          }
+        },
+        {
+          "name": "Saved Payment Methods — List 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/payments/methods", "host": ["{{baseUrl}}"], "path": ["payments", "methods"] },
+            "description": "Saved cards / UPI IDs (gateway tokens — raw card data backend pe nahi)."
+          }
+        },
+        {
+          "name": "Saved Payment Methods — Add 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/payments/methods", "host": ["{{baseUrl}}"], "path": ["payments", "methods"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"upi\",\n  \"vpa\": \"user@upi\",\n  \"isDefault\": true\n}"
+            },
+            "description": "Card ke liye gateway token bhejo (Razorpay tokenization se), UPI ke liye `vpa`."
+          }
+        },
+        {
+          "name": "Saved Payment Methods — Delete 🔒",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/payments/methods/{{methodId}}", "host": ["{{baseUrl}}"], "path": ["payments", "methods", "{{methodId}}"] }
+          }
+        },
+        {
+          "name": "Saved Payment Methods — Set Default 🔒",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/payments/methods/{{methodId}}/default", "host": ["{{baseUrl}}"], "path": ["payments", "methods", "{{methodId}}", "default"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👛 Wallet",
+      "item": [
+        {
+          "name": "Wallet Summary (balance + recent) 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/wallet", "host": ["{{baseUrl}}"], "path": ["wallet"] },
+            "description": "Wallet screen ka main payload — balance + recent txns."
+          }
+        },
+        {
+          "name": "Balance Only 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/wallet/balance", "host": ["{{baseUrl}}"], "path": ["wallet", "balance"] },
+            "description": "Light call — sirf `{ balance: 250 }`. Header chip ke liye."
+          }
+        },
+        {
+          "name": "Add Money — Simple (users/wallet/add) 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/wallet/add", "host": ["{{baseUrl}}"], "path": ["users", "wallet", "add"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 200,\n  \"paymentMethod\": \"upi\"\n}"
+            },
+            "description": "Simple add money — Min ₹10, Max ₹10,000.\n\n**Note**: Production flow ke liye `/wallet/recharge` better — wo full payment-order create karta hai."
+          }
+        },
+        {
+          "name": "Recharge — Full Flow 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/wallet/recharge", "host": ["{{baseUrl}}"], "path": ["wallet", "recharge"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500,\n  \"paymentMethod\": \"upi\"\n}"
+            },
+            "description": "Recharge intent banata hai → `gateway_order_id` deta hai → Razorpay SDK open → success pe `/payments/verify` call karo."
+          }
+        },
+        {
+          "name": "Pay Ride from Wallet 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/wallet/pay-ride", "host": ["{{baseUrl}}"], "path": ["wallet", "pay-ride"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rideId\": {{rideId}},\n  \"amount\": 230\n}"
+            },
+            "description": "Wallet se ride payment debit. Insufficient balance → 400."
+          }
+        },
+        {
+          "name": "Transactions 🔒",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/wallet/transactions?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallet", "transactions"],
+              "query": [
+                { "key": "page",  "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "type",  "value": "credit", "disabled": true, "description": "credit | debit" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Single Transaction 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/wallet/transactions/{{txnNumber}}", "host": ["{{baseUrl}}"], "path": ["wallet", "transactions", "{{txnNumber}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "⭐ Subscription",
+      "item": [
+        {
+          "name": "All Plans (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/subscriptions/plans", "host": ["{{baseUrl}}"], "path": ["subscriptions", "plans"] },
+            "description": "Auth ki zarurat nahi. Pricing/landing page pe."
+          }
+        },
+        {
+          "name": "Plan Details (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/subscriptions/plans/{{planId}}", "host": ["{{baseUrl}}"], "path": ["subscriptions", "plans", "{{planId}}"] }
+          }
+        },
+        {
+          "name": "Active Subscription 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/subscriptions/active", "host": ["{{baseUrl}}"], "path": ["subscriptions", "active"] },
+            "description": "Current plan, valid till, rides used this month, total saved.\n\nIf no active sub: `data: null`."
+          }
+        },
+        {
+          "name": "Purchase 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/subscriptions/purchase", "host": ["{{baseUrl}}"], "path": ["subscriptions", "purchase"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planId\": {{planId}},\n  \"paymentMethod\": \"upi\"\n}"
+            },
+            "description": "Rate-limited: 3 per hour. UPI/card → gateway flow same as rides."
+          }
+        },
+        {
+          "name": "Cancel 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/subscriptions/cancel", "host": ["{{baseUrl}}"], "path": ["subscriptions", "cancel"] },
+            "body": { "mode": "raw", "raw": "{\n  \"reason\": \"too_expensive\"\n}" }
+          }
+        },
+        {
+          "name": "Toggle Auto-Renew 🔒",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/subscriptions/auto-renew", "host": ["{{baseUrl}}"], "path": ["subscriptions", "auto-renew"] },
+            "body": { "mode": "raw", "raw": "{\n  \"autoRenew\": true\n}" },
+            "description": "Settings page ka toggle."
+          }
+        },
+        {
+          "name": "Subscription History 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/subscriptions/history?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["subscriptions", "history"], "query": [{"key":"page","value":"1"},{"key":"limit","value":"10"}] }
+          }
+        },
+        {
+          "name": "Subscription Payments 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/subscriptions/{{subscriptionId}}/payments", "host": ["{{baseUrl}}"], "path": ["subscriptions", "{{subscriptionId}}", "payments"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Profile & Settings",
+      "item": [
+        {
+          "name": "Get Profile 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/profile", "host": ["{{baseUrl}}"], "path": ["users", "profile"] }
+          }
+        },
+        {
+          "name": "Update Profile 🔒",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/profile", "host": ["{{baseUrl}}"], "path": ["users", "profile"] },
+            "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Rahul Sharma\",\n  \"email\": \"rahul@email.com\"\n}" }
+          }
+        },
+        {
+          "name": "Upload Profile Picture 🔒",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/users/profile/picture", "host": ["{{baseUrl}}"], "path": ["users", "profile", "picture"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "profilePicture", "type": "file", "src": [], "description": "Image file (jpg/png), <= 5 MB" }
+              ]
+            },
+            "description": "multipart/form-data — `Content-Type` Postman khud set karega.\n\n**Response data**: `{ profilePicture: 'https://...' }` — frontend updated URL use kare."
+          }
+        },
+        {
+          "name": "Saved Addresses — List 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/addresses", "host": ["{{baseUrl}}"], "path": ["users", "addresses"] }
+          }
+        },
+        {
+          "name": "Saved Addresses — Add 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/addresses", "host": ["{{baseUrl}}"], "path": ["users", "addresses"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Home\",\n  \"address\": \"123 MG Road, Bangalore\",\n  \"latitude\": 28.61,\n  \"longitude\": 77.20\n}"
+            },
+            "description": "`label` typical: `Home`, `Work`, ya custom."
+          }
+        },
+        {
+          "name": "Saved Addresses — Update 🔒",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/addresses/{{addressId}}", "host": ["{{baseUrl}}"], "path": ["users", "addresses", "{{addressId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Office\",\n  \"address\": \"Tech Park, ORR\",\n  \"latitude\": 28.62,\n  \"longitude\": 77.21\n}"
+            }
+          }
+        },
+        {
+          "name": "Saved Addresses — Delete 🔒",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/users/addresses/{{addressId}}", "host": ["{{baseUrl}}"], "path": ["users", "addresses", "{{addressId}}"] }
+          }
+        },
+        {
+          "name": "Emergency Contacts — List 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/emergency-contacts", "host": ["{{baseUrl}}"], "path": ["users", "emergency-contacts"] }
+          }
+        },
+        {
+          "name": "Emergency Contacts — Add 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/emergency-contacts", "host": ["{{baseUrl}}"], "path": ["users", "emergency-contacts"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mom\",\n  \"phone\": \"9876500000\",\n  \"relation\": \"mother\"\n}"
+            },
+            "description": "Phone same Indian regex (`^[6-9]\\d{9}$`). SOS trigger pe in contacts ko SMS jaayega."
+          }
+        },
+        {
+          "name": "Emergency Contacts — Update 🔒",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/emergency-contacts/{{contactId}}", "host": ["{{baseUrl}}"], "path": ["users", "emergency-contacts", "{{contactId}}"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Mom\",\n  \"phone\": \"9876500000\",\n  \"relation\": \"mother\"\n}" }
+          }
+        },
+        {
+          "name": "Emergency Contacts — Delete 🔒",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/users/emergency-contacts/{{contactId}}", "host": ["{{baseUrl}}"], "path": ["users", "emergency-contacts", "{{contactId}}"] }
+          }
+        },
+        {
+          "name": "My Referral Code 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/referral-code", "host": ["{{baseUrl}}"], "path": ["users", "referral-code"] },
+            "description": "Share screen ke liye apna code + share message."
+          }
+        },
+        {
+          "name": "Apply Referral Code 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/referral/apply", "host": ["{{baseUrl}}"], "path": ["users", "referral", "apply"] },
+            "body": { "mode": "raw", "raw": "{\n  \"code\": \"FRIEND123\"\n}" },
+            "description": "Onboarding ya 'Got a referral?' screen. Sirf naye user pehli baar apply kar sakte hain."
+          }
+        },
+        {
+          "name": "My Referrals 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/referrals", "host": ["{{baseUrl}}"], "path": ["users", "referrals"] },
+            "description": "List of friends jinko refer kiya + earned bonus."
+          }
+        },
+        {
+          "name": "Delete Account 🔒",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/users/account", "host": ["{{baseUrl}}"], "path": ["users", "account"] },
+            "description": "Soft delete — phone/email pe `-deleted-<userId>` suffix lag jaata hai. Active ride chal rahi ho to error.\n\n**Frontend**: Confirmation modal + 'final delete' alert. Local tokens clear karo."
+          }
+        }
+      ]
+    },
+    {
+      "name": "🎫 Support",
+      "item": [
+        {
+          "name": "Categories 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/support/categories", "host": ["{{baseUrl}}"], "path": ["support", "categories"] },
+            "description": "Trip Issues / Payments & Refunds / Account & Subscription — har ek ke andar sub-items ke saath."
+          }
+        },
+        {
+          "name": "Search Tickets 🔒",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/support/search?q=refund",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "search"],
+              "query": [{ "key": "q", "value": "refund" }]
+            }
+          }
+        },
+        {
+          "name": "Create Ticket 🔒",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  const j = pm.response.json();",
+                  "  const id = j?.data?.id || j?.data?.ticket?.id;",
+                  "  if (id) pm.collectionVariables.set('ticketId', String(id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/support/tickets", "host": ["{{baseUrl}}"], "path": ["support", "tickets"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"trip_issues\",\n  \"subject\": \"Wrong fare charged\",\n  \"description\": \"My ride was 5km but charged 15km worth\",\n  \"ride_id\": {{rideId}}\n}"
+            },
+            "description": "**category options**: `trip_issues` | `payments_refunds` | `account_subscription` | `safety` | `other` (categories endpoint se latest list lo)."
+          }
+        },
+        {
+          "name": "My Tickets 🔒",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/support/tickets?status=in_progress",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "tickets"],
+              "query": [{ "key": "status", "value": "in_progress", "description": "open | in_progress | resolved | closed" }]
+            }
+          }
+        },
+        {
+          "name": "Ticket Detail (with messages) 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/support/tickets/{{ticketId}}", "host": ["{{baseUrl}}"], "path": ["support", "tickets", "{{ticketId}}"] },
+            "description": "Full thread chat-style display ke liye."
+          }
+        },
+        {
+          "name": "Reply to Ticket 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/support/tickets/{{ticketId}}/reply", "host": ["{{baseUrl}}"], "path": ["support", "tickets", "{{ticketId}}", "reply"] },
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"Please check the fare again\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "⭐ Reviews",
+      "item": [
+        {
+          "name": "Feedback Tags (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reviews/tags?reviewer_type=passenger",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "tags"],
+              "query": [{ "key": "reviewer_type", "value": "passenger", "description": "passenger | driver" }]
+            },
+            "description": "Rating screen ke chips: Cleanliness, AC Working, Professional, etc."
+          }
+        },
+        {
+          "name": "Submit Detailed Review 🔒",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/reviews", "host": ["{{baseUrl}}"], "path": ["reviews"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rideId\": {{rideId}},\n  \"rating\": 5,\n  \"comment\": \"Driver was very polite\",\n  \"tags\": [\"cleanliness\", \"professional\"]\n}"
+            },
+            "description": "Tags-wala richer review. Quick rating ke liye `/rides/:id/rate` use kar sakte ho."
+          }
+        },
+        {
+          "name": "Reviews for a Ride 🔒",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/reviews/ride/{{rideId}}", "host": ["{{baseUrl}}"], "path": ["reviews", "ride", "{{rideId}}"] }
+          }
+        },
+        {
+          "name": "Flag a Review 🔒",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/reviews/{{reviewId}}/flag", "host": ["{{baseUrl}}"], "path": ["reviews", "{{reviewId}}", "flag"] },
+            "description": "Abuse report — moderation queue mein bhejta hai."
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔌 Socket Events (Reference)",
+      "description": "Postman se socket.io test nahi hota — yeh sirf reference. Frontend ko ye events implement karne hain.",
+      "item": [
+        {
+          "name": "📖 README — Socket Connection Flow",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] },
+            "description": "## Connection setup\n\n```js\nconst socket = io('http://localhost:3000', {\n  auth: { token: accessToken },  // optional\n  transports: ['websocket']\n});\n```\n\n## Step 1 — Identify yourself\n```js\nsocket.emit('auth:login', { userId, userType: 'passenger' });\n```\n\n## Step 2 — Ride request ke baad room join\n```js\nsocket.emit('ride:join', { rideId });\n// ⚠️ Bina iske live tracking nahi milegi\n```\n\n## Server → App events (passenger ko sun ne hain)\n| Event | Payload | Kab aata hai |\n|---|---|---|\n| `ride:driver_assigned` | `{ driverName, phone, vehicleNumber, vehicleModel, vehicleColor, rating, eta }` | Driver mil gaya |\n| `ride:no_driver_found` | `{ rideId, message }` | Timeout — koi nahi mila |\n| `driver:map_ping` | `{ latitude, longitude, timestamp }` | Live driver location (har 3-5s) |\n| `ride:eta_update` | `{ etaMinutes, distanceKm, etaType, message }` | `etaType` = `pickup` (driver aa raha) ya `dropoff` (destination tak) |\n| `ride:status_changed` | `{ rideId, status }` | `driver_arrived` / `in_progress` / `completed` / `cancelled` |\n| `ride:otp_verified` | `{ rideId, verifiedAt }` | Driver ne OTP verify kiya — 'in_progress' screen |\n| `chat:new_message` | `{ senderId, senderType, message, timestamp }` | Driver ne chat bheja |\n| `chat:user_typing` | `{ userType }` | Typing indicator |\n\n## App → Server events (passenger emit karega)\n| Event | Payload |\n|---|---|\n| `auth:login` | `{ userId, userType: 'passenger' }` |\n| `auth:reconnect` | `{ userId }` (app restart pe) |\n| `ride:join` | `{ rideId }` |\n| `ride:leave` | `{ rideId }` (cancel/complete pe) |\n| `chat:send` | `{ rideId, message }` |\n| `chat:typing` | `{ rideId }` |\n\n## Reconnection\nApp wapas khulne pe `auth:reconnect` emit karo — backend Redis se queued messages flush karega aur ride rooms wapas join kara dega."
+          }
+        }
+      ]
+    }
+  ]
+}

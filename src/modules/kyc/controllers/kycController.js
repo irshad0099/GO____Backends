@@ -2,53 +2,87 @@ import * as kycService from '../services/kycService.js';
 import logger from '../../../core/logger/logger.js';
 import { sendResponse, sendError } from '../../../core/utils/response.js';
 
-// ─── DigiLocker Webhook (public — no auth) ───────────────────────────────────
-
-export const handleDigilockerWebhook = async (req, res) => {
-    try {
-        const rawBody = req.rawBody?.toString('utf8') || JSON.stringify(req.body);
-        await kycService.processDigilockerWebhook(rawBody, req.headers);
-        res.status(200).json({ success: true });
-    } catch (err) {
-        logger.error('DigiLocker webhook error:', err);
-        res.status(err.statusCode || 500).json({ success: false, message: err.message });
-    }
+// Pulls retry metadata from service-thrown errors so frontend can act on them
+const buildErrorData = (err) => {
+    const data = {};
+    if (err.documentId   !== undefined) data.documentId   = err.documentId;
+    if (err.canRetry     !== undefined) data.canRetry     = err.canRetry;
+    if (err.attemptsLeft !== undefined) data.attemptsLeft = err.attemptsLeft;
+    return Object.keys(data).length ? data : null;
 };
 
-// ─── Rider Endpoints ──────────────────────────────────────────────────────────
+// ─── Driver endpoints ──────────────────────────────────────────────────────────
 
 export const getStatus = async (req, res) => {
     try {
         const data = await kycService.getKycStatus(req.user.id);
         sendResponse(res, 200, '', data);
     } catch (err) {
-        logger.error('KYC error:', err);
+        logger.error('[KYC] getStatus error:', err);
         sendError(res, err.statusCode || 500, err.message);
     }
 };
 
-/**
- * POST /kyc/ocr — unified Smart OCR endpoint for PAN / AADHAAR / DRIVING_LICENCE / VEHICLE_RC
- * multipart/form-data: { document_type, file }
- */
-export const submitOcrDocument = async (req, res) => {
+export const getDocUploadFlags = async (req, res) => {
     try {
-        if (!req.file) {
-            return sendError(res, 400, 'Document file is required (field name: file)');
-        }
-        const documentType = (req.body.document_type || '').toUpperCase();
-        if (!documentType) {
-            return sendError(res, 400, 'document_type is required (PAN | AADHAAR | DRIVING_LICENCE | VEHICLE_RC)');
-        }
-
-        const data = await kycService.submitOcrDocument(req.user.id, documentType, {
-            fileBuffer: req.file.buffer,
-            fileName:   req.file.originalname,
-            mimeType:   req.file.mimetype,
-        });
-        sendResponse(res, 200, `${documentType} verified via OCR`, data);
+        const data = await kycService.getHowManyDocUploadedByFlag(req.user.id);
+        sendResponse(res, 200, '', data);
     } catch (err) {
-        logger.error('KYC error:', err);
+        logger.error('[KYC] getDocUploadFlags error:', err);
+        sendError(res, err.statusCode || 500, err.message);
+    }
+};
+
+export const submitDocument = async (req, res) => {
+    try {
+        const frontFile = req.files?.file?.[0] || req.file;
+        if (!frontFile) return sendError(res, 400, 'Document file is required');
+
+        const docType = (req.body.document_type || '').toUpperCase();
+        if (!docType) return sendError(res, 400, 'document_type is required (AADHAAR | PAN | DRIVING_LICENCE | VEHICLE_RC)');
+
+        const backFile = req.files?.file_back?.[0] || null;
+
+        const data = await kycService.submitDocument(req.user.id, docType, {
+            fileBuffer:     frontFile.buffer,
+            fileName:       frontFile.originalname,
+            mimeType:       frontFile.mimetype,
+            backFileBuffer: backFile?.buffer   || null,
+            backFileName:   backFile?.originalname || null,
+            backMimeType:   backFile?.mimetype || null,
+        });
+
+        const httpStatus = data.status === 'rejected' ? 422 : 200;
+        res.status(httpStatus).json({ success: data.status !== 'rejected', data });
+    } catch (err) {
+        logger.error('[KYC] submitDocument error:', err);
+        const extra = buildErrorData(err);
+        if (err.statusCode === 409) return sendError(res, 409, err.message, extra);
+        sendError(res, err.statusCode || 500, err.message, extra);
+    }
+};
+
+export const retryDocument = async (req, res) => {
+    try {
+        const frontFile = req.files?.file?.[0] || req.file;
+        if (!frontFile) return sendError(res, 400, 'Document file is required');
+        const { id } = req.params;
+
+        const backFile = req.files?.file_back?.[0] || null;
+
+        const data = await kycService.retryDocument(Number(id), req.user.id, {
+            fileBuffer:     frontFile.buffer,
+            fileName:       frontFile.originalname,
+            mimeType:       frontFile.mimetype,
+            backFileBuffer: backFile?.buffer       || null,
+            backFileName:   backFile?.originalname || null,
+            backMimeType:   backFile?.mimetype     || null,
+        });
+
+        const httpStatus = data.status === 'rejected' ? 422 : 200;
+        res.status(httpStatus).json({ success: data.status !== 'rejected', data });
+    } catch (err) {
+        logger.error('[KYC] retryDocument error:', err);
         sendError(res, err.statusCode || 500, err.message);
     }
 };
@@ -56,91 +90,121 @@ export const submitOcrDocument = async (req, res) => {
 export const submitBankAccount = async (req, res) => {
     try {
         const { account_number, ifsc, name } = req.body;
-        const data = await kycService.verifyBankAccount(req.user.id, account_number, ifsc, name);
-        sendResponse(res, 200, '', data);
+        if (!account_number || !ifsc || !name) {
+            return sendError(res, 400, 'account_number, ifsc, and name are required');
+        }
+        const data = await kycService.submitBankAccount(req.user.id, account_number, ifsc, name);
+        sendResponse(res, 200, data.message, data);
     } catch (err) {
-        logger.error('KYC error:', err);
-        sendError(res, err.statusCode || 500, err.message);
+        logger.error('[KYC] submitBankAccount error:', err);
+        const extra = buildErrorData(err);
+        if (err.statusCode === 409) return sendError(res, 409, err.message, extra);
+        sendError(res, err.statusCode || 500, err.message, extra);
     }
 };
 
 export const submitFaceMatch = async (req, res) => {
     try {
-        const { selfie, aadhaar_photo } = req.body;
-        const data = await kycService.verifyFace(req.user.id, selfie, aadhaar_photo);
-        sendResponse(res, 200, '', data);
+        if (!req.file) return sendError(res, 400, 'Selfie image is required');
+        const data = await kycService.submitFaceMatch(req.user.id, {
+            fileBuffer: req.file.buffer,
+            mimeType:   req.file.mimetype,
+        });
+        const httpStatus = data.status === 'rejected' ? 422 : 200;
+        res.status(httpStatus).json({ success: data.status !== 'rejected', data });
     } catch (err) {
-        logger.error('KYC error:', err);
+        logger.error('[KYC] submitFaceMatch error:', err);
         sendError(res, err.statusCode || 500, err.message);
     }
 };
 
-export const getDigilockerDocument = async (req, res) => {
+// ─── Admin endpoints ───────────────────────────────────────────────────────────
+
+export const getDriversKycList = async (req, res) => {
     try {
-        const { document_type } = req.params;
-        const { verification_id, reference_id } = req.query;
-        const data = await kycService.getDigilockerDocument(req.user.id, document_type, { verification_id, reference_id });
+        const { status, page = 1, limit = 20 } = req.query;
+        const data = await kycService.getDriversKycList(status || null, Number(page), Number(limit));
         sendResponse(res, 200, '', data);
     } catch (err) {
-        logger.error('KYC error:', err);
+        logger.error('[KYC] getDriversKycList error:', err);
         sendError(res, err.statusCode || 500, err.message);
     }
 };
 
-export const getDigilockerStatus = async (req, res) => {
+export const getDriverKycDetail = async (req, res) => {
     try {
-        const { verification_id, reference_id } = req.query;
-        const data = await kycService.getDigilockerStatus(req.user.id, { verification_id, reference_id });
+        const data = await kycService.getDriverKycDetail(req.params.userId);
         sendResponse(res, 200, '', data);
     } catch (err) {
-        logger.error('KYC error:', err);
+        logger.error('[KYC] getDriverKycDetail error:', err);
         sendError(res, err.statusCode || 500, err.message);
     }
 };
 
-export const createDigilockerUrl = async (req, res) => {
+export const getReviewQueue = async (req, res) => {
     try {
-        const { document_requested, user_flow } = req.body;
-        const data = await kycService.createDigilockerUrl(req.user.id, { document_requested, user_flow });
+        const { type, status, page = 1, limit = 20 } = req.query;
+        const data = await kycService.getReviewQueue(type || null, status || 'manual_review', Number(page), Number(limit));
         sendResponse(res, 200, '', data);
     } catch (err) {
-        logger.error('KYC error:', err);
+        logger.error('[KYC] getReviewQueue error:', err);
         sendError(res, err.statusCode || 500, err.message);
     }
 };
 
-export const submitDigilocker = async (req, res) => {
+export const getDocumentForAdmin = async (req, res) => {
     try {
-        const { mobile_number, aadhaar_number } = req.body;
-        const data = await kycService.verifyDigilocker(req.user.id, mobile_number, aadhaar_number);
+        const data = await kycService.getDocumentForAdmin(Number(req.params.id));
         sendResponse(res, 200, '', data);
     } catch (err) {
-        logger.error('KYC error:', err);
+        logger.error('[KYC] getDocumentForAdmin error:', err);
         sendError(res, err.statusCode || 500, err.message);
     }
 };
 
-// ─── Admin Endpoints ──────────────────────────────────────────────────────────
-
-export const listManualReviews = async (req, res) => {
+export const approveDocument = async (req, res) => {
     try {
-        const { page = 1, limit = 20 } = req.query;
-        const data = await kycService.listManualReviews({ page: +page, limit: +limit });
-        sendResponse(res, 200, '', data);
+        const { notes } = req.body;
+        const data = await kycService.approveDocument(Number(req.params.id), req.user.id, notes);
+        sendResponse(res, 200, 'Document approved', data);
     } catch (err) {
-        logger.error('KYC error:', err);
+        logger.error('[KYC] approveDocument error:', err);
         sendError(res, err.statusCode || 500, err.message);
     }
 };
 
-export const resolveReview = async (req, res) => {
+export const rejectDocument = async (req, res) => {
     try {
-        const { user_id } = req.params;
-        const { decision, reason } = req.body;
-        const data = await kycService.resolveManualReview(user_id, decision, req.user.id, reason);
+        const { reason, allowRetry = true } = req.body;
+        if (!reason) return sendError(res, 400, 'reason is required');
+        const data = await kycService.rejectDocument(Number(req.params.id), req.user.id, reason, allowRetry);
+        sendResponse(res, 200, 'Document rejected', data);
+    } catch (err) {
+        logger.error('[KYC] rejectDocument error:', err);
+        sendError(res, err.statusCode || 500, err.message);
+    }
+};
+
+export const getFraudAlerts = async (req, res) => {
+    try {
+        const { severity } = req.query;
+        const data = await kycService.getFraudAlerts(severity || null);
         sendResponse(res, 200, '', data);
     } catch (err) {
-        logger.error('KYC error:', err);
+        logger.error('[KYC] getFraudAlerts error:', err);
+        sendError(res, err.statusCode || 500, err.message);
+    }
+};
+
+export const suspendDriver = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { reason } = req.body;
+        if (!reason) return sendError(res, 400, 'reason is required');
+        const data = await kycService.suspendDriverByAdmin(Number(userId), req.user.id, reason);
+        sendResponse(res, 200, 'Driver suspended', data);
+    } catch (err) {
+        logger.error('[KYC] suspendDriver error:', err);
         sendError(res, err.statusCode || 500, err.message);
     }
 };

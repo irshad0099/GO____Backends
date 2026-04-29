@@ -285,7 +285,15 @@ CONV_FEE_LUXURY_PEAK_MAX:    parseFloat(process.env.CONV_FEE_LUXURY_PEAK_MAX)   
     })(),
     CASHFREE_FACE_MATCH_THRESHOLD:    parseFloat(process.env.CASHFREE_FACE_MATCH_THRESHOLD) || 75,
     CASHFREE_NAME_MATCH_THRESHOLD:    parseFloat(process.env.CASHFREE_NAME_MATCH_THRESHOLD) || 70,
-    DIGILOCKER_REDIRECT_URL:          process.env.DIGILOCKER_REDIRECT_URL || 'http://localhost:5000/api/v1/kyc/digilocker/callback',
+
+    // KYC v2 scoring thresholds (tune without redeploy)
+    KYC_AUTO_THRESHOLD:             parseFloat(process.env.KYC_AUTO_THRESHOLD)             || 85,
+    KYC_REVIEW_THRESHOLD:           parseFloat(process.env.KYC_REVIEW_THRESHOLD)           || 60,
+    // RC pe VAHAN se aane wale insurance/fitness data ke liye
+    KYC_INSURANCE_EXPIRY_MIN_DAYS:  parseInt(process.env.KYC_INSURANCE_EXPIRY_MIN_DAYS)    || 30,
+
+    // S3 bucket for KYC document storage
+    AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME || 'go-mobility-kyc',
 };
 
 // Validate required secrets in production

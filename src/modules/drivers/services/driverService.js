@@ -1,5 +1,6 @@
 import * as driverRepo from '../repositories/driver.repository.js';
 import * as rideRepo from '../../rides/repositories/ride.repository.js';
+import userService from "../../users/services/userService.js"
 import { NotFoundError, ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 import { appConfig } from '../../../config/app.config.js';
@@ -96,7 +97,7 @@ export const getDriverProfile = async (userId) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);
         if (!driver) throw new NotFoundError('Driver profile');
-
+        
         // ── Redis se live location fetch karo (fast) ──────────────────────────
         let currentLocation = null;
         const redisLocation = await getDriverLocation(driver.id);
@@ -105,7 +106,8 @@ export const getDriverProfile = async (userId) => {
         } else if (driver.current_latitude && driver.current_longitude) {
             currentLocation = { latitude: driver.current_latitude, longitude: driver.current_longitude };
         }
-
+        
+        const userData = await userService.getUserProfile(driver.user_id)
         return {
             id:             driver.id,
             userId:         driver.user_id,
@@ -122,7 +124,15 @@ export const getDriverProfile = async (userId) => {
             totalEarnings:  driver.total_earnings,
             verifiedAt:     driver.verified_at,
             createdAt:      driver.created_at,
-            updatedAt:      driver.updated_at
+            updatedAt:      driver.updated_at,
+             phone: userData.phone || "",
+            email: userData.email || "",
+            fullName: userData.fullName || "",
+            profilePicture: userData.profilePicture || "",
+            role: userData.role || "",
+              isVerified: userData.isVerified || "",
+            isActive: userData.isActive || "",
+            lastLogin: userData.lastLogin || "",
         };
     } catch (error) {
         logger.error('Get driver profile service error:', error);

@@ -1,6 +1,9 @@
 import * as userService from '../services/userService.js';
 import logger from '../../../core/logger/logger.js';
 import { sendResponse } from '../../../core/utils/response.js';
+import * as userRepo from '../repositories/user.repository.js';
+import * as sessionRepo from '../../auth/repositories/sessionRepository.js';
+import { blacklistToken } from '../../../core/services/redisService.js';
 
 export const getProfile = async (req, res, next) => {
     try {
@@ -80,9 +83,28 @@ export const addMoneyToWallet = async (req, res, next) => {
 
 export const deleteAccount = async (req, res, next) => {
     try {
-        const data = await userService.deleteAccount(req.user.id);
-        sendResponse(res, 200, data.message, null);
+        const userId = req.user.id;
+
+        // Sirf is_active false karo
+        await userRepo.updateUser(userId, { 
+            is_active: false
+        });
+
+        // Token blacklist karo
+        const authHeader = req.headers.authorization || '';
+        const accessToken = authHeader.startsWith('Bearer ') 
+            ? authHeader.split(' ')[1] 
+            : null;
+        if (accessToken) {
+            await blacklistToken(accessToken, 86400);
+        }
+
+        res.status(200).json({ 
+            success: true, 
+            message: 'Account deleted successfully' 
+        });
     } catch (error) {
+        logger.error('Delete account error:', error);
         next(error);
     }
 };

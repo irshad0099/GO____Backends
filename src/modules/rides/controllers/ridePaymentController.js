@@ -1,4 +1,5 @@
 import * as rideService from '../services/rideService.js';
+import { updateRidePaymentStatus } from '../services/ridePaymentService.js';
 import { createOrder } from '../../payments/services/paymentService.js';
 import logger from '../../../core/logger/logger.js';
 import { ApiError } from '../../../core/errors/ApiError.js';
@@ -22,7 +23,29 @@ export const createRidePayment = async (req, res, next) => {
         // Check if payment already exists for this ride
         // TODO: Add payment check in rideService
 
-        // Create payment order
+        // Handle cash payment differently
+        if (payment_method === 'cash') {
+            // For cash payments, mark as collected by driver
+            const updatedRide = await rideService.updateRidePaymentStatus(ride_id, {
+                payment_status: 'cash_collected',
+                payment_method: 'cash',
+                payment_collected_at: new Date()
+            });
+
+            res.status(200).json({
+                success: true,
+                message: 'Cash payment recorded. Please pay driver directly.',
+                data: {
+                    ride: updatedRide,
+                    payment_method: 'cash',
+                    amount: ride.finalFare || ride.estimatedFare,
+                    status: 'cash_collected'
+                }
+            });
+            return;
+        }
+
+        // For other payment methods (QR, UPI, Wallet), create payment order
         const paymentOrder = await createOrder(userId, {
             amount: ride.finalFare || ride.estimatedFare,
             purpose: 'ride_payment',

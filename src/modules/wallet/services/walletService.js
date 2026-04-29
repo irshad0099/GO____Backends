@@ -405,6 +405,54 @@ export const creditReferralBonus = async (userId, { amount, description }) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+//  8b. Driver earnings credit  (category: 'driver_earnings')
+//     Credited when driver collects cash/payment for a ride
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const creditDriverEarnings = async (userId, { amount, ride_id, description }) => {
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        const wallet        = await getOrCreateWallet(userId);
+        const updatedWallet = await creditWallet(client, userId, amount);
+
+        const txn = await createTransaction(client, {
+            transactionNumber: generateTxnNumber(),
+            userId,
+            walletId:          wallet.id,
+            rideId:            ride_id,
+            amount,
+            type:              'credit',
+            category:          'driver_earnings',
+            paymentMethod:     'wallet',
+            status:            'success',
+            description:       description || `Driver earnings credited for ride`,
+            metadata:          { ride_id },
+        });
+
+        await client.query('COMMIT');
+
+        logger.info(`[Wallet] Driver earnings ₹${amount} | User: ${userId} | Ride: ${ride_id}`);
+
+        return {
+            success: true,
+            message: `₹${amount} driver earnings added to wallet`,
+            data: {
+                transaction: formatTransaction(txn),
+                newBalance:  parseFloat(updatedWallet.balance),
+            },
+        };
+    } catch (error) {
+        await client.query('ROLLBACK');
+        logger.error(`[Wallet] creditDriverEarnings error:`, error);
+        throw error;
+    } finally {
+        client.release();
+    }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 //  9. Withdrawal  (category: 'withdrawal')
 //     Rider withdraws wallet balance to bank account
 // ─────────────────────────────────────────────────────────────────────────────

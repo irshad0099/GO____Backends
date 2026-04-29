@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Razorpay Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <h2>Test Razorpay Payment</h2>
+    <p>Order ID: order_Si6DJzZrxoy8o1</p>
+    <p>Amount: ₹250</p>
+    
+    <button id="pay-btn">Pay Now</button>
+    
+    <div id="result" style="margin-top: 20px; padding: 10px; background: #f0f0f0;"></div>
+
+    <script>
+        document.getElementById('pay-btn').onclick = function(e) {
+            var options = {
+                key: 'rzp_test_1DX5Rlq5bNCHIA', // Test key (replace with yours)
+                amount: '25000', // Amount in paise (250 * 100)
+                currency: 'INR',
+                name: 'GoMobility',
+                description: 'Payment for ride',
+                order_id: 'order_Si6DJzZrxoy8o1',
+                handler: function (response) {
+                    console.log('Razorpay Response:', response);
+                    
+                    // Display the payment details for verification
+                    document.getElementById('result').innerHTML = `
+                        <h3>Payment Details (Copy these for verification):</h3>
+                        <p><strong>gateway_payment_id:</strong> ${response.razorpay_payment_id}</p>
+                        <p><strong>gateway_signature:</strong> ${response.razorpay_signature}</p>
+                        <p><strong>order_number:</strong> PAY20260426GIHF96</p>
+                        
+                        <h4>Verification Request Body:</h4>
+                        <pre>{
+  "order_number": "PAY20260426GIHF96",
+  "gateway_payment_id": "${response.razorpay_payment_id}",
+  "gateway_signature": "${response.razorpay_signature}"
+}</pre>
+                    `;
+                    
+                    alert('Payment successful! Check below for verification details.');
+                },
+                modal: {
+                    ondismiss: function() {
+                        console.log('Payment modal closed');
+                    }
+                }
+            };
+            
+            var rzp = new Razorpay(options);
+            rzp.open();
+            e.preventDefault();
+        };
+    </script>
+</body>
+</html>

@@ -2,6 +2,8 @@ import crypto from 'crypto';
 import { pool } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 import { addPaymentPostActionJob } from '../../../infrastructure/queue/payment.queue.js';
+import { createRazorpayOrder } from '../../../core/services/razorpayService.js';
+import { generateRidePaymentQR, generateWalletRechargeQR } from '../../../core/services/qrService.js';
 import {
     createPaymentOrder,
     getPaymentOrderById,
@@ -228,17 +230,50 @@ export const createOrder = async (userId, {
 
         logger.info(`[Payment] Gateway order created | User: ${userId} | Order: ${order.order_number} | GW: ${gatewayOrderId}`);
 
+        const responseData = {
+            order:           formatOrder(order),
+            requiresGateway: true,
+            gatewayOrderId,                  // send to frontend for Razorpay SDK
+            amount:          amount * 100,   // Razorpay uses paise
+            currency:        'INR',
+            expiresAt,
+        };
+
+        // Generate QR code if payment method is QR
+        if (payment_method === 'qr') {
+            try {
+                let qrData;
+                if (purpose === 'ride_payment' && ride_id) {
+                    qrData = await generateRidePaymentQR({
+                        rideId: ride_id,
+                        amount,
+                        orderId: gatewayOrderId,
+                        orderNumber: order.order_number
+                    });
+                } else if (purpose === 'wallet_recharge') {
+                    qrData = await generateWalletRechargeQR({
+                        amount,
+                        orderId: gatewayOrderId,
+                        orderNumber: order.order_number,
+                        userId
+                    });
+                }
+
+                if (qrData && qrData.success) {
+                    responseData.qrCode = qrData.qrCode;
+                    responseData.upiUrl = qrData.upiUrl;
+                    responseData.qrExpiresAt = qrData.expiresAt;
+                }
+            } catch (qrError) {
+                logger.warn(`[Payment] QR generation failed for order ${order.order_number}: ${qrError.message}`);
+                // Continue without QR code
+            }
+        }
+
         return {
             success:        true,
             message:        'Payment order created',
-            data: {
-                order:           formatOrder(order),
-                requiresGateway: true,
-                gatewayOrderId,                  // send to frontend for Razorpay SDK
-                amount:          amount * 100,   // Razorpay uses paise
-                currency:        'INR',
-                expiresAt,
-            },
+            data: responseData,
         };
     } catch (error) {
         await client.query('ROLLBACK');

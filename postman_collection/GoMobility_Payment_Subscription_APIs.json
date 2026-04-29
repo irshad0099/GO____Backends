@@ -1,0 +1,1254 @@
+{
+  "info": {
+    "_postman_id": "gomobility-payment-apis",
+    "name": "GoMobility - Payment & Subscription APIs",
+    "description": "Complete API collection for Razorpay Payment & Subscription integration",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "qr_order_number",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "qr_gateway_payment_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "qr_gateway_signature",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ride_id",
+      "value": "123",
+      "type": "string"
+    },
+    {
+      "key": "order_number",
+      "value": "PAY20240101ABC123",
+      "type": "string"
+    },
+    {
+      "key": "plan_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "subscription_id",
+      "value": "sub_1234567890",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "1. Signin - Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/signin",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "signin"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"role\": \"passenger\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "1. Signin - Send OTP (Rahul)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/signin",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "signin"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{rahul_phone}}\",\n  \"role\": \"passenger\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "1. Signin - Send OTP (Priya)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/signin",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "signin"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{priya_phone}}\",\n  \"role\": \"passenger\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Verify OTP (Get Token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/verify-signin",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-signin"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"role\": \"passenger\",\n  \"otp\": \"{{actual_otp}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Rahul (Passenger - Has Wallet)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/verify-signin",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-signin"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{rahul_phone}}\",\n  \"role\": \"passenger\",\n  \"otp\": \"{{actual_otp}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Priya (Passenger - Empty Wallet)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/verify-signin",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-signin"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{priya_phone}}\",\n  \"role\": \"passenger\",\n  \"otp\": \"{{actual_otp}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Amit (Driver)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/verify-signin",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-signin"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{amit_phone}}\",\n  \"role\": \"driver\",\n  \"otp\": \"{{actual_otp}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Signup (Create New User)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "signup"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"role\": \"passenger\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/verify-signup",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-signup"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"role\": \"passenger\",\n  \"otp\": \"123456\",\n  \"email\": \"user@test.com\",\n  \"fullName\": \"Test User\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "� QR Payment APIs",
+      "item": [
+        {
+          "name": "1. Generate QR for Ride Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/qr/generate",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "qr", "generate"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 272.50,\n  \"purpose\": \"ride_payment\",\n  \"payment_method\": \"qr\",\n  \"payment_gateway\": \"razorpay\",\n  \"ride_id\": 3,\n  \"description\": \"QR payment for ride #3\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Generate QR for Wallet Recharge",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/qr/generate",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "qr", "generate"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500,\n  \"purpose\": \"wallet_recharge\",\n  \"payment_method\": \"qr\",\n  \"payment_gateway\": \"razorpay\",\n  \"description\": \"QR wallet recharge\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Verify QR Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/qr/verify",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "qr", "verify"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_number\": \"{{qr_order_number}}\",\n  \"gateway_payment_id\": \"{{qr_gateway_payment_id}}\",\n  \"gateway_signature\": \"{{qr_gateway_signature}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get QR Payment Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/qr/status/{{qr_order_number}}",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "qr", "status", "{{qr_order_number}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Close QR Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/qr/close",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "qr", "close"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_number\": \"{{qr_order_number}}\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💵 Cash Payment APIs",
+      "item": [
+        {
+          "name": "1. Pay Ride with Cash (Passenger)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/rides/payments/create",
+              "host": ["{{base_url}}"],
+              "path": ["rides", "payments", "create"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ride_id\": 3,\n  \"payment_method\": \"cash\",\n  \"payment_gateway\": null\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Confirm Cash Collection (Driver)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/rides/cash/confirm",
+              "host": ["{{base_url}}"],
+              "path": ["rides", "cash", "confirm"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ride_id\": 3\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Cash Payment Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/rides/cash/status/3",
+              "host": ["{{base_url}}"],
+              "path": ["rides", "cash", "status", "3"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "�� Wallet APIs",
+      "item": [
+        {
+          "name": "Get Wallet Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/wallet",
+              "host": ["{{base_url}}"],
+              "path": ["wallet"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Wallet Balance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/wallet/balance",
+              "host": ["{{base_url}}"],
+              "path": ["wallet", "balance"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Recharge Wallet (Razorpay)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/wallet/recharge",
+              "host": ["{{base_url}}"],
+              "path": ["wallet", "recharge"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500,\n  \"payment_method\": \"card\",\n  \"payment_gateway\": \"razorpay\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Pay for Ride (Wallet)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/wallet/pay-ride",
+              "host": ["{{base_url}}"],
+              "path": ["wallet", "pay-ride"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ride_id\": 3,\n  \"amount\": 272.50\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Withdraw to Bank",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/wallet/withdraw",
+              "host": ["{{base_url}}"],
+              "path": ["wallet", "withdraw"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500,\n  \"bank_account_id\": \"acc_123456\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/wallet/transactions?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["wallet", "transactions"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Transaction",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/wallet/transactions/TXN1234567890",
+              "host": ["{{base_url}}"],
+              "path": ["wallet", "transactions", "TXN1234567890"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💰 Payment APIs",
+      "item": [
+        {
+          "name": "Create Payment Order (Razorpay)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/orders",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "orders"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 250,\n  \"purpose\": \"ride_payment\",\n  \"payment_method\": \"upi\",\n  \"payment_gateway\": \"razorpay\",\n  \"ride_id\": {{ride_id}},\n  \"description\": \"Payment for ride\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Razorpay Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/verify",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "verify"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gateway_order_id\": \"order_1234567890\",\n  \"gateway_payment_id\": \"pay_1234567890\",\n  \"gateway_signature\": \"signature_here\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Cash Payment Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/orders",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "orders"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 250,\n  \"purpose\": \"ride_payment\",\n  \"payment_method\": \"cash\",\n  \"ride_id\": {{ride_id}}\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Wallet Payment Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/orders",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "orders"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 250,\n  \"purpose\": \"ride_payment\",\n  \"payment_method\": \"wallet\",\n  \"ride_id\": {{ride_id}}\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Initiate Refund (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/refund",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "refund"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_number\": \"{{order_number}}\",\n  \"amount\": 250,\n  \"reason\": \"Ride cancelled\",\n  \"refund_method\": \"wallet\",\n  \"ride_id\": {{ride_id}}\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Payment History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/history?limit=20&offset=0&status=success",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "history"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "status",
+                  "value": "success"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/orders/{{order_number}}",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "orders", "{{order_number}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Saved Payment Methods",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/methods",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "methods"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Save Payment Method",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/methods",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "methods"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"card\",\n  \"card_token\": \"token_123456\",\n  \"card_last4\": \"4242\",\n  \"card_brand\": \"visa\",\n  \"card_exp_month\": 12,\n  \"card_exp_year\": 2025,\n  \"is_default\": true\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Set Default Payment Method",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/methods/123/default",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "methods", "123", "default"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Payment Method",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/methods/123",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "methods", "123"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🚗 Ride Payment APIs",
+      "item": [
+        {
+          "name": "Calculate Ride Fare + Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/rides/payments/calculate",
+              "host": ["{{base_url}}"],
+              "path": ["rides", "payments", "calculate"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicleType\": \"car\",\n  \"pickupLatitude\": 19.0760,\n  \"pickupLongitude\": 72.8777,\n  \"dropoffLatitude\": 19.2183,\n  \"dropoffLongitude\": 72.9781,\n  \"payment_method\": \"upi\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Payment for Completed Ride",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/rides/payments",
+              "host": ["{{base_url}}"],
+              "path": ["rides", "payments"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ride_id\": {{ride_id}},\n  \"payment_method\": \"upi\",\n  \"payment_gateway\": \"razorpay\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Ride Payment Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/rides/payments/{{ride_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["rides", "payments", "{{ride_id}}", "status"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📅 Subscription APIs (Razorpay)",
+      "item": [
+        {
+          "name": "Get All Plans (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/plans",
+              "host": ["{{base_url}}"],
+              "path": ["subscriptions", "plans"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Plan Details (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/plans/{{plan_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["subscriptions", "plans", "{{plan_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Subscription",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/active",
+              "host": ["{{base_url}}"],
+              "path": ["subscriptions", "active"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Purchase Subscription (Razorpay)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/purchase",
+              "host": ["{{base_url}}"],
+              "path": ["subscriptions", "purchase"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plan_id\": {{plan_id}},\n  \"payment_method\": \"card\",\n  \"payment_gateway\": \"razorpay\",\n  \"auto_renew\": true,\n  \"customer_details\": {\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"contact\": \"+919876543210\"\n  }\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["subscriptions", "cancel"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subscription_id\": \"{{subscription_id}}\",\n  \"reason\": \"Not using anymore\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Auto-Renew",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/auto-renew",
+              "host": ["{{base_url}}"],
+              "path": ["subscriptions", "auto-renew"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subscription_id\": \"{{subscription_id}}\",\n  \"auto_renew\": false\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Apply Subscription Benefits",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/apply-benefits",
+              "host": ["{{base_url}}"],
+              "path": ["subscriptions", "apply-benefits"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ride_amount\": 350,\n  \"ride_id\": {{ride_id}}\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Subscription History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/history?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["subscriptions", "history"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Subscription Payments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/{{subscription_id}}/payments",
+              "host": ["{{base_url}}"],
+              "path": ["subscriptions", "{{subscription_id}}", "payments"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔴 Admin APIs",
+      "item": [
+        {
+          "name": "Create Subscription Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/admin/plans",
+              "host": ["{{base_url}}"],
+              "path": ["subscriptions", "admin", "plans"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Premium Monthly\",\n  \"slug\": \"premium-monthly\",\n  \"description\": \"Unlimited rides with 20% discount\",\n  \"price\": 999,\n  \"currency\": \"INR\",\n  \"period\": \"monthly\",\n  \"benefits\": {\n    \"discount_percent\": 20,\n    \"free_rides_per_month\": 5,\n    \"priority_support\": true\n  },\n  \"is_active\": true\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Plan Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/admin/plans/{{plan_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["subscriptions", "admin", "plans", "{{plan_id}}", "status"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": false\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔄 Razorpay Webhook (Server)",
+      "item": [
+        {
+          "name": "Razorpay Webhook Handler (Not Implemented)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Razorpay-Signature",
+                "value": "webhook_signature_here"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/webhook/razorpay",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "webhook", "razorpay"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"payment.captured\",\n  \"payload\": {\n    \"payment\": {\n      \"entity\": {\n        \"id\": \"pay_1234567890\",\n        \"order_id\": \"order_1234567890\",\n        \"amount\": 25000,\n        \"status\": \"captured\"\n      }\n    }\n  }\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

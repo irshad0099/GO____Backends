@@ -617,3 +617,1216 @@ error: password authentication failed for user "postgres"
 2026-04-16 13:50:45 [INFO]: ✅ PostgreSQL connected successfully
 2026-04-24 16:37:04 [INFO]: ✅ PostgreSQL connected successfully
 2026-04-24 16:39:56 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-25 14:16:39 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-25 14:16:39 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-25 14:16:39 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-25 14:16:39 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-25 14:16:39 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-25 14:16:39 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-25 14:16:39 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-25 14:16:39 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-25 14:16:39 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-25 14:16:41 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-25 14:16:41 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-25 14:16:41 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-25 14:16:41 [INFO]: ✅ Redis Cloud ready
+2026-04-25 14:16:41 [INFO]: ✅ Redis Cloud ready
+2026-04-25 14:16:42 [INFO]: ✅ Redis Cloud ready
+2026-04-25 14:16:43 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-25 14:16:43 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-25 14:16:43 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-25 14:16:46 [WARN]: Slow query:
+2026-04-25 14:16:46 [WARN]: Slow query:
+2026-04-25 14:16:46 [WARN]: Slow query:
+2026-04-25 14:16:46 [WARN]: Slow query:
+2026-04-25 14:16:46 [WARN]: Slow query:
+2026-04-25 14:16:46 [WARN]: Slow query:
+2026-04-25 14:16:47 [WARN]: Slow query:
+2026-04-25 14:16:47 [WARN]: Slow query:
+2026-04-25 14:16:47 [WARN]: Slow query:
+2026-04-25 14:16:47 [WARN]: Slow query:
+2026-04-25 14:16:47 [WARN]: Slow query:
+2026-04-25 14:16:47 [WARN]: Slow query:
+2026-04-25 14:16:47 [WARN]: Slow query:
+2026-04-25 14:16:47 [WARN]: Slow query:
+2026-04-25 14:16:47 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-25 14:16:47 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-25 14:16:47 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-25 14:16:47 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-25 14:16:47 [WARN]: Slow query:
+2026-04-25 14:16:47 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-25 14:16:47 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-25 14:16:47 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-25 14:16:47 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-25 14:16:47 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-25 14:16:47 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-25 14:16:47 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-25 14:16:47 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-25 14:16:48 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:19:17 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-25 14:19:17 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-25 14:19:17 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-25 14:19:18 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-25 14:19:18 [INFO]: ✅ Redis Cloud ready
+2026-04-25 14:19:19 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-25 14:19:21 [WARN]: Slow query:
+2026-04-25 14:19:21 [WARN]: Slow query:
+2026-04-25 14:19:21 [WARN]: Slow query:
+2026-04-25 14:19:21 [WARN]: Slow query:
+2026-04-25 14:19:21 [WARN]: Slow query:
+2026-04-25 14:19:21 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-25 14:19:21 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-25 14:19:21 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-25 14:19:21 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-25 14:19:52 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-25 14:19:52 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-25 14:19:52 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-25 14:19:53 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-25 14:19:53 [INFO]: ✅ Redis Cloud ready
+2026-04-25 14:19:54 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-25 14:19:56 [WARN]: Slow query:
+2026-04-25 14:19:56 [WARN]: Slow query:
+2026-04-25 14:19:56 [WARN]: Slow query:
+2026-04-25 14:19:56 [WARN]: Slow query:
+2026-04-25 14:19:56 [WARN]: Slow query:
+2026-04-25 14:19:56 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-25 14:19:56 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-25 14:19:56 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-25 14:19:56 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-25 14:33:31 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-25 14:33:31 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-25 14:33:31 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-25 14:33:31 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-25 14:33:31 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-25 14:33:31 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-25 14:33:32 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-25 14:33:32 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-25 14:33:32 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-25 14:33:33 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-25 14:33:33 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-25 14:33:34 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-25 14:33:34 [INFO]: ✅ Redis Cloud ready
+2026-04-25 14:33:34 [INFO]: ✅ Redis Cloud ready
+2026-04-25 14:33:34 [INFO]: ✅ Redis Cloud ready
+2026-04-25 14:33:34 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-25 14:33:34 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-25 14:33:34 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-25 14:33:36 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-25 14:33:36 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-25 14:33:36 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-25 14:33:36 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [WARN]: Slow query:
+2026-04-25 14:33:36 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-25 14:33:36 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-25 14:33:36 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-25 14:33:36 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-25 14:33:36 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:36 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:36 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:36 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:51 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-25 14:33:51 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-25 14:33:51 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-25 14:33:51 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-25 14:33:51 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-25 14:33:51 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-25 14:33:51 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-25 14:33:51 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-25 14:33:51 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-25 14:33:53 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-25 14:33:53 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-25 14:33:53 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-25 14:33:53 [INFO]: ✅ Redis Cloud ready
+2026-04-25 14:33:53 [INFO]: ✅ Redis Cloud ready
+2026-04-25 14:33:53 [INFO]: ✅ Redis Cloud ready
+2026-04-25 14:33:55 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-25 14:33:55 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-25 14:33:55 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-25 14:33:57 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-25 14:33:57 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-25 14:33:57 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-25 14:33:57 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-25 14:33:57 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [WARN]: Slow query:
+2026-04-25 14:33:57 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-25 14:33:57 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-25 14:33:57 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:34:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:34:32 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:35:07 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:35:07 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:35:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:35:42 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:36:17 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:36:17 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:36:52 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:36:52 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:37:27 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:37:27 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:38:02 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:38:02 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:38:37 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:38:37 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:39:12 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:39:12 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:39:47 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:39:47 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:40:22 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:40:22 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:40:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:40:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:41:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:41:32 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:42:07 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:42:07 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:42:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:42:42 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:43:17 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:43:17 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:43:52 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:43:52 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:44:27 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:44:27 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:45:02 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:45:02 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:45:37 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:45:37 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:46:12 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:46:12 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:46:47 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:46:47 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:47:22 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:47:22 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:47:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:47:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:48:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:48:32 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:49:07 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:49:07 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:49:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:49:42 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:50:17 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:50:17 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:50:53 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:50:53 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:51:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:51:28 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:52:03 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:52:03 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:52:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:52:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:53:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:53:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:53:48 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:53:48 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:54:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:54:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:54:58 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:54:58 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:55:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:55:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:56:08 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:56:08 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:56:43 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:56:43 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:57:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:57:18 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:57:53 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:57:53 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:58:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:58:28 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:59:03 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:59:03 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:59:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:59:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:00:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:00:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:00:48 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:00:48 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:01:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:01:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:01:58 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:01:58 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:02:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:02:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:03:08 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:03:08 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:03:43 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:03:43 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:04:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:04:18 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:04:53 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:04:53 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:05:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:05:28 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:06:03 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:06:03 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:06:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:06:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:07:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:07:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:07:48 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:07:48 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:08:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:08:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:08:58 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:08:58 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:09:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:09:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:10:08 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:10:08 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:10:43 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:10:43 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:11:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:11:18 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:11:53 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:11:53 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:12:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:12:28 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:13:03 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:13:03 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:13:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:13:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:14:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:14:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:14:48 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:14:48 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:15:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:15:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:15:58 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:15:58 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:16:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:16:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:17:08 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:17:08 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:17:43 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:17:43 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:18:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:18:18 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:18:53 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:18:53 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:19:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:19:28 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:19:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:35 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:43 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:46 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:49 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:55 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:01 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:03 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:20:03 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:20:04 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:11 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:14 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:15 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-25 15:20:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:16 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:16 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:19 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:25 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:28 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:29 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:32 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:32 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:35 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:20:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:20:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:01 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:04 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:05 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:07 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:08 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:10 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:11 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:21:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:21:13 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:14 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:16 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:19 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:22 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:29 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:29 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:32 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:32 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:35 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:35 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:48 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:21:48 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:21:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:05 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:05 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:08 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:08 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:11 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:14 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:22:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:22:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:29 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:32 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:35 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:48 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:58 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:22:58 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:22:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:23:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:23:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:48 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:48 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:08 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:24:08 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:24:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-26 14:35:41 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 14:35:42 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 14:35:42 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 14:35:44 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 14:35:44 [INFO]: ✅ Redis Cloud ready
+2026-04-26 14:35:45 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 14:35:47 [WARN]: Slow query:
+2026-04-26 14:35:47 [WARN]: Slow query:
+2026-04-26 14:35:47 [WARN]: Slow query:
+2026-04-26 14:35:47 [WARN]: Slow query:
+2026-04-26 14:35:47 [WARN]: Slow query:
+2026-04-26 14:35:47 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 14:35:47 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 14:35:47 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 14:35:47 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 14:42:58 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 14:42:58 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 14:42:58 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 14:43:00 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 14:43:00 [INFO]: ✅ Redis Cloud ready
+2026-04-26 14:43:02 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 14:43:03 [WARN]: Slow query:
+2026-04-26 14:43:03 [WARN]: Slow query:
+2026-04-26 14:43:03 [WARN]: Slow query:
+2026-04-26 14:43:03 [WARN]: Slow query:
+2026-04-26 14:43:04 [WARN]: Slow query:
+2026-04-26 14:43:04 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 14:43:04 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 14:43:04 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 14:43:04 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 14:43:07 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 14:43:07 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 14:43:07 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 14:43:09 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 14:43:09 [INFO]: ✅ Redis Cloud ready
+2026-04-26 14:43:10 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 14:43:12 [WARN]: Slow query:
+2026-04-26 14:43:12 [WARN]: Slow query:
+2026-04-26 14:43:12 [WARN]: Slow query:
+2026-04-26 14:43:12 [WARN]: Slow query:
+2026-04-26 14:43:12 [WARN]: Slow query:
+2026-04-26 14:43:12 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 14:43:12 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 14:43:12 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 14:43:12 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 14:47:12 [ERROR]: Authentication failed: Invalid token
+AuthError: Invalid token
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:47:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 14:47:12 [ERROR]: Invalid token
+AuthError: Invalid token
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:47:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 14:52:17 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 14:52:17 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 14:52:17 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 14:52:20 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 14:52:20 [INFO]: ✅ Redis Cloud ready
+2026-04-26 14:52:23 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 14:52:27 [WARN]: Slow query:
+2026-04-26 14:52:27 [WARN]: Slow query:
+2026-04-26 14:52:27 [WARN]: Slow query:
+2026-04-26 14:52:27 [WARN]: Slow query:
+2026-04-26 14:52:27 [WARN]: Slow query:
+2026-04-26 14:52:27 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 14:52:27 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 14:52:27 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 14:52:27 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 14:52:44 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 14:52:45 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 14:52:45 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 14:52:47 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 14:52:47 [INFO]: ✅ Redis Cloud ready
+2026-04-26 14:52:48 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 14:52:50 [WARN]: Slow query:
+2026-04-26 14:52:53 [WARN]: Slow query:
+2026-04-26 14:52:53 [WARN]: Slow query:
+2026-04-26 14:52:53 [WARN]: Slow query:
+2026-04-26 14:52:53 [WARN]: Slow query:
+2026-04-26 14:52:53 [WARN]: Slow query:
+2026-04-26 14:52:53 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 14:52:53 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 14:52:53 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 14:52:53 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 14:53:41 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 14:53:42 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 14:53:42 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 14:53:43 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 14:53:43 [INFO]: ✅ Redis Cloud ready
+2026-04-26 14:53:45 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 14:53:47 [WARN]: Slow query:
+2026-04-26 14:53:47 [WARN]: Slow query:
+2026-04-26 14:53:47 [WARN]: Slow query:
+2026-04-26 14:53:47 [WARN]: Slow query:
+2026-04-26 14:53:47 [WARN]: Slow query:
+2026-04-26 14:53:47 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 14:53:47 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 14:53:47 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 14:53:47 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 15:01:09 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:01:09 [INFO]: ═══════════════════════════════════════════════════════════
+2026-04-26 15:01:09 [INFO]: 🚀 Starting Test Data Seeding
+2026-04-26 15:01:09 [INFO]: ═══════════════════════════════════════════════════════════
+2026-04-26 15:01:10 [INFO]: 🌱 Seeding users...
+2026-04-26 15:01:10 [ERROR]: ❌ Seeding failed: update or delete on table "users" violates foreign key constraint "rides_passenger_id_fkey" on table "rides"
+error: update or delete on table "users" violates foreign key constraint "rides_passenger_id_fkey" on table "rides"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async seedUsers (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/scripts/seedTestData.js:51:5)
+    at async seedData (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/scripts/seedTestData.js:234:5)
+2026-04-26 15:16:20 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:16:20 [INFO]: ═══════════════════════════════════════════════════════════
+2026-04-26 15:16:20 [INFO]: 🚀 Starting Test Data Seeding
+2026-04-26 15:16:20 [INFO]: ═══════════════════════════════════════════════════════════
+2026-04-26 15:16:20 [INFO]: 🌱 Seeding users...
+2026-04-26 15:16:21 [INFO]:   ⚠️  Rahul Sharma already exists (9876543210) - using existing ID
+2026-04-26 15:16:21 [INFO]:   ✅ Priya Patel created (passenger) - 9876543211
+2026-04-26 15:16:22 [INFO]:   ✅ Amit Kumar created (driver) - 9876543212
+2026-04-26 15:16:23 [INFO]:   ✅ Sunil Verma created (driver) - 9876543213
+2026-04-26 15:16:23 [INFO]: 🚗 Seeding driver profiles...
+2026-04-26 15:16:24 [INFO]:   ✅ 2 drivers created
+2026-04-26 15:16:24 [INFO]: 💰 Seeding wallets...
+2026-04-26 15:16:27 [INFO]:   ✅ 4 wallets created/updated
+2026-04-26 15:16:27 [INFO]: 🚙 Seeding rides...
+2026-04-26 15:16:30 [ERROR]: ❌ Seeding failed: INSERT has more target columns than expressions
+error: INSERT has more target columns than expressions
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async seedRides (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/scripts/seedTestData.js:198:5)
+    at async seedData (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/scripts/seedTestData.js:258:5)
+2026-04-26 15:17:41 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:17:41 [INFO]: ═══════════════════════════════════════════════════════════
+2026-04-26 15:17:41 [INFO]: 🚀 Starting Test Data Seeding
+2026-04-26 15:17:41 [INFO]: ═══════════════════════════════════════════════════════════
+2026-04-26 15:17:41 [INFO]: 🌱 Seeding users...
+2026-04-26 15:17:42 [INFO]:   ⚠️  Rahul Sharma already exists (9876543210) - using existing ID
+2026-04-26 15:17:43 [INFO]:   ✅ Priya Patel created (passenger) - 9876543211
+2026-04-26 15:17:43 [INFO]:   ✅ Amit Kumar created (driver) - 9876543212
+2026-04-26 15:17:44 [INFO]:   ✅ Sunil Verma created (driver) - 9876543213
+2026-04-26 15:17:44 [INFO]: 🚗 Seeding driver profiles...
+2026-04-26 15:17:45 [INFO]:   ✅ 2 drivers created
+2026-04-26 15:17:45 [INFO]: 💰 Seeding wallets...
+2026-04-26 15:17:48 [INFO]:   ✅ 4 wallets created/updated
+2026-04-26 15:17:48 [INFO]: 🚙 Seeding rides...
+2026-04-26 15:17:50 [INFO]:   ✅ Ride RD202401010001 - completed
+2026-04-26 15:17:50 [INFO]:   ✅ Ride RD202401010002 - completed
+2026-04-26 15:17:51 [INFO]:   ✅ Ride RD202401010003 - in_progress
+2026-04-26 15:17:51 [INFO]:   ✅ Ride RD202401010004 - requested
+2026-04-26 15:17:51 [INFO]: 📜 Seeding transactions...
+2026-04-26 15:17:52 [INFO]:   ✅ Sample transaction created
+2026-04-26 15:17:52 [INFO]: ═══════════════════════════════════════════════════════════
+2026-04-26 15:22:16 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:22:16 [INFO]: ═══════════════════════════════════════════════════════════
+2026-04-26 15:22:16 [INFO]: 🚀 Starting Test Data Seeding
+2026-04-26 15:22:16 [INFO]: ═══════════════════════════════════════════════════════════
+2026-04-26 15:22:17 [INFO]: 🌱 Seeding users...
+2026-04-26 15:22:17 [INFO]:   ⚠️  Rahul Sharma already exists (9876543210) - using existing ID
+2026-04-26 15:22:18 [INFO]:   ⚠️  Priya Patel already exists (9876543211) - using existing ID
+2026-04-26 15:22:18 [INFO]:   ⚠️  Amit Kumar already exists (9876543212) - using existing ID
+2026-04-26 15:22:18 [INFO]:   ⚠️  Sunil Verma already exists (9876543213) - using existing ID
+2026-04-26 15:22:18 [INFO]: 🚗 Seeding driver profiles...
+2026-04-26 15:22:19 [INFO]:   ✅ 2 drivers created
+2026-04-26 15:22:19 [INFO]: 💰 Seeding wallets...
+2026-04-26 15:22:23 [INFO]:   ✅ 4 wallets created/updated
+2026-04-26 15:22:23 [INFO]: 🚙 Seeding rides...
+2026-04-26 15:22:24 [INFO]:   ✅ Ride RD202401010001 - completed
+2026-04-26 15:22:25 [INFO]:   ✅ Ride RD202401010002 - completed
+2026-04-26 15:22:25 [INFO]:   ✅ Ride RD202401010003 - in_progress
+2026-04-26 15:22:26 [INFO]:   ✅ Ride RD202401010004 - requested
+2026-04-26 15:22:26 [INFO]: 📜 Seeding transactions...
+2026-04-26 15:22:27 [INFO]:   ✅ Sample transaction created
+2026-04-26 15:22:27 [INFO]: ═══════════════════════════════════════════════════════════
+2026-04-26 15:23:29 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 15:23:29 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 15:23:29 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 15:23:31 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 15:23:31 [INFO]: ✅ Redis Cloud ready
+2026-04-26 15:23:32 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:23:34 [WARN]: Slow query:
+2026-04-26 15:23:34 [WARN]: Slow query:
+2026-04-26 15:23:34 [WARN]: Slow query:
+2026-04-26 15:23:34 [WARN]: Slow query:
+2026-04-26 15:23:34 [WARN]: Slow query:
+2026-04-26 15:23:34 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 15:23:34 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 15:23:34 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 15:23:34 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 15:23:58 [ERROR]: Role is required
+ValidationError: Role is required
+    at file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/validation.middleware.js:21:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 15:26:37 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 15:26:37 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 15:26:37 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 15:26:38 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 15:26:39 [INFO]: ✅ Redis Cloud ready
+2026-04-26 15:26:40 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:26:42 [WARN]: Slow query:
+2026-04-26 15:26:42 [WARN]: Slow query:
+2026-04-26 15:26:42 [WARN]: Slow query:
+2026-04-26 15:26:42 [WARN]: Slow query:
+2026-04-26 15:26:42 [WARN]: Slow query:
+2026-04-26 15:26:42 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 15:26:42 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 15:26:42 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 15:26:42 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 15:26:48 [INFO]: 🔐 OTP send initiated
+2026-04-26 15:26:50 [WARN]: Slow query:
+2026-04-26 15:26:50 [DEBUG]: 💾 OTP saved to database
+2026-04-26 15:26:50 [DEBUG]: 📤 SMS sending initiated
+2026-04-26 15:26:50 [DEBUG]: 📡 MSG91 API Request
+2026-04-26 15:26:51 [DEBUG]: 📨 MSG91 API Response Received
+2026-04-26 15:26:51 [INFO]: ✅ SMS sent successfully via MSG91
+2026-04-26 15:26:51 [INFO]: ✅ OTP sent successfully
+2026-04-26 15:30:38 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 15:30:38 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 15:30:38 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 15:30:41 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 15:30:41 [INFO]: ✅ Redis Cloud ready
+2026-04-26 15:30:42 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:30:44 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 15:30:44 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 15:30:44 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 15:30:47 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 15:30:47 [INFO]: ✅ Redis Cloud ready
+2026-04-26 15:30:48 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:30:50 [WARN]: Slow query:
+2026-04-26 15:30:50 [WARN]: Slow query:
+2026-04-26 15:30:50 [WARN]: Slow query:
+2026-04-26 15:30:50 [WARN]: Slow query:
+2026-04-26 15:30:50 [WARN]: Slow query:
+2026-04-26 15:30:50 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 15:30:50 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 15:30:50 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 15:30:50 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 15:31:28 [WARN]: Slow query:
+2026-04-26 15:31:29 [ERROR]: Verify OTP service error: Invalid OTP
+Error: Invalid OTP
+    at Module.verifyOTP (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/otpService.js:211:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/authService.js:275:13)
+    at async verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/controllers/authController.js:105:24)
+2026-04-26 15:31:29 [ERROR]: Verify signin service error: Invalid OTP
+Error: Invalid OTP
+    at Module.verifyOTP (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/otpService.js:211:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/authService.js:275:13)
+    at async verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/controllers/authController.js:105:24)
+2026-04-26 15:31:29 [ERROR]: Invalid OTP
+Error: Invalid OTP
+    at Module.verifyOTP (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/otpService.js:211:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/authService.js:275:13)
+    at async verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/controllers/authController.js:105:24)
+2026-04-26 15:32:24 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 15:32:24 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 15:32:24 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 15:32:25 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 15:32:26 [INFO]: ✅ Redis Cloud ready
+2026-04-26 15:32:27 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:32:28 [WARN]: Slow query:
+2026-04-26 15:32:28 [WARN]: Slow query:
+2026-04-26 15:32:28 [WARN]: Slow query:
+2026-04-26 15:32:28 [WARN]: Slow query:
+2026-04-26 15:32:28 [WARN]: Slow query:
+2026-04-26 15:32:28 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 15:32:29 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 15:32:29 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 15:32:29 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 15:32:31 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 15:32:31 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 15:32:31 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 15:32:32 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 15:32:32 [INFO]: ✅ Redis Cloud ready
+2026-04-26 15:32:33 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:32:35 [WARN]: Slow query:
+2026-04-26 15:32:35 [WARN]: Slow query:
+2026-04-26 15:32:35 [WARN]: Slow query:
+2026-04-26 15:32:35 [WARN]: Slow query:
+2026-04-26 15:32:35 [WARN]: Slow query:
+2026-04-26 15:32:35 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 15:32:35 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 15:32:35 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 15:32:35 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 15:32:38 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 15:32:38 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 15:32:38 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 15:32:39 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 15:32:39 [INFO]: ✅ Redis Cloud ready
+2026-04-26 15:32:40 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:32:42 [WARN]: Slow query:
+2026-04-26 15:32:42 [WARN]: Slow query:
+2026-04-26 15:32:42 [WARN]: Slow query:
+2026-04-26 15:32:42 [WARN]: Slow query:
+2026-04-26 15:32:42 [WARN]: Slow query:
+2026-04-26 15:32:42 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 15:32:42 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 15:32:42 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 15:32:42 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 15:32:43 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 15:32:43 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 15:32:43 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 15:32:44 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 15:32:45 [INFO]: ✅ Redis Cloud ready
+2026-04-26 15:32:45 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:32:47 [WARN]: Slow query:
+2026-04-26 15:32:47 [WARN]: Slow query:
+2026-04-26 15:32:47 [WARN]: Slow query:
+2026-04-26 15:32:47 [WARN]: Slow query:
+2026-04-26 15:32:47 [WARN]: Slow query:
+2026-04-26 15:32:47 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 15:32:47 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 15:32:47 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 15:32:47 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 15:32:49 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 15:32:49 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 15:32:49 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 15:32:50 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 15:32:50 [INFO]: ✅ Redis Cloud ready
+2026-04-26 15:32:51 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:32:53 [WARN]: Slow query:
+2026-04-26 15:32:53 [WARN]: Slow query:
+2026-04-26 15:32:53 [WARN]: Slow query:
+2026-04-26 15:32:53 [WARN]: Slow query:
+2026-04-26 15:32:53 [WARN]: Slow query:
+2026-04-26 15:32:53 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 15:32:53 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 15:32:53 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 15:32:53 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 15:36:17 [WARN]: Slow query:
+2026-04-26 15:36:18 [INFO]: ✅ OTP verified via DB fallback for 9876543210
+2026-04-26 15:36:19 [INFO]: User signed in successfully:
+2026-04-26 15:36:46 [WARN]: Slow query:
+2026-04-26 15:40:27 [WARN]: Slow query:
+2026-04-26 15:40:30 [INFO]: [Wallet] Recharge ₹500 | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965 | TXN: TXN1777198230147VRGN
+2026-04-26 15:47:07 [WARN]: Slow query:
+2026-04-26 15:47:45 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-26 15:47:46 [ERROR]: [NotificationWorker] Worker error: connect ETIMEDOUT
+2026-04-26 15:47:47 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-26 15:48:26 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 15:48:26 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 15:48:26 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 15:48:27 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 15:48:27 [INFO]: ✅ Redis Cloud ready
+2026-04-26 15:48:28 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:48:30 [WARN]: Slow query:
+2026-04-26 15:48:30 [WARN]: Slow query:
+2026-04-26 15:48:30 [WARN]: Slow query:
+2026-04-26 15:48:30 [WARN]: Slow query:
+2026-04-26 15:48:30 [WARN]: Slow query:
+2026-04-26 15:48:30 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 15:48:30 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 15:48:30 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 15:48:30 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 15:49:39 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:50:50 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 15:50:50 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 15:50:50 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 15:50:53 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 15:50:53 [INFO]: ✅ Redis Cloud ready
+2026-04-26 15:50:54 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 15:50:56 [WARN]: Slow query:
+2026-04-26 15:50:56 [WARN]: Slow query:
+2026-04-26 15:50:57 [WARN]: Slow query:
+2026-04-26 15:50:57 [WARN]: Slow query:
+2026-04-26 15:50:57 [WARN]: Slow query:
+2026-04-26 15:50:57 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 15:50:57 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 15:50:57 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 15:50:57 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 15:51:34 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 15:51:34 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 15:51:41 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/otpService.js:199:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/authService.js:275:13)
+    at async verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/controllers/authController.js:105:24)
+2026-04-26 15:51:41 [ERROR]: Verify signin service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/otpService.js:199:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/authService.js:275:13)
+    at async verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/controllers/authController.js:105:24)
+2026-04-26 15:51:41 [ERROR]: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/otpService.js:199:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/authService.js:275:13)
+    at async verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/controllers/authController.js:105:24)
+2026-04-26 15:51:46 [INFO]: 🔐 OTP send initiated
+2026-04-26 15:51:48 [DEBUG]: 💾 OTP saved to database
+2026-04-26 15:51:48 [DEBUG]: 📤 SMS sending initiated
+2026-04-26 15:51:48 [DEBUG]: 📡 MSG91 API Request
+2026-04-26 15:51:50 [DEBUG]: 📨 MSG91 API Response Received
+2026-04-26 15:51:50 [INFO]: ✅ SMS sent successfully via MSG91
+2026-04-26 15:51:50 [INFO]: ✅ OTP sent successfully
+2026-04-26 15:52:06 [WARN]: Slow query:
+2026-04-26 15:52:06 [INFO]: ✅ OTP verified via Redis for 9876543210
+2026-04-26 15:52:07 [INFO]: User signed in successfully:
+2026-04-26 15:52:27 [ERROR]: Authentication failed: Invalid token
+AuthError: Invalid token
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:47:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 15:52:27 [ERROR]: Invalid token
+AuthError: Invalid token
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:47:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 15:52:52 [WARN]: Slow query:
+2026-04-26 15:52:56 [INFO]: [Wallet] Ride payment ₹150 | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965 | Ride: 3 | TXN: TXN1777198975979PV7Y
+2026-04-26 16:32:21 [WARN]: Slow query:
+2026-04-26 16:32:21 [INFO]: 🔐 OTP send initiated
+2026-04-26 16:32:22 [DEBUG]: 💾 OTP saved to database
+2026-04-26 16:32:22 [DEBUG]: 📤 SMS sending initiated
+2026-04-26 16:32:22 [DEBUG]: 📡 MSG91 API Request
+2026-04-26 16:32:23 [DEBUG]: 📨 MSG91 API Response Received
+2026-04-26 16:32:23 [INFO]: ✅ SMS sent successfully via MSG91
+2026-04-26 16:32:23 [INFO]: ✅ OTP sent successfully
+2026-04-26 16:36:59 [WARN]: Slow query:
+2026-04-26 16:36:59 [INFO]: ✅ OTP verified via Redis for 9876543210
+2026-04-26 16:37:01 [INFO]: User signed in successfully:
+2026-04-26 16:37:53 [WARN]: Slow query:
+2026-04-26 16:37:54 [INFO]: [Razorpay] Order created | Amount: ₹250 | Order ID: order_Si6DJzZrxoy8o1
+2026-04-26 16:37:55 [INFO]: [Payment] Gateway order created | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965 | Order: PAY20260426GIHF96 | GW: order_Si6DJzZrxoy8o1
+2026-04-26 16:45:01 [ERROR]: [PaymentWorker] Worker error: connect ETIMEDOUT
+2026-04-26 16:47:10 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 16:47:10 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 16:47:10 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 16:47:13 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 16:47:13 [INFO]: ✅ Redis Cloud ready
+2026-04-26 16:47:14 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 16:47:16 [WARN]: Slow query:
+2026-04-26 16:47:16 [WARN]: Slow query:
+2026-04-26 16:47:16 [WARN]: Slow query:
+2026-04-26 16:47:16 [WARN]: Slow query:
+2026-04-26 16:47:16 [WARN]: Slow query:
+2026-04-26 16:47:16 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 16:47:16 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 16:47:16 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 16:47:16 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 16:47:24 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 16:47:24 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 16:47:24 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 16:47:26 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 16:47:26 [INFO]: ✅ Redis Cloud ready
+2026-04-26 16:47:28 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 16:47:30 [WARN]: Slow query:
+2026-04-26 16:47:30 [WARN]: Slow query:
+2026-04-26 16:47:30 [WARN]: Slow query:
+2026-04-26 16:47:30 [WARN]: Slow query:
+2026-04-26 16:47:30 [WARN]: Slow query:
+2026-04-26 16:47:30 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 16:47:30 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 16:47:30 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 16:47:30 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 16:48:03 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 16:48:03 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 16:48:03 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 16:48:05 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 16:48:05 [INFO]: ✅ Redis Cloud ready
+2026-04-26 16:48:06 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 16:48:08 [WARN]: Slow query:
+2026-04-26 16:48:08 [WARN]: Slow query:
+2026-04-26 16:48:08 [WARN]: Slow query:
+2026-04-26 16:48:08 [WARN]: Slow query:
+2026-04-26 16:48:08 [WARN]: Slow query:
+2026-04-26 16:48:08 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 16:48:08 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 16:48:08 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 16:48:08 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 16:48:21 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 16:48:21 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 16:48:21 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 16:48:22 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 16:48:22 [INFO]: ✅ Redis Cloud ready
+2026-04-26 16:48:24 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 16:48:25 [WARN]: Slow query:
+2026-04-26 16:48:25 [WARN]: Slow query:
+2026-04-26 16:48:25 [WARN]: Slow query:
+2026-04-26 16:48:25 [WARN]: Slow query:
+2026-04-26 16:48:25 [WARN]: Slow query:
+2026-04-26 16:48:25 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 16:48:25 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 16:48:25 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 16:48:25 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 16:48:37 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 16:48:37 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 16:48:37 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 16:48:39 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 16:48:39 [INFO]: ✅ Redis Cloud ready
+2026-04-26 16:48:40 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 16:48:42 [WARN]: Slow query:
+2026-04-26 16:48:42 [WARN]: Slow query:
+2026-04-26 16:48:42 [WARN]: Slow query:
+2026-04-26 16:48:42 [WARN]: Slow query:
+2026-04-26 16:48:42 [WARN]: Slow query:
+2026-04-26 16:48:42 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 16:48:42 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 16:48:42 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 16:48:42 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 16:48:44 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 16:48:44 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 16:48:44 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 16:48:46 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 16:48:46 [INFO]: ✅ Redis Cloud ready
+2026-04-26 16:48:47 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 16:48:49 [WARN]: Slow query:
+2026-04-26 16:48:49 [WARN]: Slow query:
+2026-04-26 16:48:49 [WARN]: Slow query:
+2026-04-26 16:48:49 [WARN]: Slow query:
+2026-04-26 16:48:49 [WARN]: Slow query:
+2026-04-26 16:48:49 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 16:48:49 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 16:48:50 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 16:48:50 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 16:50:13 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 16:50:13 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 16:50:13 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 16:50:15 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 16:50:15 [INFO]: ✅ Redis Cloud ready
+2026-04-26 16:50:16 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 16:50:18 [WARN]: Slow query:
+2026-04-26 16:50:18 [WARN]: Slow query:
+2026-04-26 16:50:18 [WARN]: Slow query:
+2026-04-26 16:50:18 [WARN]: Slow query:
+2026-04-26 16:50:18 [WARN]: Slow query:
+2026-04-26 16:50:18 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 16:50:18 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 16:50:18 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 16:50:18 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 17:13:26 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 17:13:26 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 17:13:26 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 17:13:29 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 17:13:29 [INFO]: ✅ Redis Cloud ready
+2026-04-26 17:13:30 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 17:13:32 [WARN]: Slow query:
+2026-04-26 17:13:32 [WARN]: Slow query:
+2026-04-26 17:13:32 [WARN]: Slow query:
+2026-04-26 17:13:32 [WARN]: Slow query:
+2026-04-26 17:13:32 [WARN]: Slow query:
+2026-04-26 17:13:32 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 17:13:32 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 17:13:32 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 17:13:32 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-26 17:13:38 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-26 17:13:38 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-26 17:13:38 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-26 17:13:39 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-26 17:13:39 [INFO]: ✅ Redis Cloud ready
+2026-04-26 17:13:41 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-26 17:13:43 [WARN]: Slow query:
+2026-04-26 17:13:43 [WARN]: Slow query:
+2026-04-26 17:13:43 [WARN]: Slow query:
+2026-04-26 17:13:43 [WARN]: Slow query:
+2026-04-26 17:13:43 [WARN]: Slow query:
+2026-04-26 17:13:43 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-26 17:13:43 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-26 17:13:43 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-26 17:13:43 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-28 13:39:32 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-28 13:39:32 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-28 13:39:32 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-28 13:39:35 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-28 13:39:44 [ERROR]: ❌ Redis error:
+2026-04-28 13:39:44 [WARN]: ⚠️ Redis connection closed
+2026-04-28 13:39:44 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-28 13:39:44 [INFO]: ✅ Redis Cloud ready
+2026-04-28 13:39:46 [WARN]: Slow query:
+2026-04-28 13:39:46 [WARN]: Slow query:
+2026-04-28 13:39:46 [WARN]: Slow query:
+2026-04-28 13:39:46 [WARN]: Slow query:
+2026-04-28 13:39:46 [WARN]: Slow query:
+2026-04-28 13:39:46 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-28 13:39:46 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-28 13:39:46 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-28 13:39:46 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-28 13:45:19 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-28 13:45:19 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-28 13:45:19 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-28 13:45:21 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-28 13:45:21 [INFO]: ✅ Redis Cloud ready
+2026-04-28 13:45:23 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-28 13:45:24 [WARN]: Slow query:
+2026-04-28 13:45:24 [WARN]: Slow query:
+2026-04-28 13:45:24 [WARN]: Slow query:
+2026-04-28 13:45:24 [WARN]: Slow query:
+2026-04-28 13:45:24 [WARN]: Slow query:
+2026-04-28 13:45:24 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-28 13:45:24 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-28 13:45:24 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-28 13:45:24 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-28 13:45:58 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-28 13:45:58 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-28 13:45:58 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-28 13:46:01 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-28 13:46:02 [INFO]: ✅ Redis Cloud ready
+2026-04-28 13:46:03 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-28 13:46:04 [WARN]: Slow query:
+2026-04-28 13:46:04 [WARN]: Slow query:
+2026-04-28 13:46:04 [WARN]: Slow query:
+2026-04-28 13:46:04 [WARN]: Slow query:
+2026-04-28 13:46:04 [WARN]: Slow query:
+2026-04-28 13:46:04 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-28 13:46:04 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-28 13:46:04 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-28 13:46:04 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-28 14:03:55 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-28 14:03:55 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-28 14:03:55 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-28 14:03:57 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-28 14:03:57 [INFO]: ✅ Redis Cloud ready
+2026-04-28 14:03:58 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-28 14:04:00 [WARN]: Slow query:
+2026-04-28 14:04:00 [WARN]: Slow query:
+2026-04-28 14:04:00 [WARN]: Slow query:
+2026-04-28 14:04:00 [WARN]: Slow query:
+2026-04-28 14:04:00 [WARN]: Slow query:
+2026-04-28 14:04:00 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-28 14:04:00 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-28 14:04:00 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-28 14:04:00 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment

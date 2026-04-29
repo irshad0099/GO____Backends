@@ -13,6 +13,7 @@ import subscriptionRoutes from '../modules/subscription/routes/subscriptionRoute
 
 // ─── New Routes ───────────────────────────────────────────────────────────────
 import paymentRoutes      from '../modules/payments/routes/paymentRoutes.js';
+import qrPaymentRoutes    from '../modules/payments/routes/qrPaymentRoutes.js';
 import pricingRoutes      from '../modules/pricing/routes/pricingRoutes.js';
 import pricingAdminRoutes from '../modules/pricing/routes/pricingAdminRoutes.js';
 import reviewRoutes       from '../modules/review/routes/reviewRoutes.js';
@@ -35,6 +36,7 @@ router.use('/rides',         rideRoutes);
 router.use('/wallet',        walletRoutes);
 router.use('/subscriptions', subscriptionRoutes);
 router.use('/payments',      paymentRoutes);
+router.use('/payments/qr',   qrPaymentRoutes);
 router.use('/pricing',       pricingRoutes);
 router.use('/reviews',       reviewRoutes);
 

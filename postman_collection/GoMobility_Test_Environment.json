@@ -1,0 +1,117 @@
+{
+  "id": "gomobility-test-env",
+  "name": "GoMobility - Test Users Environment",
+  "values": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api/v1",
+      "enabled": true
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "enabled": true,
+      "description": "Set after login - use rahul_token or priya_token"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "key": "rahul_phone",
+      "value": "9876543210",
+      "enabled": true,
+      "description": "Passenger with ₹500 wallet balance"
+    },
+    {
+      "key": "rahul_token",
+      "value": "",
+      "enabled": true,
+      "description": "Login and copy token here for Rahul"
+    },
+    {
+      "key": "priya_phone",
+      "value": "9876543211",
+      "enabled": true,
+      "description": "Passenger with ₹0 wallet balance (empty)"
+    },
+    {
+      "key": "priya_token",
+      "value": "",
+      "enabled": true,
+      "description": "Login and copy token here for Priya"
+    },
+    {
+      "key": "amit_phone",
+      "value": "9876543212",
+      "enabled": true,
+      "description": "Available driver"
+    },
+    {
+      "key": "amit_token",
+      "value": "",
+      "enabled": true,
+      "description": "Driver token"
+    },
+    {
+      "key": "sunil_phone",
+      "value": "9876543213",
+      "enabled": true,
+      "description": "Off-duty driver"
+    },
+    {
+      "key": "ride_1_id",
+      "value": "1",
+      "enabled": true,
+      "description": "RD202401010001 - Rahul's completed ride (pending payment)"
+    },
+    {
+      "key": "ride_2_id",
+      "value": "2",
+      "enabled": true,
+      "description": "RD202401010002 - Priya's completed ride (cash)"
+    },
+    {
+      "key": "ride_3_id",
+      "value": "3",
+      "enabled": true,
+      "description": "RD202401010003 - Rahul's in-progress ride"
+    },
+    {
+      "key": "ride_4_id",
+      "value": "4",
+      "enabled": true,
+      "description": "RD202401010004 - Priya's requested ride (no driver)"
+    },
+    {
+      "key": "order_number",
+      "value": "PAY20240101ABC123",
+      "enabled": true
+    },
+    {
+      "key": "plan_id",
+      "value": "1",
+      "enabled": true
+    },
+    {
+      "key": "subscription_id",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "key": "txn_number",
+      "value": "TXN202401010001",
+      "enabled": true
+    },
+    {
+      "key": "otp_test",
+      "value": "123456",
+      "enabled": true,
+      "description": "Test OTP - use this in test mode"
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2024-01-01T00:00:00.000Z",
+  "_postman_exported_using": "Postman/10.0.0"
+}

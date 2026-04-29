@@ -399,3 +399,504 @@ error: password authentication failed for user "postgres"
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
     at async Database.connect (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/infrastructure/database/postgres.js:35:28)
     at async startServer (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/server.js:22:9)
+2026-04-25 14:16:48 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:36 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:36 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:36 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:36 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [NotificationWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:33:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:34:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:34:32 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:35:07 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:35:07 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:35:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:35:42 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:36:17 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:36:17 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:36:52 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:36:52 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:37:27 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:37:27 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:38:02 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:38:02 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:38:37 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:38:37 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:39:12 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:39:12 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:39:47 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:39:47 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:40:22 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:40:22 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:40:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:40:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:41:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:41:32 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:42:07 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:42:07 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:42:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:42:42 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:43:17 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:43:17 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:43:52 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:43:52 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:44:27 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:44:27 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:45:02 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:45:02 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:45:37 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:45:37 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:46:12 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:46:12 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:46:47 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:46:47 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:47:22 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:47:22 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:47:57 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:47:57 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:48:32 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:48:32 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:49:07 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:49:07 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:49:42 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:49:42 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:50:17 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:50:17 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:50:53 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:50:53 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:51:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:51:28 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:52:03 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:52:03 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:52:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:52:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:53:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:53:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:53:48 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:53:48 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:54:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:54:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:54:58 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:54:58 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:55:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:55:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:56:08 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:56:08 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:56:43 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:56:43 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:57:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:57:18 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:57:53 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:57:53 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:58:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:58:28 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:59:03 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:59:03 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:59:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 14:59:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:00:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:00:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:00:48 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:00:48 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:01:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:01:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:01:58 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:01:58 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:02:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:02:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:03:08 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:03:08 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:03:43 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:03:43 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:04:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:04:18 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:04:53 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:04:53 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:05:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:05:28 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:06:03 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:06:03 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:06:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:06:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:07:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:07:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:07:48 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:07:48 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:08:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:08:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:08:58 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:08:58 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:09:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:09:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:10:08 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:10:08 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:10:43 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:10:43 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:11:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:11:18 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:11:53 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:11:53 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:12:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:12:28 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:13:03 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:13:03 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:13:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:13:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:14:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:14:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:14:48 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:14:48 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:15:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:15:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:15:58 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:15:58 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:16:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:16:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:17:08 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:17:08 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:17:43 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:17:43 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:18:18 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:18:18 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:18:53 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:18:53 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:19:28 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:19:28 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:19:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:35 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:43 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:46 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:49 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:55 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:19:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:01 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:03 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:20:03 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:20:04 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:11 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:14 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:15 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-25 15:20:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:16 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:16 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:19 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:25 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:28 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:29 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:32 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:32 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:35 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:38 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:20:38 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:20:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:20:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:01 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:04 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:05 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:07 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:08 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:10 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:11 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:13 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:21:13 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:21:13 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:14 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:16 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:19 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:22 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:29 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:29 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:32 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:32 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:35 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:35 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:48 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:21:48 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:21:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:21:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:05 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:05 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:08 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:08 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:11 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:14 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:23 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:22:23 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:22:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:29 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:32 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:35 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:48 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:22:58 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:22:58 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:22:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:33 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:23:33 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:23:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:48 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:48 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:23:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:08 [ERROR]: [RideCompletionWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:24:08 [ERROR]: [PaymentWorker] Worker error: ERR max number of clients reached
+2026-04-25 15:24:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-25 15:24:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-26 14:47:12 [ERROR]: Authentication failed: Invalid token
+AuthError: Invalid token
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:47:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 14:47:12 [ERROR]: Invalid token
+AuthError: Invalid token
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:47:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 15:01:10 [ERROR]: ❌ Seeding failed: update or delete on table "users" violates foreign key constraint "rides_passenger_id_fkey" on table "rides"
+error: update or delete on table "users" violates foreign key constraint "rides_passenger_id_fkey" on table "rides"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async seedUsers (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/scripts/seedTestData.js:51:5)
+    at async seedData (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/scripts/seedTestData.js:234:5)
+2026-04-26 15:16:30 [ERROR]: ❌ Seeding failed: INSERT has more target columns than expressions
+error: INSERT has more target columns than expressions
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async seedRides (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/scripts/seedTestData.js:198:5)
+    at async seedData (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/scripts/seedTestData.js:258:5)
+2026-04-26 15:23:58 [ERROR]: Role is required
+ValidationError: Role is required
+    at file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/validation.middleware.js:21:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 15:31:29 [ERROR]: Verify OTP service error: Invalid OTP
+Error: Invalid OTP
+    at Module.verifyOTP (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/otpService.js:211:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/authService.js:275:13)
+    at async verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/controllers/authController.js:105:24)
+2026-04-26 15:31:29 [ERROR]: Verify signin service error: Invalid OTP
+Error: Invalid OTP
+    at Module.verifyOTP (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/otpService.js:211:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/authService.js:275:13)
+    at async verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/controllers/authController.js:105:24)
+2026-04-26 15:31:29 [ERROR]: Invalid OTP
+Error: Invalid OTP
+    at Module.verifyOTP (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/otpService.js:211:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/authService.js:275:13)
+    at async verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/controllers/authController.js:105:24)
+2026-04-26 15:47:45 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-04-26 15:47:46 [ERROR]: [NotificationWorker] Worker error: connect ETIMEDOUT
+2026-04-26 15:47:47 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com
+2026-04-26 15:51:34 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 15:51:34 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 15:51:41 [ERROR]: Verify OTP service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/otpService.js:199:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/authService.js:275:13)
+    at async verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/controllers/authController.js:105:24)
+2026-04-26 15:51:41 [ERROR]: Verify signin service error: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/otpService.js:199:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/authService.js:275:13)
+    at async verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/controllers/authController.js:105:24)
+2026-04-26 15:51:41 [ERROR]: OTP expired or not found. Please request a new OTP.
+Error: OTP expired or not found. Please request a new OTP.
+    at Module.verifyOTP (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/otpService.js:199:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/authService.js:275:13)
+    at async verifySignin (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/controllers/authController.js:105:24)
+2026-04-26 15:52:27 [ERROR]: Authentication failed: Invalid token
+AuthError: Invalid token
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:47:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 15:52:27 [ERROR]: Invalid token
+AuthError: Invalid token
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:47:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-26 16:45:01 [ERROR]: [PaymentWorker] Worker error: connect ETIMEDOUT
+2026-04-28 13:39:44 [ERROR]: ❌ Redis error:

@@ -1203,3 +1203,32 @@ AuthError: Token expired
     at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
 2026-04-30 11:50:22 [ERROR]: [Razorpay] createSubscription error:
+2026-04-30 21:48:07 [ERROR]: Database query error:
+2026-04-30 21:48:09 [ERROR]: Database query error:
+2026-04-30 21:48:11 [ERROR]: Database query error:
+2026-04-30 21:48:13 [ERROR]: Database query error:
+2026-04-30 21:48:14 [ERROR]: Database query error:
+2026-04-30 21:48:16 [ERROR]: Database query error:
+2026-04-30 21:48:18 [ERROR]: Database query error:
+2026-04-30 21:48:21 [ERROR]: Database query error:
+2026-04-30 21:48:23 [ERROR]: Database query error:
+2026-04-30 21:48:25 [ERROR]: Database query error:
+2026-04-30 21:48:27 [ERROR]: Database query error:
+2026-04-30 21:48:30 [ERROR]: Database query error:
+2026-04-30 21:48:31 [ERROR]: Database query error:
+2026-04-30 21:48:33 [ERROR]: Database query error:
+2026-04-30 21:48:34 [ERROR]: Database query error:
+2026-04-30 21:48:38 [ERROR]: Database query error:
+2026-04-30 21:48:39 [ERROR]: Database query error:
+2026-04-30 21:48:42 [ERROR]: Database query error:
+2026-04-30 21:48:44 [ERROR]: Database query error:
+2026-04-30 21:48:45 [ERROR]: Database query error:
+2026-04-30 21:48:48 [ERROR]: Database query error:
+2026-04-30 21:48:49 [ERROR]: Database query error:
+2026-04-30 21:48:51 [ERROR]: Database query error:
+2026-04-30 21:48:53 [ERROR]: Database query error:
+2026-04-30 21:48:55 [ERROR]: Database query error:
+2026-04-30 21:48:57 [ERROR]: Database query error:
+2026-04-30 21:49:02 [ERROR]: Database query error:
+2026-04-30 21:49:06 [ERROR]: Database query error:
+2026-04-30 21:49:10 [ERROR]: Database query error:

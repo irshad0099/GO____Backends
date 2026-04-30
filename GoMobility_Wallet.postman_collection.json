@@ -1,0 +1,122 @@
+{
+  "info": {
+    "name": "GoMobility — Wallet APIs",
+    "_postman_id": "gomobility-wallet-v1",
+    "description": "Wallet balance, transactions, withdraw (bank transfer + instant cash)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "TOKEN",
+      "value": "YOUR_JWT_TOKEN_HERE",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Get Wallet Balance",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/v1/wallet/balance",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api", "v1", "wallet", "balance"]
+        },
+        "description": "Lightweight balance check — called before ride booking"
+      }
+    },
+    {
+      "name": "2. Get Transactions (limit=10)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/v1/wallet/transactions?limit=10&offset=0",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api", "v1", "wallet", "transactions"],
+          "query": [
+            { "key": "limit",     "value": "10" },
+            { "key": "offset",    "value": "0" },
+            { "key": "type",      "value": "credit",        "disabled": true },
+            { "key": "type",      "value": "debit",         "disabled": true },
+            { "key": "category",  "value": "ride_payment",  "disabled": true },
+            { "key": "category",  "value": "wallet_recharge","disabled": true },
+            { "key": "category",  "value": "withdrawal",    "disabled": true },
+            { "key": "status",    "value": "success",       "disabled": true },
+            { "key": "startDate", "value": "2025-01-01",    "disabled": true },
+            { "key": "endDate",   "value": "2025-12-31",    "disabled": true }
+          ]
+        },
+        "description": "Paginated transaction history. Uncomment filters as needed."
+      }
+    },
+    {
+      "name": "3. Transfer Button — Bank Transfer (Withdraw)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 500,\n  \"bank_account_number\": \"123456789012\",\n  \"ifsc_code\": \"SBIN0001234\",\n  \"description\": \"Bank transfer withdrawal\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/v1/wallet/withdraw",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api", "v1", "wallet", "withdraw"]
+        },
+        "description": "Bank transfer. amount min=100, max=50000. IFSC must be 11 chars uppercase."
+      }
+    },
+    {
+      "name": "4. Instant Cash Button — Fast Withdrawal",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 500,\n  \"bank_account_number\": \"123456789012\",\n  \"ifsc_code\": \"SBIN0001234\",\n  \"description\": \"Instant cash withdrawal\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/v1/wallet/withdraw",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api", "v1", "wallet", "withdraw"]
+        },
+        "description": "Same endpoint as bank transfer. 'instant' flag backend me abhi implement nahi hai — frontend description field se differentiate kar sakta hai, ya baad me flag add hoga."
+      }
+    }
+  ]
+}

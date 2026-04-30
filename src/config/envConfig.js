@@ -38,9 +38,9 @@ REDIS_USERNAME: process.env.REDIS_USERNAME || 'default',
 
     // JWT
     JWT_SECRET: process.env.JWT_SECRET || 'gomobility_super_secret_key',
-    JWT_ACCESS_EXPIRY: process.env.JWT_ACCESS_EXPIRY || '30d',
+    JWT_ACCESS_EXPIRY: '60d',
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'gomobility_refresh_secret',
-    JWT_REFRESH_EXPIRY: process.env.JWT_REFRESH_EXPIRY || '30d',
+    JWT_REFRESH_EXPIRY: '60d',
     
     // OTP
     OTP_EXPIRY_MINUTES: parseInt(process.env.OTP_EXPIRY_MINUTES) || 5,

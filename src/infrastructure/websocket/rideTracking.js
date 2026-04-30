@@ -1,6 +1,6 @@
 import redis from '../../config/redis.config.js';
 import { calculateDistance } from '../../core/utils/rideCalculator.js';
-import logger from '../../core/logger/logger.js';
+import logger from '../../core/logger/socketLogger.js';
 
 const TRACKING_TTL   = 7200;  // 2 hours
 const MIN_PING_KM    = 0.01;  // 10 meters — GPS jitter ignore karo

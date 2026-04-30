@@ -1,5 +1,5 @@
 import { getIO } from '../../config/websocketConfig.js';
-import logger from '../../core/logger/logger.js';
+import logger, { logSocketEvent } from '../../core/logger/socketLogger.js';
 import {
     registerSocketUser,
     unregisterSocketUser,
@@ -27,6 +27,32 @@ export const setupSocketHandlers = () => {
 
     io.on('connection', (socket) => {
         logger.info('🔌 New socket connection', { socketId: socket.id });
+
+        // Har incoming event (client → server) automatically log karo
+        socket.onAny((event, ...args) => {
+            const user = getSocketUser(socket.id);
+            logSocketEvent({
+                direction: 'in',
+                event,
+                socketId: socket.id,
+                userId: user?.userId,
+                rideId: args[0]?.rideId,
+                data: args[0],
+            });
+        });
+
+        // Har outgoing emit (server → client) automatically log karo
+        socket.onAnyOutgoing((event, ...args) => {
+            const user = getSocketUser(socket.id);
+            logSocketEvent({
+                direction: 'out',
+                event,
+                socketId: socket.id,
+                userId: user?.userId,
+                rideId: args[0]?.rideId,
+                data: args[0],
+            });
+        });
 
         // ==================== AUTHENTICATION EVENTS ====================
 

@@ -90,6 +90,23 @@ export const getPaymentOrderByRideId = async (rideId, purpose = 'ride_payment') 
     }
 };
 
+export const getActivePaymentOrderByRideId = async (rideId, purpose = 'ride_payment') => {
+    try {
+        const result = await pool.query(
+            `SELECT * FROM payment_orders
+             WHERE ride_id = $1
+               AND purpose = $2
+               AND status IN ('created', 'pending', 'attempted')
+             ORDER BY created_at DESC LIMIT 1`,
+            [rideId, purpose]
+        );
+        return result.rows[0] || null;
+    } catch (error) {
+        logger.error('getActivePaymentOrderByRideId error:', error);
+        throw error;
+    }
+};
+
 export const updatePaymentOrderStatus = async (client, orderId, status, extra = {}) => {
     const {
         gatewayPaymentId, gatewaySignature, failureReason, paidAt,

@@ -11,7 +11,7 @@
 
 import { getIO } from '../../config/websocketConfig.js';
 import { emitToPassenger, emitToDriver } from './socket.events.js';
-import logger from '../../core/logger/logger.js';
+import logger from '../../core/logger/socketLogger.js';
 
 /**
  * Initiate payment for ride

@@ -38,9 +38,9 @@ REDIS_USERNAME: process.env.REDIS_USERNAME || 'default',
 
     // JWT
     JWT_SECRET: process.env.JWT_SECRET || 'gomobility_super_secret_key',
-    JWT_ACCESS_EXPIRY: process.env.JWT_ACCESS_EXPIRY || '30d',
+    JWT_ACCESS_EXPIRY: '60d',
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'gomobility_refresh_secret',
-    JWT_REFRESH_EXPIRY: process.env.JWT_REFRESH_EXPIRY || '30d',
+    JWT_REFRESH_EXPIRY: '60d',
     
     // OTP
     OTP_EXPIRY_MINUTES: parseInt(process.env.OTP_EXPIRY_MINUTES) || 5,
@@ -127,7 +127,7 @@ REDIS_USERNAME: process.env.REDIS_USERNAME || 'default',
     
     // Security
     BCRYPT_SALT_ROUNDS: parseInt(process.env.BCRYPT_SALT_ROUNDS) || 10,
-    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY || 'gomobility_ultra_secure_key_2026',
+    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,  // NO DEFAULT - must be set in env
     CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
     
     // OCR
@@ -295,6 +295,15 @@ CONV_FEE_LUXURY_PEAK_MAX:    parseFloat(process.env.CONV_FEE_LUXURY_PEAK_MAX)   
     // S3 bucket for KYC document storage
     AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME || 'go-mobility-kyc',
 };
+
+// Validate required secrets in production
+if (ENV.NODE_ENV === 'production') {
+    const requiredSecrets = ['DB_PASSWORD', 'JWT_SECRET', 'JWT_REFRESH_SECRET', 'ENCRYPTION_KEY'];
+    const missing = requiredSecrets.filter(key => !ENV[key]);
+    if (missing.length > 0) {
+        throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+    }
+}
 
 // import dotenv from 'dotenv';
 // import path from 'path';

@@ -1,0 +1,176 @@
+{
+  "info": {
+    "name": "GoMobility — Driver Profile & Wallet Screen",
+    "_postman_id": "gomobility-driver-profile-wallet-v1",
+    "description": "Driver Profile + Wallet Balance + Recent Rides screen APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "https://api.gomobility.co.in",
+      "type": "string"
+    },
+    {
+      "key": "TOKEN",
+      "value": "YOUR_JWT_TOKEN_HERE",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "PAGE LOAD (call these 3 together)",
+      "item": [
+        {
+          "name": "1. Driver Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/drivers/profile",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "drivers", "profile"]
+            },
+            "description": "Name, phone, email — top section of screen"
+          }
+        },
+        {
+          "name": "2. Wallet Balance",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/wallet/balance",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "wallet", "balance"]
+            },
+            "description": "GO Wallet Balance — ₹450 card"
+          }
+        },
+        {
+          "name": "3. Recent Rides (last 3)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/drivers/rides/history?limit=3",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "drivers", "rides", "history"],
+              "query": [
+                { "key": "limit", "value": "3" }
+              ]
+            },
+            "description": "Recent Rides section — 3 rides on profile screen"
+          }
+        }
+      ]
+    },
+    {
+      "name": "WALLET BUTTONS",
+      "item": [
+        {
+          "name": "4. Add Money (+ button)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500,\n  \"payment_method\": \"upi\",\n  \"payment_gateway\": \"razorpay\",\n  \"gateway_transaction_id\": \"pay_xyz123\",\n  \"description\": \"Wallet recharge\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/wallet/recharge",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "wallet", "recharge"]
+            },
+            "description": "Add Money / + button. Call after payment gateway confirms. payment_method: cash | card | upi"
+          }
+        },
+        {
+          "name": "5. Transaction History",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/wallet/transactions?limit=20&offset=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "wallet", "transactions"],
+              "query": [
+                { "key": "limit",     "value": "20" },
+                { "key": "offset",    "value": "0" },
+                { "key": "type",      "value": "credit",         "disabled": true },
+                { "key": "type",      "value": "debit",          "disabled": true },
+                { "key": "category",  "value": "ride_payment",   "disabled": true },
+                { "key": "category",  "value": "wallet_recharge","disabled": true },
+                { "key": "category",  "value": "withdrawal",     "disabled": true },
+                { "key": "status",    "value": "success",        "disabled": true },
+                { "key": "startDate", "value": "2025-01-01",     "disabled": true },
+                { "key": "endDate",   "value": "2025-12-31",     "disabled": true }
+              ]
+            },
+            "description": "Transaction History button. Uncomment filters as needed."
+          }
+        }
+      ]
+    },
+    {
+      "name": "EDIT PROFILE",
+      "item": [
+        {
+          "name": "6. Update Driver Profile (Edit button)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Sharma\",\n  \"email\": \"rahul.sharma@email.com\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/drivers/profile",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "drivers", "profile"]
+            },
+            "description": "Edit button (top right). Update name and email."
+          }
+        }
+      ]
+    },
+    {
+      "name": "VIEW ALL RIDES",
+      "item": [
+        {
+          "name": "7. All Ride History (View All button)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/drivers/rides/history?limit=20&page=1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "drivers", "rides", "history"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "page",  "value": "1" }
+              ]
+            },
+            "description": "View All button on Recent Rides section"
+          }
+        }
+      ]
+    }
+  ]
+}

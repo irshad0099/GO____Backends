@@ -1,0 +1,207 @@
+{
+  "info": {
+    "_postman_id": "gomobility-qr-payment-apis",
+    "name": "GoMobility - QR Payment APIs",
+    "description": "QR Code Payment Integration for Ride Payments and Wallet Recharge",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "Login Rahul (Passenger - Has Wallet)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/verify-signin",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-signin"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"role\": \"passenger\",\n  \"otp\": \"{{actual_otp}}\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📱 QR Payment APIs",
+      "item": [
+        {
+          "name": "1. Generate QR for Ride Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/qr/generate",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "qr", "generate"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 272.50,\n  \"purpose\": \"ride_payment\",\n  \"payment_method\": \"qr\",\n  \"payment_gateway\": \"razorpay\",\n  \"ride_id\": 3,\n  \"description\": \"QR payment for ride #3\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Generate QR for Wallet Recharge",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/qr/generate",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "qr", "generate"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500,\n  \"purpose\": \"wallet_recharge\",\n  \"payment_method\": \"qr\",\n  \"payment_gateway\": \"razorpay\",\n  \"description\": \"QR wallet recharge\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Verify QR Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/qr/verify",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "qr", "verify"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_number\": \"PAY20260426GIHF96\",\n  \"gateway_payment_id\": \"pay_1234567890\",\n  \"gateway_signature\": \"abc123def456\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get QR Payment Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/qr/status/PAY20260426GIHF96",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "qr", "status", "PAY20260426GIHF96"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Close QR Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/qr/close",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "qr", "close"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_number\": \"PAY20260426GIHF96\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💳 Regular Payment APIs (For Comparison)",
+      "item": [
+        {
+          "name": "Create Payment Order (UPI/Card)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/orders",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "orders"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 250,\n  \"purpose\": \"ride_payment\",\n  \"payment_method\": \"upi\",\n  \"payment_gateway\": \"razorpay\",\n  \"ride_id\": 3,\n  \"description\": \"Payment for ride\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

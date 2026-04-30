@@ -19,10 +19,10 @@ export const createOrderSchema = Joi.object({
         }),
 
     payment_method: Joi.string()
-        .valid('cash', 'card', 'wallet', 'upi')
+        .valid('cash', 'card', 'wallet', 'upi', 'qr')
         .required()
         .messages({
-            'any.only':     'payment_method must be: cash, card, wallet, or upi',
+            'any.only':     'payment_method must be: cash, card, wallet, upi, or qr',
             'any.required': 'payment_method is required',
         }),
 

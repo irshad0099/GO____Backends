@@ -9,7 +9,7 @@
  */
 
 import redis from '../../config/redis.config.js';
-import logger from '../../core/logger/logger.js';
+import logger from '../../core/logger/socketLogger.js';
 import { getIO } from '../../config/websocketConfig.js';
 
 // Session key pattern in Redis: session:{userId}:{socketId}

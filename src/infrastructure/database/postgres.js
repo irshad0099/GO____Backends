@@ -26,7 +26,8 @@ class Database {
                 host: dbConfig.host,
                 database: dbConfig.database,
                 user: dbConfig.user,
-                port: dbConfig.port
+                port: dbConfig.port,
+                password: '[REDACTED]'  // Don't log actual password
             });
 
             this.pool = new Pool(dbConfig);

@@ -239,12 +239,12 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
         //     break;
         // }
 
-        case 'VEHICLE_RC': {
+       case 'VEHICLE_RC': {
             docNumber     = fields.registration_number || fields.rc_number;
             extractedName = fields.owner_name || fields.owner;
 
             // ── Yellow Plate Check ────────────────────────────────────────────
-            // Bike ke liye abhi yellow plate check skip — private bike allowed
+            // GO Bike — abhi yellow plate check SKIP (private bike allowed)
             // Future mein: BIKE_TYPES ko COMMERCIAL check mein add karo
 
             const BIKE_TYPES = [
@@ -270,14 +270,12 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
             const rawCovDetails  = (fields.cov_details || [])
                 .map(c => (c.vehicle_class || c.type || '').toUpperCase());
 
-            // Bike hai kya?
+            // Bike detect karo
             const isBike =
                 BIKE_TYPES.some(t => rawVehicleType.includes(t)) ||
                 rawCovDetails.some(c => BIKE_TYPES.some(t => c.includes(t)));
 
-            // Yellow plate check:
-            // Bike → skip (always pass)
-            // Baaki → commercial type hona chahiye
+            // Bike ke liye yellow plate skip — baaki sab ke liye check karo
             const isYellowPlate = isBike ? true : (
                 COMMERCIAL_TYPES.some(t => rawVehicleType.includes(t)) ||
                 COMMERCIAL_TYPES.some(t => rawPermitType.includes(t))  ||
@@ -287,37 +285,6 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
             );
 
             const plateColor = isBike ? 'ANY' : (isYellowPlate ? 'YELLOW' : 'WHITE');
-
-            // TODO: VAHAN API se insurance/fitness/permit verify karna hai — abhi skip
-            const insuranceExpiry   = null;
-            const insuranceDaysLeft = null;
-            const fitnessExpiry     = null;
-            const permitExpiry      = null;
-            const puccExpiry        = null;
-
-            extractedData = {
-                owner:                  extractedName || null,
-                relation_name:          fields.relation_name || null,
-                vehicle_model:          fields.vehicle_model || null,
-                vehicle_type:           fields.vehicle_type  || null,
-                manufacturer:           fields.manufacturer_name || null,
-                manufacturing_date:     fields.manufacturing_date || null,
-                registration_date:      fields.registration_date || null,
-                registration_validity:  fields.registration_validity || fields.reg_valid_upto || null,
-                chassis_number:         fields.chassis_number || null,
-                engine_number:          fields.engine_number  || null,
-                address:                fields.address || null,
-                insurance_expiry:       insuranceExpiry,
-                insurance_days_left:    insuranceDaysLeft,
-                fitness_expiry:         fitnessExpiry,
-                permit_expiry:          permitExpiry,
-                pucc_expiry:            puccExpiry,
-                vahan_verified:         false,
-                masked:                 docNumber ? String(docNumber).toUpperCase() : null,
-                // ── Plate Verification ───────────────────────────────────────
-                plate_color:            plateColor,       // YELLOW / WHITE / ANY (bike)
-                is_commercial_vehicle:  isYellowPlate,   // true / false
-            };
 
             // ── White Plate → Reject (Bike skip) ─────────────────────────────
             if (!isYellowPlate && !isBike && rawVehicleType) {
@@ -338,6 +305,139 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
                     }
                 );
             }
+
+            // ── VAHAN API — RC + PUCC + Insurance verify ──────────────────────
+            let insuranceExpiry   = null;
+            let insuranceDaysLeft = null;
+            let fitnessExpiry     = null;
+            let permitExpiry      = null;
+            let puccExpiry        = null;
+            let vahanVerified     = false;
+            let puccStatus        = null;
+            let insuranceStatus   = null;
+
+            if (docNumber) {
+                try {
+                    const vahanResp = await cf.verifyVehicleRC(docNumber);
+                    logger.info(`[KYC] VAHAN response for RC ${docNumber}:`, vahanResp);
+
+                    const vd = vahanResp || {};
+
+                    // Insurance
+                    insuranceExpiry   = vd.insurance_upto || vd.insurance_expiry || null;
+                    insuranceDaysLeft = insuranceExpiry
+                        ? Math.floor((new Date(insuranceExpiry) - new Date()) / (1000 * 60 * 60 * 24))
+                        : null;
+
+                    // Fitness
+                    fitnessExpiry = vd.fit_up_to || vd.fitness_upto || vd.fitness_expiry || null;
+
+                    // Permit
+                    permitExpiry = vd.permit_valid_upto || vd.permit_expiry || null;
+
+                    // PUCC
+                    puccExpiry  = vd.pucc_upto || vd.pucc_expiry || null;
+                    puccStatus  = puccExpiry
+                        ? (new Date(puccExpiry) > new Date() ? 'VALID' : 'EXPIRED')
+                        : null;
+
+                    // Insurance status
+                    insuranceStatus = insuranceExpiry
+                        ? (new Date(insuranceExpiry) > new Date() ? 'VALID' : 'EXPIRED')
+                        : null;
+
+                    vahanVerified = true;
+
+                    // ── Hard Reject — Insurance Expired ───────────────────────
+                    if (insuranceStatus === 'EXPIRED') {
+                        await repo.updateDocument(doc.id, {
+                            status:          'rejected',
+                            rejectionReason: 'Vehicle insurance has expired. Please renew and resubmit.',
+                        });
+                        await repo.recomputeAggregate(userId);
+                        throw Object.assign(
+                            new Error('Vehicle insurance has expired. Please renew and resubmit.'),
+                            {
+                                statusCode:   422,
+                                documentId:   doc.id,
+                                canRetry:     true,
+                                attemptsLeft: Math.max(0, 3 - (doc.attempt_count || 1)),
+                            }
+                        );
+                    }
+
+                    // ── Hard Reject — PUCC Expired ────────────────────────────
+                    if (puccStatus === 'EXPIRED') {
+                        await repo.updateDocument(doc.id, {
+                            status:          'rejected',
+                            rejectionReason: 'Pollution certificate (PUCC) has expired. Please renew and resubmit.',
+                        });
+                        await repo.recomputeAggregate(userId);
+                        throw Object.assign(
+                            new Error('Pollution certificate (PUCC) has expired. Please renew and resubmit.'),
+                            {
+                                statusCode:   422,
+                                documentId:   doc.id,
+                                canRetry:     true,
+                                attemptsLeft: Math.max(0, 3 - (doc.attempt_count || 1)),
+                            }
+                        );
+                    }
+
+                    // ── Soft Warning — Insurance expiring in 30 days ──────────
+                    if (insuranceDaysLeft !== null && insuranceDaysLeft <= 30 && insuranceDaysLeft > 0) {
+                        await repo.addFraudFlag(doc.id, 'INSURANCE_EXPIRING_SOON', 'MEDIUM', {
+                            insurance_expiry:    insuranceExpiry,
+                            insurance_days_left: insuranceDaysLeft,
+                        });
+                        logger.warn(`[KYC] Insurance expiring soon for RC ${docNumber} — ${insuranceDaysLeft} days left`);
+                    }
+
+                    // ── Soft Warning — PUCC expiring in 30 days ───────────────
+                    if (puccExpiry) {
+                        const puccDaysLeft = Math.floor((new Date(puccExpiry) - new Date()) / (1000 * 60 * 60 * 24));
+                        if (puccDaysLeft <= 30 && puccDaysLeft > 0) {
+                            await repo.addFraudFlag(doc.id, 'PUCC_EXPIRING_SOON', 'MEDIUM', {
+                                pucc_expiry:    puccExpiry,
+                                pucc_days_left: puccDaysLeft,
+                            });
+                            logger.warn(`[KYC] PUCC expiring soon for RC ${docNumber} — ${puccDaysLeft} days left`);
+                        }
+                    }
+
+                } catch (vahanErr) {
+                    // VAHAN fail → skip, manual review mein jayega
+                    if (vahanErr.statusCode === 422) throw vahanErr; // Re-throw rejection errors
+                    logger.warn(`[KYC] VAHAN API failed for RC ${docNumber} — continuing without VAHAN verification:`, vahanErr.message);
+                }
+            }
+
+            extractedData = {
+                owner:                  extractedName || null,
+                relation_name:          fields.relation_name || null,
+                vehicle_model:          fields.vehicle_model || null,
+                vehicle_type:           fields.vehicle_type  || null,
+                manufacturer:           fields.manufacturer_name || null,
+                manufacturing_date:     fields.manufacturing_date || null,
+                registration_date:      fields.registration_date || null,
+                registration_validity:  fields.registration_validity || fields.reg_valid_upto || null,
+                chassis_number:         fields.chassis_number || null,
+                engine_number:          fields.engine_number  || null,
+                address:                fields.address || null,
+                // ── VAHAN verified fields ────────────────────────────────────
+                insurance_expiry:       insuranceExpiry,
+                insurance_days_left:    insuranceDaysLeft,
+                insurance_status:       insuranceStatus,      // VALID / EXPIRED / null
+                fitness_expiry:         fitnessExpiry,
+                permit_expiry:          permitExpiry,
+                pucc_expiry:            puccExpiry,
+                pucc_status:            puccStatus,           // VALID / EXPIRED / null
+                vahan_verified:         vahanVerified,        // true jab VAHAN API success
+                masked:                 docNumber ? String(docNumber).toUpperCase() : null,
+                // ── Plate Verification ───────────────────────────────────────
+                plate_color:            plateColor,           // YELLOW / WHITE / ANY (bike)
+                is_commercial_vehicle:  isYellowPlate,        // true / false
+            };
 
             break;
         }

@@ -117,3 +117,25 @@ export const matchFace = async (image1Base64, image2Base64) => {
         throw err;
     }
 };
+
+
+// ─── VAHAN RC Verification ────────────────────────────────────────────────────
+export const verifyVehicleRC = async (rcNumber, dob = null) => {
+    try {
+        const payload = {
+            verification_id: `vahan_${Date.now()}`,
+            rc_number:       rcNumber.toUpperCase(),
+        };
+        if (dob) payload.dob = dob;
+
+        const res = await axios.post(
+            `${CF_BASE}/rc`,
+            payload,
+            { headers: cfHeaders() }
+        );
+        return res.data;
+    } catch (err) {
+        logCfError('verifyVehicleRC', err);
+        throw err;
+    }
+};

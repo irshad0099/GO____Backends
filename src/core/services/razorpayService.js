@@ -3,11 +3,12 @@ import crypto from 'crypto';
 import { ENV } from '../../config/envConfig.js';
 import logger from '../../core/logger/logger.js';
 
-// Initialize Razorpay instance
-const razorpay = new Razorpay({
-    key_id: ENV.RAZORPAY_KEY_ID,
-    key_secret: ENV.RAZORPAY_KEY_SECRET,
-});
+// Initialize Razorpay instance (only if keys are present)
+const razorpay = ENV.RAZORPAY_KEY_ID && ENV.RAZORPAY_KEY_SECRET
+    ? new Razorpay({ key_id: ENV.RAZORPAY_KEY_ID, key_secret: ENV.RAZORPAY_KEY_SECRET })
+    : null;
+
+if (!razorpay) logger.warn('[Razorpay] RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET not set — payment features disabled');
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  One-time Payment (Ride Payments)

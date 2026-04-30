@@ -1,6 +1,6 @@
 import * as earningsRepo from '../repositories/earnings.repository.js';
 import * as driverRepo from '../repositories/driver.repository.js';
-import { creditWallet } from '../../wallet/repositories/wallet.Repository.js';
+import { creditWallet } from '../../wallet/repositories/wallet.repository.js';
 import { pool } from '../../../infrastructure/database/postgres.js';
 import { NotFoundError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';

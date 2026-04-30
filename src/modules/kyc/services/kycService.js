@@ -205,37 +205,140 @@ export const submitDocument = async (userId, docType, { fileBuffer, fileName, mi
             };
             break;
         }
+        // case 'VEHICLE_RC': {
+        //     docNumber     = fields.registration_number || fields.rc_number;
+        //     extractedName = fields.owner_name || fields.owner;
+
+        //     // TODO: VAHAN API se insurance/fitness/permit verify karna hai — abhi skip
+        //     const insuranceExpiry  = null;
+        //     const insuranceDaysLeft = null;
+        //     const fitnessExpiry    = null;
+        //     const permitExpiry     = null;
+        //     const puccExpiry       = null;
+
+        //     extractedData = {
+        //         owner:                 extractedName || null,
+        //         relation_name:         fields.relation_name || null,
+        //         vehicle_model:         fields.vehicle_model || null,
+        //         vehicle_type:          fields.vehicle_type  || null,
+        //         manufacturer:          fields.manufacturer_name || null,
+        //         manufacturing_date:    fields.manufacturing_date || null,
+        //         registration_date:     fields.registration_date || null,
+        //         registration_validity: fields.registration_validity || fields.reg_valid_upto || null,
+        //         chassis_number:        fields.chassis_number || null,
+        //         engine_number:         fields.engine_number  || null,
+        //         address:               fields.address || null,
+        //         insurance_expiry:      insuranceExpiry,
+        //         insurance_days_left:   insuranceDaysLeft,
+        //         fitness_expiry:        fitnessExpiry,
+        //         permit_expiry:         permitExpiry,
+        //         pucc_expiry:           puccExpiry,
+        //         vahan_verified:        false,
+        //         masked:                docNumber ? String(docNumber).toUpperCase() : null,
+        //     };
+        //     break;
+        // }
+
         case 'VEHICLE_RC': {
             docNumber     = fields.registration_number || fields.rc_number;
             extractedName = fields.owner_name || fields.owner;
 
+            // ── Yellow Plate Check ────────────────────────────────────────────
+            // Bike ke liye abhi yellow plate check skip — private bike allowed
+            // Future mein: BIKE_TYPES ko COMMERCIAL check mein add karo
+
+            const BIKE_TYPES = [
+                'MOTOR CYCLE', 'MOTORCYCLE', 'MCWG', 'MCWOG',
+                'TWO WHEELER', 'M/CYCLE', 'MOPED', 'SCOOTER',
+            ];
+
+            const COMMERCIAL_TYPES = [
+                // Auto
+                'AUTO RICKSHAW', 'E-RICKSHAW', 'RICKSHAW',
+                'THREE WHEELER', 'TSR', 'E RICKSHAW',
+                // Car / Cab
+                'MOTOR CAB', 'TAXI', 'CAB',
+                'CONTRACT CARRIAGE', 'PRIVATE SERVICE VEHICLE',
+                // XL / Premium / Luxury
+                'MAXI CAB', 'OMNIBUS', 'STAGE CARRIAGE',
+                'TOURIST VEHICLE',
+            ];
+
+            const rawVehicleType = (fields.vehicle_type || '').toUpperCase();
+            const rawPermitType  = (fields.permit_type  || '').toUpperCase();
+            const rawRegType     = (fields.registration_type || '').toUpperCase();
+            const rawCovDetails  = (fields.cov_details || [])
+                .map(c => (c.vehicle_class || c.type || '').toUpperCase());
+
+            // Bike hai kya?
+            const isBike =
+                BIKE_TYPES.some(t => rawVehicleType.includes(t)) ||
+                rawCovDetails.some(c => BIKE_TYPES.some(t => c.includes(t)));
+
+            // Yellow plate check:
+            // Bike → skip (always pass)
+            // Baaki → commercial type hona chahiye
+            const isYellowPlate = isBike ? true : (
+                COMMERCIAL_TYPES.some(t => rawVehicleType.includes(t)) ||
+                COMMERCIAL_TYPES.some(t => rawPermitType.includes(t))  ||
+                rawCovDetails.some(c => COMMERCIAL_TYPES.some(t => c.includes(t))) ||
+                rawRegType === 'COMMERCIAL' ||
+                rawRegType === 'TRANSPORT'
+            );
+
+            const plateColor = isBike ? 'ANY' : (isYellowPlate ? 'YELLOW' : 'WHITE');
+
             // TODO: VAHAN API se insurance/fitness/permit verify karna hai — abhi skip
-            const insuranceExpiry  = null;
+            const insuranceExpiry   = null;
             const insuranceDaysLeft = null;
-            const fitnessExpiry    = null;
-            const permitExpiry     = null;
-            const puccExpiry       = null;
+            const fitnessExpiry     = null;
+            const permitExpiry      = null;
+            const puccExpiry        = null;
 
             extractedData = {
-                owner:                 extractedName || null,
-                relation_name:         fields.relation_name || null,
-                vehicle_model:         fields.vehicle_model || null,
-                vehicle_type:          fields.vehicle_type  || null,
-                manufacturer:          fields.manufacturer_name || null,
-                manufacturing_date:    fields.manufacturing_date || null,
-                registration_date:     fields.registration_date || null,
-                registration_validity: fields.registration_validity || fields.reg_valid_upto || null,
-                chassis_number:        fields.chassis_number || null,
-                engine_number:         fields.engine_number  || null,
-                address:               fields.address || null,
-                insurance_expiry:      insuranceExpiry,
-                insurance_days_left:   insuranceDaysLeft,
-                fitness_expiry:        fitnessExpiry,
-                permit_expiry:         permitExpiry,
-                pucc_expiry:           puccExpiry,
-                vahan_verified:        false,
-                masked:                docNumber ? String(docNumber).toUpperCase() : null,
+                owner:                  extractedName || null,
+                relation_name:          fields.relation_name || null,
+                vehicle_model:          fields.vehicle_model || null,
+                vehicle_type:           fields.vehicle_type  || null,
+                manufacturer:           fields.manufacturer_name || null,
+                manufacturing_date:     fields.manufacturing_date || null,
+                registration_date:      fields.registration_date || null,
+                registration_validity:  fields.registration_validity || fields.reg_valid_upto || null,
+                chassis_number:         fields.chassis_number || null,
+                engine_number:          fields.engine_number  || null,
+                address:                fields.address || null,
+                insurance_expiry:       insuranceExpiry,
+                insurance_days_left:    insuranceDaysLeft,
+                fitness_expiry:         fitnessExpiry,
+                permit_expiry:          permitExpiry,
+                pucc_expiry:            puccExpiry,
+                vahan_verified:         false,
+                masked:                 docNumber ? String(docNumber).toUpperCase() : null,
+                // ── Plate Verification ───────────────────────────────────────
+                plate_color:            plateColor,       // YELLOW / WHITE / ANY (bike)
+                is_commercial_vehicle:  isYellowPlate,   // true / false
             };
+
+            // ── White Plate → Reject (Bike skip) ─────────────────────────────
+            if (!isYellowPlate && !isBike && rawVehicleType) {
+                const rejectMsg = `${rawVehicleType} is a private vehicle. GO Mobility requires commercial (yellow plate) vehicle only.`;
+                await repo.updateDocument(doc.id, {
+                    status:          'rejected',
+                    rejectionReason: rejectMsg,
+                });
+                await repo.recomputeAggregate(userId);
+                throw Object.assign(
+                    new Error(rejectMsg),
+                    {
+                        statusCode:   422,
+                        documentId:   doc.id,
+                        canRetry:     true,
+                        attemptsLeft: Math.max(0, 3 - (doc.attempt_count || 1)),
+                        plateColor:   'WHITE',
+                    }
+                );
+            }
+
             break;
         }
     }

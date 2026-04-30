@@ -2,12 +2,15 @@ import crypto from 'crypto';
 import { pool } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 import { addPaymentPostActionJob } from '../../../infrastructure/queue/payment.queue.js';
+import { createRazorpayOrder } from '../../../core/services/razorpayService.js';
+import { generateRidePaymentQR, generateWalletRechargeQR } from '../../../core/services/qrService.js';
 import {
     createPaymentOrder,
     getPaymentOrderById,
     getPaymentOrderByNumber,
     getPaymentOrderByGatewayOrderId,
     getPaymentOrderByRideId,
+    getActivePaymentOrderByRideId,
     updatePaymentOrderStatus,
     getUserPaymentOrders,
     getUserPaymentOrdersCount,
@@ -201,10 +204,13 @@ export const createOrder = async (userId, {
         // For UPI / card — create gateway order (Razorpay/Stripe)
         const expiresAt = new Date(Date.now() + ORDER_EXPIRY_MINUTES * 60 * 1000);
 
-        // TODO: Call Razorpay/Stripe API to create order and get gateway_order_id
-        // const gatewayOrder = await razorpayService.createOrder({ amount: amount * 100, currency: 'INR' });
-        // const gatewayOrderId = gatewayOrder.id;
-        const gatewayOrderId = `gw_order_${Date.now()}`; // placeholder — replace with real gateway call
+        // Call Razorpay API to create order
+        const razorpayOrder = await createRazorpayOrder(amount, 'INR', `receipt_${Date.now()}`, {
+            purpose: PURPOSE_LABELS[purpose],
+            user_id: userId,
+            ride_id: ride_id || null,
+        });
+        const gatewayOrderId = razorpayOrder.data.id;
 
         const order = await createPaymentOrder(client, {
             orderNumber:    generateOrderNumber(),
@@ -224,17 +230,50 @@ export const createOrder = async (userId, {
 
         logger.info(`[Payment] Gateway order created | User: ${userId} | Order: ${order.order_number} | GW: ${gatewayOrderId}`);
 
+        const responseData = {
+            order:           formatOrder(order),
+            requiresGateway: true,
+            gatewayOrderId,                  // send to frontend for Razorpay SDK
+            amount:          amount * 100,   // Razorpay uses paise
+            currency:        'INR',
+            expiresAt,
+        };
+
+        // Generate QR code if payment method is QR
+        if (payment_method === 'qr') {
+            try {
+                let qrData;
+                if (purpose === 'ride_payment' && ride_id) {
+                    qrData = await generateRidePaymentQR({
+                        rideId: ride_id,
+                        amount,
+                        orderId: gatewayOrderId,
+                        orderNumber: order.order_number
+                    });
+                } else if (purpose === 'wallet_recharge') {
+                    qrData = await generateWalletRechargeQR({
+                        amount,
+                        orderId: gatewayOrderId,
+                        orderNumber: order.order_number,
+                        userId
+                    });
+                }
+
+                if (qrData && qrData.success) {
+                    responseData.qrCode = qrData.qrCode;
+                    responseData.upiUrl = qrData.upiUrl;
+                    responseData.qrExpiresAt = qrData.expiresAt;
+                }
+            } catch (qrError) {
+                logger.warn(`[Payment] QR generation failed for order ${order.order_number}: ${qrError.message}`);
+                // Continue without QR code
+            }
+        }
+
         return {
             success:        true,
             message:        'Payment order created',
-            data: {
-                order:           formatOrder(order),
-                requiresGateway: true,
-                gatewayOrderId,                  // send to frontend for Razorpay SDK
-                amount:          amount * 100,   // Razorpay uses paise
-                currency:        'INR',
-                expiresAt,
-            },
+            data: responseData,
         };
     } catch (error) {
         await client.query('ROLLBACK');
@@ -407,8 +446,19 @@ export const processRefund = async (userId, {
         }
 
         // Source refund (bank/card) — initiate via gateway
-        // TODO: await razorpayService.createRefund({ payment_id: order.gateway_payment_id, amount: amount * 100 });
-        logger.info(`[Payment] Source refund initiated ₹${amount} | User: ${userId} | Refund: ${refund.refund_number}`);
+        if (order.gateway_payment_id) {
+            const razorpayRefund = await createRazorpayRefund(order.gateway_payment_id, amount, {
+                reason: reason || 'Customer requested refund',
+                order_number: order_number,
+                user_id: userId,
+            });
+            
+            // Update refund with gateway refund ID
+            await updateRefundStatus(client, refund.id, 'success', {
+                processedAt: new Date(),
+                gatewayRefundId: razorpayRefund.data.id,
+            });
+        }
 
         return {
             success: true,

@@ -24,7 +24,7 @@ export const generateRefreshToken = (user) => {
             userId: user.id,
             type: 'refresh'
         },
-        ENV.JWT_SECRET,
+        ENV.JWT_REFRESH_SECRET,
         {
             expiresIn: ENV.JWT_REFRESH_EXPIRY,
             algorithm: 'HS256'

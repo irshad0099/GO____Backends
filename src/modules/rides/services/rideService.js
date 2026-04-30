@@ -1,5 +1,3 @@
-
-
 import * as rideRepo from '../repositories/ride.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as walletRepo from '../../wallet/repositories/wallet.repository.js';
@@ -44,10 +42,6 @@ const safeEmit = (fn, label) => {
 };
 
 // ─── Helper: gather REAL demand + weather signals ───────────────────────────
-// const gatherDemandSignals = async (vehicleType, latitude, longitude) => {
-//     const searchRadius    = Number(ENV.DEFAULT_SEARCH_RADIUS_KM) || 5;
-//     const demandWindow    = Number(ENV.DEMAND_WINDOW_MINUTES)    || 10;
-//     const velocityWindow  = Number(ENV.VELOCITY_WINDOW_MINUTES)  || 5;
 
 //     const [rideRequests, requestVelocity, nearbyDrivers, weatherSignal] = await Promise.all([
 //         rideRepo.countRecentRideRequests(vehicleType, latitude, longitude, searchRadius, demandWindow),
@@ -787,39 +781,31 @@ if (status === 'cancelled') {
                 });
             }
 
-           // Email receipt
-if (ride.passenger_email) {
-    sendRideReceipt({
-        to:                   ride.passenger_email,
-        riderName:            ride.passenger_name || 'Rider',
-        rideNumber:           ride.ride_number,
-        vehicleType:          ride.vehicle_type,
-        pickupAddress:        ride.pickup_address,
-        dropoffAddress:       ride.dropoff_address,
-        distanceKm:           ride.distance_km,
-        durationMinutes:      ride.duration_minutes,
-        baseFare:             ride.base_fare,
-        distanceFare:         ride.distance_fare,
-        convenienceFee:       ride.convenience_fee,
-        surgeMultiplier:      ride.surge_multiplier,
-        finalFare:            passengerFinalFare,
-        paymentMethod:        ride.payment_method,
-        rideDate:             new Date(),
-        subscriptionDiscount: Number(ride.subscription_discount) || 0,
-        couponDiscount:       Number(ride.coupon_discount) || 0,
-        isFreeRide:           ride.is_free_ride || false,
-        // ── Naye fields ──────────────────────────────────
-        isPeak:               ride.is_peak || false,
-        fareBeforeGst:        Number(ride.fare_before_gst) || null,
-        timeFare:             Number(ride.time_fare) || 0,
-        waitingCharges:       Number(additionalFields.waiting_charges) || 0,
-        pickupCompensation:   Number(additionalFields.pickup_compensation) || 0,
-        trafficCompensation:  Number(additionalFields.traffic_compensation) || 0,
-        gstOnFare:            Number(ride.gst_on_fare) || 0,
-    }).catch(err => logger.error('Receipt email error:', err));
-}
+            // Email receipt
+            if (ride.passenger_email) {
+                sendRideReceipt({
+                    to:                   ride.passenger_email,
+                    riderName:            ride.passenger_name || 'Rider',
+                    rideNumber:           ride.ride_number,
+                    vehicleType:          ride.vehicle_type,
+                    pickupAddress:        ride.pickup_address,
+                    dropoffAddress:       ride.dropoff_address,
+                    distanceKm:           ride.distance_km,
+                    durationMinutes:      ride.duration_minutes,
+                    baseFare:             ride.base_fare,
+                    distanceFare:         ride.distance_fare,
+                    convenienceFee:       ride.convenience_fee,
+                    surgeMultiplier:      ride.surge_multiplier,
+                    finalFare:            passengerFinalFare,
+                    paymentMethod:        ride.payment_method,
+                    rideDate:             new Date(),
+                    subscriptionDiscount: Number(ride.subscription_discount) || 0,
+                    couponDiscount:       Number(ride.coupon_discount) || 0,
+                    isFreeRide:           ride.is_free_ride || false
+                }).catch(err => logger.error('Receipt email error:', err));
+            }
 
-logger.info(`Ride ${rideId} final fare: Rs.${passengerFinalFare} (estimated: Rs.${ride.estimated_fare})`);
+            logger.info(`Ride ${rideId} final fare: Rs.${passengerFinalFare} (estimated: Rs.${ride.estimated_fare})`);
         }
 
         const updatedRide = await rideRepo.updateRideStatus(rideId, status, additionalFields);
@@ -852,7 +838,7 @@ logger.info(`Ride ${rideId} final fare: Rs.${passengerFinalFare} (estimated: Rs.
                 estimatedFare:        ride.estimated_fare,
                 finalFare:            additionalFields.final_fare,
                 subscriptionDiscount: Number(ride.subscription_discount) || 0,
-                couponDiscount:       Number(ride.coupon_discount)        || 0,
+                couponDiscount:       Number(ride.coupon_discount) || 0,
                 isFreeRide:           ride.is_free_ride || false
             }),
             message: `Ride status updated to ${status}`

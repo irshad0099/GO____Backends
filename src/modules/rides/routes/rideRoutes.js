@@ -3,6 +3,8 @@ import * as controller from '../controllers/rideController.js';
 import { authenticate, authorize } from '../../../core/middleware/auth.middleware.js';
 import { validate } from '../../../core/middleware/validation.middleware.js';
 import * as validator from '../validators/rideValidator.js';
+import ridePaymentRoutes from './ridePaymentRoutes.js';
+import cashPaymentRoutes from './cashPaymentRoutes.js';
 
 // ─── New Feature Controllers ─────────────────────────────────────────────────
 import * as cancelCtrl    from '../controllers/rideCancellationController.js';
@@ -138,7 +140,12 @@ router.get('/:rideId/invoice', invoiceCtrl.getInvoice);
 // GET /api/v1/rides/:rideId/driver-summary — trip completed screen ke liye
 router.get('/:rideId/driver-summary', authorize('driver'), controller.getDriverRideSummary);
 
+// ─── Ride Payments ─────────────────────────────────────────────────────
+// Mount payment-specific routes under /payments
+router.use('/payments', ridePaymentRoutes);
 
-
+// ─── Cash Payments ─────────────────────────────────────────────
+// Mount cash payment routes under /cash
+router.use('/cash', cashPaymentRoutes);
 
 export default router;

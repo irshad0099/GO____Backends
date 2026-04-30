@@ -11,7 +11,7 @@
 import { getIO } from '../../config/websocketConfig.js';
 import { emitToPassenger, emitToDriver, setupRideRoom } from './socket.events.js';
 import { storeActiveRideSession } from './reconnection.handler.js';
-import logger from '../../core/logger/logger.js';
+import logger from '../../core/logger/socketLogger.js';
 
 /**
  * Assign driver to ride and start real-time tracking

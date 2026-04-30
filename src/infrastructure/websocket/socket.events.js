@@ -1,5 +1,5 @@
 import { getIO } from '../../config/websocketConfig.js';
-import logger from '../../core/logger/logger.js';
+import logger from '../../core/logger/socketLogger.js';
 import redis from '../../config/redis.config.js';
 
 /**

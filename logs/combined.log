@@ -2560,3 +2560,43 @@ AuthError: Token expired
 2026-04-30 21:49:10 [ERROR]: Database query error:
 2026-04-30 21:49:12 [WARN]: Slow query:
 2026-04-30 21:49:14 [INFO]: PostgreSQL disconnected
+2026-05-01 00:38:40 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-01 00:38:41 [ERROR]: Database query error:
+2026-05-01 00:38:44 [ERROR]: Database query error:
+2026-05-01 00:38:47 [ERROR]: Database query error:
+2026-05-01 00:38:50 [ERROR]: Database query error:
+2026-05-01 00:38:53 [ERROR]: Database query error:
+2026-05-01 00:38:56 [ERROR]: Database query error:
+2026-05-01 00:38:59 [ERROR]: Database query error:
+2026-05-01 00:39:02 [WARN]: Slow query:
+2026-05-01 00:39:04 [ERROR]: Database query error:
+2026-05-01 00:39:08 [WARN]: Slow query:
+2026-05-01 00:39:08 [ERROR]: Database query error:
+2026-05-01 00:39:11 [WARN]: Slow query:
+2026-05-01 00:39:12 [ERROR]: Database query error:
+2026-05-01 00:39:16 [WARN]: Slow query:
+2026-05-01 00:39:16 [ERROR]: Database query error:
+2026-05-01 00:39:19 [WARN]: Slow query:
+2026-05-01 00:39:20 [ERROR]: Database query error:
+2026-05-01 00:39:23 [ERROR]: Database query error:
+2026-05-01 00:39:26 [ERROR]: Database query error:
+2026-05-01 00:39:30 [ERROR]: Database query error:
+2026-05-01 00:39:33 [ERROR]: Database query error:
+2026-05-01 00:39:36 [ERROR]: Database query error:
+2026-05-01 00:39:39 [ERROR]: Database query error:
+2026-05-01 00:39:43 [ERROR]: Database query error:
+2026-05-01 00:39:46 [ERROR]: Database query error:
+2026-05-01 00:39:49 [ERROR]: Database query error:
+2026-05-01 00:39:52 [ERROR]: Database query error:
+2026-05-01 00:39:55 [ERROR]: Database query error:
+2026-05-01 00:39:59 [ERROR]: Database query error:
+2026-05-01 00:40:02 [ERROR]: Database query error:
+2026-05-01 00:40:05 [WARN]: Slow query:
+2026-05-01 00:40:06 [ERROR]: Database query error:
+2026-05-01 00:40:09 [WARN]: Slow query:
+2026-05-01 00:40:14 [ERROR]: Database query error:
+2026-05-01 00:40:17 [ERROR]: Database query error:
+2026-05-01 00:40:21 [WARN]: Slow query:
+2026-05-01 00:40:23 [ERROR]: Database query error:
+2026-05-01 00:40:26 [WARN]: Slow query:
+2026-05-01 00:40:31 [INFO]: PostgreSQL disconnected

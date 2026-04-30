@@ -7,6 +7,7 @@ import { setupSocketHandlers } from './infrastructure/websocket/socket.server.js
 import { startWorkers } from './infrastructure/queue/startWorkers.js';
 import { initPricingConfig } from './modules/pricing/services/pricingConfigLoader.js';
 import './core/services/firebaseService.js';
+import { initSocketLogger } from './core/logger/socketLogger.js';
 
 const PORT = ENV.PORT || 5000;
 
@@ -22,6 +23,7 @@ const startServer = async () => {
     try {
         // Connect to database
         await db.connect();
+        initSocketLogger(db.pool);
 
         // Redis connects automatically when imported - no need to call connect()
         // Just ensure it's ready

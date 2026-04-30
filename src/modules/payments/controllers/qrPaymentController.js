@@ -1,7 +1,7 @@
 import logger from '../../../core/logger/logger.js';
 import { ApiError } from '../../../core/errors/ApiError.js';
-import { createOrder, verifyAndConfirmPayment } from '../services/paymentService.js';
-import { validateQRPayment } from '../../../core/services/qrService.js';
+import { createOrder, verifyAndConfirmPayment, getOrderDetail } from '../services/paymentService.js';
+import { validateQRPayment, closeRideQR } from '../../../core/services/qrService.js';
 
 /**
  * Generate QR code for payment
@@ -117,8 +117,8 @@ export const getQRPaymentStatus = async (req, res) => {
         }
 
         // Get order details
-        const { getOrderDetail } = require('../services/paymentService.js');
-        const order = await getOrderDetail(userId, order_number);
+        const orderResponse = await getOrderDetail(userId, order_number);
+        const order = orderResponse.data.order;
 
         // Check if this was a QR payment
         if (order.paymentMethod !== 'qr') {
@@ -160,12 +160,11 @@ export const closeQRPayment = async (req, res) => {
         }
 
         // Get order details to find ride_id
-        const { getOrderDetail } = require('../services/paymentService.js');
-        const order = await getOrderDetail(userId, order_number);
+        const orderResponse = await getOrderDetail(userId, order_number);
+        const order = orderResponse.data.order;
 
         if (order.rideId) {
             // Close QR for ride payment
-            const { closeRideQR } = require('../../../core/services/qrService.js');
             await closeRideQR(order.rideId);
         }
 

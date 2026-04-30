@@ -26,7 +26,7 @@ export const createRidePayment = async (req, res, next) => {
         // Handle cash payment differently
         if (payment_method === 'cash') {
             // For cash payments, mark as collected by driver
-            const updatedRide = await rideService.updateRidePaymentStatus(ride_id, {
+            const updatedRide = await updateRidePaymentStatus(ride_id, {
                 payment_status: 'cash_collected',
                 payment_method: 'cash',
                 payment_collected_at: new Date()

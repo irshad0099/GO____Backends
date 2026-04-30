@@ -2,7 +2,7 @@ import express from 'express';
 import { authenticate } from '../../../core/middleware/auth.middleware.js';
 import { validate } from '../../../core/middleware/validation.middleware.js';
 import * as controller from '../controllers/cashPaymentController.js';
-import * as validator from '../validators/rideValidator.js';
+import { body } from 'express-validator';
 
 const router = express.Router();
 
@@ -10,7 +10,9 @@ const router = express.Router();
 router.post(
     '/confirm',
     authenticate,
-    validate(validator.rideIdValidator),
+    validate([
+        body('ride_id').isInt().withMessage('Invalid ride ID')
+    ]),
     controller.confirmCashPayment
 );
 

@@ -43,11 +43,8 @@
     "node-cron": "^4.2.1",
     "nodemailer": "^8.0.1",
     "pg": "^8.18.0",
-<<<<<<< HEAD
-    "razorpay": "^2.9.6",
-=======
     "rate-limit-redis": "^4.3.1",
->>>>>>> 14c146dabe2491c7238ceb55d507474f5b956c15
+    "razorpay": "^2.9.6",
     "socket.io": "^4.8.3",
     "twilio": "^5.13.1",
     "uuid": "^13.0.0",

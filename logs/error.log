@@ -900,3 +900,306 @@ AuthError: Invalid token
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
 2026-04-26 16:45:01 [ERROR]: [PaymentWorker] Worker error: connect ETIMEDOUT
 2026-04-28 13:39:44 [ERROR]: ❌ Redis error:
+2026-04-30 10:44:23 [ERROR]: Cannot read properties of undefined (reading 'map')
+TypeError: Cannot read properties of undefined (reading 'map')
+    at file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/validation.middleware.js:7:39
+    at Layer.handleRequest (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\route.js:157:13)
+    at file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/node_modules/express-rate-limit/dist/index.mjs:918:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/node_modules/express-rate-limit/dist/index.mjs:801:5
+2026-04-30 10:54:25 [ERROR]: [Payment] createOrder error | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+error: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async createPaymentOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/repositories/payment.Repository.js:15:20)
+    at async createOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/services/paymentService.js:215:23)
+    at async generatePaymentQR (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:26:24)
+2026-04-30 10:54:25 [ERROR]: [QR Payment] Generate QR error: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+error: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async createPaymentOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/repositories/payment.Repository.js:15:20)
+    at async createOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/services/paymentService.js:215:23)
+    at async generatePaymentQR (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:26:24)
+2026-04-30 10:57:21 [ERROR]: [Payment] createOrder error | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+error: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async createPaymentOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/repositories/payment.Repository.js:15:20)
+    at async createOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/services/paymentService.js:215:23)
+    at async generatePaymentQR (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:26:24)
+2026-04-30 10:57:21 [ERROR]: [QR Payment] Generate QR error: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+error: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async createPaymentOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/repositories/payment.Repository.js:15:20)
+    at async createOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/services/paymentService.js:215:23)
+    at async generatePaymentQR (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:26:24)
+2026-04-30 10:57:34 [ERROR]: Database query error:
+2026-04-30 10:57:36 [ERROR]: Database query error:
+2026-04-30 10:57:38 [ERROR]: Database query error:
+2026-04-30 10:57:39 [ERROR]: Database query error:
+2026-04-30 10:57:41 [ERROR]: Database query error:
+2026-04-30 10:57:43 [ERROR]: Database query error:
+2026-04-30 10:57:44 [ERROR]: Database query error:
+2026-04-30 10:57:47 [ERROR]: Database query error:
+2026-04-30 10:57:49 [ERROR]: Database query error:
+2026-04-30 10:57:51 [ERROR]: Database query error:
+2026-04-30 10:57:54 [ERROR]: Database query error:
+2026-04-30 10:57:56 [ERROR]: Database query error:
+2026-04-30 10:57:58 [ERROR]: Database query error:
+2026-04-30 10:57:59 [ERROR]: Database query error:
+2026-04-30 10:58:01 [ERROR]: Database query error:
+2026-04-30 10:58:03 [ERROR]: Database query error:
+2026-04-30 10:58:05 [ERROR]: Database query error:
+2026-04-30 10:58:07 [ERROR]: Database query error:
+2026-04-30 10:58:08 [ERROR]: Database query error:
+2026-04-30 10:58:11 [ERROR]: Database query error:
+2026-04-30 10:58:13 [ERROR]: Database query error:
+2026-04-30 10:58:15 [ERROR]: Database query error:
+2026-04-30 10:58:17 [ERROR]: Database query error:
+2026-04-30 10:58:19 [ERROR]: Database query error:
+2026-04-30 10:58:20 [ERROR]: Database query error:
+2026-04-30 10:58:23 [ERROR]: Database query error:
+2026-04-30 10:58:31 [ERROR]: Database query error:
+2026-04-30 10:58:57 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 10:58:57 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:03:18 [ERROR]: [QR Payment] Get status error: require is not defined
+ReferenceError: require is not defined
+    at getQRPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:120:36)
+    at Layer.handleRequest (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\route.js:157:13)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:121:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:03:19 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-30 11:05:28 [ERROR]: [QR Payment] Get status error: This is not a QR payment order
+Error: This is not a QR payment order
+    at getQRPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:124:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:06:01 [ERROR]: [QR Payment] Get status error: Payment order not found
+Error: Payment order not found
+    at getOrderDetail (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/services/paymentService.js:484:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getQRPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:120:23)
+2026-04-30 11:08:02 [ERROR]: [QR Payment] Get status error: Payment order not found
+Error: Payment order not found
+    at getOrderDetail (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/services/paymentService.js:484:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getQRPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:120:23)
+2026-04-30 11:10:11 [ERROR]: [QR Payment] Get status error: This is not a QR payment order
+Error: This is not a QR payment order
+    at getQRPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:124:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:13:39 [ERROR]: validations.map is not a function
+TypeError: validations.map is not a function
+    at file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/validation.middleware.js:7:39
+    at Layer.handleRequest (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\index.js:295:15
+    at processParams (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\index.js:582:12)
+    at next (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\index.js:291:5)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:121:9)
+2026-04-30 11:14:35 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:14:35 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:15:44 [ERROR]: rideService.updateRidePaymentStatus is not a function
+TypeError: rideService.updateRidePaymentStatus is not a function
+    at createRidePayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/ridePaymentController.js:29:51)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:16:20 [ERROR]: [RidePayment] Failed to update ride payment status for ride 3: column "payment_collected_at" of relation "rides" does not exist
+error: column "payment_collected_at" of relation "rides" does not exist
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async updateRidePaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/ridePaymentService.js:17:24)
+    at async createRidePayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/ridePaymentController.js:29:33)
+2026-04-30 11:16:20 [ERROR]: column "payment_collected_at" of relation "rides" does not exist
+error: column "payment_collected_at" of relation "rides" does not exist
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async updateRidePaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/ridePaymentService.js:17:24)
+    at async createRidePayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/ridePaymentController.js:29:33)
+2026-04-30 11:17:06 [ERROR]: Database query error:
+2026-04-30 11:17:07 [ERROR]: Database query error:
+2026-04-30 11:17:09 [ERROR]: Database query error:
+2026-04-30 11:17:11 [ERROR]: Database query error:
+2026-04-30 11:17:13 [ERROR]: Database query error:
+2026-04-30 11:17:15 [ERROR]: Database query error:
+2026-04-30 11:17:17 [ERROR]: Database query error:
+2026-04-30 11:17:20 [ERROR]: Database query error:
+2026-04-30 11:17:22 [ERROR]: Database query error:
+2026-04-30 11:17:24 [ERROR]: Database query error:
+2026-04-30 11:17:26 [ERROR]: Database query error:
+2026-04-30 11:17:28 [ERROR]: Database query error:
+2026-04-30 11:17:30 [ERROR]: Database query error:
+2026-04-30 11:17:31 [ERROR]: Database query error:
+2026-04-30 11:17:33 [ERROR]: Database query error:
+2026-04-30 11:17:35 [ERROR]: Database query error:
+2026-04-30 11:17:36 [ERROR]: Database query error:
+2026-04-30 11:17:38 [ERROR]: Database query error:
+2026-04-30 11:17:40 [ERROR]: Database query error:
+2026-04-30 11:17:41 [ERROR]: Database query error:
+2026-04-30 11:17:43 [ERROR]: Database query error:
+2026-04-30 11:17:45 [ERROR]: Database query error:
+2026-04-30 11:17:47 [ERROR]: Database query error:
+2026-04-30 11:17:48 [ERROR]: Database query error:
+2026-04-30 11:17:51 [ERROR]: Database query error:
+2026-04-30 11:17:53 [ERROR]: Database query error:
+2026-04-30 11:18:01 [ERROR]: Database query error:
+2026-04-30 11:18:05 [ERROR]: Database query error:
+2026-04-30 11:21:15 [ERROR]: [RidePayment] Failed to update ride payment status for ride 3: column "payment_collected_at" of relation "rides" does not exist
+error: column "payment_collected_at" of relation "rides" does not exist
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async updateRidePaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/ridePaymentService.js:17:24)
+    at async createRidePayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/ridePaymentController.js:29:33)
+2026-04-30 11:21:15 [ERROR]: column "payment_collected_at" of relation "rides" does not exist
+error: column "payment_collected_at" of relation "rides" does not exist
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async updateRidePaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/ridePaymentService.js:17:24)
+    at async createRidePayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/ridePaymentController.js:29:33)
+2026-04-30 11:22:13 [ERROR]: Database query error:
+2026-04-30 11:22:15 [ERROR]: Database query error:
+2026-04-30 11:22:17 [ERROR]: Database query error:
+2026-04-30 11:22:19 [ERROR]: Database query error:
+2026-04-30 11:22:21 [ERROR]: Database query error:
+2026-04-30 11:22:23 [ERROR]: Database query error:
+2026-04-30 11:22:25 [ERROR]: Database query error:
+2026-04-30 11:22:29 [ERROR]: Database query error:
+2026-04-30 11:22:31 [ERROR]: Database query error:
+2026-04-30 11:22:33 [ERROR]: Database query error:
+2026-04-30 11:22:35 [ERROR]: Database query error:
+2026-04-30 11:22:38 [ERROR]: Database query error:
+2026-04-30 11:22:40 [ERROR]: Database query error:
+2026-04-30 11:22:42 [ERROR]: Database query error:
+2026-04-30 11:22:44 [ERROR]: Database query error:
+2026-04-30 11:22:46 [ERROR]: Database query error:
+2026-04-30 11:22:48 [ERROR]: Database query error:
+2026-04-30 11:22:50 [ERROR]: Database query error:
+2026-04-30 11:22:52 [ERROR]: Database query error:
+2026-04-30 11:22:54 [ERROR]: Database query error:
+2026-04-30 11:22:56 [ERROR]: Database query error:
+2026-04-30 11:22:57 [ERROR]: Database query error:
+2026-04-30 11:22:59 [ERROR]: Database query error:
+2026-04-30 11:23:01 [ERROR]: Database query error:
+2026-04-30 11:23:03 [ERROR]: Database query error:
+2026-04-30 11:23:05 [ERROR]: Database query error:
+2026-04-30 11:23:13 [ERROR]: Database query error:
+2026-04-30 11:24:38 [ERROR]: Cannot read properties of undefined (reading 'map')
+TypeError: Cannot read properties of undefined (reading 'map')
+    at file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/validation.middleware.js:7:39
+    at Layer.handleRequest (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\route.js:157:13)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:121:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:26:31 [ERROR]: Get ride details service error: You do not have access to this ride
+Error: You do not have access to this ride
+    at getRideDetails (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/rideService.js:866:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async confirmCashPayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/cashPaymentController.js:17:22)
+2026-04-30 11:26:31 [ERROR]: You do not have access to this ride
+Error: You do not have access to this ride
+    at getRideDetails (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/rideService.js:866:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async confirmCashPayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/cashPaymentController.js:17:22)
+2026-04-30 11:27:09 [ERROR]: Get ride details service error: You do not have access to this ride
+Error: You do not have access to this ride
+    at getRideDetails (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/rideService.js:866:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getCashPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/cashPaymentController.js:63:22)
+2026-04-30 11:27:09 [ERROR]: You do not have access to this ride
+Error: You do not have access to this ride
+    at getRideDetails (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/rideService.js:866:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getCashPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/cashPaymentController.js:63:22)
+2026-04-30 11:30:06 [ERROR]: [Subscription] purchaseSubscription error | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965: You already have an active "Basic Pass" subscription valid till 12/5/2026
+Error: You already have an active "Basic Pass" subscription valid till 12/5/2026
+    at purchaseSubscription (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/subscription/services/subscriptionService.js:198:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async purchase (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/subscription/controllers/subscriptionController.js:65:24)
+2026-04-30 11:30:06 [ERROR]: [SubscriptionController] You already have an active "Basic Pass" subscription valid till 12/5/2026
+2026-04-30 11:33:12 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:33:12 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:34:16 [ERROR]: [Razorpay] createSubscription error:
+2026-04-30 11:34:16 [ERROR]: [Subscription] purchaseSubscription error | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965: Failed to create subscription: undefined
+Error: Failed to create subscription: undefined
+    at createSubscriptionPlan (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/services/razorpayService.js:185:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async purchaseSubscription (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/subscription/services/subscriptionService.js:227:34)
+    at async purchase (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/subscription/controllers/subscriptionController.js:65:24)
+2026-04-30 11:34:16 [ERROR]: [SubscriptionController] Failed to create subscription: undefined
+2026-04-30 11:35:45 [ERROR]: Database query error:
+2026-04-30 11:35:47 [ERROR]: Database query error:
+2026-04-30 11:35:49 [ERROR]: Database query error:
+2026-04-30 11:35:51 [ERROR]: Database query error:
+2026-04-30 11:35:54 [ERROR]: Database query error:
+2026-04-30 11:35:56 [ERROR]: Database query error:
+2026-04-30 11:35:58 [ERROR]: Database query error:
+2026-04-30 11:36:01 [ERROR]: Database query error:
+2026-04-30 11:36:03 [ERROR]: Database query error:
+2026-04-30 11:36:06 [ERROR]: Database query error:
+2026-04-30 11:36:08 [ERROR]: Database query error:
+2026-04-30 11:36:10 [ERROR]: Database query error:
+2026-04-30 11:36:12 [ERROR]: Database query error:
+2026-04-30 11:36:14 [ERROR]: Database query error:
+2026-04-30 11:36:16 [ERROR]: Database query error:
+2026-04-30 11:36:18 [ERROR]: Database query error:
+2026-04-30 11:36:20 [ERROR]: Database query error:
+2026-04-30 11:36:22 [ERROR]: Database query error:
+2026-04-30 11:36:24 [ERROR]: Database query error:
+2026-04-30 11:36:26 [ERROR]: Database query error:
+2026-04-30 11:36:28 [ERROR]: Database query error:
+2026-04-30 11:36:30 [ERROR]: Database query error:
+2026-04-30 11:36:32 [ERROR]: Database query error:
+2026-04-30 11:36:34 [ERROR]: Database query error:
+2026-04-30 11:36:36 [ERROR]: Database query error:
+2026-04-30 11:36:38 [ERROR]: Database query error:
+2026-04-30 11:36:44 [ERROR]: Database query error:
+2026-04-30 11:36:46 [ERROR]: Database query error:
+2026-04-30 11:36:50 [ERROR]: Database query error:
+2026-04-30 11:43:56 [ERROR]: [Razorpay] createSubscription error:
+2026-04-30 11:43:56 [ERROR]: [Subscription] purchaseSubscription error | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965: Failed to create subscription: undefined
+Error: Failed to create subscription: undefined
+    at createSubscriptionPlan (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/services/razorpayService.js:185:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async purchaseSubscription (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/subscription/services/subscriptionService.js:227:34)
+    at async purchase (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/subscription/controllers/subscriptionController.js:65:24)
+2026-04-30 11:43:56 [ERROR]: [SubscriptionController] Failed to create subscription: undefined
+2026-04-30 11:49:17 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:49:17 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:50:22 [ERROR]: [Razorpay] createSubscription error:

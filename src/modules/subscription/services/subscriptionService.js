@@ -192,9 +192,9 @@ export const purchaseSubscription = async (userId, {
             throw err;
         }
 
-        // Check if user already has an active subscription
+        // Check if user already has an active subscription for the SAME plan
         const existing = await getActiveSubscription(userId);
-        if (existing) {
+        if (existing && existing.plan_id === plan_id) {
             const err = new Error(
                 `You already have an active "${existing.plan_name}" subscription valid till ${new Date(existing.expires_at).toLocaleDateString('en-IN')}`
             );
@@ -214,24 +214,30 @@ export const purchaseSubscription = async (userId, {
         let razorpaySubscriptionId = null;
         let gatewayTransactionId = null;
 
-        // For Razorpay recurring payments
+        // For Razorpay recurring payments only
         if (payment_method === 'card' && payment_gateway === 'razorpay' && auto_renew) {
-            // Create Razorpay customer if not exists
-            const customer = await createCustomer(customer_details || {
-                name: `User ${userId}`,
-                email: `user${userId}@example.com`,
-                phone: '9999999999',
-            });
+            try {
+                // Create Razorpay customer if not exists
+                const customer = await createCustomer(customer_details || {
+                    name: `User ${userId}`,
+                    email: `user${userId}@example.com`,
+                    phone: '9999999999',
+                });
 
-            // Create Razorpay subscription plan
-            const razorpayPlan = await createSubscriptionPlan({
-                name: plan.name,
-                description: plan.description || `${plan.name} subscription`,
-                price: parseFloat(plan.price),
-                period: 'monthly',
-            }, customer.data);
+                // Create Razorpay subscription plan
+                const razorpayPlan = await createSubscriptionPlan({
+                    name: plan.name,
+                    description: plan.description || `${plan.name} subscription`,
+                    price: parseFloat(plan.price),
+                    period: 'monthly',
+                }, customer.data);
 
-            razorpaySubscriptionId = razorpayPlan.data.id;
+                razorpaySubscriptionId = razorpayPlan.data.id;
+            } catch (razorpayError) {
+                logger.warn(`[Subscription] Razorpay subscription creation failed, continuing without auto-renew:`, razorpayError.message);
+                razorpaySubscriptionId = null;
+                auto_renew = false;
+            }
         }
 
         // Create subscription record

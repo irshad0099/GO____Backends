@@ -1830,3 +1830,692 @@ AuthError: Invalid token
 2026-04-28 14:04:00 [INFO]: ✅ Redis adapter initialized for Socket.IO
 2026-04-28 14:04:00 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
 2026-04-28 14:04:00 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 10:38:18 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 10:38:18 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 10:38:19 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 10:38:19 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 10:38:21 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 10:38:21 [INFO]: ✅ Redis Cloud ready
+2026-04-30 10:38:22 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 10:38:25 [WARN]: Slow query:
+2026-04-30 10:38:25 [WARN]: Slow query:
+2026-04-30 10:38:25 [WARN]: Slow query:
+2026-04-30 10:38:25 [WARN]: Slow query:
+2026-04-30 10:38:25 [WARN]: Slow query:
+2026-04-30 10:38:25 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 10:38:25 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 10:38:25 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 10:42:47 [WARN]: Slow query:
+2026-04-30 10:42:47 [INFO]: 🔐 OTP send initiated
+2026-04-30 10:42:49 [DEBUG]: 💾 OTP saved to database
+2026-04-30 10:42:49 [DEBUG]: 📤 SMS sending initiated
+2026-04-30 10:42:49 [DEBUG]: 📡 MSG91 API Request
+2026-04-30 10:42:50 [DEBUG]: 📨 MSG91 API Response Received
+2026-04-30 10:42:50 [INFO]: ✅ SMS sent successfully via MSG91
+2026-04-30 10:42:50 [INFO]: ✅ OTP sent successfully
+2026-04-30 10:43:46 [WARN]: Slow query:
+2026-04-30 10:43:46 [INFO]: ✅ OTP verified via Redis for 9876543210
+2026-04-30 10:43:48 [INFO]: User signed in successfully:
+2026-04-30 10:44:22 [WARN]: Slow query:
+2026-04-30 10:44:23 [ERROR]: Cannot read properties of undefined (reading 'map')
+TypeError: Cannot read properties of undefined (reading 'map')
+    at file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/validation.middleware.js:7:39
+    at Layer.handleRequest (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\route.js:157:13)
+    at file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/node_modules/express-rate-limit/dist/index.mjs:918:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/node_modules/express-rate-limit/dist/index.mjs:801:5
+2026-04-30 10:49:35 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 10:49:35 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 10:49:35 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 10:49:35 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 10:49:37 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 10:49:37 [INFO]: ✅ Redis Cloud ready
+2026-04-30 10:49:38 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 10:49:41 [WARN]: Slow query:
+2026-04-30 10:49:41 [WARN]: Slow query:
+2026-04-30 10:49:41 [WARN]: Slow query:
+2026-04-30 10:49:41 [WARN]: Slow query:
+2026-04-30 10:49:41 [WARN]: Slow query:
+2026-04-30 10:49:41 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 10:49:41 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 10:49:41 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 10:52:16 [WARN]: Slow query:
+2026-04-30 10:53:09 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 10:53:09 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 10:53:09 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 10:53:09 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 10:53:10 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 10:53:10 [INFO]: ✅ Redis Cloud ready
+2026-04-30 10:53:11 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 10:53:13 [WARN]: Slow query:
+2026-04-30 10:53:13 [WARN]: Slow query:
+2026-04-30 10:53:13 [WARN]: Slow query:
+2026-04-30 10:53:13 [WARN]: Slow query:
+2026-04-30 10:53:13 [WARN]: Slow query:
+2026-04-30 10:53:13 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 10:53:13 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 10:53:13 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 10:54:23 [WARN]: Slow query:
+2026-04-30 10:54:24 [INFO]: [Razorpay] Order created | Amount: ₹272.5 | Order ID: order_SjaUwuqWMFjo9B
+2026-04-30 10:54:25 [ERROR]: [Payment] createOrder error | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+error: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async createPaymentOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/repositories/payment.Repository.js:15:20)
+    at async createOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/services/paymentService.js:215:23)
+    at async generatePaymentQR (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:26:24)
+2026-04-30 10:54:25 [ERROR]: [QR Payment] Generate QR error: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+error: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async createPaymentOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/repositories/payment.Repository.js:15:20)
+    at async createOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/services/paymentService.js:215:23)
+    at async generatePaymentQR (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:26:24)
+2026-04-30 10:57:19 [WARN]: Slow query:
+2026-04-30 10:57:20 [INFO]: [Razorpay] Order created | Amount: ₹272.5 | Order ID: order_SjaY3499iAkyLF
+2026-04-30 10:57:21 [ERROR]: [Payment] createOrder error | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+error: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async createPaymentOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/repositories/payment.Repository.js:15:20)
+    at async createOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/services/paymentService.js:215:23)
+    at async generatePaymentQR (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:26:24)
+2026-04-30 10:57:21 [ERROR]: [QR Payment] Generate QR error: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+error: new row for relation "payment_orders" violates check constraint "payment_orders_payment_method_check"
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async createPaymentOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/repositories/payment.Repository.js:15:20)
+    at async createOrder (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/services/paymentService.js:215:23)
+    at async generatePaymentQR (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:26:24)
+2026-04-30 10:57:34 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 10:57:34 [ERROR]: Database query error:
+2026-04-30 10:57:36 [ERROR]: Database query error:
+2026-04-30 10:57:38 [ERROR]: Database query error:
+2026-04-30 10:57:39 [ERROR]: Database query error:
+2026-04-30 10:57:41 [ERROR]: Database query error:
+2026-04-30 10:57:43 [ERROR]: Database query error:
+2026-04-30 10:57:44 [ERROR]: Database query error:
+2026-04-30 10:57:46 [WARN]: Slow query:
+2026-04-30 10:57:47 [ERROR]: Database query error:
+2026-04-30 10:57:49 [WARN]: Slow query:
+2026-04-30 10:57:49 [ERROR]: Database query error:
+2026-04-30 10:57:51 [WARN]: Slow query:
+2026-04-30 10:57:51 [ERROR]: Database query error:
+2026-04-30 10:57:53 [WARN]: Slow query:
+2026-04-30 10:57:54 [ERROR]: Database query error:
+2026-04-30 10:57:56 [WARN]: Slow query:
+2026-04-30 10:57:56 [ERROR]: Database query error:
+2026-04-30 10:57:58 [ERROR]: Database query error:
+2026-04-30 10:57:59 [ERROR]: Database query error:
+2026-04-30 10:58:01 [ERROR]: Database query error:
+2026-04-30 10:58:03 [ERROR]: Database query error:
+2026-04-30 10:58:05 [ERROR]: Database query error:
+2026-04-30 10:58:07 [ERROR]: Database query error:
+2026-04-30 10:58:08 [ERROR]: Database query error:
+2026-04-30 10:58:11 [ERROR]: Database query error:
+2026-04-30 10:58:13 [ERROR]: Database query error:
+2026-04-30 10:58:15 [ERROR]: Database query error:
+2026-04-30 10:58:17 [ERROR]: Database query error:
+2026-04-30 10:58:19 [ERROR]: Database query error:
+2026-04-30 10:58:20 [ERROR]: Database query error:
+2026-04-30 10:58:22 [WARN]: Slow query:
+2026-04-30 10:58:23 [ERROR]: Database query error:
+2026-04-30 10:58:25 [WARN]: Slow query:
+2026-04-30 10:58:31 [ERROR]: Database query error:
+2026-04-30 10:58:33 [WARN]: Slow query:
+2026-04-30 10:58:35 [INFO]: PostgreSQL disconnected
+2026-04-30 10:58:45 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 10:58:45 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 10:58:45 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 10:58:45 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 10:58:46 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 10:58:46 [INFO]: ✅ Redis Cloud ready
+2026-04-30 10:58:47 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 10:58:48 [WARN]: Slow query:
+2026-04-30 10:58:48 [WARN]: Slow query:
+2026-04-30 10:58:48 [WARN]: Slow query:
+2026-04-30 10:58:49 [WARN]: Slow query:
+2026-04-30 10:58:49 [WARN]: Slow query:
+2026-04-30 10:58:49 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 10:58:49 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 10:58:49 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 10:58:57 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 10:58:57 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 10:59:07 [INFO]: 🔐 OTP send initiated
+2026-04-30 10:59:08 [DEBUG]: 💾 OTP saved to database
+2026-04-30 10:59:08 [DEBUG]: 📤 SMS sending initiated
+2026-04-30 10:59:08 [DEBUG]: 📡 MSG91 API Request
+2026-04-30 10:59:09 [DEBUG]: 📨 MSG91 API Response Received
+2026-04-30 10:59:09 [INFO]: ✅ SMS sent successfully via MSG91
+2026-04-30 10:59:09 [INFO]: ✅ OTP sent successfully
+2026-04-30 10:59:28 [WARN]: Slow query:
+2026-04-30 10:59:28 [INFO]: ✅ OTP verified via Redis for 9876543210
+2026-04-30 10:59:30 [INFO]: User signed in successfully:
+2026-04-30 10:59:58 [WARN]: Slow query:
+2026-04-30 10:59:59 [INFO]: [Razorpay] Order created | Amount: ₹272.5 | Order ID: order_SjaaqCwkjdqpwx
+2026-04-30 11:00:00 [INFO]: [Payment] Gateway order created | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965 | Order: PAY20260430MMTPWT | GW: order_SjaaqCwkjdqpwx
+2026-04-30 11:00:00 [INFO]: [QR Service] Generating QR for ride 3, amount: ₹272.5
+2026-04-30 11:00:00 [INFO]: [PaymentGateway] Generating dynamic QR for ride 3, amount: ₹272.5
+2026-04-30 11:00:00 [INFO]: [QR Service] QR generated successfully for ride 3
+2026-04-30 11:00:00 [INFO]: [QR Payment] QR generated | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965 | Order: PAY20260430MMTPWT
+2026-04-30 11:00:33 [WARN]: Slow query:
+2026-04-30 11:00:35 [INFO]: [Razorpay] Order created | Amount: ₹500 | Order ID: order_SjabSggXV9lCGd
+2026-04-30 11:00:35 [INFO]: [Payment] Gateway order created | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965 | Order: PAY2026043061P667 | GW: order_SjabSggXV9lCGd
+2026-04-30 11:00:35 [INFO]: [QR Service] Generating wallet recharge QR, amount: ₹500
+2026-04-30 11:00:35 [INFO]: [QR Service] Wallet recharge QR generated successfully
+2026-04-30 11:00:35 [INFO]: [QR Payment] QR generated | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965 | Order: PAY2026043061P667
+2026-04-30 11:03:17 [WARN]: Slow query:
+2026-04-30 11:03:18 [ERROR]: [QR Payment] Get status error: require is not defined
+ReferenceError: require is not defined
+    at getQRPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:120:36)
+    at Layer.handleRequest (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\route.js:157:13)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:121:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:03:19 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-04-30 11:04:40 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:04:40 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:04:40 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:04:40 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:04:41 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:04:41 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:04:43 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:04:45 [WARN]: Slow query:
+2026-04-30 11:04:45 [WARN]: Slow query:
+2026-04-30 11:04:45 [WARN]: Slow query:
+2026-04-30 11:04:45 [WARN]: Slow query:
+2026-04-30 11:04:45 [WARN]: Slow query:
+2026-04-30 11:04:45 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 11:04:45 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 11:04:45 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 11:04:51 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:04:51 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:04:51 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:04:51 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:04:51 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:04:52 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:04:53 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:04:54 [WARN]: Slow query:
+2026-04-30 11:04:54 [WARN]: Slow query:
+2026-04-30 11:04:54 [WARN]: Slow query:
+2026-04-30 11:04:54 [WARN]: Slow query:
+2026-04-30 11:04:54 [WARN]: Slow query:
+2026-04-30 11:04:54 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 11:04:54 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 11:04:54 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 11:05:03 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:05:03 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:05:03 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:05:03 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:05:04 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:05:04 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:05:05 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:05:07 [WARN]: Slow query:
+2026-04-30 11:05:07 [WARN]: Slow query:
+2026-04-30 11:05:07 [WARN]: Slow query:
+2026-04-30 11:05:07 [WARN]: Slow query:
+2026-04-30 11:05:07 [WARN]: Slow query:
+2026-04-30 11:05:07 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 11:05:07 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 11:05:07 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 11:05:27 [WARN]: Slow query:
+2026-04-30 11:05:28 [ERROR]: [QR Payment] Get status error: This is not a QR payment order
+Error: This is not a QR payment order
+    at getQRPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:124:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:06:00 [WARN]: Slow query:
+2026-04-30 11:06:01 [ERROR]: [QR Payment] Get status error: Payment order not found
+Error: Payment order not found
+    at getOrderDetail (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/services/paymentService.js:484:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getQRPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:120:23)
+2026-04-30 11:08:01 [WARN]: Slow query:
+2026-04-30 11:08:02 [ERROR]: [QR Payment] Get status error: Payment order not found
+Error: Payment order not found
+    at getOrderDetail (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/services/paymentService.js:484:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getQRPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:120:23)
+2026-04-30 11:10:10 [WARN]: Slow query:
+2026-04-30 11:10:11 [ERROR]: [QR Payment] Get status error: This is not a QR payment order
+Error: This is not a QR payment order
+    at getQRPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/payments/controllers/qrPaymentController.js:124:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:10:32 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:10:32 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:10:32 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:10:32 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:10:33 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:10:33 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:10:35 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:10:37 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:10:37 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:10:37 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:10:37 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:10:38 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:10:38 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:10:39 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:10:41 [WARN]: Slow query:
+2026-04-30 11:10:41 [WARN]: Slow query:
+2026-04-30 11:10:41 [WARN]: Slow query:
+2026-04-30 11:10:41 [WARN]: Slow query:
+2026-04-30 11:10:41 [WARN]: Slow query:
+2026-04-30 11:10:41 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 11:10:41 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 11:10:41 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 11:11:27 [WARN]: Slow query:
+2026-04-30 11:13:38 [WARN]: Slow query:
+2026-04-30 11:13:39 [ERROR]: validations.map is not a function
+TypeError: validations.map is not a function
+    at file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/validation.middleware.js:7:39
+    at Layer.handleRequest (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\index.js:295:15
+    at processParams (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\index.js:582:12)
+    at next (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\index.js:291:5)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:121:9)
+2026-04-30 11:14:25 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:14:25 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:14:25 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:14:25 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:14:26 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:14:26 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:14:27 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:14:29 [WARN]: Slow query:
+2026-04-30 11:14:29 [WARN]: Slow query:
+2026-04-30 11:14:29 [WARN]: Slow query:
+2026-04-30 11:14:29 [WARN]: Slow query:
+2026-04-30 11:14:29 [WARN]: Slow query:
+2026-04-30 11:14:29 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 11:14:29 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 11:14:29 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 11:14:35 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:14:35 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:14:45 [INFO]: 🔐 OTP send initiated
+2026-04-30 11:14:46 [DEBUG]: 💾 OTP saved to database
+2026-04-30 11:14:46 [DEBUG]: 📤 SMS sending initiated
+2026-04-30 11:14:46 [DEBUG]: 📡 MSG91 API Request
+2026-04-30 11:14:47 [DEBUG]: 📨 MSG91 API Response Received
+2026-04-30 11:14:47 [INFO]: ✅ SMS sent successfully via MSG91
+2026-04-30 11:14:47 [INFO]: ✅ OTP sent successfully
+2026-04-30 11:15:25 [WARN]: Slow query:
+2026-04-30 11:15:25 [INFO]: ✅ OTP verified via Redis for 9876543210
+2026-04-30 11:15:26 [INFO]: User signed in successfully:
+2026-04-30 11:15:43 [WARN]: Slow query:
+2026-04-30 11:15:44 [ERROR]: rideService.updateRidePaymentStatus is not a function
+TypeError: rideService.updateRidePaymentStatus is not a function
+    at createRidePayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/ridePaymentController.js:29:51)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:16:05 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:16:05 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:16:05 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:16:05 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:16:06 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:16:06 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:16:07 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:16:09 [WARN]: Slow query:
+2026-04-30 11:16:09 [WARN]: Slow query:
+2026-04-30 11:16:09 [WARN]: Slow query:
+2026-04-30 11:16:09 [WARN]: Slow query:
+2026-04-30 11:16:09 [WARN]: Slow query:
+2026-04-30 11:16:09 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 11:16:09 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 11:16:09 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 11:16:20 [ERROR]: [RidePayment] Failed to update ride payment status for ride 3: column "payment_collected_at" of relation "rides" does not exist
+error: column "payment_collected_at" of relation "rides" does not exist
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async updateRidePaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/ridePaymentService.js:17:24)
+    at async createRidePayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/ridePaymentController.js:29:33)
+2026-04-30 11:16:20 [ERROR]: column "payment_collected_at" of relation "rides" does not exist
+error: column "payment_collected_at" of relation "rides" does not exist
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async updateRidePaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/ridePaymentService.js:17:24)
+    at async createRidePayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/ridePaymentController.js:29:33)
+2026-04-30 11:17:05 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:17:06 [ERROR]: Database query error:
+2026-04-30 11:17:07 [ERROR]: Database query error:
+2026-04-30 11:17:09 [ERROR]: Database query error:
+2026-04-30 11:17:11 [ERROR]: Database query error:
+2026-04-30 11:17:13 [ERROR]: Database query error:
+2026-04-30 11:17:15 [ERROR]: Database query error:
+2026-04-30 11:17:17 [ERROR]: Database query error:
+2026-04-30 11:17:19 [WARN]: Slow query:
+2026-04-30 11:17:20 [ERROR]: Database query error:
+2026-04-30 11:17:22 [WARN]: Slow query:
+2026-04-30 11:17:22 [ERROR]: Database query error:
+2026-04-30 11:17:24 [WARN]: Slow query:
+2026-04-30 11:17:24 [ERROR]: Database query error:
+2026-04-30 11:17:26 [WARN]: Slow query:
+2026-04-30 11:17:26 [ERROR]: Database query error:
+2026-04-30 11:17:28 [WARN]: Slow query:
+2026-04-30 11:17:28 [ERROR]: Database query error:
+2026-04-30 11:17:30 [ERROR]: Database query error:
+2026-04-30 11:17:31 [ERROR]: Database query error:
+2026-04-30 11:17:33 [ERROR]: Database query error:
+2026-04-30 11:17:35 [ERROR]: Database query error:
+2026-04-30 11:17:36 [ERROR]: Database query error:
+2026-04-30 11:17:38 [ERROR]: Database query error:
+2026-04-30 11:17:40 [ERROR]: Database query error:
+2026-04-30 11:17:41 [ERROR]: Database query error:
+2026-04-30 11:17:43 [ERROR]: Database query error:
+2026-04-30 11:17:45 [ERROR]: Database query error:
+2026-04-30 11:17:47 [ERROR]: Database query error:
+2026-04-30 11:17:48 [ERROR]: Database query error:
+2026-04-30 11:17:51 [ERROR]: Database query error:
+2026-04-30 11:17:53 [WARN]: Slow query:
+2026-04-30 11:17:53 [ERROR]: Database query error:
+2026-04-30 11:17:55 [WARN]: Slow query:
+2026-04-30 11:18:01 [ERROR]: Database query error:
+2026-04-30 11:18:03 [WARN]: Slow query:
+2026-04-30 11:18:05 [ERROR]: Database query error:
+2026-04-30 11:21:02 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:21:02 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:21:03 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:21:03 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:21:03 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:21:03 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:21:05 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:21:06 [WARN]: Slow query:
+2026-04-30 11:21:06 [WARN]: Slow query:
+2026-04-30 11:21:06 [WARN]: Slow query:
+2026-04-30 11:21:06 [WARN]: Slow query:
+2026-04-30 11:21:06 [WARN]: Slow query:
+2026-04-30 11:21:06 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 11:21:06 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 11:21:06 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 11:21:15 [ERROR]: [RidePayment] Failed to update ride payment status for ride 3: column "payment_collected_at" of relation "rides" does not exist
+error: column "payment_collected_at" of relation "rides" does not exist
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async updateRidePaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/ridePaymentService.js:17:24)
+    at async createRidePayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/ridePaymentController.js:29:33)
+2026-04-30 11:21:15 [ERROR]: column "payment_collected_at" of relation "rides" does not exist
+error: column "payment_collected_at" of relation "rides" does not exist
+    at C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\pg\lib\client.js:631:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async updateRidePaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/ridePaymentService.js:17:24)
+    at async createRidePayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/ridePaymentController.js:29:33)
+2026-04-30 11:22:13 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:22:13 [ERROR]: Database query error:
+2026-04-30 11:22:15 [ERROR]: Database query error:
+2026-04-30 11:22:17 [ERROR]: Database query error:
+2026-04-30 11:22:19 [ERROR]: Database query error:
+2026-04-30 11:22:21 [ERROR]: Database query error:
+2026-04-30 11:22:23 [ERROR]: Database query error:
+2026-04-30 11:22:25 [ERROR]: Database query error:
+2026-04-30 11:22:27 [WARN]: Slow query:
+2026-04-30 11:22:29 [ERROR]: Database query error:
+2026-04-30 11:22:31 [WARN]: Slow query:
+2026-04-30 11:22:31 [ERROR]: Database query error:
+2026-04-30 11:22:33 [WARN]: Slow query:
+2026-04-30 11:22:33 [ERROR]: Database query error:
+2026-04-30 11:22:35 [WARN]: Slow query:
+2026-04-30 11:22:35 [ERROR]: Database query error:
+2026-04-30 11:22:37 [WARN]: Slow query:
+2026-04-30 11:22:38 [ERROR]: Database query error:
+2026-04-30 11:22:40 [ERROR]: Database query error:
+2026-04-30 11:22:42 [ERROR]: Database query error:
+2026-04-30 11:22:44 [ERROR]: Database query error:
+2026-04-30 11:22:46 [ERROR]: Database query error:
+2026-04-30 11:22:48 [ERROR]: Database query error:
+2026-04-30 11:22:50 [ERROR]: Database query error:
+2026-04-30 11:22:52 [ERROR]: Database query error:
+2026-04-30 11:22:54 [ERROR]: Database query error:
+2026-04-30 11:22:56 [ERROR]: Database query error:
+2026-04-30 11:22:57 [ERROR]: Database query error:
+2026-04-30 11:22:59 [ERROR]: Database query error:
+2026-04-30 11:23:01 [ERROR]: Database query error:
+2026-04-30 11:23:03 [ERROR]: Database query error:
+2026-04-30 11:23:05 [WARN]: Slow query:
+2026-04-30 11:23:05 [ERROR]: Database query error:
+2026-04-30 11:23:07 [WARN]: Slow query:
+2026-04-30 11:23:13 [ERROR]: Database query error:
+2026-04-30 11:23:15 [WARN]: Slow query:
+2026-04-30 11:23:16 [INFO]: PostgreSQL disconnected
+2026-04-30 11:23:50 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:23:50 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:23:50 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:23:50 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:23:51 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:23:51 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:23:52 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:23:54 [WARN]: Slow query:
+2026-04-30 11:23:54 [WARN]: Slow query:
+2026-04-30 11:23:54 [WARN]: Slow query:
+2026-04-30 11:23:54 [WARN]: Slow query:
+2026-04-30 11:23:54 [WARN]: Slow query:
+2026-04-30 11:23:54 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 11:23:54 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 11:23:54 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 11:24:04 [INFO]: [RidePayment] Cash payment recorded for ride 3
+2026-04-30 11:24:38 [WARN]: Slow query:
+2026-04-30 11:24:38 [ERROR]: Cannot read properties of undefined (reading 'map')
+TypeError: Cannot read properties of undefined (reading 'map')
+    at file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/validation.middleware.js:7:39
+    at Layer.handleRequest (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\sursi\OneDrive\Desktop\go mobility\GO____Backends\node_modules\router\lib\route.js:157:13)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:121:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:25:29 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:25:29 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:25:29 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:25:29 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:25:30 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:25:30 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:25:31 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:25:33 [WARN]: Slow query:
+2026-04-30 11:25:33 [WARN]: Slow query:
+2026-04-30 11:25:33 [WARN]: Slow query:
+2026-04-30 11:25:33 [WARN]: Slow query:
+2026-04-30 11:25:33 [WARN]: Slow query:
+2026-04-30 11:25:33 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 11:25:33 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 11:25:33 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 11:26:30 [WARN]: Slow query:
+2026-04-30 11:26:31 [ERROR]: Get ride details service error: You do not have access to this ride
+Error: You do not have access to this ride
+    at getRideDetails (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/rideService.js:866:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async confirmCashPayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/cashPaymentController.js:17:22)
+2026-04-30 11:26:31 [ERROR]: You do not have access to this ride
+Error: You do not have access to this ride
+    at getRideDetails (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/rideService.js:866:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async confirmCashPayment (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/cashPaymentController.js:17:22)
+2026-04-30 11:27:08 [WARN]: Slow query:
+2026-04-30 11:27:09 [ERROR]: Get ride details service error: You do not have access to this ride
+Error: You do not have access to this ride
+    at getRideDetails (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/rideService.js:866:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getCashPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/cashPaymentController.js:63:22)
+2026-04-30 11:27:09 [ERROR]: You do not have access to this ride
+Error: You do not have access to this ride
+    at getRideDetails (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/services/rideService.js:866:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getCashPaymentStatus (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/rides/controllers/cashPaymentController.js:63:22)
+2026-04-30 11:27:47 [WARN]: Slow query:
+2026-04-30 11:28:55 [WARN]: Slow query:
+2026-04-30 11:28:56 [DEBUG]: 💾 Subscription cached in Redis for user 54f398ba-ed4c-40d6-a79a-1522e57e6965
+2026-04-30 11:30:03 [WARN]: Slow query:
+2026-04-30 11:30:05 [WARN]: Slow query:
+2026-04-30 11:30:06 [ERROR]: [Subscription] purchaseSubscription error | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965: You already have an active "Basic Pass" subscription valid till 12/5/2026
+Error: You already have an active "Basic Pass" subscription valid till 12/5/2026
+    at purchaseSubscription (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/subscription/services/subscriptionService.js:198:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async purchase (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/subscription/controllers/subscriptionController.js:65:24)
+2026-04-30 11:30:06 [ERROR]: [SubscriptionController] You already have an active "Basic Pass" subscription valid till 12/5/2026
+2026-04-30 11:32:12 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:32:12 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:32:12 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:32:12 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:32:14 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:32:14 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:32:15 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:32:17 [WARN]: Slow query:
+2026-04-30 11:32:17 [WARN]: Slow query:
+2026-04-30 11:32:17 [WARN]: Slow query:
+2026-04-30 11:32:17 [WARN]: Slow query:
+2026-04-30 11:32:17 [WARN]: Slow query:
+2026-04-30 11:32:17 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 11:32:17 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 11:32:17 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 11:33:12 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:33:12 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:33:21 [INFO]: 🔐 OTP send initiated
+2026-04-30 11:33:22 [DEBUG]: 💾 OTP saved to database
+2026-04-30 11:33:22 [DEBUG]: 📤 SMS sending initiated
+2026-04-30 11:33:22 [DEBUG]: 📡 MSG91 API Request
+2026-04-30 11:33:23 [DEBUG]: 📨 MSG91 API Response Received
+2026-04-30 11:33:23 [INFO]: ✅ SMS sent successfully via MSG91
+2026-04-30 11:33:23 [INFO]: ✅ OTP sent successfully
+2026-04-30 11:33:45 [WARN]: Slow query:
+2026-04-30 11:33:45 [INFO]: ✅ OTP verified via Redis for 9876543210
+2026-04-30 11:33:47 [INFO]: User signed in successfully:
+2026-04-30 11:34:12 [WARN]: Slow query:
+2026-04-30 11:34:14 [WARN]: Slow query:
+2026-04-30 11:34:15 [INFO]: [Razorpay] Customer created | ID: cust_SjbB2t5VrkgWws | Email: user54f398ba-ed4c-40d6-a79a-1522e57e6965@example.com
+2026-04-30 11:34:16 [ERROR]: [Razorpay] createSubscription error:
+2026-04-30 11:34:16 [ERROR]: [Subscription] purchaseSubscription error | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965: Failed to create subscription: undefined
+Error: Failed to create subscription: undefined
+    at createSubscriptionPlan (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/services/razorpayService.js:185:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async purchaseSubscription (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/subscription/services/subscriptionService.js:227:34)
+    at async purchase (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/subscription/controllers/subscriptionController.js:65:24)
+2026-04-30 11:34:16 [ERROR]: [SubscriptionController] Failed to create subscription: undefined
+2026-04-30 11:35:45 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:35:45 [ERROR]: Database query error:
+2026-04-30 11:35:47 [ERROR]: Database query error:
+2026-04-30 11:35:49 [ERROR]: Database query error:
+2026-04-30 11:35:51 [ERROR]: Database query error:
+2026-04-30 11:35:54 [ERROR]: Database query error:
+2026-04-30 11:35:56 [ERROR]: Database query error:
+2026-04-30 11:35:58 [ERROR]: Database query error:
+2026-04-30 11:36:00 [WARN]: Slow query:
+2026-04-30 11:36:01 [ERROR]: Database query error:
+2026-04-30 11:36:03 [WARN]: Slow query:
+2026-04-30 11:36:03 [ERROR]: Database query error:
+2026-04-30 11:36:05 [WARN]: Slow query:
+2026-04-30 11:36:06 [ERROR]: Database query error:
+2026-04-30 11:36:08 [WARN]: Slow query:
+2026-04-30 11:36:08 [ERROR]: Database query error:
+2026-04-30 11:36:10 [WARN]: Slow query:
+2026-04-30 11:36:10 [ERROR]: Database query error:
+2026-04-30 11:36:12 [ERROR]: Database query error:
+2026-04-30 11:36:14 [ERROR]: Database query error:
+2026-04-30 11:36:16 [ERROR]: Database query error:
+2026-04-30 11:36:18 [ERROR]: Database query error:
+2026-04-30 11:36:20 [ERROR]: Database query error:
+2026-04-30 11:36:22 [ERROR]: Database query error:
+2026-04-30 11:36:24 [ERROR]: Database query error:
+2026-04-30 11:36:26 [ERROR]: Database query error:
+2026-04-30 11:36:28 [ERROR]: Database query error:
+2026-04-30 11:36:30 [ERROR]: Database query error:
+2026-04-30 11:36:32 [ERROR]: Database query error:
+2026-04-30 11:36:34 [ERROR]: Database query error:
+2026-04-30 11:36:36 [ERROR]: Database query error:
+2026-04-30 11:36:38 [WARN]: Slow query:
+2026-04-30 11:36:38 [ERROR]: Database query error:
+2026-04-30 11:36:40 [WARN]: Slow query:
+2026-04-30 11:36:44 [ERROR]: Database query error:
+2026-04-30 11:36:46 [ERROR]: Database query error:
+2026-04-30 11:36:48 [WARN]: Slow query:
+2026-04-30 11:36:50 [ERROR]: Database query error:
+2026-04-30 11:36:52 [WARN]: Slow query:
+2026-04-30 11:36:55 [INFO]: PostgreSQL disconnected
+2026-04-30 11:43:35 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:43:35 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:43:35 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:43:35 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:43:36 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:43:36 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:43:38 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:43:39 [WARN]: Slow query:
+2026-04-30 11:43:39 [WARN]: Slow query:
+2026-04-30 11:43:39 [WARN]: Slow query:
+2026-04-30 11:43:39 [WARN]: Slow query:
+2026-04-30 11:43:39 [WARN]: Slow query:
+2026-04-30 11:43:39 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 11:43:39 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 11:43:39 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 11:43:52 [WARN]: Slow query:
+2026-04-30 11:43:55 [WARN]: Slow query:
+2026-04-30 11:43:55 [INFO]: [Razorpay] Customer created | ID: cust_SjbB2t5VrkgWws | Email: user54f398ba-ed4c-40d6-a79a-1522e57e6965@example.com
+2026-04-30 11:43:56 [ERROR]: [Razorpay] createSubscription error:
+2026-04-30 11:43:56 [ERROR]: [Subscription] purchaseSubscription error | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965: Failed to create subscription: undefined
+Error: Failed to create subscription: undefined
+    at createSubscriptionPlan (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/services/razorpayService.js:185:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async purchaseSubscription (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/subscription/services/subscriptionService.js:227:34)
+    at async purchase (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/subscription/controllers/subscriptionController.js:65:24)
+2026-04-30 11:43:56 [ERROR]: [SubscriptionController] Failed to create subscription: undefined
+2026-04-30 11:45:26 [INFO]: 🔌 Redis: Using redis-13586.crce281.ap-south-1-3.ec2.cloud.redislabs.com:13586
+2026-04-30 11:45:26 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-04-30 11:45:26 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-04-30 11:45:26 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-04-30 11:45:27 [INFO]: ✅ Redis Cloud connected successfully
+2026-04-30 11:45:27 [INFO]: ✅ Redis Cloud ready
+2026-04-30 11:45:28 [INFO]: ✅ PostgreSQL connected successfully
+2026-04-30 11:45:30 [WARN]: Slow query:
+2026-04-30 11:45:30 [WARN]: Slow query:
+2026-04-30 11:45:30 [WARN]: Slow query:
+2026-04-30 11:45:30 [WARN]: Slow query:
+2026-04-30 11:45:30 [WARN]: Slow query:
+2026-04-30 11:45:30 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-04-30 11:45:30 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-04-30 11:45:30 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment
+2026-04-30 11:49:17 [ERROR]: Authentication failed: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:49:17 [ERROR]: Token expired
+AuthError: Token expired
+    at verifyToken (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/modules/auth/services/tokenService.js:44:19)
+    at authenticate (file:///C:/Users/sursi/OneDrive/Desktop/go%20mobility/GO____Backends/src/core/middleware/auth.middleware.js:104:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-30 11:49:26 [INFO]: 🔐 OTP send initiated
+2026-04-30 11:49:27 [DEBUG]: 💾 OTP saved to database
+2026-04-30 11:49:27 [DEBUG]: 📤 SMS sending initiated
+2026-04-30 11:49:27 [DEBUG]: 📡 MSG91 API Request
+2026-04-30 11:49:28 [DEBUG]: 📨 MSG91 API Response Received
+2026-04-30 11:49:28 [INFO]: ✅ SMS sent successfully via MSG91
+2026-04-30 11:49:28 [INFO]: ✅ OTP sent successfully
+2026-04-30 11:49:48 [WARN]: Slow query:
+2026-04-30 11:49:48 [INFO]: ✅ OTP verified via Redis for 9876543210
+2026-04-30 11:49:49 [INFO]: User signed in successfully:
+2026-04-30 11:50:19 [WARN]: Slow query:
+2026-04-30 11:50:21 [WARN]: Slow query:
+2026-04-30 11:50:22 [INFO]: [Razorpay] Customer created | ID: cust_SjbB2t5VrkgWws | Email: user54f398ba-ed4c-40d6-a79a-1522e57e6965@example.com
+2026-04-30 11:50:22 [ERROR]: [Razorpay] createSubscription error:
+2026-04-30 11:50:22 [WARN]: [Subscription] Razorpay subscription creation failed, continuing without auto-renew:
+2026-04-30 11:50:23 [DEBUG]: 🗑 Subscription cache invalidated for user 54f398ba-ed4c-40d6-a79a-1522e57e6965
+2026-04-30 11:50:23 [INFO]: [Subscription] New subscription | User: 54f398ba-ed4c-40d6-a79a-1522e57e6965 | Plan: Annual Pass | Razorpay: null | Expires: 2027-04-30T06:20:21.998Z

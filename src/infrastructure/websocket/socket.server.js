@@ -17,7 +17,7 @@ import {
     storeActiveRideSession,
     getActiveRideSession
 } from './reconnection.handler.js';
-import { addTrackingPoint } from './rideTracking.js';
+import { addTrackingPoint, getActualDistance, startRideTracking } from './rideTracking.js';
 
 /**
  * Setup all socket event handlers
@@ -137,97 +137,216 @@ export const setupSocketHandlers = () => {
          * Client emits: socket.emit('driver:location_update', { latitude, longitude, rideId })
          * rideId MUST be sent so we only send to that specific ride's passenger
          */
-        socket.on('driver:location_update', async (data) => {
-            try {
-                const user = getSocketUser(socket.id);
-                if (!user || user.userType !== 'driver') {
-                    socket.emit('error', { message: 'Unauthorized' });
-                    return;
-                }
+        // socket.on('driver:location_update', async (data) => {
+        //     try {
+        //         const user = getSocketUser(socket.id);
+        //         if (!user || user.userType !== 'driver') {
+        //             socket.emit('error', { message: 'Unauthorized' });
+        //             return;
+        //         }
 
-                const { latitude, longitude, rideId, accuracy, speed } = data;
+        //         const { latitude, longitude, rideId, accuracy, speed } = data;
 
-                if (!rideId) {
-                    socket.emit('error', { message: 'rideId required for location update' });
-                    return;
-                }
+        //         if (!rideId) {
+        //             socket.emit('error', { message: 'rideId required for location update' });
+        //             return;
+        //         }
 
-                const location = { latitude, longitude };
+        //         const location = { latitude, longitude };
 
-                // Save to Redis
-                await updateDriverLocation(user.userId, location, true);
+        //         // Save to Redis
+        //         await updateDriverLocation(user.userId, location, true);
 
-                // ONLY send to that specific ride room (driver + passenger joined via ride:join)
-                io.to(`ride:${rideId}`).emit('driver:map_ping', {
+        //         // ONLY send to that specific ride room (driver + passenger joined via ride:join)
+        //         io.to(`ride:${rideId}`).emit('driver:map_ping', {
+        //             rideId,
+        //             driverId: user.userId,
+        //             location,
+        //             accuracy: accuracy || null,
+        //             speed: speed || 0,
+        //             timestamp: new Date().toISOString()
+        //         });
+
+        //         // ETA calculate karo aur passenger ko bhejo
+        //         try {
+        //             const ride = await findRideById(rideId);
+        //             if (ride) {
+        //                 let targetLat, targetLng, etaType;
+
+        //                 if (['driver_assigned', 'driver_arrived'].includes(ride.status)) {
+        //                     // Driver pickup pe aa raha hai
+        //                     targetLat = ride.pickup_latitude;
+        //                     targetLng = ride.pickup_longitude;
+        //                     etaType   = 'pickup';
+        //                 } else if (ride.status === 'in_progress') {
+        //                     // Ride chal rahi hai — dropoff tak ETA
+        //                     targetLat = ride.dropoff_latitude;
+        //                     targetLng = ride.dropoff_longitude;
+        //                     etaType   = 'dropoff';
+        //                 }
+
+        //                 if (targetLat && targetLng) {
+        //                     const distKm     = calculateDistance(latitude, longitude, targetLat, targetLng);
+        //                     const etaMinutes = calculateDuration(distKm, ride.vehicle_type);
+
+        //                     io.to(`ride:${rideId}`).emit('ride:eta_update', {
+        //                         rideId,
+        //                         etaMinutes,
+        //                         distanceKm: distKm,
+        //                         etaType,   // 'pickup' ya 'dropoff'
+        //                         message: etaType === 'pickup'
+        //                             ? `Driver arriving in ${etaMinutes} min`
+        //                             : `Reaching destination in ${etaMinutes} min`,
+        //                         timestamp: new Date().toISOString()
+        //                     });
+        //                 }
+        //             }
+        //         } catch (etaErr) {
+        //             logger.warn('ETA calculation failed:', etaErr.message);
+        //         }
+
+        //         // Actual distance track karo — sirf in_progress rides ke liye
+        //         try {
+        //             const rideForTracking = await findRideById(rideId);
+        //             if (rideForTracking?.status === 'in_progress') {
+        //                 await addTrackingPoint(rideId, latitude, longitude);
+        //             }
+        //         } catch (trackErr) {
+        //             logger.warn('Distance tracking failed:', trackErr.message);
+        //         }
+
+        //         logger.debug('📍 Location ping sent to ride room', {
+        //             driverId: user.userId,
+        //             rideId,
+        //             location
+        //         });
+        //     } catch (error) {
+        //         logger.error('❌ Driver location update error', {
+        //             socketId: socket.id,
+        //             error: error.message
+        //         });
+        //         socket.emit('error', { message: error.message });
+        //     }
+        // });
+
+socket.on('driver:location_update', async (data) => {
+    try {
+        const user = getSocketUser(socket.id);
+        if (!user || user.userType !== 'driver') {
+            socket.emit('error', { message: 'Unauthorized' });
+            return;
+        }
+
+        const { latitude, longitude, rideId, accuracy, speed } = data;
+        if (!rideId) {
+            socket.emit('error', { message: 'rideId required' });
+            return;
+        }
+
+        const location = { latitude, longitude };
+
+        // Save to Redis
+        await updateDriverLocation(user.userId, location, true);
+
+        // Map ping — passenger ko location bhejo
+        io.to(`ride:${rideId}`).emit('driver:map_ping', {
+            rideId,
+            driverId: user.userId,
+            location,
+            accuracy: accuracy || null,
+            speed:    speed || 0,
+            timestamp: new Date().toISOString()
+        });
+
+        // ── Single DB query ──────────────────────────────────────────────
+        const ride = await findRideById(rideId);
+        if (!ride) return;
+
+        // ── ETA Calculate ─────────────────────────────────────────────────
+        try {
+            let targetLat, targetLng, etaType;
+
+            if (['driver_assigned', 'driver_arrived'].includes(ride.status)) {
+                targetLat = ride.pickup_latitude;
+                targetLng = ride.pickup_longitude;
+                etaType   = 'pickup';
+            } else if (ride.status === 'in_progress') {
+                targetLat = ride.dropoff_latitude;
+                targetLng = ride.dropoff_longitude;
+                etaType   = 'dropoff';
+            }
+
+            if (targetLat && targetLng) {
+                const distKm     = calculateDistance(latitude, longitude, targetLat, targetLng);
+                const etaMinutes = calculateDuration(distKm, ride.vehicle_type);
+
+                io.to(`ride:${rideId}`).emit('ride:eta_update', {
                     rideId,
-                    driverId: user.userId,
-                    location,
-                    accuracy: accuracy || null,
-                    speed: speed || 0,
+                    etaMinutes,
+                    distanceKm: distKm,
+                    etaType,
+                    message: etaType === 'pickup'
+                        ? `Driver arriving in ${etaMinutes} min`
+                        : `Reaching destination in ${etaMinutes} min`,
                     timestamp: new Date().toISOString()
                 });
-
-                // ETA calculate karo aur passenger ko bhejo
-                try {
-                    const ride = await findRideById(rideId);
-                    if (ride) {
-                        let targetLat, targetLng, etaType;
-
-                        if (['driver_assigned', 'driver_arrived'].includes(ride.status)) {
-                            // Driver pickup pe aa raha hai
-                            targetLat = ride.pickup_latitude;
-                            targetLng = ride.pickup_longitude;
-                            etaType   = 'pickup';
-                        } else if (ride.status === 'in_progress') {
-                            // Ride chal rahi hai — dropoff tak ETA
-                            targetLat = ride.dropoff_latitude;
-                            targetLng = ride.dropoff_longitude;
-                            etaType   = 'dropoff';
-                        }
-
-                        if (targetLat && targetLng) {
-                            const distKm     = calculateDistance(latitude, longitude, targetLat, targetLng);
-                            const etaMinutes = calculateDuration(distKm, ride.vehicle_type);
-
-                            io.to(`ride:${rideId}`).emit('ride:eta_update', {
-                                rideId,
-                                etaMinutes,
-                                distanceKm: distKm,
-                                etaType,   // 'pickup' ya 'dropoff'
-                                message: etaType === 'pickup'
-                                    ? `Driver arriving in ${etaMinutes} min`
-                                    : `Reaching destination in ${etaMinutes} min`,
-                                timestamp: new Date().toISOString()
-                            });
-                        }
-                    }
-                } catch (etaErr) {
-                    logger.warn('ETA calculation failed:', etaErr.message);
-                }
-
-                // Actual distance track karo — sirf in_progress rides ke liye
-                try {
-                    const rideForTracking = await findRideById(rideId);
-                    if (rideForTracking?.status === 'in_progress') {
-                        await addTrackingPoint(rideId, latitude, longitude);
-                    }
-                } catch (trackErr) {
-                    logger.warn('Distance tracking failed:', trackErr.message);
-                }
-
-                logger.debug('📍 Location ping sent to ride room', {
-                    driverId: user.userId,
-                    rideId,
-                    location
-                });
-            } catch (error) {
-                logger.error('❌ Driver location update error', {
-                    socketId: socket.id,
-                    error: error.message
-                });
-                socket.emit('error', { message: error.message });
             }
-        });
+        } catch (etaErr) {
+            logger.warn('ETA calculation failed:', etaErr.message);
+        }
+
+        // ── Distance Tracking + Dynamic Fare ─────────────────────────────
+       if (ride.status === 'in_progress') {
+    try {
+        // Tracking shuru nahi hua toh start karo
+        const existingData = await import('../../config/redis.config.js')
+            .then(m => m.default.hgetall(`ride:tracking:${rideId}`));
+        if (!existingData || !existingData.lastLat) {
+            await startRideTracking(rideId, latitude, longitude);
+        }
+        
+        await addTrackingPoint(rideId, latitude, longitude);
+
+                // ── Dynamic Fare Update ───────────────────────────────────
+                const trackingData = await getActualDistance(rideId);
+                if (trackingData !== null) {
+                    // Driven distance se current fare calculate karo
+                    const drivenKm      = trackingData;
+                    const perKmRate     = Number(ride.distance_fare) / Number(ride.distance_km);
+                    const currentFare   = Number(ride.base_fare)
+                                       + (drivenKm * perKmRate)
+                                       + Number(ride.convenience_fee || 0);
+
+                    // Waiting charges — speed 0 ya null hone pe
+                    const isWaiting       = !speed || speed < 2;
+                    const waitingPerMin   = 1.5; // Rs per minute
+                    const waitingCharges  = 0;   // Future: track waiting time
+
+                    io.to(`ride:${rideId}`).emit('ride:fare_update', {
+                        rideId,
+                        drivenKm:       Math.round(drivenKm * 100) / 100,
+                        currentFare:    Math.round(currentFare * 100) / 100,
+                        baseFare:       ride.base_fare,
+                        distanceFare:   Math.round(drivenKm * perKmRate * 100) / 100,
+                        convenienceFee: ride.convenience_fee || 0,
+                        waitingCharges,
+                        isWaiting,
+                        timestamp:      new Date().toISOString()
+                    });
+                }
+            } catch (trackErr) {
+                logger.warn('Distance tracking failed:', trackErr.message);
+            }
+        }
+
+        logger.debug('📍 Location ping sent', { driverId: user.userId, rideId, location });
+
+    } catch (error) {
+        logger.error('❌ Driver location update error', { socketId: socket.id, error: error.message });
+        socket.emit('error', { message: error.message });
+    }
+});
+
 
         /**
          * Driver availability toggle

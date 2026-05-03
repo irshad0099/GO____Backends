@@ -53,7 +53,7 @@ export const getRidePaymentStatus = async (rideId) => {
         const ride = await findRideById(rideId);
         
         if (!ride) {
-            throw new ApiError('Ride not found', 404);
+            throw new ApiError(404, 'Ride not found');
         }
 
         return {
@@ -85,15 +85,15 @@ export const confirmCashCollection = async (rideId, driverId) => {
         const ride = await findRideById(rideId);
         
         if (!ride) {
-            throw new ApiError('Ride not found', 404);
+            throw new ApiError(404, 'Ride not found');
         }
 
         if (ride.driver_id !== driverId) {
-            throw new ApiError('You are not assigned to this ride', 403);
+            throw new ApiError(403, 'You are not assigned to this ride');
         }
 
         if (ride.payment_status !== 'cash_collected') {
-            throw new ApiError('Cash payment not recorded for this ride', 400);
+            throw new ApiError(400, 'Cash payment not recorded for this ride');
         }
 
         // Mark cash as confirmed by driver

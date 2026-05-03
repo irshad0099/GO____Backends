@@ -1,6 +1,27 @@
 import { db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 
+// ─── Per-ride cash collection record ────────────────────────────────────────
+
+export const getCashCollectionByRideId = async (client, rideId) => {
+    const { rows } = await (client || db).query(
+        `SELECT * FROM cash_collections WHERE ride_id = $1`,
+        [rideId]
+    );
+    return rows[0] || null;
+};
+
+export const createCashCollection = async (client, { rideId, driverId, passengerId, finalFare, platformFee, netEarnings, method, status = 'confirmed' }) => {
+    const { rows } = await (client || db).query(
+        `INSERT INTO cash_collections
+            (ride_id, driver_id, passenger_id, final_fare, platform_fee, net_earnings, collection_method, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         RETURNING *`,
+        [rideId, driverId, passengerId, finalFare, platformFee, netEarnings, method, status]
+    );
+    return rows[0];
+};
+
 // ─── Get driver's cash balance ──────────────────────────────────────────────
 export const findCashBalance = async (driverId) => {
     try {

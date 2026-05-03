@@ -14,8 +14,9 @@ export const startWorkers = async () => {
             import('./workers/notificationWorker.js'),
             import('./workers/rideCompletionWorker.js'),
             import('./workers/paymentWorker.js'),
+            import('./workers/postPaymentWorker.js'),
         ]);
-        logger.info('✅ BullMQ workers started: notification, ride-completion, payment');
+        logger.info('✅ BullMQ workers started: notification, ride-completion, payment, post-payment');
     } catch (err) {
         // Worker start fail hone pe server band nahi hona chahiye
         // Worst case: queue mein jobs jam jayenge, next restart pe process honge

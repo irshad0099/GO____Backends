@@ -66,13 +66,18 @@ export const getUserSockets = (userId) => {
     return sockets;
 };
 
+const DRIVER_LOC_HASH  = 'driver:locations';  // Redis Hash — ek field per driver
+const DRIVER_LOC_TTL   = 3600;                 // 1 hour inactivity ke baad expire
+
 /**
- * Get all drivers and their locations from Redis
+ * Get all drivers and their locations from Redis Hash
+ * Ek blob nahi — individual fields hain, race condition nahi
  */
-export const getAvailableDrivers = async (radius = 5000) => {
+export const getAvailableDrivers = async () => {
     try {
-        const drivers = await redis.get('available_drivers');
-        return drivers ? JSON.parse(drivers) : [];
+        const raw = await redis.hgetall(DRIVER_LOC_HASH);
+        if (!raw) return [];
+        return Object.values(raw).map(v => JSON.parse(v));
     } catch (error) {
         logger.error('❌ Failed to get available drivers', { error: error.message });
         return [];
@@ -80,27 +85,20 @@ export const getAvailableDrivers = async (radius = 5000) => {
 };
 
 /**
- * Store driver location and availability
+ * Store driver location — individual Redis Hash field per driver
+ * Atomic hSet — koi race condition nahi
  */
 export const updateDriverLocation = async (driverId, location, isAvailable = true) => {
     try {
-        const drivers = await getAvailableDrivers();
-        const index = drivers.findIndex(d => d.driverId === driverId);
-
         const driverData = {
             driverId,
             location,
             isAvailable,
             updatedAt: new Date().toISOString()
         };
-
-        if (index >= 0) {
-            drivers[index] = driverData;
-        } else {
-            drivers.push(driverData);
-        }
-
-        await redis.setEx('available_drivers', 3600, JSON.stringify(drivers)); // 1 hour TTL
+        await redis.hSet(DRIVER_LOC_HASH, String(driverId), JSON.stringify(driverData));
+        // Hash ka expiry reset karo — 1 hour ke baad stale data clean hoga
+        await redis.expire(DRIVER_LOC_HASH, DRIVER_LOC_TTL);
         logger.debug('✅ Driver location updated', { driverId, location });
     } catch (error) {
         logger.error('❌ Failed to update driver location', { driverId, error: error.message });

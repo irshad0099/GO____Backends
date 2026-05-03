@@ -1,4 +1,7 @@
+import jwt from 'jsonwebtoken';
 import { getIO } from '../../config/websocketConfig.js';
+import { ENV } from '../../config/envConfig.js';
+import redis from '../../config/redis.config.js';
 import logger, { logSocketEvent } from '../../core/logger/socketLogger.js';
 import {
     registerSocketUser,
@@ -24,6 +27,22 @@ import { addTrackingPoint, getActualDistance, startRideTracking } from './rideTr
  */
 export const setupSocketHandlers = () => {
     const io = getIO();
+
+    // Har connection pe JWT verify karo — bina token ke connection reject
+    io.use((socket, next) => {
+        const token = socket.handshake.auth?.token;
+        if (!token) {
+            return next(new Error('Authentication token required'));
+        }
+        try {
+            const decoded = jwt.verify(token, ENV.JWT_SECRET);
+            socket.data.userId   = decoded.userId;
+            socket.data.userType = decoded.role;
+            next();
+        } catch {
+            next(new Error('Invalid or expired token'));
+        }
+    });
 
     io.on('connection', (socket) => {
         logger.info('🔌 New socket connection', { socketId: socket.id });
@@ -62,10 +81,13 @@ export const setupSocketHandlers = () => {
          */
         socket.on('auth:login', async (data) => {
             try {
-                const { userId, userType, phone } = data;
+                const { phone } = data || {};
+                // Token middleware se verified values use karo — client ki values trust mat karo
+                const userId   = socket.data.userId;
+                const userType = socket.data.userType;
 
                 if (!userId || !userType) {
-                    socket.emit('auth:error', { message: 'Missing userId or userType' });
+                    socket.emit('auth:error', { message: 'Authentication failed' });
                     return;
                 }
 
@@ -92,12 +114,14 @@ export const setupSocketHandlers = () => {
          * Handle reconnection after server restart or network loss
          * Client emits: socket.emit('auth:reconnect', { userId, userType })
          */
-        socket.on('auth:reconnect', async (data) => {
+        socket.on('auth:reconnect', async (_data) => {
             try {
-                const { userId, userType } = data;
+                // Token middleware se verified values use karo
+                const userId   = socket.data.userId;
+                const userType = socket.data.userType;
 
                 if (!userId || !userType) {
-                    socket.emit('auth:error', { message: 'Missing userId or userType' });
+                    socket.emit('auth:error', { message: 'Authentication failed' });
                     return;
                 }
 
@@ -258,8 +282,20 @@ socket.on('driver:location_update', async (data) => {
             timestamp: new Date().toISOString()
         });
 
-        // ── Single DB query ──────────────────────────────────────────────
-        const ride = await findRideById(rideId);
+        // ── Ride fetch — Redis cache (30s) se, warna DB ─────────────────
+        let ride = null;
+        const rideCacheKey = `ride:active:${rideId}`;
+        try {
+            const cached = await redis.get(rideCacheKey);
+            if (cached) {
+                ride = JSON.parse(cached);
+            } else {
+                ride = await findRideById(rideId);
+                if (ride) await redis.setex(rideCacheKey, 30, JSON.stringify(ride));
+            }
+        } catch {
+            ride = await findRideById(rideId);
+        }
         if (!ride) return;
 
         // ── ETA Calculate ─────────────────────────────────────────────────
@@ -299,8 +335,7 @@ socket.on('driver:location_update', async (data) => {
        if (ride.status === 'in_progress') {
     try {
         // Tracking shuru nahi hua toh start karo
-        const existingData = await import('../../config/redis.config.js')
-            .then(m => m.default.hgetall(`ride:tracking:${rideId}`));
+        const existingData = await redis.hgetall(`ride:tracking:${rideId}`);
         if (!existingData || !existingData.lastLat) {
             await startRideTracking(rideId, latitude, longitude);
         }
@@ -362,7 +397,8 @@ socket.on('driver:location_update', async (data) => {
 
                 const { isAvailable } = data;
 
-                io.emit('driver:availability_changed', {
+                // Sirf driver ko acknowledge karo — sabko broadcast nahi
+                socket.emit('driver:availability_changed', {
                     driverId: user.userId,
                     isAvailable,
                     timestamp: new Date().toISOString()
@@ -394,8 +430,8 @@ socket.on('driver:location_update', async (data) => {
 
                 const { rideId } = data;
 
-                // Notify all (ride will be removed from other drivers' lists by backend)
-                io.emit('ride:accepted', {
+                // Sirf us ride room ko notify karo — global broadcast nahi
+                io.to(`ride:${rideId}`).emit('ride:accepted', {
                     rideId,
                     driverId: user.userId,
                     timestamp: new Date().toISOString()
@@ -421,7 +457,8 @@ socket.on('driver:location_update', async (data) => {
 
                 const { rideId, reason } = data;
 
-                io.emit('ride:rejected', {
+                // Sirf us ride room ko notify karo — global broadcast nahi
+                io.to(`ride:${rideId}`).emit('ride:rejected', {
                     rideId,
                     driverId: user.userId,
                     reason,

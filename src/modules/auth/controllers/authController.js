@@ -90,10 +90,10 @@ export const signin = async (req, res, next) => {
     try {
         const { phone, email, role } = req.body;
         const result = await authService.signin(phone, email, role);
-        res.status(200).json({ 
-            success: true, 
-            message: 'OTP sent successfully', 
-            data: result 
+        res.status(200).json({
+            success: true,
+            message: result.message,
+            data: result
         });
     } catch (error) {
         next(error);

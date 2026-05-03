@@ -145,34 +145,14 @@
 import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import { ENV }                       from '../../config/envConfig.js';
 
-// ─── Redis Store factory ──────────────────────────────────────────────────────
-// Har limiter ka alag prefix — taaki keys mix na hon
-// const makeStore = (prefix) => new RedisStore({
-//     // sendCommand: (...args) => redis.call(...args),
-//     // ✅ Correct
-//      sendCommand: (...args) => redis.sendCommand(args),
-//     prefix,
-// });
-
-
-const makeStore = (prefix) => new RedisStore({
-    sendCommand: (command, ...args) => redis.call(command, ...args),
-    prefix,
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  In-memory store use ho raha hai (express-rate-limit default)
-//  Redis store hata diya — Upstash rate limit hit ho raha tha
-// ─────────────────────────────────────────────────────────────────────────────
-
 // ─────────────────────────────────────────────────────────────────────────────
 //  GENERAL LIMITERS
 // ─────────────────────────────────────────────────────────────────────────────
 
-// General API rate limiter
+// General API rate limiter — 100 req/15min per IP in production
 export const apiLimiter = rateLimit({
-    windowMs: ENV.RATE_LIMIT_WINDOW,
-    max:      ENV.RATE_LIMIT_MAX,
+    windowMs: ENV.RATE_LIMIT_WINDOW || 15 * 60 * 1000,
+    max:      ENV.RATE_LIMIT_MAX_REQUESTS || 100,
     message: {
         success: false,
         message: 'Too many requests, please try again later.'

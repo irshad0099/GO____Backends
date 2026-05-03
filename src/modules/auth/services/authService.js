@@ -27,10 +27,6 @@ export const signup = async ({ phone, email, fullName ,role}) => {
 
         // Send OTP
         const result = await otpService.sendOTP(phone, 'signup');
-        console.log('OTP service result:', result);
-        // Store temporary data in cache/session if needed
-        // For now, just return success
-
         return result;
     } catch (error) {
         logger.error('Signup service error:', error);
@@ -141,15 +137,12 @@ export const signin = async (phone, email, role) => {
             user = await userRepo.findUserByPhoneAndRole(phone, role);
         }
 
-        if (!user) {
-            throw new NotFoundError('User not found. Please sign up first.');
-        }
-        if (!user.is_active) {
-            throw new AuthError('Account is deactivated. Please contact support.');
+        // Generic response — don't reveal if phone/email is registered or not
+        if (!user || !user.is_active) {
+            return { message: 'If this account exists, an OTP will be sent', expiryInMinutes: 5 };
         }
 
         if (isEmail) {
-            // Email pe OTP bhejo
             const result = await otpService.sendOTP(email, 'signin');
             await sendOtpEmail({
                 to:      email,
@@ -157,11 +150,10 @@ export const signin = async (phone, email, role) => {
                 otp:     result.otp,
                 purpose: 'login'
             });
-            return { message: 'OTP sent to your email', expiryInMinutes: 5 };
+            return { message: 'If this account exists, an OTP will be sent', expiryInMinutes: 5 };
         } else {
-            // Phone pe OTP bhejo
-            const result = await otpService.sendOTP(phone, 'signin');
-            return result;
+            await otpService.sendOTP(phone, 'signin');
+            return { message: 'If this account exists, an OTP will be sent', expiryInMinutes: 5 };
         }
     } catch (error) {
         logger.error('Signin service error:', error);

@@ -16,11 +16,9 @@ export const s3Upload = multer({
     bucket: process.env.AWS_BUCKET_NAME || 'default-bucket',
     key: function (req, file, cb) {
 
-  const type = req.body.type; // aadhaar, pan etc
-  const userId = req.user.id; // driver_id or rider_id
+  const type = req.body.type;
+  const userId = req.user.id;
   const isFront = req.body.isFront === "true";
-  console.log("userId from req.user:", {...req.user});
-        console.log("Upload request received:", { type, userId, isFront, originalname: file.originalname });
   const folderMap = {
     aadhaar: "aadhaar",
     pan: "pan",

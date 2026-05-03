@@ -36,9 +36,11 @@ export const triggerSOS = async (userId, data) => {
 
 export const cancelSOS = async (userId, alertId) => {
     try {
-        const result = await sosRepo.updateStatus(alertId, 'false_alarm', 'Cancelled by user', userId);
-        if (!result) throw new ApiError(404, 'SOS alert not found');
+        const existing = await sosRepo.findById(alertId);
+        if (!existing) throw new ApiError(404, 'SOS alert not found');
+        if (existing.triggered_by !== userId) throw new ApiError(403, 'You can only cancel your own SOS alerts');
 
+        const result = await sosRepo.updateStatus(alertId, 'false_alarm', 'Cancelled by user', userId);
         return { alertId: result.id, status: 'false_alarm', message: 'SOS cancelled' };
     } catch (error) {
         logger.error('Cancel SOS service error:', error);

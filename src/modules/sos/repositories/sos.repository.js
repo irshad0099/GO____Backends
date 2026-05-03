@@ -17,6 +17,11 @@ export const insertAlert = async (data) => {
     }
 };
 
+export const findById = async (id) => {
+    const { rows } = await db.query('SELECT * FROM sos_alerts WHERE id = $1', [id]);
+    return rows[0];
+};
+
 export const updateStatus = async (id, status, adminNotes, resolvedBy) => {
     try {
         const { rows } = await db.query(

@@ -38,11 +38,12 @@ import { ENV } from '../../config/envConfig.js';
  * maxRetriesPerRequest: null — BullMQ ki hard requirement hai.
  */
 export const getRedisConnectionOptions = () => {
-    const useUpstash = !!process.env.UPSTASH_REDIS_URL;
+    const upstashUrl = process.env.UPSTASH_REDIS_URL;
+    const useUpstash = !!upstashUrl;
 
     if (useUpstash) {
         // URL format: rediss://default:<password>@<host>:<port>
-        const parsed = new URL(ENV.UPSTASH_REDIS_URL);
+        const parsed = new URL(upstashUrl);
 
         return {
             host:     parsed.hostname,

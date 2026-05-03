@@ -15,6 +15,7 @@ console.log(`API Prefix: "${ENV.API_PREFIX}"`);
 
 // Parse JSON — rawBody saved for webhook signature verification
 app.use(express.json({
+    limit: '10kb',
     verify: (req, _res, buf) => { req.rawBody = buf; },
 }));
 
@@ -45,8 +46,6 @@ app.use(compression());
 // HTTP Parameter Pollution protection
 app.use(hpp());
 
-// Body parser with size limit
-app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // DB me har request/response log karo

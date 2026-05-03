@@ -147,13 +147,18 @@ export const findActiveRideByDriver = async (driverId) => {
 
 export const findNearbyDrivers = async (vehicleType, latitude, longitude, radiusKm = 5) => {
     try {
+        // Bounding box pre-filter — index use karta hai, full table scan nahi
+        // 1 degree lat ≈ 111 km, 1 degree lng ≈ 111*cos(lat) km
+        const latDelta = radiusKm / 111.0;
+        const lngDelta = radiusKm / (111.0 * Math.cos((latitude * Math.PI) / 180));
+
         const result = await db.query(
-            `SELECT d.*, 
+            `SELECT d.*,
                     dv.vehicle_type, dv.vehicle_number, dv.vehicle_model, dv.vehicle_color,
                     u.full_name, u.phone_number, u.fcm_token,
-                    (6371 * acos(cos(radians($1)) * cos(radians(d.current_latitude)) * 
-                    cos(radians(d.current_longitude) - radians($2)) + 
-                    sin(radians($1)) * sin(radians(d.current_latitude)))) AS distance
+                    (6371 * acos(LEAST(1.0, cos(radians($1)) * cos(radians(d.current_latitude)) *
+                    cos(radians(d.current_longitude) - radians($2)) +
+                    sin(radians($1)) * sin(radians(d.current_latitude))))) AS distance
              FROM drivers d
              JOIN driver_vehicle dv ON d.id = dv.driver_id
              JOIN users u ON d.user_id = u.id
@@ -161,14 +166,18 @@ export const findNearbyDrivers = async (vehicleType, latitude, longitude, radius
                AND d.is_verified = true
                AND d.is_available = true
                AND d.is_on_duty = false
-               AND d.current_latitude IS NOT NULL
-               AND d.current_longitude IS NOT NULL
-               AND (6371 * acos(cos(radians($1)) * cos(radians(d.current_latitude)) * 
-                    cos(radians(d.current_longitude) - radians($2)) + 
-                    sin(radians($1)) * sin(radians(d.current_latitude)))) <= $4
+               AND d.current_latitude  BETWEEN $5 AND $6
+               AND d.current_longitude BETWEEN $7 AND $8
+               AND (6371 * acos(LEAST(1.0, cos(radians($1)) * cos(radians(d.current_latitude)) *
+                    cos(radians(d.current_longitude) - radians($2)) +
+                    sin(radians($1)) * sin(radians(d.current_latitude))))) <= $4
              ORDER BY distance
              LIMIT 10`,
-            [latitude, longitude, vehicleType, radiusKm]
+            [
+                latitude, longitude, vehicleType, radiusKm,
+                latitude - latDelta, latitude + latDelta,
+                longitude - lngDelta, longitude + lngDelta,
+            ]
         );
         return result.rows;
     } catch (error) {

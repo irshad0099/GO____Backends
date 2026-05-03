@@ -1,6 +1,7 @@
 import * as cancelRepo from '../repositories/rideCancellation.repository.js';
 import * as rideRepo from '../repositories/ride.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
+import { chargeCancellationFee } from '../../wallet/services/walletService.js';
 import { NotFoundError, ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 import { ENV } from '../../../config/envConfig.js';
@@ -58,11 +59,24 @@ export const cancelRide = async (userId, rideId, data) => {
         // });
 
 
-        // BAAD MEIN — sirf yeh rakho
-await rideRepo.updateRideStatus(rideId, 'cancelled', {
-    cancelled_by: 'passenger',
-    cancellation_reason: data.reason_code,
-});
+        await rideRepo.updateRideStatus(rideId, 'cancelled', {
+            cancelled_by: 'passenger',
+            cancellation_reason: data.reason_code,
+        });
+
+        // Penalty actually charge karo wallet se
+        if (penaltyApplied && penaltyAmount > 0) {
+            try {
+                await chargeCancellationFee(userId, {
+                    ride_id:     rideId,
+                    amount:      penaltyAmount,
+                    description: `Cancellation fee for ride #${rideId}`,
+                });
+            } catch (feeErr) {
+                // Cancellation toh ho gayi — fee fail hone pe log karo, ride block mat karo
+                logger.error(`[cancelRide] Cancellation fee charge failed | ride=${rideId} | user=${userId}:`, feeErr.message);
+            }
+        }
 
         return {
             rideId,

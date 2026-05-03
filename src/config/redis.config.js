@@ -33,13 +33,14 @@ import { ENV } from './envConfig.js';
 
 // Backward compatibility: agar UPSTASH_REDIS_URL explicitly set hai .env mein toh woh use karo
 // Warna REDIS_HOST/PORT/PASSWORD use karo (naya Redis / local Redis)
-const useUpstash = !!process.env.UPSTASH_REDIS_URL;
+const upstashUrl = process.env.UPSTASH_REDIS_URL;
+const useUpstash = !!upstashUrl;
 
 let redis;
 
 if (useUpstash) {
     logger.info('🔌 Redis: Using Upstash URL');
-    redis = new Redis(ENV.UPSTASH_REDIS_URL, {
+    redis = new Redis(upstashUrl, {
         tls: { rejectUnauthorized: false },
         maxRetriesPerRequest: null,
         enableReadyCheck: false,

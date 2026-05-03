@@ -34,7 +34,7 @@ export const storeSessionInRedis = async (socketId, userId, userType, metadata =
         const key = `${SESSION_KEY_PREFIX}:${userId}`;
 
         // Store in Redis with 24-hour TTL
-        await redis.setEx(
+        await redis.setex(
             key,
             SESSION_TTL,
             JSON.stringify(sessionData)
@@ -162,7 +162,7 @@ export const storeActiveRideSession = async (userId, userType, rideId, rideData)
         };
 
         // Store with 1-hour TTL (rides don't last long)
-        await redis.setEx(key, 3600, JSON.stringify(sessionData));
+        await redis.setex(key, 3600, JSON.stringify(sessionData));
 
         logger.info('🚗 Active ride session stored', { userId, rideId });
         return sessionData;

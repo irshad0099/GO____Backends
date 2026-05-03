@@ -55,6 +55,7 @@
 
 
 
+import jwt from 'jsonwebtoken';
 import redis from '../../config/redis.config.js';
 import logger from '../logger/logger.js';
 
@@ -94,6 +95,14 @@ export const getDriverLocation = async (driverId) => {
 
 // ─── Token Blacklist (logout pe) ──────────────────────────────────────────────
 export const blacklistToken = async (token, expirySeconds = 86400) => {
+    // Token ki actual remaining validity use karo — 24h fixed nahi
+    try {
+        const decoded = jwt.decode(token);
+        if (decoded?.exp) {
+            const remaining = decoded.exp - Math.floor(Date.now() / 1000);
+            if (remaining > 0) expirySeconds = remaining;
+        }
+    } catch { /* decode fail pe default use karo */ }
     await redis.setex(`blacklist:${token}`, expirySeconds, '1');
 };
 

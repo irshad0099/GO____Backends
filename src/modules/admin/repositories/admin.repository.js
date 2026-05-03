@@ -18,12 +18,12 @@ export const getDashboardStats = async () => {
                 (SELECT COUNT(*) FROM users WHERE is_active = TRUE)                 AS active_users,
 
                 (SELECT COUNT(*) FROM drivers)                                       AS total_drivers,
-                (SELECT COUNT(*) FROM drivers WHERE is_online = TRUE)               AS online_drivers,
+                (SELECT COUNT(*) FROM drivers WHERE is_available = TRUE)             AS online_drivers,
                 (SELECT COUNT(*) FROM drivers WHERE is_verified = TRUE)             AS verified_drivers,
 
                 (SELECT COUNT(*) FROM rides)                                         AS total_rides,
                 (SELECT COUNT(*) FROM rides WHERE DATE(created_at) = CURRENT_DATE)  AS rides_today,
-                (SELECT COUNT(*) FROM rides WHERE status = 'ongoing')               AS ongoing_rides,
+                (SELECT COUNT(*) FROM rides WHERE status = 'in_progress')           AS ongoing_rides,
                 (SELECT COUNT(*) FROM rides WHERE status = 'completed')             AS completed_rides,
                 (SELECT COUNT(*) FROM rides WHERE status = 'cancelled')             AS cancelled_rides,
 
@@ -140,8 +140,8 @@ export const getAllDrivers = async ({ limit, offset, search, status, isVerified 
             query += ` AND (u.full_name ILIKE $${idx} OR u.email ILIKE $${idx} OR u.phone_number ILIKE $${idx})`;
             params.push(`%${search}%`); idx++;
         }
-        if (status === 'online')  { query += ` AND d.is_online = TRUE`; }
-        if (status === 'offline') { query += ` AND d.is_online = FALSE`; }
+        if (status === 'online')  { query += ` AND d.is_available = TRUE`; }
+        if (status === 'offline') { query += ` AND d.is_available = FALSE`; }
         if (isVerified === true)  { query += ` AND d.is_verified = TRUE`; }
         if (isVerified === false) { query += ` AND d.is_verified = FALSE`; }
 
@@ -166,8 +166,8 @@ export const getAllDriversCount = async ({ search, status, isVerified }) => {
             query += ` AND (u.full_name ILIKE $${idx} OR u.email ILIKE $${idx} OR u.phone_number ILIKE $${idx})`;
             params.push(`%${search}%`); idx++;
         }
-        if (status === 'online')  { query += ` AND d.is_online = TRUE`; }
-        if (status === 'offline') { query += ` AND d.is_online = FALSE`; }
+        if (status === 'online')  { query += ` AND d.is_available = TRUE`; }
+        if (status === 'offline') { query += ` AND d.is_available = FALSE`; }
         if (isVerified === true)  { query += ` AND d.is_verified = TRUE`; }
         if (isVerified === false) { query += ` AND d.is_verified = FALSE`; }
 

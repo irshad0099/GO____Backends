@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import * as schedRepo from '../../modules/rides/repositories/scheduledRide.repository.js';
 import { requestRide } from '../../modules/rides/services/rideService.js';
+import { db } from '../../infrastructure/database/postgres.js';
 import logger from '../../core/logger/logger.js';
 
 // Every 2 minutes: rides check karo jinka pickup_time 15 min ke andar hai
@@ -48,4 +49,20 @@ export const startScheduledRideCron = () => {
     });
 
     logger.info('[ScheduledRideCron] Started — checking every 2 minutes');
+};
+
+// Daily at 3 AM: api_logs 30 din se purana data delete karo
+export const startApiLogCleanupCron = () => {
+    cron.schedule('0 3 * * *', async () => {
+        try {
+            const result = await db.query(
+                `DELETE FROM api_logs WHERE created_at < NOW() - INTERVAL '30 days'`
+            );
+            logger.info(`[ApiLogCleanup] Deleted ${result.rowCount} old log entries`);
+        } catch (err) {
+            logger.error(`[ApiLogCleanup] Error: ${err.message}`);
+        }
+    });
+
+    logger.info('[ApiLogCleanup] Started — runs daily at 3 AM');
 };

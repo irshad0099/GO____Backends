@@ -36,6 +36,7 @@ import {
 } from '../../../infrastructure/websocket/assignment.handler.js';
 import { addRideCompletionJob, addNotificationJob } from '../../../infrastructure/queue/rideQueue.js';
 import { startRideTracking, getActualDistance, clearRideTracking } from '../../../infrastructure/websocket/rideTracking.js';
+import { sendNotification } from '../../../core/services/firebaseService.js';
 
 const safeEmit = (fn, label) => {
     try { fn(); } catch (err) { logger.warn(`Socket emit failed (${label}): ${err.message}`); }

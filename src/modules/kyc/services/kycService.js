@@ -34,9 +34,8 @@ const uploadKycFile = async (userId, docType, buffer, mimeType) => {
 
 // S3 URL se file download karke Buffer return karo
 const downloadFromS3 = async (fileUrl) => {
-    // URL format: https://{bucket}.s3.{region}.amazonaws.com/{key}
     const url = new URL(fileUrl);
-    const key = url.pathname.slice(1); // leading slash hata do
+    const key = url.pathname.slice(1);
     const command = new GetObjectCommand({ Bucket: S3_BUCKET, Key: key });
     const response = await s3.send(command);
     const chunks = [];

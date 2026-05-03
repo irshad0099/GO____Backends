@@ -1,8 +1,9 @@
 import crypto from 'crypto';
 import { pool } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
+import { ENV } from '../../../config/envConfig.js';
 import { addPaymentPostActionJob } from '../../../infrastructure/queue/payment.queue.js';
-import { createRazorpayOrder } from '../../../core/services/razorpayService.js';
+import { createRazorpayOrder, createRazorpayRefund } from '../../../core/services/razorpayService.js';
 import { generateRidePaymentQR, generateWalletRechargeQR } from '../../../core/services/qrService.js';
 import {
     createPaymentOrder,
@@ -65,7 +66,7 @@ const generateRefundNumber = () => {
 
 // Verify Razorpay webhook signature
 const verifyRazorpaySignature = (gatewayOrderId, gatewayPaymentId, signature) => {
-    const secret   = process.env.RAZORPAY_KEY_SECRET;
+    const secret   = ENV.RAZORPAY_KEY_SECRET;
     const body     = `${gatewayOrderId}|${gatewayPaymentId}`;
     const expected = crypto.createHmac('sha256', secret).update(body).digest('hex');
     return expected === signature;
@@ -183,14 +184,12 @@ export const createOrder = async (userId, {
                 expiresAt:      null,
             });
 
-            await client.query('COMMIT');
-
-            // Now process the wallet deduction based on purpose
+            // Wallet deduction pehle — agar fail ho toh order ROLLBACK ho jayega
             await processWalletPayment(userId, { order, purpose, ride_id, amount });
 
-            // Re-fetch updated order
-            const updatedOrder = await getPaymentOrderById(order.id);
-            await updatePaymentOrderStatus(client, order.id, 'success', { paidAt: new Date() });
+            // Wallet succeeded — ab order success mark karo aur commit karo
+            const updatedOrder = await updatePaymentOrderStatus(client, order.id, 'success', { paidAt: new Date() });
+            await client.query('COMMIT');
 
             logger.info(`[Payment] Wallet order confirmed | User: ${userId} | Order: ${order.order_number}`);
 

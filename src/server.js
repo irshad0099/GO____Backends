@@ -5,6 +5,7 @@ import redis from './config/redis.config.js';
 import { initializeSocketIO } from './config/websocketConfig.js';
 import { setupSocketHandlers } from './infrastructure/websocket/socket.server.js';
 import { startWorkers } from './infrastructure/queue/startWorkers.js';
+import { startScheduledRideCron, startApiLogCleanupCron } from './infrastructure/jobs/scheduledRideCron.js';
 import { initPricingConfig } from './modules/pricing/services/pricingConfigLoader.js';
 import './core/services/firebaseService.js';
 import { initSocketLogger } from './core/logger/socketLogger.js';
@@ -94,6 +95,10 @@ const startServer = async () => {
 
         // BullMQ workers start karo — background job processors
         await startWorkers();
+
+        // Cron jobs start karo
+        startScheduledRideCron();
+        startApiLogCleanupCron();
 
         // Graceful shutdown with longer timeout
         const gracefulShutdown = async () => {

@@ -34,8 +34,8 @@ export const getReviewById = async (reviewId) => {
     try {
         const result = await pool.query(
             `SELECT r.*,
-                    u1.name AS reviewer_name,
-                    u2.name AS reviewee_name
+                    u1.full_name AS reviewer_name,
+                    u2.full_name AS reviewee_name
              FROM reviews r
              JOIN users u1 ON r.reviewer_id = u1.id
              JOIN users u2 ON r.reviewee_id = u2.id
@@ -85,7 +85,7 @@ export const getReviewsForUser = async (revieweeId, filters) => {
 
         let query = `
             SELECT r.*,
-                   u.name  AS reviewer_name
+                   u.full_name AS reviewer_name
             FROM reviews r
             JOIN users u ON r.reviewer_id = u.id
             WHERE r.reviewee_id = $1
@@ -127,8 +127,8 @@ export const getReviewsByRideId = async (rideId) => {
     try {
         const result = await pool.query(
             `SELECT r.*,
-                    u1.name AS reviewer_name,
-                    u2.name AS reviewee_name
+                    u1.full_name AS reviewer_name,
+                    u2.full_name AS reviewee_name
              FROM reviews r
              JOIN users u1 ON r.reviewer_id = u1.id
              JOIN users u2 ON r.reviewee_id = u2.id
@@ -279,8 +279,8 @@ export const getFlaggedReviews = async ({ limit = 20, offset = 0 }) => {
     try {
         const result = await pool.query(
             `SELECT r.*,
-                    u1.name AS reviewer_name,
-                    u2.name AS reviewee_name
+                    u1.full_name AS reviewer_name,
+                    u2.full_name AS reviewee_name
              FROM reviews r
              JOIN users u1 ON r.reviewer_id = u1.id
              JOIN users u2 ON r.reviewee_id = u2.id

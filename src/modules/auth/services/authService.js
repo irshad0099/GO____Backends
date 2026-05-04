@@ -152,8 +152,8 @@ export const signin = async (phone, email, role) => {
             });
             return { message: 'OTP sent to your email', expiryInMinutes: 5,otp:result.otp };
         } else {
-            await otpService.sendOTP(phone, 'signin');
-            return { message: 'If this account exists, an OTP will be sent', expiryInMinutes: 5 };
+            const result =  await otpService.sendOTP(phone, 'signin');
+            return { message: 'If this account exists, an OTP will be sent', expiryInMinutes: 5, otp: result.otp };
         }
     } catch (error) {
         console.log(error)

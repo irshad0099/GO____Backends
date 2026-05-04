@@ -1,0 +1,839 @@
+{
+  "info": {
+    "name": "GoMobility — Admin & Super Admin APIs",
+    "_postman_id": "gomobility-admin-v1",
+    "description": "Complete Admin & Super Admin API collection for GoMobility backend.\n\nBase URL: {{base_url}}/api/v1\n\nAuth: All routes need  →  Authorization: Bearer {{admin_token}}\n\nRole required: 'admin' OR 'super_admin'",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url",    "value": "http://localhost:3000",  "type": "string" },
+    { "key": "admin_token", "value": "PASTE_ACCESS_TOKEN_HERE","type": "string" }
+  ],
+  "item": [
+
+    {
+      "name": "1. Auth — Admin Login",
+      "description": "OTP-based login for admin / super_admin. Two-step flow.",
+      "item": [
+
+        {
+          "name": "1.1 Send OTP (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/auth/send-otp", "host": ["{{base_url}}"], "path": ["api","v1","auth","send-otp"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"0000000001\",\n  \"role\": \"super_admin\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"OTP sent successfully\",\n  \"data\": {\n    \"otp\": \"1234\"\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "1.2 Verify OTP (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/auth/verify-otp", "host": ["{{base_url}}"], "path": ["api","v1","auth","verify-otp"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"0000000001\",\n  \"otp\": \"1234\",\n  \"role\": \"super_admin\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n      \"id\": \"uuid-here\",\n      \"phone_number\": \"0000000001\",\n      \"email\": \"ag244834@gmail.com\",\n      \"full_name\": \"GoMobility Super Admin\",\n      \"role\": \"super_admin\",\n      \"is_verified\": true,\n      \"is_active\": true\n    }\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "1.3 Send OTP (Regular Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/auth/send-otp", "host": ["{{base_url}}"], "path": ["api","v1","auth","send-otp"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"0000000002\",\n  \"role\": \"admin\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"OTP sent successfully\",\n  \"data\": {\n    \"otp\": \"5678\"\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "1.4 Verify OTP (Regular Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/auth/verify-otp", "host": ["{{base_url}}"], "path": ["api","v1","auth","verify-otp"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"0000000002\",\n  \"otp\": \"5678\",\n  \"role\": \"admin\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n      \"id\": \"uuid-here\",\n      \"phone_number\": \"0000000002\",\n      \"email\": \"admin@gomobility.co.in\",\n      \"full_name\": \"GoMobility Admin\",\n      \"role\": \"admin\",\n      \"is_verified\": true,\n      \"is_active\": true\n    }\n  }\n}"
+            }
+          ]
+        }
+
+      ]
+    },
+
+    {
+      "name": "2. Dashboard",
+      "description": "GET /api/v1/admin/dashboard\n\nReturns live platform stats — users, drivers, rides, revenue.",
+      "item": [
+
+        {
+          "name": "2.1 Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/dashboard", "host": ["{{base_url}}"], "path": ["api","v1","admin","dashboard"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"users\": {\n      \"total\": 1520,\n      \"newToday\": 12,\n      \"active\": 1480\n    },\n    \"drivers\": {\n      \"total\": 340,\n      \"online\": 87,\n      \"verified\": 310\n    },\n    \"rides\": {\n      \"total\": 9870,\n      \"today\": 143,\n      \"ongoing\": 22,\n      \"completed\": 9200,\n      \"cancelled\": 648\n    },\n    \"revenue\": {\n      \"today\": 18450.50,\n      \"month\": 542300.75\n    }\n  }\n}"
+            }
+          ]
+        }
+
+      ]
+    },
+
+    {
+      "name": "3. User Management",
+      "description": "List, detail, and activate/deactivate passenger users.",
+      "item": [
+
+        {
+          "name": "3.1 Get All Users (no filters)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/users?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","users"],
+              "query": [
+                { "key": "limit",  "value": "20" },
+                { "key": "offset", "value": "0"  }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"users\": [\n      {\n        \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n        \"full_name\": \"Rahul Sharma\",\n        \"email\": \"rahul@test.com\",\n        \"phone_number\": \"9876543210\",\n        \"is_active\": true,\n        \"created_at\": \"2025-10-01T10:00:00.000Z\"\n      },\n      {\n        \"id\": \"b2c3d4e5-f6a7-8901-bcde-f12345678901\",\n        \"full_name\": \"Priya Patel\",\n        \"email\": \"priya@test.com\",\n        \"phone_number\": \"9876543211\",\n        \"is_active\": true,\n        \"created_at\": \"2025-10-02T11:30:00.000Z\"\n      }\n    ],\n    \"pagination\": {\n      \"total\": 1520,\n      \"limit\": 20,\n      \"offset\": 0,\n      \"hasMore\": true\n    }\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "3.2 Get All Users (with search + status filter)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/users?limit=10&offset=0&search=rahul&status=active",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","users"],
+              "query": [
+                { "key": "limit",  "value": "10" },
+                { "key": "offset", "value": "0"  },
+                { "key": "search", "value": "rahul" },
+                { "key": "status", "value": "active" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"users\": [\n      {\n        \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n        \"full_name\": \"Rahul Sharma\",\n        \"email\": \"rahul@test.com\",\n        \"phone_number\": \"9876543210\",\n        \"is_active\": true,\n        \"created_at\": \"2025-10-01T10:00:00.000Z\"\n      }\n    ],\n    \"pagination\": {\n      \"total\": 1,\n      \"limit\": 10,\n      \"offset\": 0,\n      \"hasMore\": false\n    }\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "3.3 Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/users/a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","users","a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n    \"phone_number\": \"9876543210\",\n    \"email\": \"rahul@test.com\",\n    \"full_name\": \"Rahul Sharma\",\n    \"profile_picture\": null,\n    \"role\": \"passenger\",\n    \"is_verified\": true,\n    \"is_active\": true,\n    \"last_login\": \"2026-05-03T08:22:00.000Z\",\n    \"created_at\": \"2025-10-01T10:00:00.000Z\",\n    \"updated_at\": \"2026-05-03T08:22:00.000Z\",\n    \"wallet_balance\": \"850.00\"\n  }\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "body": "{\n  \"success\": false,\n  \"statuscode\": 404,\n  \"message\": \"User not found\",\n  \"data\": {}\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "3.4 Activate User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/users/a1b2c3d4-e5f6-7890-abcd-ef1234567890/status",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","users","a1b2c3d4-e5f6-7890-abcd-ef1234567890","status"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": true\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"User activated successfully\",\n  \"data\": {\n    \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n    \"full_name\": \"Rahul Sharma\",\n    \"email\": \"rahul@test.com\",\n    \"is_active\": true\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "3.5 Deactivate User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/users/a1b2c3d4-e5f6-7890-abcd-ef1234567890/status",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","users","a1b2c3d4-e5f6-7890-abcd-ef1234567890","status"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": false\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"User deactivated successfully\",\n  \"data\": {\n    \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n    \"full_name\": \"Rahul Sharma\",\n    \"email\": \"rahul@test.com\",\n    \"is_active\": false\n  }\n}"
+            }
+          ]
+        }
+
+      ]
+    },
+
+    {
+      "name": "4. Driver Management",
+      "description": "List, detail, verify, and activate/deactivate drivers.",
+      "item": [
+
+        {
+          "name": "4.1 Get All Drivers (no filters)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/drivers?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","drivers"],
+              "query": [
+                { "key": "limit",  "value": "20" },
+                { "key": "offset", "value": "0"  }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"drivers\": [\n      {\n        \"id\": 1,\n        \"user_id\": \"c3d4e5f6-a7b8-9012-cdef-123456789012\",\n        \"is_verified\": true,\n        \"is_available\": true,\n        \"is_online\": true,\n        \"current_latitude\": 28.6150,\n        \"current_longitude\": 77.2100,\n        \"rating\": \"4.50\",\n        \"total_rides\": 120,\n        \"total_earnings\": \"18500.00\",\n        \"city\": \"Delhi\",\n        \"subscription_status\": \"inactive\",\n        \"created_at\": \"2025-09-01T08:00:00.000Z\",\n        \"full_name\": \"Suresh Kumar\",\n        \"email\": \"suresh.driver@gomobility.dev\",\n        \"phone_number\": \"9200000001\",\n        \"is_active\": true\n      }\n    ],\n    \"pagination\": {\n      \"total\": 340,\n      \"limit\": 20,\n      \"offset\": 0,\n      \"hasMore\": true\n    }\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "4.2 Get All Drivers (with filters)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/drivers?limit=10&offset=0&search=suresh&status=online&is_verified=true",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","drivers"],
+              "query": [
+                { "key": "limit",       "value": "10"    },
+                { "key": "offset",      "value": "0"     },
+                { "key": "search",      "value": "suresh"},
+                { "key": "status",      "value": "online"},
+                { "key": "is_verified", "value": "true"  }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"drivers\": [\n      {\n        \"id\": 1,\n        \"user_id\": \"c3d4e5f6-a7b8-9012-cdef-123456789012\",\n        \"is_verified\": true,\n        \"is_online\": true,\n        \"rating\": \"4.50\",\n        \"total_rides\": 120,\n        \"full_name\": \"Suresh Kumar\",\n        \"phone_number\": \"9200000001\",\n        \"is_active\": true\n      }\n    ],\n    \"pagination\": {\n      \"total\": 1,\n      \"limit\": 10,\n      \"offset\": 0,\n      \"hasMore\": false\n    }\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "4.3 Get Driver by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/drivers/1",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","drivers","1"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"id\": 1,\n    \"user_id\": \"c3d4e5f6-a7b8-9012-cdef-123456789012\",\n    \"is_verified\": true,\n    \"is_available\": true,\n    \"is_online\": true,\n    \"current_latitude\": 28.6150,\n    \"current_longitude\": 77.2100,\n    \"rating\": \"4.50\",\n    \"total_rides\": 120,\n    \"total_earnings\": \"18500.00\",\n    \"city\": \"Delhi\",\n    \"subscription_status\": \"inactive\",\n    \"created_at\": \"2025-09-01T08:00:00.000Z\",\n    \"updated_at\": \"2026-05-03T07:00:00.000Z\",\n    \"full_name\": \"Suresh Kumar\",\n    \"email\": \"suresh.driver@gomobility.dev\",\n    \"phone_number\": \"9200000001\",\n    \"is_active\": true,\n    \"wallet_balance\": \"6250.00\"\n  }\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "body": "{\n  \"success\": false,\n  \"statuscode\": 404,\n  \"message\": \"Driver not found\",\n  \"data\": {}\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "4.4 Verify Driver (approve KYC)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/drivers/1/verify",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","drivers","1","verify"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_verified\": true\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Driver verified successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"user_id\": \"c3d4e5f6-a7b8-9012-cdef-123456789012\",\n    \"is_verified\": true,\n    \"updated_at\": \"2026-05-04T10:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "4.5 Unverify Driver (revoke KYC)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/drivers/1/verify",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","drivers","1","verify"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_verified\": false\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Driver verification removed successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"user_id\": \"c3d4e5f6-a7b8-9012-cdef-123456789012\",\n    \"is_verified\": false,\n    \"updated_at\": \"2026-05-04T10:05:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "4.6 Activate Driver Account",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/drivers/1/status",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","drivers","1","status"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": true\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Driver activated successfully\",\n  \"data\": {\n    \"id\": \"c3d4e5f6-a7b8-9012-cdef-123456789012\",\n    \"full_name\": \"Suresh Kumar\",\n    \"is_active\": true\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "4.7 Deactivate Driver Account",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/drivers/1/status",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","drivers","1","status"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": false\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Driver deactivated successfully\",\n  \"data\": {\n    \"id\": \"c3d4e5f6-a7b8-9012-cdef-123456789012\",\n    \"full_name\": \"Suresh Kumar\",\n    \"is_active\": false\n  }\n}"
+            }
+          ]
+        }
+
+      ]
+    },
+
+    {
+      "name": "5. Ride Management",
+      "description": "List all rides with filters — status, vehicle type, date range.",
+      "item": [
+
+        {
+          "name": "5.1 Get All Rides (no filters)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/rides?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","rides"],
+              "query": [
+                { "key": "limit",  "value": "20" },
+                { "key": "offset", "value": "0"  }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"rides\": [\n      {\n        \"id\": \"ride-uuid-001\",\n        \"ride_number\": \"SEED-R0001\",\n        \"passenger_id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n        \"driver_id\": 1,\n        \"vehicle_type\": \"bike\",\n        \"pickup_address\": \"Connaught Place, New Delhi 110001\",\n        \"pickup_location_name\": \"Connaught Place\",\n        \"dropoff_address\": \"India Gate, New Delhi 110001\",\n        \"dropoff_location_name\": \"India Gate\",\n        \"distance_km\": \"5.20\",\n        \"duration_minutes\": 18,\n        \"estimated_fare\": \"82.00\",\n        \"final_fare\": \"82.00\",\n        \"tip_amount\": \"0.00\",\n        \"status\": \"completed\",\n        \"payment_status\": \"paid\",\n        \"payment_method\": \"wallet\",\n        \"requested_at\": \"2026-04-27T09:30:00.000Z\",\n        \"completed_at\": \"2026-04-27T09:48:00.000Z\",\n        \"passenger_name\": \"Rahul Sharma\",\n        \"passenger_phone\": \"9876543210\",\n        \"driver_name\": \"Suresh Kumar\"\n      }\n    ],\n    \"pagination\": {\n      \"total\": 9870,\n      \"limit\": 20,\n      \"offset\": 0,\n      \"hasMore\": true\n    }\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "5.2 Get Rides — completed + bike + date range",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/rides?limit=10&offset=0&status=completed&vehicle_type=bike&start_date=2026-05-01&end_date=2026-05-04",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","rides"],
+              "query": [
+                { "key": "limit",        "value": "10"         },
+                { "key": "offset",       "value": "0"          },
+                { "key": "status",       "value": "completed"  },
+                { "key": "vehicle_type", "value": "bike"       },
+                { "key": "start_date",   "value": "2026-05-01" },
+                { "key": "end_date",     "value": "2026-05-04" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"rides\": [\n      {\n        \"id\": \"ride-uuid-007\",\n        \"ride_number\": \"SEED-R0007\",\n        \"vehicle_type\": \"bike\",\n        \"status\": \"completed\",\n        \"final_fare\": \"74.00\",\n        \"passenger_name\": \"Rahul Sharma\",\n        \"driver_name\": \"Vikram Patel\"\n      }\n    ],\n    \"pagination\": {\n      \"total\": 1,\n      \"limit\": 10,\n      \"offset\": 0,\n      \"hasMore\": false\n    }\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "5.3 Get Rides — ongoing",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/rides?status=ongoing&limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","rides"],
+              "query": [
+                { "key": "status", "value": "ongoing" },
+                { "key": "limit",  "value": "20" },
+                { "key": "offset", "value": "0"  }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"rides\": [\n      {\n        \"id\": \"ride-uuid-in-progress\",\n        \"ride_number\": \"SEED-R0011\",\n        \"vehicle_type\": \"auto\",\n        \"status\": \"in_progress\",\n        \"estimated_fare\": \"145.00\",\n        \"passenger_name\": \"Rahul Sharma\",\n        \"driver_name\": \"Ramesh Yadav\"\n      }\n    ],\n    \"pagination\": {\n      \"total\": 22,\n      \"limit\": 20,\n      \"offset\": 0,\n      \"hasMore\": true\n    }\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "5.4 Get Rides — cancelled",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/rides?status=cancelled&limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","rides"],
+              "query": [
+                { "key": "status", "value": "cancelled" },
+                { "key": "limit",  "value": "20" },
+                { "key": "offset", "value": "0"  }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"rides\": [\n      {\n        \"id\": \"ride-uuid-cancelled\",\n        \"ride_number\": \"SEED-R0009\",\n        \"vehicle_type\": \"bike\",\n        \"status\": \"cancelled\",\n        \"final_fare\": \"80.00\",\n        \"passenger_name\": \"Rahul Sharma\",\n        \"driver_name\": \"Suresh Kumar\"\n      }\n    ],\n    \"pagination\": {\n      \"total\": 648,\n      \"limit\": 20,\n      \"offset\": 0,\n      \"hasMore\": true\n    }\n  }\n}"
+            }
+          ]
+        }
+
+      ]
+    },
+
+    {
+      "name": "6. Transaction Management",
+      "description": "List all platform transactions with filters — type, category, status, date range.",
+      "item": [
+
+        {
+          "name": "6.1 Get All Transactions (no filters)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/transactions?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","transactions"],
+              "query": [
+                { "key": "limit",  "value": "20" },
+                { "key": "offset", "value": "0"  }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"transactions\": [\n      {\n        \"id\": \"txn-uuid-001\",\n        \"transaction_number\": \"SEED-T0001\",\n        \"user_id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n        \"ride_id\": \"ride-uuid-001\",\n        \"amount\": \"82.00\",\n        \"type\": \"debit\",\n        \"category\": \"ride_payment\",\n        \"payment_method\": \"wallet\",\n        \"status\": \"success\",\n        \"description\": \"Ride payment — Connaught Place to India Gate\",\n        \"created_at\": \"2026-04-27T09:48:00.000Z\",\n        \"user_name\": \"Rahul Sharma\",\n        \"user_phone\": \"9876543210\"\n      }\n    ],\n    \"pagination\": {\n      \"total\": 5200,\n      \"limit\": 20,\n      \"offset\": 0,\n      \"hasMore\": true\n    }\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "6.2 Get Transactions — credit + ride_payment + success",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/transactions?limit=10&offset=0&type=credit&category=ride_payment&status=success",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","transactions"],
+              "query": [
+                { "key": "limit",    "value": "10"          },
+                { "key": "offset",   "value": "0"           },
+                { "key": "type",     "value": "credit"      },
+                { "key": "category", "value": "ride_payment"},
+                { "key": "status",   "value": "success"     }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"transactions\": [\n      {\n        \"id\": \"txn-uuid-002\",\n        \"transaction_number\": \"SEED-T0002\",\n        \"amount\": \"65.60\",\n        \"type\": \"credit\",\n        \"category\": \"ride_payment\",\n        \"payment_method\": \"wallet\",\n        \"status\": \"success\",\n        \"user_name\": \"Suresh Kumar\",\n        \"user_phone\": \"9200000001\"\n      }\n    ],\n    \"pagination\": {\n      \"total\": 3100,\n      \"limit\": 10,\n      \"offset\": 0,\n      \"hasMore\": true\n    }\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "6.3 Get Transactions — date range",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/transactions?limit=20&offset=0&start_date=2026-05-01&end_date=2026-05-04",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","transactions"],
+              "query": [
+                { "key": "limit",      "value": "20"         },
+                { "key": "offset",     "value": "0"          },
+                { "key": "start_date", "value": "2026-05-01" },
+                { "key": "end_date",   "value": "2026-05-04" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"transactions\": [],\n    \"pagination\": {\n      \"total\": 0,\n      \"limit\": 20,\n      \"offset\": 0,\n      \"hasMore\": false\n    }\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "6.4 Get Transactions — wallet_recharge",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/transactions?category=wallet_recharge&limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","transactions"],
+              "query": [
+                { "key": "category", "value": "wallet_recharge" },
+                { "key": "limit",    "value": "20" },
+                { "key": "offset",   "value": "0"  }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"transactions\": [\n      {\n        \"id\": \"txn-uuid-100\",\n        \"transaction_number\": \"SEED-T0100\",\n        \"amount\": \"2000.00\",\n        \"type\": \"credit\",\n        \"category\": \"wallet_recharge\",\n        \"payment_method\": \"upi\",\n        \"status\": \"success\",\n        \"description\": \"Wallet recharge\",\n        \"user_name\": \"Rahul Sharma\",\n        \"user_phone\": \"9876543210\"\n      }\n    ],\n    \"pagination\": {\n      \"total\": 320,\n      \"limit\": 20,\n      \"offset\": 0,\n      \"hasMore\": true\n    }\n  }\n}"
+            }
+          ]
+        }
+
+      ]
+    },
+
+    {
+      "name": "7. Revenue Analytics",
+      "description": "Revenue breakdown by day and by vehicle type.",
+      "item": [
+
+        {
+          "name": "7.1 Revenue Analytics — last 7 days (default)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/analytics/revenue",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","analytics","revenue"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"byDay\": [\n      { \"date\": \"2026-04-28\", \"totalRides\": 128, \"totalRevenue\": 15200.50 },\n      { \"date\": \"2026-04-29\", \"totalRides\": 141, \"totalRevenue\": 17340.00 },\n      { \"date\": \"2026-04-30\", \"totalRides\": 155, \"totalRevenue\": 19100.75 },\n      { \"date\": \"2026-05-01\", \"totalRides\": 132, \"totalRevenue\": 16450.00 },\n      { \"date\": \"2026-05-02\", \"totalRides\": 148, \"totalRevenue\": 18200.25 },\n      { \"date\": \"2026-05-03\", \"totalRides\": 160, \"totalRevenue\": 20100.00 },\n      { \"date\": \"2026-05-04\", \"totalRides\": 143, \"totalRevenue\": 18450.50 }\n    ],\n    \"byVehicle\": [\n      { \"vehicleType\": \"car\",  \"totalRides\": 3800, \"totalRevenue\": 285000.00, \"avgFare\": 75.00 },\n      { \"vehicleType\": \"auto\", \"totalRides\": 3200, \"totalRevenue\": 192000.00, \"avgFare\": 60.00 },\n      { \"vehicleType\": \"bike\", \"totalRides\": 2200, \"totalRevenue\": 88000.00,  \"avgFare\": 40.00 }\n    ]\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "7.2 Revenue Analytics — last 30 days",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/analytics/revenue?days=30",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","analytics","revenue"],
+              "query": [{ "key": "days", "value": "30" }]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"byDay\": [\n      { \"date\": \"2026-04-05\", \"totalRides\": 110, \"totalRevenue\": 13500.00 },\n      { \"date\": \"2026-04-06\", \"totalRides\": 125, \"totalRevenue\": 15800.50 }\n    ],\n    \"byVehicle\": [\n      { \"vehicleType\": \"car\",  \"totalRides\": 3800, \"totalRevenue\": 285000.00, \"avgFare\": 75.00 },\n      { \"vehicleType\": \"auto\", \"totalRides\": 3200, \"totalRevenue\": 192000.00, \"avgFare\": 60.00 },\n      { \"vehicleType\": \"bike\", \"totalRides\": 2200, \"totalRevenue\": 88000.00,  \"avgFare\": 40.00 }\n    ]\n  }\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "7.3 Revenue Analytics — last 90 days",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/analytics/revenue?days=90",
+              "host": ["{{base_url}}"],
+              "path": ["api","v1","admin","analytics","revenue"],
+              "query": [{ "key": "days", "value": "90" }]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"byDay\": [\n      { \"date\": \"2026-02-04\", \"totalRides\": 90, \"totalRevenue\": 11200.00 }\n    ],\n    \"byVehicle\": [\n      { \"vehicleType\": \"car\",  \"totalRides\": 3800, \"totalRevenue\": 285000.00, \"avgFare\": 75.00 },\n      { \"vehicleType\": \"auto\", \"totalRides\": 3200, \"totalRevenue\": 192000.00, \"avgFare\": 60.00 },\n      { \"vehicleType\": \"bike\", \"totalRides\": 2200, \"totalRevenue\": 88000.00,  \"avgFare\": 40.00 }\n    ]\n  }\n}"
+            }
+          ]
+        }
+
+      ]
+    },
+
+    {
+      "name": "8. Error Responses (Reference)",
+      "description": "Standard error shapes returned by all admin endpoints.",
+      "item": [
+
+        {
+          "name": "401 — No token / invalid token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/v1/admin/dashboard", "host": ["{{base_url}}"], "path": ["api","v1","admin","dashboard"] }
+          },
+          "response": [
+            {
+              "name": "401 Unauthorized",
+              "status": "Unauthorized",
+              "code": 401,
+              "body": "{\n  \"success\": false,\n  \"statuscode\": 401,\n  \"message\": \"No token provided\",\n  \"data\": {}\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "403 — Insufficient role",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer PASSENGER_TOKEN_HERE" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/dashboard", "host": ["{{base_url}}"], "path": ["api","v1","admin","dashboard"] }
+          },
+          "response": [
+            {
+              "name": "403 Forbidden",
+              "status": "Forbidden",
+              "code": 403,
+              "body": "{\n  \"success\": false,\n  \"statuscode\": 403,\n  \"message\": \"Access denied. This action requires one of the following roles: admin.\",\n  \"data\": {}\n}"
+            }
+          ]
+        },
+
+        {
+          "name": "400 — Validation error",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/v1/admin/users/some-id/status", "host": ["{{base_url}}"], "path": ["api","v1","admin","users","some-id","status"] },
+            "body": { "mode": "raw", "raw": "{}" }
+          },
+          "response": [
+            {
+              "name": "400 Validation Error",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"success\": false,\n  \"statuscode\": 400,\n  \"message\": \"is_active (true/false) is required\",\n  \"errorFull\": [\n    { \"field\": \"is_active\", \"message\": \"is_active (true/false) is required\" }\n  ],\n  \"data\": {}\n}"
+            }
+          ]
+        }
+
+      ]
+    }
+
+  ]
+}

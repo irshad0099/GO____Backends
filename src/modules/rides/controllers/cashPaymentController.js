@@ -16,17 +16,17 @@ export const confirmCashPayment = async (req, res, next) => {
         // Get ride details to verify
         const ride = await getRideDetails(userId, ride_id, 'driver');
         if (!ride) {
-            throw new ApiError('Ride not found', 404);
+            throw new ApiError(404, 'Ride not found');
         }
 
         // Check if ride is completed
         if (ride.status !== 'completed') {
-            throw new ApiError('Ride must be completed before confirming cash payment', 400);
+            throw new ApiError(400, 'Ride must be completed before confirming cash payment');
         }
 
         // Check if payment status is cash_collected
         if (ride.paymentStatus !== 'cash_collected') {
-            throw new ApiError('Cash payment not recorded for this ride', 400);
+            throw new ApiError(400, 'Cash payment not recorded for this ride');
         }
 
         // Confirm cash collection
@@ -62,7 +62,7 @@ export const getCashPaymentStatus = async (req, res, next) => {
         // Get ride details
         const ride = await getRideDetails(userId, ride_id, 'driver');
         if (!ride) {
-            throw new ApiError('Ride not found', 404);
+            throw new ApiError(404, 'Ride not found');
         }
 
         res.status(200).json({

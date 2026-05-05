@@ -7,10 +7,11 @@ import ridePaymentRoutes from './ridePaymentRoutes.js';
 import cashPaymentRoutes from './cashPaymentRoutes.js';
 
 // ─── New Feature Controllers ─────────────────────────────────────────────────
-import * as cancelCtrl    from '../controllers/rideCancellationController.js';
-import * as otpCtrl       from '../controllers/rideOtpController.js';
-import * as invoiceCtrl   from '../controllers/rideInvoiceController.js';
-import * as schedCtrl     from '../controllers/scheduledRideController.js';
+import * as cancelCtrl     from '../controllers/rideCancellationController.js';
+import * as otpCtrl        from '../controllers/rideOtpController.js';
+import * as invoiceCtrl    from '../controllers/rideInvoiceController.js';
+import * as schedCtrl      from '../controllers/scheduledRideController.js';
+import * as collectCtrl    from '../controllers/rideCollectionController.js';
 import {
     cancelRideSchema, verifyOtpSchema, scheduleRideSchema,
     validate as joiValidate,
@@ -143,6 +144,15 @@ router.get('/:rideId/driver-summary', authorize('driver'), controller.getDriverR
 // ─── Ride Payments ─────────────────────────────────────────────────────
 // Mount payment-specific routes under /payments
 router.use('/payments', ridePaymentRoutes);
+
+// ─── Manual Cash Collection (Driver) ────────────────────────────────────────
+// POST /api/v1/rides/:rideId/collect-confirm
+// Driver confirms cash/personal_upi received from passenger
+router.post(
+    '/:rideId/collect-confirm',
+    authorize('driver'),
+    collectCtrl.confirmCollection
+);
 
 // ─── Cash Payments ─────────────────────────────────────────────
 // Mount cash payment routes under /cash

@@ -1,6 +1,7 @@
 import { db } from '../../../infrastructure/database/postgres.js';
 import { ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
+import { initCashBalance, addToPending } from './cashCollection.repository.js';
 
 export const findDriverByUserId = async (userId) => {
     try {
@@ -257,4 +258,11 @@ export const getDriverEarnings = async (driverId, startDate, endDate) => {
         logger.error('Get driver earnings repository error:', error);
         throw error;
     }
+};
+
+// Cash ride complete hone pe driver ka pending balance badhao
+// driver_cash_balance row pehle se nahi hai toh create karo (first cash ride)
+export const incrementDriverCashBalance = async (client, driverId, platformFee) => {
+    await initCashBalance(driverId);
+    return addToPending(client, driverId, platformFee, 0);
 };

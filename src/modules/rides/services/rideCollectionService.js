@@ -171,11 +171,9 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
         );
 
         // ── 5. Credit driver wallet (net earnings) ─────────────────────────────
-        // IMPORTANT: Use the same wallet service as online payments for consistency
-        await creditDriverEarnings({
-            userId: driver.user_id,   // driver users table id
-            amount: netEarnings,
-            rideId,
+        await creditDriverEarnings(driver.user_id, {
+            amount:      netEarnings,
+            ride_id:     rideId,
             description: `Earnings for ride #${ride.ride_number} (manual collection: ${method})`,
         });
 

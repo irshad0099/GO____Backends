@@ -218,6 +218,18 @@ const durationMinutes = mapsResult.durationMinutes;
             fare.estimatedFare = couponResult.finalAmount;
         }
 
+        // ── Step 3: Wallet balance pre-check ──────────────────────────────────
+        const paymentMethod = rideData.paymentMethod || 'cash';
+        if (paymentMethod === 'wallet' && !subscriptionResult?.isFreeRide) {
+            const wallet = await walletRepo.findWalletByUserId(userId);
+            const balance = parseFloat(wallet?.balance || 0);
+            if (balance < fare.estimatedFare) {
+                throw new ApiError(400,
+                    `Insufficient wallet balance. Required: ₹${fare.estimatedFare.toFixed(2)}, Available: ₹${balance.toFixed(2)}`
+                );
+            }
+        }
+
         const rideNumber = rideCalculator.generateRideNumber();
 
         const ride = await rideRepo.createRide({
@@ -242,7 +254,7 @@ const durationMinutes = mapsResult.durationMinutes;
             convenienceFee:       fare.convenienceFee,
             isPeak:               fare.isPeak,
             demandSupplyRatio:    fare.demandSupplyRatio,
-            paymentMethod:        rideData.paymentMethod || 'cash',
+            paymentMethod:        paymentMethod,
             couponId:             couponResult?.couponId || null,
             couponDiscount:       couponResult?.discountApplied || 0,
             subscriptionDiscount: subscriptionResult?.discountAmount || 0,

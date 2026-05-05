@@ -239,7 +239,7 @@ export const updateDriverLocation = async (userId, latitude, longitude) => {
     }
 };
 
-export const toggleAvailability = async (userId, isAvailable) => {
+export const toggleAvailability = async (userId, isAvailable, latitude, longitude) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);
 
@@ -258,13 +258,23 @@ export const toggleAvailability = async (userId, isAvailable) => {
             }
         }
 
-        const updatedDriver = await driverRepo.updateDriver(driver.id, {
-            is_available: isAvailable
-        });
+        const updateData = { is_available: isAvailable };
+
+        // Driver online ho raha hai aur lat/long diya — DB mein location update karo
+        if (isAvailable && latitude && longitude) {
+            updateData.current_latitude  = latitude;
+            updateData.current_longitude = longitude;
+            await saveDriverLocation(driver.id, latitude, longitude);
+        }
+
+        const updatedDriver = await driverRepo.updateDriver(driver.id, updateData);
 
         return {
             isAvailable: updatedDriver.is_available,
-            updatedAt: updatedDriver.updated_at
+            updatedAt:   updatedDriver.updated_at,
+            ...(isAvailable && latitude && longitude && {
+                location: { latitude: updatedDriver.current_latitude, longitude: updatedDriver.current_longitude }
+            })
         };
     } catch (error) {
         logger.error('Toggle availability service error:', error);

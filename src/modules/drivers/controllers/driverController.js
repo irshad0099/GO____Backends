@@ -74,9 +74,9 @@ export const updateLocation = async (req, res, next) => {
 export const toggleAvailability = async (req, res, next) => {
     try {
         const userId = req.user.id;
-        const { isAvailable } = req.body;
+        const { isAvailable, latitude, longitude } = req.body;
 
-        const result = await driverService.toggleAvailability(userId, isAvailable);
+        const result = await driverService.toggleAvailability(userId, isAvailable, latitude, longitude);
 
         sendResponse(res, 200, `Driver is now ${result.isAvailable ? 'available' : 'unavailable'}`, result);
     } catch (error) {

@@ -1,0 +1,813 @@
+{
+  "info": {
+    "name": "GoMobility — Complete Admin + Super Admin API Collection",
+    "_postman_id": "gomobility-admin-complete-v2",
+    "description": "Every API endpoint an admin/super_admin needs across ALL modules.\n\nBase URL: {{base_url}}\nPrefix: /api/v1\n\nAll protected routes need:  Authorization: Bearer {{admin_token}}\n\nAdmin-only routes need role = 'admin' or 'super_admin'",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url",    "value": "http://localhost:3000", "type": "string" },
+    { "key": "admin_token", "value": "PASTE_ADMIN_ACCESS_TOKEN_HERE", "type": "string" }
+  ],
+  "item": [
+
+    {
+      "name": "0. Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/api/v1/health" } },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Server is healthy\",\n  \"data\": {}\n}" }]
+        }
+      ]
+    },
+
+    {
+      "name": "1. Auth (Admin Login)",
+      "item": [
+
+        {
+          "name": "1.1 Send OTP — Super Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/auth/send-otp" },
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"0000000001\",\n  \"role\": \"super_admin\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"OTP sent successfully\",\n  \"data\": { \"otp\": \"1234\" }\n}" }]
+        },
+
+        {
+          "name": "1.2 Verify OTP — Super Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/auth/verify-otp" },
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"0000000001\",\n  \"otp\": \"1234\",\n  \"role\": \"super_admin\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"accessToken\": \"eyJhbGci...\",\n    \"refreshToken\": \"eyJhbGci...\",\n    \"user\": {\n      \"id\": \"uuid\",\n      \"phone_number\": \"0000000001\",\n      \"email\": \"ag244834@gmail.com\",\n      \"full_name\": \"GoMobility Super Admin\",\n      \"role\": \"super_admin\",\n      \"is_verified\": true,\n      \"is_active\": true\n    }\n  }\n}" }]
+        },
+
+        {
+          "name": "1.3 Send OTP — Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/auth/send-otp" },
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"0000000002\",\n  \"role\": \"admin\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"OTP sent successfully\",\n  \"data\": { \"otp\": \"5678\" }\n}" }]
+        },
+
+        {
+          "name": "1.4 Verify OTP — Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/auth/verify-otp" },
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"0000000002\",\n  \"otp\": \"5678\",\n  \"role\": \"admin\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"accessToken\": \"eyJhbGci...\",\n    \"refreshToken\": \"eyJhbGci...\",\n    \"user\": {\n      \"id\": \"uuid\",\n      \"phone_number\": \"0000000002\",\n      \"email\": \"admin@gomobility.co.in\",\n      \"full_name\": \"GoMobility Admin\",\n      \"role\": \"admin\",\n      \"is_verified\": true,\n      \"is_active\": true\n    }\n  }\n}" }]
+        },
+
+        {
+          "name": "1.5 Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/auth/refresh-token" },
+            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"eyJhbGci...\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Token refreshed\",\n  \"data\": {\n    \"accessToken\": \"eyJhbGci...\",\n    \"refreshToken\": \"eyJhbGci...\"\n  }\n}" }]
+        },
+
+        {
+          "name": "1.6 Get Me (Current Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/auth/me" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"id\": \"uuid\",\n    \"phone_number\": \"0000000001\",\n    \"email\": \"ag244834@gmail.com\",\n    \"full_name\": \"GoMobility Super Admin\",\n    \"role\": \"super_admin\",\n    \"is_verified\": true,\n    \"is_active\": true,\n    \"last_login\": \"2026-05-04T10:00:00.000Z\"\n  }\n}" }]
+        },
+
+        {
+          "name": "1.7 Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/v1/auth/logout" },
+            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"eyJhbGci...\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Logged out successfully\",\n  \"data\": {}\n}" }]
+        }
+
+      ]
+    },
+
+    {
+      "name": "2. Dashboard",
+      "item": [
+        {
+          "name": "2.1 Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/dashboard" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"users\": {\n      \"total\": 1520,\n      \"newToday\": 12,\n      \"active\": 1480\n    },\n    \"drivers\": {\n      \"total\": 340,\n      \"online\": 87,\n      \"verified\": 310\n    },\n    \"rides\": {\n      \"total\": 9870,\n      \"today\": 143,\n      \"ongoing\": 22,\n      \"completed\": 9200,\n      \"cancelled\": 648\n    },\n    \"revenue\": {\n      \"today\": 18450.50,\n      \"month\": 542300.75\n    }\n  }\n}" }]
+        }
+      ]
+    },
+
+    {
+      "name": "3. User Management (Admin)",
+      "item": [
+
+        {
+          "name": "3.1 List All Users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/users?limit=20&offset=0",
+              "query": [{ "key": "limit", "value": "20" }, { "key": "offset", "value": "0" }]
+            }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"users\": [\n      {\n        \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n        \"full_name\": \"Rahul Sharma\",\n        \"email\": \"rahul@test.com\",\n        \"phone_number\": \"9876543210\",\n        \"is_active\": true,\n        \"created_at\": \"2025-10-01T10:00:00.000Z\"\n      }\n    ],\n    \"pagination\": { \"total\": 1520, \"limit\": 20, \"offset\": 0, \"hasMore\": true }\n  }\n}" }]
+        },
+
+        {
+          "name": "3.2 List Users — search + status filter",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/users?limit=10&offset=0&search=rahul&status=active",
+              "query": [{ "key": "limit","value":"10"},{"key":"offset","value":"0"},{"key":"search","value":"rahul"},{"key":"status","value":"active"}]
+            }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"users\": [\n      { \"id\": \"a1b2c3d4-...\", \"full_name\": \"Rahul Sharma\", \"email\": \"rahul@test.com\", \"phone_number\": \"9876543210\", \"is_active\": true, \"created_at\": \"2025-10-01T10:00:00.000Z\" }\n    ],\n    \"pagination\": { \"total\": 1, \"limit\": 10, \"offset\": 0, \"hasMore\": false }\n  }\n}" }]
+        },
+
+        {
+          "name": "3.3 Get User Detail by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/users/a1b2c3d4-e5f6-7890-abcd-ef1234567890" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n    \"phone_number\": \"9876543210\",\n    \"email\": \"rahul@test.com\",\n    \"full_name\": \"Rahul Sharma\",\n    \"profile_picture\": null,\n    \"role\": \"passenger\",\n    \"is_verified\": true,\n    \"is_active\": true,\n    \"last_login\": \"2026-05-03T08:22:00.000Z\",\n    \"created_at\": \"2025-10-01T10:00:00.000Z\",\n    \"updated_at\": \"2026-05-03T08:22:00.000Z\",\n    \"wallet_balance\": \"850.00\"\n  }\n}" }]
+        },
+
+        {
+          "name": "3.4 Activate User",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/users/a1b2c3d4-e5f6-7890-abcd-ef1234567890/status" },
+            "body": { "mode": "raw", "raw": "{\n  \"is_active\": true\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"User activated successfully\",\n  \"data\": { \"id\": \"a1b2c3d4-...\", \"full_name\": \"Rahul Sharma\", \"email\": \"rahul@test.com\", \"is_active\": true }\n}" }]
+        },
+
+        {
+          "name": "3.5 Deactivate User",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/users/a1b2c3d4-e5f6-7890-abcd-ef1234567890/status" },
+            "body": { "mode": "raw", "raw": "{\n  \"is_active\": false\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"User deactivated successfully\",\n  \"data\": { \"id\": \"a1b2c3d4-...\", \"full_name\": \"Rahul Sharma\", \"email\": \"rahul@test.com\", \"is_active\": false }\n}" }]
+        }
+
+      ]
+    },
+
+    {
+      "name": "4. Driver Management (Admin)",
+      "item": [
+
+        {
+          "name": "4.1 List All Drivers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/drivers?limit=20&offset=0", "query": [{"key":"limit","value":"20"},{"key":"offset","value":"0"}] }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"drivers\": [\n      {\n        \"id\": 1,\n        \"user_id\": \"uuid\",\n        \"is_verified\": true,\n        \"is_available\": true,\n        \"is_online\": true,\n        \"current_latitude\": 28.6150,\n        \"current_longitude\": 77.2100,\n        \"rating\": \"4.50\",\n        \"total_rides\": 120,\n        \"total_earnings\": \"18500.00\",\n        \"city\": \"Delhi\",\n        \"subscription_status\": \"inactive\",\n        \"full_name\": \"Suresh Kumar\",\n        \"email\": \"suresh.driver@gomobility.dev\",\n        \"phone_number\": \"9200000001\",\n        \"is_active\": true\n      }\n    ],\n    \"pagination\": { \"total\": 340, \"limit\": 20, \"offset\": 0, \"hasMore\": true }\n  }\n}" }]
+        },
+
+        {
+          "name": "4.2 List Drivers — filters",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/drivers?limit=10&offset=0&search=suresh&status=online&is_verified=true",
+              "query": [{"key":"limit","value":"10"},{"key":"offset","value":"0"},{"key":"search","value":"suresh"},{"key":"status","value":"online"},{"key":"is_verified","value":"true"}]
+            }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"drivers\": [ { \"id\": 1, \"full_name\": \"Suresh Kumar\", \"is_verified\": true, \"is_online\": true } ],\n    \"pagination\": { \"total\": 1, \"limit\": 10, \"offset\": 0, \"hasMore\": false }\n  }\n}" }]
+        },
+
+        {
+          "name": "4.3 Get Driver Detail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/drivers/1" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"id\": 1,\n    \"user_id\": \"uuid\",\n    \"is_verified\": true,\n    \"is_available\": true,\n    \"is_online\": true,\n    \"current_latitude\": 28.6150,\n    \"current_longitude\": 77.2100,\n    \"rating\": \"4.50\",\n    \"total_rides\": 120,\n    \"total_earnings\": \"18500.00\",\n    \"city\": \"Delhi\",\n    \"full_name\": \"Suresh Kumar\",\n    \"email\": \"suresh.driver@gomobility.dev\",\n    \"phone_number\": \"9200000001\",\n    \"is_active\": true,\n    \"wallet_balance\": \"6250.00\"\n  }\n}" }]
+        },
+
+        {
+          "name": "4.4 Verify Driver (Approve KYC)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/drivers/1/verify" },
+            "body": { "mode": "raw", "raw": "{\n  \"is_verified\": true\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Driver verified successfully\",\n  \"data\": { \"id\": 1, \"is_verified\": true, \"updated_at\": \"2026-05-04T10:00:00.000Z\" }\n}" }]
+        },
+
+        {
+          "name": "4.5 Unverify Driver",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/drivers/1/verify" },
+            "body": { "mode": "raw", "raw": "{\n  \"is_verified\": false\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Driver verification removed successfully\",\n  \"data\": { \"id\": 1, \"is_verified\": false }\n}" }]
+        },
+
+        {
+          "name": "4.6 Activate Driver",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/drivers/1/status" },
+            "body": { "mode": "raw", "raw": "{\n  \"is_active\": true\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Driver activated successfully\",\n  \"data\": { \"id\": \"uuid\", \"full_name\": \"Suresh Kumar\", \"is_active\": true }\n}" }]
+        },
+
+        {
+          "name": "4.7 Deactivate Driver",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/drivers/1/status" },
+            "body": { "mode": "raw", "raw": "{\n  \"is_active\": false\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Driver deactivated successfully\",\n  \"data\": { \"id\": \"uuid\", \"full_name\": \"Suresh Kumar\", \"is_active\": false }\n}" }]
+        }
+
+      ]
+    },
+
+    {
+      "name": "5. KYC Management (Admin)",
+      "item": [
+
+        {
+          "name": "5.1 List All Drivers KYC Status",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/kyc/admin/drivers" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": [\n    {\n      \"user_id\": \"uuid\",\n      \"full_name\": \"Suresh Kumar\",\n      \"phone_number\": \"9200000001\",\n      \"overall_status\": \"verified\",\n      \"submitted_docs_count\": 6,\n      \"verified_docs_count\": 6,\n      \"last_activity_at\": \"2026-05-01T10:00:00.000Z\"\n    }\n  ]\n}" }]
+        },
+
+        {
+          "name": "5.2 Get Driver KYC Detail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/kyc/admin/drivers/uuid-here" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"user_id\": \"uuid\",\n    \"full_name\": \"Suresh Kumar\",\n    \"overall_status\": \"verified\",\n    \"documents\": [\n      {\n        \"id\": 1,\n        \"document_type\": \"AADHAAR\",\n        \"method\": \"OCR\",\n        \"status\": \"auto_verified\",\n        \"confidence_score\": 100,\n        \"fraud_score\": 0,\n        \"extracted_data\": {\n          \"name\": \"Suresh Kumar\",\n          \"dob\": \"1995-06-15\",\n          \"masked\": \"XXXX XXXX 5678\"\n        },\n        \"verified_at\": \"2026-04-01T10:00:00.000Z\"\n      },\n      {\n        \"id\": 2,\n        \"document_type\": \"PAN\",\n        \"status\": \"auto_verified\",\n        \"extracted_data\": { \"name\": \"Suresh Kumar\", \"pan_status\": \"E\" }\n      },\n      {\n        \"id\": 3,\n        \"document_type\": \"DRIVING_LICENCE\",\n        \"status\": \"auto_verified\",\n        \"extracted_data\": { \"dl_status\": \"ACTIVE\", \"expiry_date\": \"2038-01-09\" }\n      },\n      {\n        \"id\": 4,\n        \"document_type\": \"VEHICLE_RC\",\n        \"status\": \"auto_verified\",\n        \"extracted_data\": { \"vehicle_type\": \"M-Cycle/Scooter\", \"owner\": \"Suresh Kumar\" }\n      },\n      {\n        \"id\": 5,\n        \"document_type\": \"BANK_ACCOUNT\",\n        \"status\": \"auto_verified\",\n        \"extracted_data\": { \"bank_name\": \"State Bank of India\", \"name_match_result\": \"MATCH\" }\n      },\n      {\n        \"id\": 6,\n        \"document_type\": \"SELFIE\",\n        \"status\": \"auto_verified\",\n        \"extracted_data\": { \"similarity_score\": 92 }\n      }\n    ]\n  }\n}" }]
+        },
+
+        {
+          "name": "5.3 KYC Review Queue (Pending Manual Review)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/kyc/admin/queue" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": [\n    {\n      \"id\": 10,\n      \"user_id\": \"uuid\",\n      \"document_type\": \"AADHAAR\",\n      \"status\": \"pending_review\",\n      \"submitted_at\": \"2026-05-03T14:00:00.000Z\",\n      \"full_name\": \"New Driver\",\n      \"phone_number\": \"9300000001\"\n    }\n  ]\n}" }]
+        },
+
+        {
+          "name": "5.4 Get Document for Admin Review",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/kyc/admin/documents/10" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"id\": 10,\n    \"document_type\": \"AADHAAR\",\n    \"status\": \"pending_review\",\n    \"file_url\": \"https://s3.../aadhaar_front.jpg\",\n    \"extracted_data\": { \"name\": \"New Driver\", \"dob\": \"1998-02-10\", \"masked\": \"XXXX XXXX 1234\" },\n    \"confidence_score\": 72,\n    \"fraud_score\": 5,\n    \"attempt_count\": 1\n  }\n}" }]
+        },
+
+        {
+          "name": "5.5 Approve Document",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/kyc/admin/documents/10/approve" },
+            "body": { "mode": "raw", "raw": "{\n  \"notes\": \"Document looks genuine. Approved.\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Document approved successfully\",\n  \"data\": { \"id\": 10, \"status\": \"manually_verified\", \"verified_at\": \"2026-05-04T10:00:00.000Z\" }\n}" }]
+        },
+
+        {
+          "name": "5.6 Reject Document",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/kyc/admin/documents/10/reject" },
+            "body": { "mode": "raw", "raw": "{\n  \"reason\": \"Document is blurry. Please upload a clearer image.\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Document rejected\",\n  \"data\": { \"id\": 10, \"status\": \"rejected\" }\n}" }]
+        },
+
+        {
+          "name": "5.7 Fraud Alerts",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/kyc/admin/fraud-alerts" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": [\n    {\n      \"id\": 15,\n      \"user_id\": \"uuid\",\n      \"document_type\": \"PAN\",\n      \"fraud_score\": 85,\n      \"status\": \"pending_review\",\n      \"full_name\": \"Suspicious User\",\n      \"phone_number\": \"9300000099\"\n    }\n  ]\n}" }]
+        },
+
+        {
+          "name": "5.8 Suspend Driver (KYC Violation)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/kyc/admin/drivers/uuid-here/suspend" },
+            "body": { "mode": "raw", "raw": "{\n  \"reason\": \"Fraudulent documents submitted\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Driver suspended\",\n  \"data\": { \"user_id\": \"uuid\", \"is_active\": false }\n}" }]
+        }
+
+      ]
+    },
+
+    {
+      "name": "6. Ride Management (Admin)",
+      "item": [
+
+        {
+          "name": "6.1 List All Rides",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/rides?limit=20&offset=0", "query": [{"key":"limit","value":"20"},{"key":"offset","value":"0"}] }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"rides\": [\n      {\n        \"id\": \"ride-uuid\",\n        \"ride_number\": \"SEED-R0001\",\n        \"vehicle_type\": \"bike\",\n        \"pickup_address\": \"Connaught Place, New Delhi\",\n        \"dropoff_address\": \"India Gate, New Delhi\",\n        \"distance_km\": \"5.20\",\n        \"duration_minutes\": 18,\n        \"estimated_fare\": \"82.00\",\n        \"final_fare\": \"82.00\",\n        \"tip_amount\": \"0.00\",\n        \"status\": \"completed\",\n        \"payment_status\": \"paid\",\n        \"payment_method\": \"wallet\",\n        \"requested_at\": \"2026-04-27T09:30:00.000Z\",\n        \"completed_at\": \"2026-04-27T09:48:00.000Z\",\n        \"passenger_name\": \"Rahul Sharma\",\n        \"passenger_phone\": \"9876543210\",\n        \"driver_name\": \"Suresh Kumar\"\n      }\n    ],\n    \"pagination\": { \"total\": 9870, \"limit\": 20, \"offset\": 0, \"hasMore\": true }\n  }\n}" }]
+        },
+
+        {
+          "name": "6.2 List Rides — status filter",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/rides?status=completed&vehicle_type=bike&start_date=2026-05-01&end_date=2026-05-04&limit=20&offset=0", "query": [{"key":"status","value":"completed"},{"key":"vehicle_type","value":"bike"},{"key":"start_date","value":"2026-05-01"},{"key":"end_date","value":"2026-05-04"},{"key":"limit","value":"20"},{"key":"offset","value":"0"}] }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"rides\": [],\n    \"pagination\": { \"total\": 0, \"limit\": 20, \"offset\": 0, \"hasMore\": false }\n  }\n}" }]
+        }
+
+      ]
+    },
+
+    {
+      "name": "7. Transaction Management (Admin)",
+      "item": [
+
+        {
+          "name": "7.1 List All Transactions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/transactions?limit=20&offset=0", "query": [{"key":"limit","value":"20"},{"key":"offset","value":"0"}] }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"transactions\": [\n      {\n        \"id\": \"txn-uuid\",\n        \"transaction_number\": \"SEED-T0001\",\n        \"amount\": \"82.00\",\n        \"type\": \"debit\",\n        \"category\": \"ride_payment\",\n        \"payment_method\": \"wallet\",\n        \"status\": \"success\",\n        \"description\": \"Ride payment\",\n        \"created_at\": \"2026-04-27T09:48:00.000Z\",\n        \"user_name\": \"Rahul Sharma\",\n        \"user_phone\": \"9876543210\"\n      }\n    ],\n    \"pagination\": { \"total\": 5200, \"limit\": 20, \"offset\": 0, \"hasMore\": true }\n  }\n}" }]
+        },
+
+        {
+          "name": "7.2 List Transactions — filters",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/transactions?type=credit&category=ride_payment&status=success&start_date=2026-05-01&end_date=2026-05-04&limit=10&offset=0", "query": [{"key":"type","value":"credit"},{"key":"category","value":"ride_payment"},{"key":"status","value":"success"},{"key":"start_date","value":"2026-05-01"},{"key":"end_date","value":"2026-05-04"},{"key":"limit","value":"10"},{"key":"offset","value":"0"}] }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"transactions\": [],\n    \"pagination\": { \"total\": 0, \"limit\": 10, \"offset\": 0, \"hasMore\": false }\n  }\n}" }]
+        }
+
+      ]
+    },
+
+    {
+      "name": "8. Revenue Analytics (Admin)",
+      "item": [
+
+        {
+          "name": "8.1 Revenue — Last 7 Days",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/analytics/revenue?days=7", "query": [{"key":"days","value":"7"}] }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"byDay\": [\n      { \"date\": \"2026-04-28\", \"totalRides\": 128, \"totalRevenue\": 15200.50 },\n      { \"date\": \"2026-04-29\", \"totalRides\": 141, \"totalRevenue\": 17340.00 },\n      { \"date\": \"2026-04-30\", \"totalRides\": 155, \"totalRevenue\": 19100.75 },\n      { \"date\": \"2026-05-01\", \"totalRides\": 132, \"totalRevenue\": 16450.00 },\n      { \"date\": \"2026-05-02\", \"totalRides\": 148, \"totalRevenue\": 18200.25 },\n      { \"date\": \"2026-05-03\", \"totalRides\": 160, \"totalRevenue\": 20100.00 },\n      { \"date\": \"2026-05-04\", \"totalRides\": 143, \"totalRevenue\": 18450.50 }\n    ],\n    \"byVehicle\": [\n      { \"vehicleType\": \"car\",  \"totalRides\": 3800, \"totalRevenue\": 285000.00, \"avgFare\": 75.00 },\n      { \"vehicleType\": \"auto\", \"totalRides\": 3200, \"totalRevenue\": 192000.00, \"avgFare\": 60.00 },\n      { \"vehicleType\": \"bike\", \"totalRides\": 2200, \"totalRevenue\": 88000.00,  \"avgFare\": 40.00 }\n    ]\n  }\n}" }]
+        },
+
+        {
+          "name": "8.2 Revenue — Last 30 Days",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/analytics/revenue?days=30", "query": [{"key":"days","value":"30"}] }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"byDay\": [\n      { \"date\": \"2026-04-05\", \"totalRides\": 110, \"totalRevenue\": 13500.00 }\n    ],\n    \"byVehicle\": [\n      { \"vehicleType\": \"car\", \"totalRides\": 3800, \"totalRevenue\": 285000.00, \"avgFare\": 75.00 }\n    ]\n  }\n}" }]
+        }
+
+      ]
+    },
+
+    {
+      "name": "9. Pricing Admin",
+      "item": [
+
+        {
+          "name": "9.1 List Vehicle Pricing Config",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/vehicles" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": [\n    { \"vehicle_type\": \"bike\", \"base_fare\": 25, \"per_km_rate\": 8, \"per_min_rate\": 0.5, \"min_fare\": 40, \"surge_multiplier\": 1.0 },\n    { \"vehicle_type\": \"auto\", \"base_fare\": 40, \"per_km_rate\": 12, \"per_min_rate\": 0.75, \"min_fare\": 60, \"surge_multiplier\": 1.0 },\n    { \"vehicle_type\": \"car\",  \"base_fare\": 50, \"per_km_rate\": 14, \"per_min_rate\": 1.0,  \"min_fare\": 80, \"surge_multiplier\": 1.0 }\n  ]\n}" }]
+        },
+
+        {
+          "name": "9.2 Update Vehicle Pricing",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/vehicles/bike" },
+            "body": { "mode": "raw", "raw": "{\n  \"base_fare\": 30,\n  \"per_km_rate\": 9,\n  \"per_min_rate\": 0.6,\n  \"min_fare\": 45\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Vehicle pricing updated\",\n  \"data\": { \"vehicle_type\": \"bike\", \"base_fare\": 30, \"per_km_rate\": 9, \"per_min_rate\": 0.6, \"min_fare\": 45 }\n}" }]
+        },
+
+        {
+          "name": "9.3 List Surge Tiers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/tiers" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": [\n    { \"tier_name\": \"low\",    \"min_demand\": 0,  \"max_demand\": 0.5, \"multiplier\": 1.0 },\n    { \"tier_name\": \"medium\", \"min_demand\": 0.5,\"max_demand\": 0.8, \"multiplier\": 1.3 },\n    { \"tier_name\": \"high\",   \"min_demand\": 0.8,\"max_demand\": 1.0, \"multiplier\": 1.8 }\n  ]\n}" }]
+        },
+
+        {
+          "name": "9.4 Upsert Surge Tier",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/tiers/high" },
+            "body": { "mode": "raw", "raw": "{\n  \"min_demand\": 0.8,\n  \"max_demand\": 1.0,\n  \"multiplier\": 2.0\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Tier updated\",\n  \"data\": { \"tier_name\": \"high\", \"multiplier\": 2.0 }\n}" }]
+        },
+
+        {
+          "name": "9.5 List Subscriber Rules",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/subscribers" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": [\n    { \"tier_name\": \"basic-pass\",  \"discount_percent\": 5,  \"surge_cap\": null },\n    { \"tier_name\": \"prime-pass\",  \"discount_percent\": 10, \"surge_cap\": 1.3 },\n    { \"tier_name\": \"elite-pass\",  \"discount_percent\": 15, \"surge_cap\": 1.2 },\n    { \"tier_name\": \"annual-pass\", \"discount_percent\": 20, \"surge_cap\": 1.0 }\n  ]\n}" }]
+        },
+
+        {
+          "name": "9.6 Update Subscriber Rule",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/subscribers/prime-pass" },
+            "body": { "mode": "raw", "raw": "{\n  \"discount_percent\": 12,\n  \"surge_cap\": 1.2\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Subscriber rule updated\",\n  \"data\": { \"tier_name\": \"prime-pass\", \"discount_percent\": 12, \"surge_cap\": 1.2 }\n}" }]
+        },
+
+        {
+          "name": "9.7 Get GST Config",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/gst" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": { \"gst_percent\": 5.0, \"applies_to\": \"fare\", \"is_inclusive\": false }\n}" }]
+        },
+
+        {
+          "name": "9.8 Update GST Config",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/gst" },
+            "body": { "mode": "raw", "raw": "{\n  \"gst_percent\": 5.0,\n  \"is_inclusive\": false\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"GST config updated\",\n  \"data\": { \"gst_percent\": 5.0 }\n}" }]
+        },
+
+        {
+          "name": "9.9 List Penalty Rules",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/penalties" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": [\n    { \"offense_type\": \"late_cancellation\", \"offense_count\": 1, \"penalty_amount\": 30.00 },\n    { \"offense_type\": \"late_cancellation\", \"offense_count\": 2, \"penalty_amount\": 50.00 }\n  ]\n}" }]
+        },
+
+        {
+          "name": "9.10 Upsert Penalty Rule",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/penalties/late_cancellation/1" },
+            "body": { "mode": "raw", "raw": "{\n  \"penalty_amount\": 35.00\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Penalty rule updated\",\n  \"data\": { \"offense_type\": \"late_cancellation\", \"offense_count\": 1, \"penalty_amount\": 35.00 }\n}" }]
+        },
+
+        {
+          "name": "9.11 Delete Penalty Rule",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/penalties/late_cancellation/1" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Penalty rule deleted\",\n  \"data\": {}\n}" }]
+        },
+
+        {
+          "name": "9.12 List All Settings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/settings" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": [\n    { \"key\": \"platform_fee_percent\", \"value\": \"20\" },\n    { \"key\": \"waiting_charge_per_min\", \"value\": \"1.5\" },\n    { \"key\": \"max_waiting_free_mins\", \"value\": \"3\" }\n  ]\n}" }]
+        },
+
+        {
+          "name": "9.13 Update a Setting",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/settings/platform_fee_percent" },
+            "body": { "mode": "raw", "raw": "{\n  \"value\": \"18\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Setting updated\",\n  \"data\": { \"key\": \"platform_fee_percent\", \"value\": \"18\" }\n}" }]
+        },
+
+        {
+          "name": "9.14 Get Pricing Cache Snapshot",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/cache" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"vehicles\": { \"bike\": {}, \"auto\": {}, \"car\": {} },\n    \"tiers\": [],\n    \"settings\": {},\n    \"cached_at\": \"2026-05-04T09:00:00.000Z\"\n  }\n}" }]
+        },
+
+        {
+          "name": "9.15 Reload Pricing Cache",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/admin/pricing/cache/reload" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Pricing cache reloaded\",\n  \"data\": {}\n}" }]
+        }
+
+      ]
+    },
+
+    {
+      "name": "10. Subscription Management (Admin)",
+      "item": [
+
+        {
+          "name": "10.1 Create Subscription Plan",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/subscriptions/admin/plans" },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Super Pass\",\n  \"slug\": \"super-pass\",\n  \"description\": \"Ultimate ride experience\",\n  \"price\": 599,\n  \"duration_days\": 30,\n  \"ride_discount_percent\": 25,\n  \"free_rides_per_month\": 20,\n  \"priority_booking\": true,\n  \"cancellation_waiver\": true,\n  \"surge_protection\": true,\n  \"is_active\": true\n}" }
+          },
+          "response": [{ "name": "201", "code": 201, "body": "{\n  \"success\": true,\n  \"statuscode\": 201,\n  \"message\": \"Plan created\",\n  \"data\": {\n    \"id\": 5,\n    \"name\": \"Super Pass\",\n    \"slug\": \"super-pass\",\n    \"price\": 599,\n    \"duration_days\": 30,\n    \"ride_discount_percent\": 25,\n    \"free_rides_per_month\": 20,\n    \"is_active\": true\n  }\n}" }]
+        },
+
+        {
+          "name": "10.2 Toggle Plan Status (Activate/Deactivate)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/subscriptions/admin/plans/5/status" },
+            "body": { "mode": "raw", "raw": "{\n  \"is_active\": false\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Plan deactivated\",\n  \"data\": { \"id\": 5, \"is_active\": false }\n}" }]
+        },
+
+        {
+          "name": "10.3 List All Plans (Public — Admin can also view)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/subscriptions/plans" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": [\n    { \"id\": 1, \"name\": \"Basic Pass\",  \"slug\": \"basic-pass\",  \"price\": 99,  \"duration_days\": 30, \"ride_discount_percent\": 5,  \"is_active\": true },\n    { \"id\": 2, \"name\": \"Prime Pass\",  \"slug\": \"prime-pass\",  \"price\": 199, \"duration_days\": 30, \"ride_discount_percent\": 10, \"is_active\": true },\n    { \"id\": 3, \"name\": \"Elite Pass\",  \"slug\": \"elite-pass\",  \"price\": 399, \"duration_days\": 30, \"ride_discount_percent\": 15, \"is_active\": true },\n    { \"id\": 4, \"name\": \"Annual Pass\", \"slug\": \"annual-pass\", \"price\": 999, \"duration_days\": 365,\"ride_discount_percent\": 20, \"is_active\": true }\n  ]\n}" }]
+        }
+
+      ]
+    },
+
+    {
+      "name": "11. Review Moderation (Admin)",
+      "item": [
+
+        {
+          "name": "11.1 Get Flagged Reviews",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/reviews/admin/flagged?limit=20&offset=0", "query": [{"key":"limit","value":"20"},{"key":"offset","value":"0"}] }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": [\n    {\n      \"id\": 101,\n      \"ride_id\": \"ride-uuid\",\n      \"reviewer_id\": \"user-uuid\",\n      \"rating\": 1,\n      \"comment\": \"Driver was rude and dangerous\",\n      \"is_flagged\": true,\n      \"is_hidden\": false,\n      \"flag_count\": 3,\n      \"reviewer_type\": \"passenger\",\n      \"created_at\": \"2026-05-01T10:00:00.000Z\"\n    }\n  ]\n}" }]
+        },
+
+        {
+          "name": "11.2 Hide Review",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/reviews/admin/101/hide" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Review hidden\",\n  \"data\": { \"id\": 101, \"is_hidden\": true }\n}" }]
+        },
+
+        {
+          "name": "11.3 Unflag Review",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/reviews/admin/101/unflag" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Review unflagged\",\n  \"data\": { \"id\": 101, \"is_flagged\": false }\n}" }]
+        }
+
+      ]
+    },
+
+    {
+      "name": "12. Wallet Operations (Admin System Actions)",
+      "item": [
+
+        {
+          "name": "12.1 Issue Referral Bonus to User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/wallet/referral-bonus" },
+            "body": { "mode": "raw", "raw": "{\n  \"user_id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n  \"amount\": 100,\n  \"description\": \"Referral bonus — friend joined GoMobility\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Referral bonus added\",\n  \"data\": {\n    \"transaction_number\": \"TXN-001\",\n    \"amount\": 100,\n    \"new_balance\": \"950.00\"\n  }\n}" }]
+        },
+
+        {
+          "name": "12.2 Issue Refund to User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/wallet/refund" },
+            "body": { "mode": "raw", "raw": "{\n  \"user_id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n  \"ride_id\": \"ride-uuid\",\n  \"amount\": 82,\n  \"description\": \"Refund for overcharge on ride SEED-R0001\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Refund processed\",\n  \"data\": {\n    \"transaction_number\": \"TXN-002\",\n    \"amount\": 82,\n    \"new_balance\": \"932.00\"\n  }\n}" }]
+        }
+
+      ]
+    },
+
+    {
+      "name": "13. Payment Refund (Admin)",
+      "item": [
+        {
+          "name": "13.1 Initiate Payment Refund (Razorpay)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/payments/refund" },
+            "body": { "mode": "raw", "raw": "{\n  \"payment_id\": \"pay_razorpay123\",\n  \"amount\": 82,\n  \"reason\": \"Customer complaint — overcharged\"\n}" }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"Refund initiated\",\n  \"data\": {\n    \"refund_id\": \"rfnd_razorpay456\",\n    \"amount\": 82,\n    \"status\": \"processed\"\n  }\n}" }]
+        }
+      ]
+    },
+
+    {
+      "name": "14. Pricing Estimates (Read-Only — Admin View)",
+      "item": [
+
+        {
+          "name": "14.1 Fare Estimate",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/pricing/estimate?pickup_lat=28.6315&pickup_lng=77.2167&dropoff_lat=28.6129&dropoff_lng=77.2295&vehicle_type=bike",
+              "query": [{"key":"pickup_lat","value":"28.6315"},{"key":"pickup_lng","value":"77.2167"},{"key":"dropoff_lat","value":"28.6129"},{"key":"dropoff_lng","value":"77.2295"},{"key":"vehicle_type","value":"bike"}]
+            }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"vehicle_type\": \"bike\",\n    \"estimated_fare\": 82.00,\n    \"base_fare\": 25,\n    \"distance_fare\": 41.6,\n    \"time_fare\": 9.0,\n    \"distance_km\": 5.2,\n    \"duration_minutes\": 18,\n    \"surge_multiplier\": 1.0\n  }\n}" }]
+        },
+
+        {
+          "name": "14.2 All Estimates (All Vehicle Types)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/pricing/all-estimates?pickup_lat=28.6315&pickup_lng=77.2167&dropoff_lat=28.6129&dropoff_lng=77.2295",
+              "query": [{"key":"pickup_lat","value":"28.6315"},{"key":"pickup_lng","value":"77.2167"},{"key":"dropoff_lat","value":"28.6129"},{"key":"dropoff_lng","value":"77.2295"}]
+            }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": [\n    { \"vehicle_type\": \"bike\", \"estimated_fare\": 82.00,  \"surge_multiplier\": 1.0 },\n    { \"vehicle_type\": \"auto\", \"estimated_fare\": 130.00, \"surge_multiplier\": 1.0 },\n    { \"vehicle_type\": \"car\",  \"estimated_fare\": 180.00, \"surge_multiplier\": 1.0 }\n  ]\n}" }]
+        },
+
+        {
+          "name": "14.3 Surge Info",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/pricing/surge?lat=28.6315&lng=77.2167",
+              "query": [{"key":"lat","value":"28.6315"},{"key":"lng","value":"77.2167"}]
+            }
+          },
+          "response": [{ "name": "200", "code": 200, "body": "{\n  \"success\": true,\n  \"statuscode\": 200,\n  \"message\": \"\",\n  \"data\": {\n    \"surge_active\": true,\n    \"multiplier\": 1.3,\n    \"tier\": \"medium\",\n    \"demand_score\": 0.65\n  }\n}" }]
+        }
+
+      ]
+    },
+
+    {
+      "name": "15. Common Error Responses (Reference)",
+      "item": [
+        {
+          "name": "401 — No Token",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/api/v1/admin/dashboard" } },
+          "response": [{ "name": "401", "code": 401, "body": "{\n  \"success\": false,\n  \"statuscode\": 401,\n  \"message\": \"No token provided\",\n  \"data\": {}\n}" }]
+        },
+        {
+          "name": "401 — Token Revoked",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer REVOKED_TOKEN"}], "url": { "raw": "{{base_url}}/api/v1/admin/dashboard" } },
+          "response": [{ "name": "401", "code": 401, "body": "{\n  \"success\": false,\n  \"statuscode\": 401,\n  \"message\": \"Token has been revoked. Please login again.\",\n  \"data\": {}\n}" }]
+        },
+        {
+          "name": "403 — Wrong Role",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer PASSENGER_TOKEN"}], "url": { "raw": "{{base_url}}/api/v1/admin/dashboard" } },
+          "response": [{ "name": "403", "code": 403, "body": "{\n  \"success\": false,\n  \"statuscode\": 403,\n  \"message\": \"Access denied. This action requires one of the following roles: admin.\",\n  \"data\": {}\n}" }]
+        },
+        {
+          "name": "400 — Validation Error",
+          "request": {
+            "method": "PATCH",
+            "header": [{"key":"Authorization","value":"Bearer {{admin_token}}"},{"key":"Content-Type","value":"application/json"}],
+            "url": { "raw": "{{base_url}}/api/v1/admin/users/some-id/status" },
+            "body": { "mode": "raw", "raw": "{}" }
+          },
+          "response": [{ "name": "400", "code": 400, "body": "{\n  \"success\": false,\n  \"statuscode\": 400,\n  \"message\": \"is_active (true/false) is required\",\n  \"errorFull\": [\n    { \"field\": \"is_active\", \"message\": \"is_active (true/false) is required\" }\n  ],\n  \"data\": {}\n}" }]
+        },
+        {
+          "name": "404 — Not Found",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{admin_token}}"}], "url": { "raw": "{{base_url}}/api/v1/admin/users/non-existent-id" } },
+          "response": [{ "name": "404", "code": 404, "body": "{\n  \"success\": false,\n  \"statuscode\": 404,\n  \"message\": \"User not found\",\n  \"data\": {}\n}" }]
+        }
+      ]
+    }
+
+  ]
+}

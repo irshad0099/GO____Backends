@@ -22,6 +22,11 @@ import {
     getActiveRideSession
 } from './reconnection.handler.js';
 import { addTrackingPoint, getActualDistance, startRideTracking } from './rideTracking.js';
+import { pool } from '../../infrastructure/database/postgres.js';
+
+// Debounce map — driver ke last location ka timer track karo
+const idleLocationDbTimers = new Map();
+const IDLE_LOCATION_DB_DELAY = 30_000; // 30 sec baad DB update
 
 // Helper: get user session from in-memory map OR Redis (for reconnection recovery)
 const getOrRecoverSocketUser = async (socketId, userId) => {
@@ -452,6 +457,46 @@ socket.on('driver:location_update', async (data) => {
                     socketId: socket.id,
                     error: error.message
                 });
+            }
+        });
+
+        /**
+         * Driver idle location update (online, no active ride)
+         * Client emits: socket.emit('driver:idle_location', { latitude, longitude })
+         * Redis: turant update — DB: 30 sec debounce ke baad
+         */
+        socket.on('driver:idle_location', async (data) => {
+            try {
+                const user = getSocketUser(socket.id);
+                if (!user || user.userType !== 'driver') return;
+
+                const { latitude, longitude } = data;
+                if (!latitude || !longitude) return;
+
+                // Redis — turant update
+                await updateDriverLocation(user.userId, { latitude, longitude }, true);
+
+                // DB — 30 sec debounce: har ping pe timer reset karo
+                if (idleLocationDbTimers.has(user.userId)) {
+                    clearTimeout(idleLocationDbTimers.get(user.userId));
+                }
+                const timer = setTimeout(async () => {
+                    try {
+                        await pool.query(
+                            `UPDATE drivers SET current_latitude = $1, current_longitude = $2, updated_at = NOW() WHERE user_id = $3`,
+                            [latitude, longitude, user.userId]
+                        );
+                        logger.debug('📍 Driver idle location flushed to DB', { driverId: user.userId, latitude, longitude });
+                    } catch (e) {
+                        logger.error('❌ Idle location DB flush failed', { driverId: user.userId, error: e.message });
+                    } finally {
+                        idleLocationDbTimers.delete(user.userId);
+                    }
+                }, IDLE_LOCATION_DB_DELAY);
+
+                idleLocationDbTimers.set(user.userId, timer);
+            } catch (error) {
+                logger.error('❌ Driver idle location error', { socketId: socket.id, error: error.message });
             }
         });
 

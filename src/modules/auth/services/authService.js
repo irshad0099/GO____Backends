@@ -150,13 +150,12 @@ export const signin = async (phone, email, role) => {
                 otp:     result.otp,
                 purpose: 'login'
             });
-            return { message: 'OTP sent to your email', expiryInMinutes: 5,otp:result.otp };
+            return { message: 'OTP sent to your email', expiryInMinutes: 5, otp: result.otp };
         } else {
-            const result =  await otpService.sendOTP(phone, 'signin');
+            const result = await otpService.sendOTP(phone, 'signin');
             return { message: 'If this account exists, an OTP will be sent', expiryInMinutes: 5, otp: result.otp };
         }
     } catch (error) {
-        console.log(error)
         logger.error('Signin service error:', error);
         throw error;
     }

@@ -15,6 +15,7 @@ import { calculateDistance, calculateDuration } from '../../core/utils/rideCalcu
 import { findRideById } from '../../modules/rides/repositories/ride.repository.js';
 import {
     storeSessionInRedis,
+    getSessionFromRedis,
     queueMessage,
     handleSocketReconnection,
     storeActiveRideSession,
@@ -26,6 +27,25 @@ import { pool } from '../../infrastructure/database/postgres.js';
 // Debounce map — driver ke last location ka timer track karo
 const idleLocationDbTimers = new Map();
 const IDLE_LOCATION_DB_DELAY = 30_000; // 30 sec baad DB update
+
+// Helper: get user session from in-memory map OR Redis (for reconnection recovery)
+const getOrRecoverSocketUser = async (socketId, userId) => {
+    let user = getSocketUser(socketId);
+    if (user) return user;
+
+    // Fallback: check Redis for previous session
+    try {
+        const session = await getSessionFromRedis(userId);
+        if (session) {
+            logger.info('📍 Recovered session from Redis for missing socket', { socketId, userId });
+            return session;
+        }
+    } catch (err) {
+        logger.warn('Failed to recover session from Redis', { userId, error: err.message });
+    }
+
+    return null;
+};
 
 /**
  * Setup all socket event handlers
@@ -260,7 +280,17 @@ export const setupSocketHandlers = () => {
 
 socket.on('driver:location_update', async (data) => {
     try {
-        const user = getSocketUser(socket.id);
+        const userId = socket.data.userId;
+        let user = getSocketUser(socket.id);
+
+        // Fallback: recover from Redis if in-memory session missing (e.g., after server restart)
+        if (!user) {
+            user = await getOrRecoverSocketUser(socket.id, userId);
+            if (user) {
+                registerSocketUser(socket, user.userId, user.userType);
+            }
+        }
+
         if (!user || user.userType !== 'driver') {
             socket.emit('error', { message: 'Unauthorized' });
             return;
@@ -394,7 +424,16 @@ socket.on('driver:location_update', async (data) => {
          */
         socket.on('driver:availability_toggle', async (data) => {
             try {
-                const user = getSocketUser(socket.id);
+                const userId = socket.data.userId;
+                let user = getSocketUser(socket.id);
+
+                if (!user) {
+                    user = await getOrRecoverSocketUser(socket.id, userId);
+                    if (user) {
+                        registerSocketUser(socket, user.userId, user.userType);
+                    }
+                }
+
                 if (!user || user.userType !== 'driver') {
                     socket.emit('error', { message: 'Unauthorized' });
                     return;
@@ -465,9 +504,18 @@ socket.on('driver:location_update', async (data) => {
          * Driver accepts ride request
          * Client emits: socket.emit('ride:accept', { rideId })
          */
-        socket.on('ride:accept', (data) => {
+        socket.on('ride:accept', async (data) => {
             try {
-                const user = getSocketUser(socket.id);
+                const userId = socket.data.userId;
+                let user = getSocketUser(socket.id);
+
+                if (!user) {
+                    user = await getOrRecoverSocketUser(socket.id, userId);
+                    if (user) {
+                        registerSocketUser(socket, user.userId, user.userType);
+                    }
+                }
+
                 if (!user || user.userType !== 'driver') {
                     socket.emit('error', { message: 'Unauthorized' });
                     return;
@@ -492,9 +540,18 @@ socket.on('driver:location_update', async (data) => {
          * Driver rejects ride request
          * Client emits: socket.emit('ride:reject', { rideId, reason })
          */
-        socket.on('ride:reject', (data) => {
+        socket.on('ride:reject', async (data) => {
             try {
-                const user = getSocketUser(socket.id);
+                const userId = socket.data.userId;
+                let user = getSocketUser(socket.id);
+
+                if (!user) {
+                    user = await getOrRecoverSocketUser(socket.id, userId);
+                    if (user) {
+                        registerSocketUser(socket, user.userId, user.userType);
+                    }
+                }
+
                 if (!user || user.userType !== 'driver') {
                     socket.emit('error', { message: 'Unauthorized' });
                     return;

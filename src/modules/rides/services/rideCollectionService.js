@@ -34,7 +34,7 @@ import {
     getActivePaymentOrderByRideId,
     updatePaymentOrderStatus,
 } from '../../payments/repositories/payment.Repository.js';
-import { creditDriverEarnings } from '../../wallet/services/walletService.js';
+import { creditDriverEarnings } from '../../drivers/services/earningsService.js';
 import { closeDynamicQR } from '../../../infrastructure/external/payment.gateway.js';
 import { emitToPassenger, emitToDriver } from '../../../infrastructure/websocket/socket.events.js';
 import { addNotificationJob } from '../../../infrastructure/queue/rideQueue.js';
@@ -171,10 +171,13 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
         );
 
         // ── 5. Credit driver wallet (net earnings) ─────────────────────────────
-        await creditDriverEarnings(driver.user_id, {
-            amount:      netEarnings,
-            ride_id:     rideId,
-            description: `Earnings for ride #${ride.ride_number} (manual collection: ${method})`,
+        await creditDriverEarnings({
+            driverUserId:           driver.user_id,
+            rideId,
+            netEarnings,
+            platformFee,
+            paymentMethod:          method,
+            collectionMethodActual: method,
         });
 
         // ── 6. Update driver cash_balance (platform share due) ─────────────────

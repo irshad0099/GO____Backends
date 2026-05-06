@@ -1,6 +1,7 @@
 import * as rideRepo from '../repositories/ride.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as walletRepo from '../../wallet/repositories/wallet.repository.js';
+import { payForRide } from '../../wallet/services/walletService.js';
 import * as rideOtpService from './rideOtpService.js';
 import * as rideOtpRepo from '../repositories/rideOtp.repository.js';
 import * as rideCalculator from '../../../core/utils/rideCalculator.js';
@@ -733,6 +734,21 @@ if (status === 'cancelled') {
             additionalFields.actual_fare          = passengerFinalFare;
             additionalFields.final_fare           = passengerFinalFare;
             additionalFields.payment_status       = 'pending';
+
+            // Wallet payment — turant debit karo ride complete hone pe
+            if (ride.payment_method === 'wallet' && !ride.is_free_ride && passengerFinalFare > 0) {
+                try {
+                    await payForRide(ride.passenger_id, {
+                        ride_id:     rideId,
+                        amount:      passengerFinalFare,
+                        description: `Wallet payment for ride #${ride.ride_number}`,
+                    });
+                    additionalFields.payment_status = 'paid';
+                } catch (walletErr) {
+                    logger.error(`[RideService] Wallet deduction failed for ride ${rideId}:`, walletErr.message);
+                    // payment_status 'pending' rehne do — manually resolve hoga
+                }
+            }
             additionalFields.fare_before_gst      = finalResult.passenger.fareBeforeGst ?? 0;
             additionalFields.gst_on_fare          = finalResult.passenger.gstOnFare ?? 0;
             additionalFields.gst_on_platform_fee  = finalResult.driver.gstOnPlatformFee ?? 0;

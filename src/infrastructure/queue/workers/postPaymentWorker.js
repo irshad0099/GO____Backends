@@ -70,20 +70,30 @@ export const processOnlinePaymentSuccess = async (data) => {
             [paymentOrderId, platformFee, rideId]
         );
 
-        // 5. Credit driver earnings
-        const driverCreditResult = await creditDriverEarnings({
-            driverUserId: driverUserId || ride.driver_id,
-            rideId,
-            netEarnings,
-            platformFee,
-            paymentMethod: 'online', // card/upi combined as 'online'
-        });
-
+        // 5. Commit payment status — earnings credit alag try-catch mein
         await client.query('COMMIT');
 
         logger.info(
-            `[PostPayment] Online payment processed | Ride: ${rideId} | Fare: ₹${finalFare} | Net: ₹${netEarnings}`
+            `[PostPayment] Ride ${rideId} marked paid | Fare: ₹${finalFare} | Net: ₹${netEarnings}`
         );
+
+        // 6. Credit driver earnings — payment commit ke BAAD (separate operation)
+        let driverCreditResult = null;
+        try {
+            driverCreditResult = await creditDriverEarnings({
+                driverUserId: driverUserId || ride.driver_id,
+                rideId,
+                netEarnings,
+                platformFee,
+                paymentMethod: 'online',
+            });
+        } catch (earningsErr) {
+            // Payment ho gayi, driver credit fail hua — critical alert log karo
+            logger.error(
+                `[PostPayment] CRITICAL: Driver earnings credit FAILED | Ride: ${rideId} | Driver: ${driverUserId || ride.driver_id} | Amount: ₹${netEarnings} | Error: ${earningsErr.message}`
+            );
+            // payment_status = 'paid' rahega, earnings manually recover karni hogi
+        }
 
         return {
             success: true,
@@ -92,7 +102,8 @@ export const processOnlinePaymentSuccess = async (data) => {
             driverEarnings: {
                 netEarnings,
                 platformFee,
-                walletBalance: driverCreditResult.data?.walletBalance,
+                walletBalance: driverCreditResult?.data?.walletBalance ?? null,
+                credited: driverCreditResult !== null,
             },
             alreadyProcessed: false,
         };

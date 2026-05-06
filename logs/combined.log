@@ -4240,3 +4240,296 @@ Error: Connection terminated due to connection timeout
 2026-05-01 15:47:12 [DEBUG]: [socket:out] ride:fare_update
 2026-05-01 15:47:12 [DEBUG]: [socket:out] ride:fare_update
 2026-05-01 15:47:12 [DEBUG]: 📍 Location ping sent
+2026-05-06 21:46:15 [ERROR]: ❌ PostgreSQL connection failed: Connection terminated due to connection timeout
+Error: Connection terminated due to connection timeout
+    at D:\Akash_Personal\GO____Backends\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Database.connect (file:///D:/Akash_Personal/GO____Backends/src/infrastructure/database/postgres.js:36:28)
+    at async seed (file:///D:/Akash_Personal/GO____Backends/scripts/seed.js:76:5)
+2026-05-06 21:46:29 [ERROR]: ❌ PostgreSQL connection failed: Connection terminated due to connection timeout
+Error: Connection terminated due to connection timeout
+    at D:\Akash_Personal\GO____Backends\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Database.connect (file:///D:/Akash_Personal/GO____Backends/src/infrastructure/database/postgres.js:36:28)
+    at async seed (file:///D:/Akash_Personal/GO____Backends/scripts/seed.js:76:5)
+2026-05-06 21:46:36 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-06 21:46:38 [WARN]: Slow query:
+2026-05-06 21:46:59 [WARN]: Slow query:
+2026-05-06 21:47:43 [WARN]: Slow query:
+2026-05-06 21:47:46 [WARN]: Slow query:
+2026-05-06 21:47:48 [WARN]: Slow query:
+2026-05-06 21:47:58 [WARN]: Slow query:
+2026-05-06 21:47:59 [WARN]: Slow query:
+2026-05-06 21:48:09 [WARN]: Slow query:
+2026-05-06 21:48:40 [WARN]: Slow query:
+2026-05-06 21:48:46 [WARN]: Slow query:
+2026-05-06 21:48:51 [WARN]: Slow query:
+2026-05-06 21:48:55 [WARN]: Slow query:
+2026-05-06 21:49:05 [WARN]: Slow query:
+2026-05-06 21:49:08 [WARN]: Slow query:
+2026-05-06 21:49:10 [WARN]: Slow query:
+2026-05-06 21:49:13 [WARN]: Slow query:
+2026-05-06 21:49:16 [WARN]: Slow query:
+2026-05-06 21:49:17 [WARN]: Slow query:
+2026-05-06 21:49:20 [WARN]: Slow query:
+2026-05-06 21:49:26 [WARN]: Slow query:
+2026-05-06 21:49:27 [WARN]: Slow query:
+2026-05-06 21:49:29 [WARN]: Slow query:
+2026-05-06 21:49:30 [WARN]: Slow query:
+2026-05-06 21:49:34 [WARN]: Slow query:
+2026-05-06 21:49:35 [WARN]: Slow query:
+2026-05-06 21:49:37 [WARN]: Slow query:
+2026-05-06 21:49:38 [WARN]: Slow query:
+2026-05-06 21:49:40 [WARN]: Slow query:
+2026-05-06 21:49:43 [WARN]: Slow query:
+2026-05-06 21:49:44 [WARN]: Slow query:
+2026-05-06 21:49:55 [WARN]: Slow query:
+2026-05-06 21:50:14 [WARN]: Slow query:
+2026-05-06 21:50:16 [WARN]: Slow query:
+2026-05-06 21:50:17 [WARN]: Slow query:
+2026-05-06 21:50:18 [WARN]: Slow query:
+2026-05-06 21:50:24 [ERROR]: Database query error:
+2026-05-06 22:04:42 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-06 22:04:51 [WARN]: Slow query:
+2026-05-06 22:04:53 [WARN]: Slow query:
+2026-05-06 22:04:55 [WARN]: Slow query:
+2026-05-06 22:05:06 [WARN]: Slow query:
+2026-05-06 22:05:10 [WARN]: Slow query:
+2026-05-06 22:05:12 [WARN]: Slow query:
+2026-05-06 22:05:16 [WARN]: Slow query:
+2026-05-06 22:05:24 [WARN]: Slow query:
+2026-05-06 22:05:26 [WARN]: Slow query:
+2026-05-06 22:05:27 [WARN]: Slow query:
+2026-05-06 22:05:30 [WARN]: Slow query:
+2026-05-06 22:05:40 [WARN]: Slow query:
+2026-05-06 22:06:00 [ERROR]: Database query error:
+2026-05-06 22:11:08 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-06 22:11:11 [WARN]: Slow query:
+2026-05-06 22:11:22 [WARN]: Slow query:
+2026-05-06 22:11:24 [WARN]: Slow query:
+2026-05-06 22:11:29 [WARN]: Slow query:
+2026-05-06 22:11:31 [WARN]: Slow query:
+2026-05-06 22:11:34 [WARN]: Slow query:
+2026-05-06 22:11:37 [WARN]: Slow query:
+2026-05-06 22:11:39 [WARN]: Slow query:
+2026-05-06 22:11:40 [WARN]: Slow query:
+2026-05-06 22:11:59 [WARN]: Slow query:
+2026-05-06 22:12:01 [WARN]: Slow query:
+2026-05-06 22:12:14 [WARN]: Slow query:
+2026-05-06 22:12:16 [WARN]: Slow query:
+2026-05-06 22:12:18 [WARN]: Slow query:
+2026-05-06 22:12:30 [WARN]: Slow query:
+2026-05-06 22:12:33 [WARN]: Slow query:
+2026-05-06 22:12:35 [WARN]: Slow query:
+2026-05-06 22:12:41 [WARN]: Slow query:
+2026-05-06 22:12:43 [WARN]: Slow query:
+2026-05-06 22:12:47 [WARN]: Slow query:
+2026-05-06 22:12:50 [WARN]: Slow query:
+2026-05-06 22:12:52 [WARN]: Slow query:
+2026-05-06 22:13:28 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-06 22:13:32 [WARN]: Slow query:
+2026-05-06 22:13:34 [WARN]: Slow query:
+2026-05-06 22:13:42 [WARN]: Slow query:
+2026-05-06 22:13:45 [WARN]: Slow query:
+2026-05-06 22:13:50 [WARN]: Slow query:
+2026-05-06 22:13:54 [WARN]: Slow query:
+2026-05-06 22:13:59 [WARN]: Slow query:
+2026-05-06 22:14:02 [WARN]: Slow query:
+2026-05-06 22:14:05 [WARN]: Slow query:
+2026-05-06 22:14:08 [WARN]: Slow query:
+2026-05-06 22:14:11 [WARN]: Slow query:
+2026-05-06 22:14:12 [WARN]: Slow query:
+2026-05-06 22:14:15 [WARN]: Slow query:
+2026-05-06 22:14:19 [WARN]: Slow query:
+2026-05-06 22:14:21 [WARN]: Slow query:
+2026-05-06 22:14:24 [WARN]: Slow query:
+2026-05-06 22:14:27 [WARN]: Slow query:
+2026-05-06 22:14:31 [WARN]: Slow query:
+2026-05-06 22:14:33 [WARN]: Slow query:
+2026-05-06 22:14:36 [WARN]: Slow query:
+2026-05-06 22:14:39 [WARN]: Slow query:
+2026-05-06 22:14:41 [WARN]: Slow query:
+2026-05-06 22:14:45 [WARN]: Slow query:
+2026-05-06 22:14:47 [WARN]: Slow query:
+2026-05-06 22:14:50 [WARN]: Slow query:
+2026-05-06 22:14:52 [WARN]: Slow query:
+2026-05-06 22:15:02 [WARN]: Slow query:
+2026-05-06 22:15:06 [WARN]: Slow query:
+2026-05-06 22:15:10 [WARN]: Slow query:
+2026-05-06 22:15:13 [WARN]: Slow query:
+2026-05-06 22:15:22 [WARN]: Slow query:
+2026-05-06 22:15:24 [WARN]: Slow query:
+2026-05-06 22:15:28 [WARN]: Slow query:
+2026-05-06 22:15:30 [WARN]: Slow query:
+2026-05-06 22:15:32 [WARN]: Slow query:
+2026-05-06 22:15:33 [WARN]: Slow query:
+2026-05-06 22:15:53 [WARN]: Slow query:
+2026-05-06 22:15:57 [WARN]: Slow query:
+2026-05-06 22:15:59 [WARN]: Slow query:
+2026-05-06 22:16:00 [WARN]: Slow query:
+2026-05-06 22:16:01 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-06 22:16:07 [ERROR]: Database query error:
+2026-05-06 22:16:10 [WARN]: Slow query:
+2026-05-06 22:16:11 [ERROR]: Database query error:
+2026-05-06 22:16:13 [WARN]: Slow query:
+2026-05-06 22:16:15 [WARN]: Slow query:
+2026-05-06 22:16:15 [ERROR]: Database query error:
+2026-05-06 22:16:17 [ERROR]: Database query error:
+2026-05-06 22:16:20 [WARN]: Slow query:
+2026-05-06 22:16:22 [WARN]: Slow query:
+2026-05-06 22:16:23 [WARN]: Slow query:
+2026-05-06 22:16:23 [WARN]: Slow query:
+2026-05-06 22:16:23 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-06 22:16:29 [WARN]: Slow query:
+2026-05-06 22:16:29 [WARN]: Slow query:
+2026-05-06 22:16:38 [WARN]: Slow query:
+2026-05-06 22:16:43 [WARN]: Slow query:
+2026-05-06 22:16:43 [WARN]: Slow query:
+2026-05-06 22:16:54 [WARN]: Slow query:
+2026-05-06 22:16:58 [WARN]: Slow query:
+2026-05-06 22:16:58 [WARN]: Slow query:
+2026-05-06 22:17:01 [WARN]: Slow query:
+2026-05-06 22:17:01 [WARN]: Slow query:
+2026-05-06 22:17:16 [WARN]: Slow query:
+2026-05-06 22:17:16 [WARN]: Slow query:
+2026-05-06 22:17:21 [WARN]: Slow query:
+2026-05-06 22:17:21 [WARN]: Slow query:
+2026-05-06 22:17:24 [WARN]: Slow query:
+2026-05-06 22:17:24 [WARN]: Slow query:
+2026-05-06 22:17:31 [ERROR]: Database query error:
+2026-05-06 22:17:35 [WARN]: Slow query:
+2026-05-06 22:17:38 [WARN]: Slow query:
+2026-05-06 22:17:40 [WARN]: Slow query:
+2026-05-06 22:17:42 [WARN]: Slow query:
+2026-05-06 22:17:45 [ERROR]: Database query error:
+2026-05-06 22:19:07 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-06 22:19:11 [WARN]: Slow query:
+2026-05-06 22:19:20 [WARN]: Slow query:
+2026-05-06 22:19:22 [WARN]: Slow query:
+2026-05-06 22:19:26 [WARN]: Slow query:
+2026-05-06 22:19:30 [WARN]: Slow query:
+2026-05-06 22:19:32 [WARN]: Slow query:
+2026-05-06 22:19:34 [WARN]: Slow query:
+2026-05-06 22:19:40 [WARN]: Slow query:
+2026-05-06 22:19:42 [WARN]: Slow query:
+2026-05-06 22:19:45 [WARN]: Slow query:
+2026-05-06 22:19:52 [WARN]: Slow query:
+2026-05-06 22:19:56 [WARN]: Slow query:
+2026-05-06 22:20:00 [WARN]: Slow query:
+2026-05-06 22:20:02 [WARN]: Slow query:
+2026-05-06 22:20:05 [WARN]: Slow query:
+2026-05-06 22:20:07 [WARN]: Slow query:
+2026-05-06 22:20:11 [WARN]: Slow query:
+2026-05-06 22:20:14 [WARN]: Slow query:
+2026-05-06 22:20:24 [WARN]: Slow query:
+2026-05-06 22:20:31 [WARN]: Slow query:
+2026-05-06 22:20:33 [WARN]: Slow query:
+2026-05-06 22:20:36 [WARN]: Slow query:
+2026-05-06 22:20:38 [WARN]: Slow query:
+2026-05-06 22:20:45 [WARN]: Slow query:
+2026-05-06 22:20:52 [WARN]: Slow query:
+2026-05-06 22:20:55 [WARN]: Slow query:
+2026-05-06 22:21:00 [WARN]: Slow query:
+2026-05-06 22:21:02 [WARN]: Slow query:
+2026-05-06 22:21:07 [WARN]: Slow query:
+2026-05-06 22:21:10 [WARN]: Slow query:
+2026-05-06 22:21:20 [WARN]: Slow query:
+2026-05-06 22:21:22 [WARN]: Slow query:
+2026-05-06 22:21:25 [WARN]: Slow query:
+2026-05-06 22:21:27 [WARN]: Slow query:
+2026-05-06 22:21:32 [ERROR]: Database query error:
+2026-05-06 22:23:28 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-06 22:23:31 [WARN]: Slow query:
+2026-05-06 22:23:36 [WARN]: Slow query:
+2026-05-06 22:23:42 [WARN]: Slow query:
+2026-05-06 22:23:47 [WARN]: Slow query:
+2026-05-06 22:24:01 [WARN]: Slow query:
+2026-05-06 22:24:10 [WARN]: Slow query:
+2026-05-06 22:24:11 [WARN]: Slow query:
+2026-05-06 22:24:16 [WARN]: Slow query:
+2026-05-06 22:24:17 [WARN]: Slow query:
+2026-05-06 22:24:19 [WARN]: Slow query:
+2026-05-06 22:24:25 [WARN]: Slow query:
+2026-05-06 22:24:39 [WARN]: Slow query:
+2026-05-06 22:24:53 [WARN]: Slow query:
+2026-05-06 22:24:54 [WARN]: Slow query:
+2026-05-06 22:25:20 [WARN]: Slow query:
+2026-05-06 22:25:21 [WARN]: Slow query:
+2026-05-06 22:25:56 [WARN]: Slow query:
+2026-05-06 22:25:57 [WARN]: Slow query:
+2026-05-06 22:25:59 [WARN]: Slow query:
+2026-05-06 22:26:20 [WARN]: Slow query:
+2026-05-06 22:26:22 [WARN]: Slow query:
+2026-05-06 22:26:24 [WARN]: Slow query:
+2026-05-06 22:26:27 [WARN]: Slow query:
+2026-05-06 22:26:29 [WARN]: Slow query:
+2026-05-06 22:26:30 [WARN]: Slow query:
+2026-05-06 22:26:32 [WARN]: Slow query:
+2026-05-06 22:26:40 [WARN]: Slow query:
+2026-05-06 22:26:42 [WARN]: Slow query:
+2026-05-06 22:26:44 [WARN]: Slow query:
+2026-05-06 22:26:48 [WARN]: Slow query:
+2026-05-06 22:26:50 [WARN]: Slow query:
+2026-05-06 22:26:51 [WARN]: Slow query:
+2026-05-06 22:26:54 [WARN]: Slow query:
+2026-05-06 22:26:57 [WARN]: Slow query:
+2026-05-06 22:27:08 [WARN]: Slow query:
+2026-05-06 22:27:13 [WARN]: Slow query:
+2026-05-06 22:27:15 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-06 22:27:18 [WARN]: Slow query:
+2026-05-06 22:27:18 [WARN]: Slow query:
+2026-05-06 22:27:31 [WARN]: Slow query:
+2026-05-06 22:27:31 [WARN]: Slow query:
+2026-05-06 22:27:33 [WARN]: Slow query:
+2026-05-06 22:27:33 [WARN]: Slow query:
+2026-05-06 22:27:38 [WARN]: Slow query:
+2026-05-06 22:27:40 [WARN]: Slow query:
+2026-05-06 22:27:40 [WARN]: Slow query:
+2026-05-06 22:27:42 [ERROR]: Database query error:
+2026-05-06 22:27:46 [WARN]: Slow query:
+2026-05-06 22:27:48 [WARN]: Slow query:
+2026-05-06 22:27:52 [WARN]: Slow query:
+2026-05-06 22:27:53 [WARN]: Slow query:
+2026-05-06 22:27:54 [WARN]: Slow query:
+2026-05-06 22:27:55 [WARN]: Slow query:
+2026-05-06 22:27:58 [WARN]: Slow query:
+2026-05-06 22:28:09 [WARN]: Slow query:
+2026-05-06 22:28:16 [WARN]: Slow query:
+2026-05-06 22:28:30 [WARN]: Slow query:
+2026-05-06 22:28:32 [WARN]: Slow query:
+2026-05-06 22:28:43 [WARN]: Slow query:
+2026-05-06 22:28:45 [WARN]: Slow query:
+2026-05-06 22:28:57 [WARN]: Slow query:
+2026-05-06 22:28:59 [WARN]: Slow query:
+2026-05-06 22:29:06 [WARN]: Slow query:
+2026-05-06 22:29:08 [WARN]: Slow query:
+2026-05-06 22:29:10 [WARN]: Slow query:
+2026-05-06 22:29:11 [WARN]: Slow query:
+2026-05-06 22:29:14 [WARN]: Slow query:
+2026-05-06 22:29:17 [WARN]: Slow query:
+2026-05-06 22:29:21 [WARN]: Slow query:
+2026-05-06 22:29:24 [WARN]: Slow query:
+2026-05-06 22:29:25 [WARN]: Slow query:
+2026-05-06 22:29:26 [WARN]: Slow query:
+2026-05-06 22:29:28 [WARN]: Slow query:
+2026-05-06 22:29:29 [WARN]: Slow query:
+2026-05-06 22:29:32 [WARN]: Slow query:
+2026-05-06 22:29:34 [WARN]: Slow query:
+2026-05-06 22:29:36 [WARN]: Slow query:
+2026-05-06 22:29:37 [WARN]: Slow query:
+2026-05-06 22:30:10 [WARN]: Slow query:
+2026-05-06 22:30:13 [WARN]: Slow query:
+2026-05-06 22:30:17 [WARN]: Slow query:
+2026-05-06 22:30:21 [WARN]: Slow query:
+2026-05-06 22:30:22 [WARN]: Slow query:
+2026-05-06 22:30:32 [WARN]: Slow query:
+2026-05-06 22:30:59 [WARN]: Slow query:
+2026-05-06 22:31:00 [WARN]: Slow query:
+2026-05-06 22:31:23 [WARN]: Slow query:
+2026-05-06 22:31:25 [WARN]: Slow query:
+2026-05-06 22:31:26 [WARN]: Slow query:
+2026-05-06 22:31:27 [WARN]: Slow query:
+2026-05-06 22:31:30 [WARN]: Slow query:
+2026-05-06 22:31:36 [WARN]: Slow query:
+2026-05-06 22:31:41 [WARN]: Slow query:
+2026-05-06 22:31:50 [ERROR]: Database query error:

@@ -28,6 +28,7 @@ import { pool } from '../../infrastructure/database/postgres.js';
 
 // Debounce map — driver ke last location ka timer track karo
 const idleLocationDbTimers = new Map();
+const latestIdleLocations = new Map(); // Store latest location for throttle
 const IDLE_LOCATION_DB_DELAY = 30_000; // 30 sec baad DB update
 
 // Helper: get user session from in-memory map OR Redis (for reconnection recovery)
@@ -57,7 +58,9 @@ export const setupSocketHandlers = () => {
 
     // Har connection pe JWT verify karo — bina token ke connection reject
     io.use((socket, next) => {
-        const token = socket.handshake.auth?.token;
+        // Accept token from auth object (standard client) OR query (Postman/testing)
+        const token = socket.handshake.auth?.token || socket.handshake.query?.token;
+        
         if (!token) {
             return next(new Error('Authentication token required'));
         }
@@ -465,7 +468,7 @@ socket.on('driver:location_update', async (data) => {
         /**
          * Driver idle location update (online, no active ride)
          * Client emits: socket.emit('driver:idle_location', { latitude, longitude })
-         * Redis: turant update — DB: 30 sec debounce ke baad
+         * Redis: turant update — DB: 30 sec throttle (not debounce)
          */
         socket.on('driver:idle_location', async (data) => {
             try {
@@ -478,25 +481,31 @@ socket.on('driver:location_update', async (data) => {
                 // Redis — turant update
                 await updateDriverLocation(user.userId, { latitude, longitude }, true);
 
-                // DB — 30 sec debounce: har ping pe timer reset karo
-                if (idleLocationDbTimers.has(user.userId)) {
-                    clearTimeout(idleLocationDbTimers.get(user.userId));
-                }
-                const timer = setTimeout(async () => {
-                    try {
-                        await pool.query(
-                            `UPDATE drivers SET current_latitude = $1, current_longitude = $2, updated_at = NOW() WHERE user_id = $3`,
-                            [latitude, longitude, user.userId]
-                        );
-                        logger.debug('📍 Driver idle location flushed to DB', { driverId: user.userId, latitude, longitude });
-                    } catch (e) {
-                        logger.error('❌ Idle location DB flush failed', { driverId: user.userId, error: e.message });
-                    } finally {
-                        idleLocationDbTimers.delete(user.userId);
-                    }
-                }, IDLE_LOCATION_DB_DELAY);
+                // Latest location save karo taki timer wahi use kare
+                latestIdleLocations.set(user.userId, { latitude, longitude });
 
-                idleLocationDbTimers.set(user.userId, timer);
+                // DB — 30 sec throttle: agar timer nahi hai tabhi naya start karo
+                if (!idleLocationDbTimers.has(user.userId)) {
+                    const timer = setTimeout(async () => {
+                        try {
+                            const latestLoc = latestIdleLocations.get(user.userId);
+                            if (latestLoc) {
+                                await pool.query(
+                                    `UPDATE drivers SET current_latitude = $1, current_longitude = $2, updated_at = NOW() WHERE user_id = $3`,
+                                    [latestLoc.latitude, latestLoc.longitude, user.userId]
+                                );
+                                logger.debug('📍 Driver idle location flushed to DB', { driverId: user.userId, ...latestLoc });
+                            }
+                        } catch (e) {
+                            logger.error('❌ Idle location DB flush failed', { driverId: user.userId, error: e.message });
+                        } finally {
+                            idleLocationDbTimers.delete(user.userId);
+                            latestIdleLocations.delete(user.userId);
+                        }
+                    }, IDLE_LOCATION_DB_DELAY);
+
+                    idleLocationDbTimers.set(user.userId, timer);
+                }
             } catch (error) {
                 logger.error('❌ Driver idle location error', { socketId: socket.id, error: error.message });
             }

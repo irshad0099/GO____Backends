@@ -501,6 +501,7 @@ export const acceptRide = async (driverUserId, rideId) => {
         if (!driver.is_verified) throw new ApiError(403, 'Driver not verified');
 
         const activeRide = await rideRepo.findActiveRideByDriver(driver.id);
+        console.log('Active ride for driver:', activeRide);
         if (activeRide) throw new ConflictError('You already have an active ride');
 
         const ride = await rideRepo.findRideById(rideId);

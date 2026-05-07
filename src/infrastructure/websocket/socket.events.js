@@ -101,7 +101,7 @@ export const updateDriverLocation = async (driverId, location, isAvailable = tru
         if (isNew) await redis.expire(DRIVER_LOC_HASH, DRIVER_LOC_TTL);
         logger.debug('✅ Driver location updated', { driverId, location });
     } catch (error) {
-        logger.error('❌ Failed to update driver location', { driverId, error: error.message });
+        logger.error(`❌ Failed to update driver location: ${error.message}`, { driverId });
     }
 };
 

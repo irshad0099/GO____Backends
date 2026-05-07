@@ -9,7 +9,9 @@ import {
     setupRideRoom,
     leaveRideRoom,
     updateDriverLocation,
-    getSocketUser
+    getSocketUser,
+    emitToPassenger,
+    emitToDriver
 } from './socket.events.js';
 import { calculateDistance, calculateDuration } from '../../core/utils/rideCalculator.js';
 import { findRideById } from '../../modules/rides/repositories/ride.repository.js';
@@ -523,8 +525,17 @@ socket.on('driver:location_update', async (data) => {
 
                 const { rideId } = data;
 
-                // Sirf us ride room ko notify karo — global broadcast nahi
-                io.to(`ride:${rideId}`).emit('ride:accepted', {
+                // Ride se passenger_id nikalo, phir directly emit karo
+                const ride = await findRideById(rideId);
+                if (ride && ride.passenger_id) {
+                    emitToPassenger(ride.passenger_id, 'ride:accepted', {
+                        rideId,
+                        driverId: user.userId,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                // Driver ko bhi acknowledge karo
+                socket.emit('ride:accepted', {
                     rideId,
                     driverId: user.userId,
                     timestamp: new Date().toISOString()
@@ -559,13 +570,16 @@ socket.on('driver:location_update', async (data) => {
 
                 const { rideId, reason } = data;
 
-                // Sirf us ride room ko notify karo — global broadcast nahi
-                io.to(`ride:${rideId}`).emit('ride:rejected', {
-                    rideId,
-                    driverId: user.userId,
-                    reason,
-                    timestamp: new Date().toISOString()
-                });
+                // Ride se passenger_id nikalo, phir directly emit karo
+                const ride = await findRideById(rideId);
+                if (ride && ride.passenger_id) {
+                    emitToPassenger(ride.passenger_id, 'ride:rejected', {
+                        rideId,
+                        driverId: user.userId,
+                        reason,
+                        timestamp: new Date().toISOString()
+                    });
+                }
 
                 logger.info('❌ Ride rejected by driver', { rideId, driverId: user.userId, reason });
             } catch (error) {

@@ -355,6 +355,7 @@ const durationMinutes = mapsResult.durationMinutes;
             message: 'Ride requested successfully. Finding nearby drivers...'
         };
     } catch (error) {
+        console.log(`Error requesting ride for user ${userId}:`, error);
         logger.error('Request ride service error:', error);
         throw error;
     }

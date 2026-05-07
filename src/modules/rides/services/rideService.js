@@ -746,7 +746,7 @@ if (status === 'cancelled') {
                         amount:      passengerFinalFare,
                         description: `Wallet payment for ride #${ride.ride_number}`,
                     });
-                    additionalFields.payment_status = 'paid';
+                    additionalFields.payment_status = 'completed';
                 } catch (walletErr) {
                     logger.error(`[RideService] Wallet deduction failed for ride ${rideId}:`, walletErr.message);
                     // payment_status 'pending' rehne do — manually resolve hoga

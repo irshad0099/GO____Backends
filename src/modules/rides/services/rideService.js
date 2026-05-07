@@ -289,7 +289,7 @@ const durationMinutes = mapsResult.durationMinutes;
         //     );
         // }
 
-        console.log(`Ride requested: ${rideNumber} for user ${userId} | Nearby drivers notified: ${signals.nearbyDrivers.length}`,signals.nearbyDrivers);
+        // console.log(`Ride requested: ${rideNumber} for user ${userId} | Nearby drivers notified: ${signals.nearbyDrivers.length}`,signals.nearbyDrivers);
         // ── SOCKET: broadcast new ride request to nearby drivers ──────────────
         if (signals.nearbyDrivers.length > 0) {
             const pickupLocation = {

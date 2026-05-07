@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ENV } from '../../config/envConfig.js';
-import redis from '../../infrastructure/redis/redis.js';
+import redis, { redisSafe } from '../../config/redis.config.js';
 import logger from '../logger/logger.js';
 
 const GOOGLE_MAPS_API_KEY = ENV.GOOGLE_MAPS_API_KEY;
@@ -11,7 +11,8 @@ export const getDistanceAndDuration = async (originLat, originLng, destLat, dest
     const cacheKey = `maps:route:${originLat}:${originLng}:${destLat}:${destLng}`;
 
     try {
-        const cached = await redis.get(cacheKey);
+        // Cache check — Redis fail pe skip karo
+        const cached = await redisSafe(() => redis.get(cacheKey));
         if (cached) {
             logger.info('[Maps] Cache HIT — route');
             return JSON.parse(cached);
@@ -59,7 +60,8 @@ export const getDistanceAndDuration = async (originLat, originLng, destLat, dest
             source:          'google_maps'
         };
 
-        await redis.setex(cacheKey, CACHE_TTL, JSON.stringify(result));
+        // Cache set — Redis fail pe silently skip
+        await redisSafe(() => redis.setex(cacheKey, CACHE_TTL, JSON.stringify(result)));
         logger.info(`[Maps] Cache MISS — route calculated: ${result.distanceKm}km, ${result.durationMinutes}min`);
 
         return result;
@@ -99,7 +101,7 @@ export const geocodeAddress = async (address) => {
     const cacheKey = `maps:geocode:${address.replace(/\s+/g, '_').toLowerCase()}`;
 
     try {
-        const cached = await redis.get(cacheKey);
+        const cached = await redisSafe(() => redis.get(cacheKey));
         if (cached) return JSON.parse(cached);
 
         const response = await axios.get(
@@ -122,7 +124,7 @@ export const geocodeAddress = async (address) => {
             formattedAddress: response.data.results[0].formatted_address
         };
 
-        await redis.setex(cacheKey, 3600, JSON.stringify(result));
+        await redisSafe(() => redis.setex(cacheKey, 3600, JSON.stringify(result)));
         return result;
 
     } catch (error) {

@@ -1,101 +1,43 @@
-// import redis from '../../config/redis.config.js';
-
-// // ─── OTP Store karo (5 min expiry) ───────────────────────────────────────────
-// export const saveOTP = async (phone, otp, purpose = 'signin') => {
-//     const key = `otp:${purpose}:${phone}`;
-//     await redis.setex(key, 300, otp); // 300 seconds = 5 minutes
-// };
-
-// // ─── OTP Verify karo ─────────────────────────────────────────────────────────
-// export const verifyOTP = async (phone, otp, purpose = 'signin') => {
-//     const key   = `otp:${purpose}:${phone}`;
-//     const saved = await redis.get(key);
-//     if (!saved) return { valid: false, reason: 'OTP expired or not found' };
-//     if (saved !== String(otp)) return { valid: false, reason: 'Invalid OTP' };
-//     await redis.del(key); // OTP use hone ke baad delete karo
-//     return { valid: true };
-// };
-
-// // ─── OTP Delete karo ─────────────────────────────────────────────────────────
-// export const deleteOTP = async (phone, purpose = 'signin') => {
-//     await redis.del(`otp:${purpose}:${phone}`);
-// };
-
-// // ─── Driver Location Store karo ───────────────────────────────────────────────
-// export const saveDriverLocation = async (driverId, lat, lng) => {
-//     const key  = `driver:location:${driverId}`;
-//     const data = JSON.stringify({ lat, lng, updatedAt: Date.now() });
-//     await redis.setex(key, 30, data); // 30 sec expiry — agar update na aaye toh stale
-// };
-
-// // ─── Driver Location Get karo ─────────────────────────────────────────────────
-// export const getDriverLocation = async (driverId) => {
-//     const data = await redis.get(`driver:location:${driverId}`);
-//     return data ? JSON.parse(data) : null;
-// };
-
-// // ─── Token Blacklist (logout pe) ──────────────────────────────────────────────
-// export const blacklistToken = async (token, expirySeconds = 86400) => {
-//     await redis.setex(`blacklist:${token}`, expirySeconds, '1');
-// };
-
-// export const isTokenBlacklisted = async (token) => {
-//     const result = await redis.get(`blacklist:${token}`);
-//     return result === '1';
-// };
-
-// // ─── Rate Limit check ─────────────────────────────────────────────────────────
-// export const checkRateLimit = async (key, maxRequests, windowSeconds) => {
-//     const current = await redis.incr(key);
-//     if (current === 1) await redis.expire(key, windowSeconds);
-//     return { allowed: current <= maxRequests, current, max: maxRequests };
-// };
-
-
-
-
-
 import jwt from 'jsonwebtoken';
-import redis from '../../config/redis.config.js';
+import redis, { redisSafe } from '../../config/redis.config.js';
 import logger from '../logger/logger.js';
 
 // ─── OTP Store karo (5 min expiry) ───────────────────────────────────────────
 export const saveOTP = async (phone, otp, purpose = 'signin') => {
     const key = `otp:${purpose}:${phone}`;
-    await redis.setex(key, 300, otp);
+    await redisSafe(() => redis.setex(key, 300, otp));
 };
 
 // ─── OTP Verify karo ─────────────────────────────────────────────────────────
 export const verifyOTP = async (phone, otp, purpose = 'signin') => {
     const key   = `otp:${purpose}:${phone}`;
-    const saved = await redis.get(key);
+    const saved = await redisSafe(() => redis.get(key));
     if (!saved) return { valid: false, reason: 'OTP expired or not found' };
     if (saved !== String(otp)) return { valid: false, reason: 'Invalid OTP' };
-    await redis.del(key);
+    await redisSafe(() => redis.del(key));
     return { valid: true };
 };
 
 // ─── OTP Delete karo ─────────────────────────────────────────────────────────
 export const deleteOTP = async (phone, purpose = 'signin') => {
-    await redis.del(`otp:${purpose}:${phone}`);
+    await redisSafe(() => redis.del(`otp:${purpose}:${phone}`));
 };
 
 // ─── Driver Location Store karo ───────────────────────────────────────────────
 export const saveDriverLocation = async (driverId, lat, lng) => {
     const key  = `driver:location:${driverId}`;
     const data = JSON.stringify({ lat, lng, updatedAt: Date.now() });
-    await redis.setex(key, 30, data);
+    await redisSafe(() => redis.setex(key, 120, data)); // 2 min expiry — was 30s, too short
 };
 
 // ─── Driver Location Get karo ─────────────────────────────────────────────────
 export const getDriverLocation = async (driverId) => {
-    const data = await redis.get(`driver:location:${driverId}`);
+    const data = await redisSafe(() => redis.get(`driver:location:${driverId}`));
     return data ? JSON.parse(data) : null;
 };
 
 // ─── Token Blacklist (logout pe) ──────────────────────────────────────────────
 export const blacklistToken = async (token, expirySeconds = 86400) => {
-    // Token ki actual remaining validity use karo — 24h fixed nahi
     try {
         const decoded = jwt.decode(token);
         if (decoded?.exp) {
@@ -103,29 +45,31 @@ export const blacklistToken = async (token, expirySeconds = 86400) => {
             if (remaining > 0) expirySeconds = remaining;
         }
     } catch { /* decode fail pe default use karo */ }
-    await redis.setex(`blacklist:${token}`, expirySeconds, '1');
+    await redisSafe(() => redis.setex(`blacklist:${token}`, expirySeconds, '1'));
 };
 
 export const isTokenBlacklisted = async (token) => {
-    const result = await redis.get(`blacklist:${token}`);
+    const result = await redisSafe(() => redis.get(`blacklist:${token}`));
     return result === '1';
 };
 
 // ─── Rate Limit check ─────────────────────────────────────────────────────────
 export const checkRateLimit = async (key, maxRequests, windowSeconds) => {
-    const current = await redis.incr(key);
-    if (current === 1) await redis.expire(key, windowSeconds);
+    const current = await redisSafe(() => redis.incr(key));
+    if (current === null) return { allowed: true, current: 0, max: maxRequests }; // Redis down = allow
+    if (current === 1) await redisSafe(() => redis.expire(key, windowSeconds));
     return { allowed: current <= maxRequests, current, max: maxRequests };
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  NEARBY DRIVERS CACHE
 //  Key: nearby:drivers:{vehicleType}:{lat}:{lng}
-//  TTL: 10 seconds (drivers move fast!)
+//  TTL: 30 seconds (was 10s — too short for effective caching)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const getNearbyKey = (vehicleType, lat, lng) => {
-    const rLat = Math.round(lat * 100) / 100; // ~1km precision
+    // ~1km precision — nearby requests share cache
+    const rLat = Math.round(lat * 100) / 100;
     const rLng = Math.round(lng * 100) / 100;
     return `nearby:drivers:${vehicleType}:${rLat}:${rLng}`;
 };
@@ -133,12 +77,12 @@ const getNearbyKey = (vehicleType, lat, lng) => {
 export const getCachedNearbyDrivers = async (vehicleType, lat, lng) => {
     try {
         const key  = getNearbyKey(vehicleType, lat, lng);
-        const data = await redis.get(key);
+        const data = await redisSafe(() => redis.get(key));
         if (!data) return null;
-        logger.debug(`✅ Nearby drivers cache HIT | ${key}`);
+        logger.info(`✅ Nearby drivers cache HIT | ${key}`);
         return JSON.parse(data);
     } catch (error) {
-        logger.warn('Nearby drivers Redis GET error:', error.message);
+        logger.warn('Nearby drivers cache parse error:', error.message);
         return null;
     }
 };
@@ -146,8 +90,8 @@ export const getCachedNearbyDrivers = async (vehicleType, lat, lng) => {
 export const setCachedNearbyDrivers = async (vehicleType, lat, lng, drivers) => {
     try {
         const key = getNearbyKey(vehicleType, lat, lng);
-        await redis.setex(key, 10, JSON.stringify(drivers));
-        logger.debug(`💾 Nearby drivers cached | ${key} | ${drivers.length} drivers | TTL: 10s`);
+        await redisSafe(() => redis.setex(key, 30, JSON.stringify(drivers)));
+        logger.info(`💾 Nearby drivers cached | ${key} | ${drivers.length} drivers | TTL: 30s`);
     } catch (error) {
         logger.warn('Nearby drivers Redis SET error:', error.message);
     }
@@ -156,11 +100,11 @@ export const setCachedNearbyDrivers = async (vehicleType, lat, lng, drivers) => 
 // ─────────────────────────────────────────────────────────────────────────────
 //  SURGE MULTIPLIER CACHE
 //  Key: surge:{vehicleType}:{lat}:{lng}
-//  TTL: 30 seconds
+//  TTL: 60 seconds (was 30s)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const getSurgeKey = (vehicleType, lat, lng) => {
-    const rLat = Math.round(lat * 10) / 10; // ~11km precision
+    const rLat = Math.round(lat * 10) / 10;
     const rLng = Math.round(lng * 10) / 10;
     return `surge:${vehicleType}:${rLat}:${rLng}`;
 };
@@ -168,9 +112,9 @@ const getSurgeKey = (vehicleType, lat, lng) => {
 export const getCachedSurge = async (vehicleType, lat, lng) => {
     try {
         const key  = getSurgeKey(vehicleType, lat, lng);
-        const data = await redis.get(key);
+        const data = await redisSafe(() => redis.get(key));
         if (!data) return null;
-        logger.debug(`✅ Surge cache HIT | ${key}`);
+        logger.info(`✅ Surge cache HIT | ${key}`);
         return JSON.parse(data);
     } catch (error) {
         logger.warn('Surge Redis GET error:', error.message);
@@ -181,8 +125,8 @@ export const getCachedSurge = async (vehicleType, lat, lng) => {
 export const setCachedSurge = async (vehicleType, lat, lng, surgeData) => {
     try {
         const key = getSurgeKey(vehicleType, lat, lng);
-        await redis.setex(key, 30, JSON.stringify(surgeData));
-        logger.debug(`💾 Surge cached | ${key} | TTL: 30s`);
+        await redisSafe(() => redis.setex(key, 60, JSON.stringify(surgeData)));
+        logger.info(`💾 Surge cached | ${key} | TTL: 60s`);
     } catch (error) {
         logger.warn('Surge Redis SET error:', error.message);
     }
@@ -197,9 +141,9 @@ export const setCachedSurge = async (vehicleType, lat, lng, surgeData) => {
 export const getCachedDriverProfile = async (driverId) => {
     try {
         const key  = `driver:profile:${driverId}`;
-        const data = await redis.get(key);
+        const data = await redisSafe(() => redis.get(key));
         if (!data) return null;
-        logger.debug(`✅ Driver profile cache HIT | driver:${driverId}`);
+        logger.info(`✅ Driver profile cache HIT | driver:${driverId}`);
         return JSON.parse(data);
     } catch (error) {
         logger.warn('Driver profile Redis GET error:', error.message);
@@ -209,8 +153,8 @@ export const getCachedDriverProfile = async (driverId) => {
 
 export const setCachedDriverProfile = async (driverId, profile) => {
     try {
-        await redis.setex(`driver:profile:${driverId}`, 300, JSON.stringify(profile));
-        logger.debug(`💾 Driver profile cached | driver:${driverId} | TTL: 5min`);
+        await redisSafe(() => redis.setex(`driver:profile:${driverId}`, 300, JSON.stringify(profile)));
+        logger.info(`💾 Driver profile cached | driver:${driverId} | TTL: 5min`);
     } catch (error) {
         logger.warn('Driver profile Redis SET error:', error.message);
     }
@@ -218,7 +162,7 @@ export const setCachedDriverProfile = async (driverId, profile) => {
 
 export const invalidateDriverProfileCache = async (driverId) => {
     try {
-        await redis.del(`driver:profile:${driverId}`);
+        await redisSafe(() => redis.del(`driver:profile:${driverId}`));
         logger.debug(`🗑 Driver profile cache invalidated | driver:${driverId}`);
     } catch (error) {
         logger.warn('Driver profile Redis DEL error:', error.message);

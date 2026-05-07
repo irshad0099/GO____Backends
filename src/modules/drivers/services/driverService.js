@@ -56,54 +56,22 @@ export const addVehicleDetail = async (userId, vehicleData) => {
     }
 };
 
-// export const getDriverProfile = async (userId) => {
-//     try {
-//         const driver = await driverRepo.findDriverByUserId(userId);
-//
-//         if (!driver) {
-//             throw new NotFoundError('Driver profile');
-//         }
-//
-//         return {
-//             id: driver.id,
-//             userId: driver.user_id,
-//             vehicleType: driver.vehicle_type,
-//             vehicleNumber: driver.vehicle_number,
-//             vehicleModel: driver.vehicle_model,
-//             vehicleColor: driver.vehicle_color,
-//             licenseNumber: driver.license_number,
-//             licenseExpiry: driver.license_expiry,
-//             isVerified: driver.is_verified,
-//             isAvailable: driver.is_available,
-//             isOnDuty: driver.is_on_duty,
-//             currentLocation: driver.current_latitude && driver.current_longitude ? {
-//                 latitude: driver.current_latitude,
-//                 longitude: driver.current_longitude
-//             } : null,
-//             totalRides: driver.total_rides,
-//             rating: parseFloat(driver.rating).toFixed(1),
-//             totalEarnings: driver.total_earnings,
-//             verifiedAt: driver.verified_at,
-//             createdAt: driver.created_at,
-//             updatedAt: driver.updated_at
-//         };
-//     } catch (error) {
-//         logger.error('Get driver profile service error:', error);
-//         throw error;
-//     }
-// };
+
 
 export const getDriverProfile = async (userId) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);
         if (!driver) throw new NotFoundError('Driver profile');
         
-        // ── Redis se live location fetch karo (fast) ──────────────────────────
+        // ── Redis se live location try karo, fail pe DB fallback ──────────────
         let currentLocation = null;
-        const redisLocation = await getDriverLocation(driver.id);
-        if (redisLocation) {
-            currentLocation = { latitude: redisLocation.lat, longitude: redisLocation.lng };
-        } else if (driver.current_latitude && driver.current_longitude) {
+        try {
+            const redisLocation = await getDriverLocation(driver.id);
+            if (redisLocation) {
+                currentLocation = { latitude: redisLocation.lat, longitude: redisLocation.lng };
+            }
+        } catch { /* Redis down — DB fallback */ }
+        if (!currentLocation && driver.current_latitude && driver.current_longitude) {
             currentLocation = { latitude: driver.current_latitude, longitude: driver.current_longitude };
         }
         
@@ -182,33 +150,7 @@ export const updateDriverProfile = async (userId, updates) => {
     }
 };
 
-// export const updateDriverLocation = async (userId, latitude, longitude) => {
-//     try {
-//         const driver = await driverRepo.findDriverByUserId(userId);
-//
-//         if (!driver) {
-//             throw new NotFoundError('Driver profile');
-//         }
-//
-//         if (!driver.is_verified) {
-//             throw new ApiError(403, 'Driver not verified');
-//         }
-//
-//         const updatedDriver = await driverRepo.updateDriver(driver.id, {
-//             current_latitude: latitude,
-//             current_longitude: longitude
-//         });
-//
-//         return {
-//             latitude: updatedDriver.current_latitude,
-//             longitude: updatedDriver.current_longitude,
-//             updatedAt: updatedDriver.updated_at
-//         };
-//     } catch (error) {
-//         logger.error('Update driver location service error:', error);
-//         throw error;
-//     }
-// };
+
 
 export const updateDriverLocation = async (userId, latitude, longitude) => {
     try {
@@ -216,10 +158,10 @@ export const updateDriverLocation = async (userId, latitude, longitude) => {
         if (!driver) throw new NotFoundError('Driver profile');
         if (!driver.is_verified) throw new ApiError(403, 'Driver not verified');
 
-        // ── Redis mein location save karo (30 sec expiry — real-time) ─────────
-        await saveDriverLocation(driver.id, latitude, longitude);
+        // ── Redis mein location save karo (2 min expiry — real-time) ──────────
+        await saveDriverLocation(driver.id, latitude, longitude).catch(() => {});
 
-        // ── DB mein bhi update karo (permanent record) ────────────────────────
+        // ── DB mein bhi update karo (permanent record — source of truth) ──────
         const updatedDriver = await driverRepo.updateDriver(driver.id, {
             current_latitude:  latitude,
             current_longitude: longitude

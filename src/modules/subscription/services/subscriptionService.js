@@ -1,7 +1,7 @@
 import { db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 import { createSubscriptionPlan, cancelSubscription as cancelRazorpaySubscription, fetchSubscription as fetchRazorpaySubscription, createCustomer } from '../../../core/services/razorpayService.js';
-import redis from '../../../config/redis.config.js';
+import redis, { redisSafe } from '../../../config/redis.config.js';
 import {
     getAllPlans,
     getPlanById,
@@ -28,20 +28,20 @@ const SUB_CACHE_TTL = 10 * 60; // 10 minutes
 
 const getCachedSubscription = async (userId) => {
     try {
-        const data = await redis.get(SUB_CACHE_KEY(userId));
+        const data = await redisSafe(() => redis.get(SUB_CACHE_KEY(userId)));
         if (!data) return null;
-        logger.debug(`✅ Subscription cache HIT for user ${userId}`);
+        logger.info(`✅ Subscription cache HIT for user ${userId}`);
         return JSON.parse(data);
     } catch (error) {
-        logger.warn('Subscription Redis GET error:', error.message);
+        logger.warn('Subscription cache parse error:', error.message);
         return null;
     }
 };
 
 const setCachedSubscription = async (userId, data) => {
     try {
-        await redis.setex(SUB_CACHE_KEY(userId), SUB_CACHE_TTL, JSON.stringify(data));
-        logger.debug(`💾 Subscription cached in Redis for user ${userId}`);
+        await redisSafe(() => redis.setex(SUB_CACHE_KEY(userId), SUB_CACHE_TTL, JSON.stringify(data)));
+        logger.info(`💾 Subscription cached in Redis for user ${userId}`);
     } catch (error) {
         logger.warn('Subscription Redis SET error:', error.message);
     }
@@ -49,7 +49,7 @@ const setCachedSubscription = async (userId, data) => {
 
 const invalidateSubscriptionCache = async (userId) => {
     try {
-        await redis.del(SUB_CACHE_KEY(userId));
+        await redisSafe(() => redis.del(SUB_CACHE_KEY(userId)));
         logger.debug(`🗑 Subscription cache invalidated for user ${userId}`);
     } catch (error) {
         logger.warn('Subscription Redis DEL error:', error.message);

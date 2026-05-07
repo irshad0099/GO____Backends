@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { ENV } from '../../../config/envConfig.js';
-import redis from '../../../config/redis.config.js';
+import redis, { redisSafe } from '../../../config/redis.config.js';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -30,8 +30,9 @@ const daysUntilDate = (dateStr) => {
 
 const checkVelocity = async (userId) => {
     const key = `kyc:velocity:${userId}`;
-    const count = await redis.incr(key);
-    if (count === 1) await redis.expire(key, 86400);
+    const count = await redisSafe(() => redis.incr(key));
+    if (count === null) return true; // Redis down — allow KYC
+    if (count === 1) await redisSafe(() => redis.expire(key, 86400));
     return count <= 5;
 };
 

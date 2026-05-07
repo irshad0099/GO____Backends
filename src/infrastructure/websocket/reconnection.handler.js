@@ -98,7 +98,7 @@ export const queueMessage = async (userId, event, data) => {
         };
 
         // Add to queue (list) with 24-hour TTL
-        await redis.rPush(queueKey, JSON.stringify(message));
+        await redis.rpush(queueKey, JSON.stringify(message));
         await redis.expire(queueKey, SESSION_TTL);
 
         logger.debug('📨 Message queued', { userId, event });
@@ -117,7 +117,7 @@ export const getQueuedMessages = async (userId) => {
     try {
         const queueKey = `${MESSAGE_QUEUE_PREFIX}:${userId}`;
 
-        const messages = await redis.lRange(queueKey, 0, -1);
+        const messages = await redis.lrange(queueKey, 0, -1);
 
         if (messages.length > 0) {
             logger.info('📬 Retrieved queued messages', { userId, count: messages.length });
@@ -259,8 +259,8 @@ export const storeLocationHistory = async (driverId, location, rideId = null) =>
         };
 
         // Keep last 100 locations, 7-day TTL
-        await redis.lPush(historyKey, JSON.stringify(locationEntry));
-        await redis.lTrim(historyKey, 0, 99);
+        await redis.lpush(historyKey, JSON.stringify(locationEntry));
+        await redis.ltrim(historyKey, 0, 99);
         await redis.expire(historyKey, 604800); // 7 days
 
         logger.debug('📍 Location stored in history', { driverId });
@@ -275,7 +275,7 @@ export const storeLocationHistory = async (driverId, location, rideId = null) =>
 export const getLocationHistory = async (driverId, limit = 10) => {
     try {
         const historyKey = `location_history:${driverId}`;
-        const locations = await redis.lRange(historyKey, 0, limit - 1);
+        const locations = await redis.lrange(historyKey, 0, limit - 1);
 
         if (locations.length > 0) {
             return locations.map(loc => JSON.parse(loc));

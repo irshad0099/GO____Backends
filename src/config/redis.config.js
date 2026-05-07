@@ -58,6 +58,9 @@ if (useUpstash) {
         enableOfflineQueue: true,
         retryStrategy: (times) => Math.min(times * 50, 2000),
     };
+    if (ENV.REDIS_USERNAME) {
+        opts.username = ENV.REDIS_USERNAME;
+    }
     if (ENV.REDIS_PASSWORD) {
         opts.password = ENV.REDIS_PASSWORD;
     }

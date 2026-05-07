@@ -96,7 +96,7 @@ export const updateDriverLocation = async (driverId, location, isAvailable = tru
             isAvailable,
             updatedAt: new Date().toISOString()
         };
-        const isNew = await redis.hSet(DRIVER_LOC_HASH, String(driverId), JSON.stringify(driverData));
+        const isNew = await redis.hset(DRIVER_LOC_HASH, String(driverId), JSON.stringify(driverData));
         // Expire sirf tab set karo jab naya field add hua — har ping pe nahi
         if (isNew) await redis.expire(DRIVER_LOC_HASH, DRIVER_LOC_TTL);
         logger.debug('✅ Driver location updated', { driverId, location });

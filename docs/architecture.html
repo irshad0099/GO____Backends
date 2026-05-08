@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoMobility — Backend Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:#0a0e1a; color:#e0e6f0; line-height:1.7; }
+  .container { max-width:1200px; margin:0 auto; padding:20px 30px; }
+
+  /* Header */
+  .hero { text-align:center; padding:60px 20px 40px; background:linear-gradient(135deg,#0f1629 0%,#1a1f3a 50%,#0d1117 100%); border-bottom:2px solid #2d3555; }
+  .hero h1 { font-size:2.8rem; font-weight:900; background:linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero .sub { color:#8892b0; font-size:1rem; margin-top:8px; }
+  .hero .badges { margin-top:16px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .badge { padding:6px 14px; border-radius:20px; font-size:0.75rem; font-weight:600; }
+  .badge-blue { background:#1e3a5f; color:#60a5fa; border:1px solid #2563eb; }
+  .badge-purple { background:#2d1b69; color:#a78bfa; border:1px solid #7c3aed; }
+  .badge-green { background:#14532d; color:#4ade80; border:1px solid #16a34a; }
+  .badge-pink { background:#4a1942; color:#f472b6; border:1px solid #db2777; }
+
+  /* Section */
+  .section { margin:40px 0; padding:30px; background:#111827; border:1px solid #1f2937; border-radius:16px; }
+  .section h2 { font-size:1.6rem; font-weight:800; margin-bottom:20px; color:#f8fafc; display:flex; align-items:center; gap:10px; }
+  .section h3 { font-size:1.2rem; font-weight:700; margin:20px 0 12px; color:#cbd5e1; }
+
+  /* Architecture Diagram */
+  .arch-grid { display:grid; gap:16px; }
+  .arch-row { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+  .arch-box { padding:14px 20px; border-radius:12px; text-align:center; font-size:0.85rem; font-weight:600; min-width:120px; position:relative; }
+  .arch-box small { display:block; font-weight:400; font-size:0.7rem; opacity:0.7; margin-top:2px; }
+  .box-client { background:linear-gradient(135deg,#1e3a5f,#1e40af); border:1px solid #3b82f6; color:#93c5fd; }
+  .box-server { background:linear-gradient(135deg,#14532d,#166534); border:1px solid #22c55e; color:#86efac; }
+  .box-middle { background:linear-gradient(135deg,#4a1942,#7e22ce); border:1px solid #a855f7; color:#d8b4fe; }
+  .box-db { background:linear-gradient(135deg,#78350f,#92400e); border:1px solid #f59e0b; color:#fde68a; }
+  .box-ext { background:linear-gradient(135deg,#1f2937,#374151); border:1px solid #6b7280; color:#d1d5db; }
+  .arrow-down { text-align:center; font-size:1.5rem; color:#4b5563; padding:4px 0; }
+
+  /* Table */
+  table { width:100%; border-collapse:collapse; margin:12px 0; font-size:0.85rem; }
+  th { background:#1e293b; color:#94a3b8; text-align:left; padding:10px 14px; font-weight:600; text-transform:uppercase; font-size:0.72rem; letter-spacing:0.5px; border-bottom:2px solid #334155; }
+  td { padding:10px 14px; border-bottom:1px solid #1f2937; color:#cbd5e1; }
+  tr:hover td { background:#1a2332; }
+  .pk { color:#f59e0b; font-weight:700; }
+  .fk { color:#a78bfa; font-weight:600; }
+  .check { color:#4ade80; font-size:0.75rem; }
+
+  /* Flow */
+  .flow { display:flex; align-items:center; gap:0; flex-wrap:wrap; justify-content:center; margin:20px 0; }
+  .flow-step { padding:10px 18px; border-radius:10px; font-size:0.8rem; font-weight:600; text-align:center; min-width:100px; }
+  .flow-arrow { color:#4b5563; font-size:1.2rem; padding:0 4px; }
+  .fs-green { background:#052e16; border:1px solid #16a34a; color:#4ade80; }
+  .fs-blue { background:#0c1e3a; border:1px solid #2563eb; color:#60a5fa; }
+  .fs-purple { background:#2d1b4e; border:1px solid #7c3aed; color:#c4b5fd; }
+  .fs-orange { background:#431407; border:1px solid #ea580c; color:#fdba74; }
+  .fs-red { background:#450a0a; border:1px solid #dc2626; color:#fca5a5; }
+  .fs-pink { background:#4a1942; border:1px solid #db2777; color:#f9a8d4; }
+
+  /* Modules Grid */
+  .mod-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; }
+  .mod-card { background:#1a1f3a; border:1px solid #2d3555; border-radius:12px; padding:16px; text-align:center; transition:transform 0.2s,border-color 0.2s; }
+  .mod-card:hover { transform:translateY(-3px); border-color:#60a5fa; }
+  .mod-card .icon { font-size:1.8rem; margin-bottom:6px; }
+  .mod-card .name { font-weight:700; font-size:0.95rem; color:#f1f5f9; }
+  .mod-card .desc { font-size:0.72rem; color:#64748b; margin-top:4px; }
+
+  /* Flowchart vertical */
+  .vflow { display:flex; flex-direction:column; align-items:center; gap:0; margin:20px auto; max-width:500px; }
+  .vflow-step { padding:12px 24px; border-radius:12px; font-size:0.82rem; font-weight:600; text-align:center; width:100%; max-width:380px; }
+  .vflow-arrow { color:#4b5563; font-size:1.2rem; padding:2px 0; }
+  .vflow-branch { display:flex; gap:16px; width:100%; max-width:500px; }
+  .vflow-branch > div { flex:1; }
+
+  /* Legend */
+  .legend { display:flex; gap:16px; flex-wrap:wrap; margin:16px 0; font-size:0.78rem; }
+  .legend-item { display:flex; align-items:center; gap:6px; }
+  .legend-dot { width:12px; height:12px; border-radius:50%; }
+
+  /* Ride States */
+  .state-flow { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; margin:16px 0; }
+  .state { padding:10px 16px; border-radius:10px; font-size:0.8rem; font-weight:700; }
+  .s-req { background:#1e3a5f; color:#93c5fd; border:2px solid #3b82f6; }
+  .s-assign { background:#1b4332; color:#6ee7b7; border:2px solid #10b981; }
+  .s-arrive { background:#365314; color:#bef264; border:2px solid #84cc16; }
+  .s-progress { background:#4a1d96; color:#c4b5fd; border:2px solid #8b5cf6; }
+  .s-done { background:#14532d; color:#4ade80; border:2px solid #22c55e; }
+  .s-cancel { background:#450a0a; color:#fca5a5; border:2px solid #ef4444; }
+  .s-expire { background:#431407; color:#fdba74; border:2px solid #f97316; }
+  .state-arrow { color:#475569; font-weight:700; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>🏗️ GoMobility Backend Architecture</h1>
+  <p class="sub">Complete System Design — For Principal Backend Engineer Review</p>
+  <div class="badges">
+    <span class="badge badge-blue">Node.js + Express</span>
+    <span class="badge badge-purple">PostgreSQL 40+ Tables</span>
+    <span class="badge badge-green">Socket.IO Real-time</span>
+    <span class="badge badge-pink">15 Business Modules</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ═══ SECTION 1: HIGH LEVEL ARCHITECTURE ═══ -->
+<div class="section">
+  <h2>🌐 1. High-Level System Architecture</h2>
+
+  <div class="arch-grid">
+    <!-- Clients -->
+    <h3>Client Layer</h3>
+    <div class="arch-row">
+      <div class="arch-box box-client">📱 Passenger App<small>React Native</small></div>
+      <div class="arch-box box-client">📱 Driver App<small>React Native</small></div>
+      <div class="arch-box box-client">🖥️ Admin Dashboard<small>Web Panel</small></div>
+    </div>
+    <div class="arrow-down">⬇️ HTTPS + WSS</div>
+
+    <!-- Server -->
+    <h3>Application Layer</h3>
+    <div class="arch-row">
+      <div class="arch-box box-server">🚀 Express.js<small>REST API Server</small></div>
+      <div class="arch-box box-server">⚡ Socket.IO<small>Real-time WebSocket</small></div>
+      <div class="arch-box box-server">⏰ Cron Jobs<small>Scheduled Tasks</small></div>
+      <div class="arch-box box-server">📦 BullMQ<small>Job Queue Workers</small></div>
+    </div>
+    <div class="arrow-down">⬇️</div>
+
+    <!-- Middleware -->
+    <h3>Middleware Pipeline</h3>
+    <div class="flow">
+      <div class="flow-step fs-blue">Helmet</div><span class="flow-arrow">→</span>
+      <div class="flow-step fs-blue">CORS</div><span class="flow-arrow">→</span>
+      <div class="flow-step fs-purple">Rate Limiter</div><span class="flow-arrow">→</span>
+      <div class="flow-step fs-orange">API Logger</div><span class="flow-arrow">→</span>
+      <div class="flow-step fs-red">🔐 Auth MW</div><span class="flow-arrow">→</span>
+      <div class="flow-step fs-green">Validator</div><span class="flow-arrow">→</span>
+      <div class="flow-step fs-pink">Controller</div>
+    </div>
+    <div class="arrow-down">⬇️</div>
+
+    <!-- Data Layer -->
+    <h3>Data & Infrastructure Layer</h3>
+    <div class="arch-row">
+      <div class="arch-box box-db">🐘 PostgreSQL<small>40+ Tables, 70+ Indexes</small></div>
+      <div class="arch-box box-db">🔴 Redis<small>Cache, Blacklist, Rate Limit</small></div>
+      <div class="arch-box box-db">📁 AWS S3<small>File Storage</small></div>
+    </div>
+    <div class="arrow-down">⬇️</div>
+
+    <!-- External -->
+    <h3>External Services</h3>
+    <div class="arch-row">
+      <div class="arch-box box-ext">📲 Twilio<small>SMS/OTP</small></div>
+      <div class="arch-box box-ext">📧 SendGrid<small>Email</small></div>
+      <div class="arch-box box-ext">🗺️ Google Maps<small>Geocoding</small></div>
+      <div class="arch-box box-ext">💳 Razorpay<small>Payments</small></div>
+      <div class="arch-box box-ext">🪪 Cashfree<small>KYC OCR</small></div>
+      <div class="arch-box box-ext">🔔 Firebase<small>Push Notif</small></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 2: LAYERED ARCHITECTURE ═══ -->
+<div class="section">
+  <h2>📐 2. Layered Architecture (Per Module)</h2>
+  <p style="color:#94a3b8;margin-bottom:16px;">Every module follows a strict 5-layer pattern. No layer skips another.</p>
+
+  <div class="vflow">
+    <div class="vflow-step fs-green">🌐 Route Layer<br><small>authRoutes.js — HTTP path + middleware chain</small></div>
+    <div class="vflow-arrow">⬇️</div>
+    <div class="vflow-step fs-blue">🎮 Controller Layer<br><small>authController.js — Parse request, format response</small></div>
+    <div class="vflow-arrow">⬇️</div>
+    <div class="vflow-step fs-orange">⚙️ Service Layer<br><small>authService.js — Business logic, orchestration</small></div>
+    <div class="vflow-arrow">⬇️</div>
+    <div class="vflow-step fs-purple">🗄️ Repository Layer<br><small>sessionRepository.js — Raw SQL queries</small></div>
+    <div class="vflow-arrow">⬇️</div>
+    <div class="vflow-step fs-red">💾 Database Layer<br><small>postgres.js — pg.Pool connection</small></div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 3: 15 MODULES ═══ -->
+<div class="section">
+  <h2>📦 3. Business Modules (15 Total)</h2>
+  <div class="mod-grid">
+    <div class="mod-card"><div class="icon">🔐</div><div class="name">Auth</div><div class="desc">Signup, Signin, OTP, Logout, Token Rotation</div></div>
+    <div class="mod-card"><div class="icon">👤</div><div class="name">Users</div><div class="desc">Profile, Addresses, FCM Token</div></div>
+    <div class="mod-card"><div class="icon">🚗</div><div class="name">Drivers</div><div class="desc">Online/Offline, Location, Earnings</div></div>
+    <div class="mod-card"><div class="icon">🛣️</div><div class="name">Rides</div><div class="desc">Request, Accept, Track, Complete</div></div>
+    <div class="mod-card"><div class="icon">💳</div><div class="name">Payments</div><div class="desc">Razorpay, QR, Refunds</div></div>
+    <div class="mod-card"><div class="icon">👛</div><div class="name">Wallet</div><div class="desc">Balance, Recharge, Withdraw</div></div>
+    <div class="mod-card"><div class="icon">⭐</div><div class="name">Subscriptions</div><div class="desc">Plans, Auto-renew, Benefits</div></div>
+    <div class="mod-card"><div class="icon">💰</div><div class="name">Pricing</div><div class="desc">Fare Engine, Surge, GST</div></div>
+    <div class="mod-card"><div class="icon">🪪</div><div class="name">KYC</div><div class="desc">OCR, Face Match, Fraud Detection</div></div>
+    <div class="mod-card"><div class="icon">⭐</div><div class="name">Reviews</div><div class="desc">Ratings, Tags, Responses</div></div>
+    <div class="mod-card"><div class="icon">🆘</div><div class="name">SOS</div><div class="desc">Emergency Alerts, Contacts</div></div>
+    <div class="mod-card"><div class="icon">🎟️</div><div class="name">Coupons</div><div class="desc">Promo Codes, Discounts</div></div>
+    <div class="mod-card"><div class="icon">🎧</div><div class="name">Support</div><div class="desc">Tickets, Chat, Resolution</div></div>
+    <div class="mod-card"><div class="icon">🔔</div><div class="name">Notifications</div><div class="desc">Push, In-app, FCM</div></div>
+    <div class="mod-card"><div class="icon">🛡️</div><div class="name">Admin</div><div class="desc">Dashboard, User Mgmt</div></div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 4: AUTH FLOW ═══ -->
+<div class="section">
+  <h2>🔐 4. Authentication Flow (Access Token + Auto-Rotation)</h2>
+
+  <div class="vflow">
+    <div class="vflow-step fs-blue">📥 Extract Bearer Token from Header</div>
+    <div class="vflow-arrow">⬇️</div>
+    <div class="vflow-step fs-orange">🔴 Check Redis Blacklist (revoked?)</div>
+    <div class="vflow-arrow">⬇️ Not blacklisted</div>
+    <div class="vflow-step fs-purple">🔑 JWT Verify (HS256, check signature + expiry)</div>
+    <div class="vflow-arrow">⬇️ Valid</div>
+    <div class="vflow-step fs-green">🗄️ Check sessions DB (token exists?)</div>
+    <div class="vflow-arrow">⬇️ Found</div>
+    <div class="vflow-step" style="background:#1e1b4b;border:2px solid #6366f1;color:#a5b4fc;">
+      ⏳ Token expires in &lt; 6 hours?<br>
+      <small>YES → Generate new token → Update DB → Set <code>x-new-access-token</code> header</small><br>
+      <small>NO → Continue normally</small>
+    </div>
+    <div class="vflow-arrow">⬇️</div>
+    <div class="vflow-step fs-green">✅ Attach user to req → next()</div>
+  </div>
+
+  <div class="legend" style="margin-top:20px;">
+    <div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div> Manual DB delete = Instant 401</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div> Logout = Redis blacklist 24h</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#22c55e;"></div> Rotation = Transparent to client</div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 5: RIDE LIFECYCLE ═══ -->
+<div class="section">
+  <h2>🛣️ 5. Ride Lifecycle — State Machine</h2>
+
+  <div class="state-flow">
+    <div class="state s-req">📋 requested</div>
+    <span class="state-arrow">→</span>
+    <div class="state s-assign">🚗 driver_assigned</div>
+    <span class="state-arrow">→</span>
+    <div class="state s-arrive">📍 driver_arrived</div>
+    <span class="state-arrow">→</span>
+    <div class="state s-progress">🏎️ in_progress</div>
+    <span class="state-arrow">→</span>
+    <div class="state s-done">✅ completed</div>
+  </div>
+
+  <div class="state-flow" style="margin-top:12px;">
+    <div class="state s-req">📋 requested</div>
+    <span class="state-arrow">→</span>
+    <div class="state s-expire">⏰ expired</div>
+    <span style="color:#475569;padding:0 16px;">|</span>
+    <div class="state s-assign">🚗 any stage</div>
+    <span class="state-arrow">→</span>
+    <div class="state s-cancel">❌ cancelled</div>
+  </div>
+
+  <h3>Tables Touched at Each Stage</h3>
+  <table>
+    <tr><th>Stage</th><th>Tables Written</th></tr>
+    <tr><td><strong>Request</strong></td><td>rides, scheduled_rides (if scheduled)</td></tr>
+    <tr><td><strong>Driver Match</strong></td><td>ride_rejections (per skip), rides.driver_id update</td></tr>
+    <tr><td><strong>Accept</strong></td><td>rides.status → driver_assigned, driver_metrics_daily</td></tr>
+    <tr><td><strong>Arrive</strong></td><td>ride_otps (generate 4-digit), rides.driver_arrived_at</td></tr>
+    <tr><td><strong>Start</strong></td><td>rides.started_at, ride_otps.is_verified = true</td></tr>
+    <tr><td><strong>Complete</strong></td><td>rides, ride_invoices, transactions, cash_collections, driver_cash_balance, driver_earnings_*, driver_metrics_daily, notifications</td></tr>
+    <tr><td><strong>Cancel</strong></td><td>ride_cancellations, driver_penalties (if applicable), payment_refunds</td></tr>
+  </table>
+</div>
+
+<!-- ═══ SECTION 6: SOCKET.IO ═══ -->
+<div class="section">
+  <h2>⚡ 6. Real-Time Socket.IO Events</h2>
+  <table>
+    <tr><th>Event</th><th>Direction</th><th>Purpose</th></tr>
+    <tr><td><strong>auth:login</strong></td><td>Driver → Server</td><td>Driver goes online, joins room</td></tr>
+    <tr><td><strong>location:update</strong></td><td>Driver → Server</td><td>GPS update every 5 seconds</td></tr>
+    <tr><td><strong>ride:new-request</strong></td><td>Server → Driver</td><td>Push ride request to nearby drivers</td></tr>
+    <tr><td><strong>ride:accept</strong></td><td>Driver → Server</td><td>Driver accepts ride</td></tr>
+    <tr><td><strong>ride:arrived</strong></td><td>Driver → Server</td><td>Driver at pickup point</td></tr>
+    <tr><td><strong>ride:started</strong></td><td>Driver → Server</td><td>OTP verified, ride begins</td></tr>
+    <tr><td><strong>ride:completed</strong></td><td>Driver → Server</td><td>Ride ends, fare calculated</td></tr>
+    <tr><td><strong>ride:cancelled</strong></td><td>Both → Server</td><td>Cancel with reason code</td></tr>
+    <tr><td><strong>ride:driver-location</strong></td><td>Server → Passenger</td><td>Live tracking broadcast</td></tr>
+    <tr><td><strong>payment:collect-cash</strong></td><td>Driver → Server</td><td>Cash collection confirmed</td></tr>
+    <tr><td><strong>payment:qr-generated</strong></td><td>Server → Passenger</td><td>QR code for UPI payment</td></tr>
+  </table>
+  <h3>Socket Handlers</h3>
+  <div class="arch-row">
+    <div class="arch-box box-server">socket.server.js<small>Main Event Router</small></div>
+    <div class="arch-box box-client">assignment.handler.js<small>Driver Matching</small></div>
+    <div class="arch-box box-db">payment.handler.js<small>Cash/QR Flows</small></div>
+    <div class="arch-box box-middle">reconnection.handler.js<small>State Recovery</small></div>
+    <div class="arch-box box-ext">rideTracking.js<small>Live GPS</small></div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 7: ER DIAGRAM ═══ -->
+<div class="section">
+  <h2>🗺️ 7. Entity Relationship — Visual Map</h2>
+  <p style="color:#94a3b8;margin-bottom:20px;">All foreign key relationships. Colors = domains. Lines = FK references.</p>
+
+  <!-- USERS hub -->
+  <div style="text-align:center;margin-bottom:30px;">
+    <div style="display:inline-block;padding:20px 40px;background:linear-gradient(135deg,#1e40af,#3b82f6);border-radius:16px;font-size:1.2rem;font-weight:800;color:#fff;border:3px solid #60a5fa;">
+      🧑 USERS<br><small style="font-weight:400;font-size:0.75rem;">UUID PK — Central Hub — Every table connects here</small>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+    <!-- Auth domain -->
+    <div style="background:#0c1e3a;border:1px solid #1e40af;border-radius:12px;padding:14px;">
+      <div style="color:#60a5fa;font-weight:700;font-size:0.85rem;margin-bottom:8px;">🔐 Auth Domain</div>
+      <div style="font-size:0.75rem;color:#94a3b8;line-height:2;">
+        → sessions (user_id FK)<br>
+        → otps (phone_number)<br>
+        → referral_codes (user_id FK)
+      </div>
+    </div>
+    <!-- Driver domain -->
+    <div style="background:#052e16;border:1px solid #16a34a;border-radius:12px;padding:14px;">
+      <div style="color:#4ade80;font-weight:700;font-size:0.85rem;margin-bottom:8px;">🚗 Driver Domain</div>
+      <div style="font-size:0.75rem;color:#94a3b8;line-height:2;">
+        → drivers (user_id FK UNIQUE)<br>
+        → driver_vehicle (driver_id FK)<br>
+        → driver_score (driver_id PK/FK)<br>
+        → driver_metrics_daily<br>
+        → driver_penalties<br>
+        → driver_penalty_summary<br>
+        → driver_incentive_progress<br>
+        → driver_destination_mode<br>
+        → driver_cash_balance<br>
+        → cash_deposits<br>
+        → driver_earnings_weekly<br>
+        → driver_earnings_monthly
+      </div>
+    </div>
+    <!-- Ride domain -->
+    <div style="background:#2d1b4e;border:1px solid #7c3aed;border-radius:12px;padding:14px;">
+      <div style="color:#c4b5fd;font-weight:700;font-size:0.85rem;margin-bottom:8px;">🛣️ Ride Domain</div>
+      <div style="font-size:0.75rem;color:#94a3b8;line-height:2;">
+        → rides (passenger_id, driver_id FK)<br>
+        → ride_cancellations (ride_id FK)<br>
+        → ride_otps (ride_id FK)<br>
+        → ride_invoices (ride_id FK)<br>
+        → ride_rejections (ride_id, driver_id)<br>
+        → scheduled_rides (passenger_id)<br>
+        → cash_collections (ride_id FK)
+      </div>
+    </div>
+    <!-- Financial domain -->
+    <div style="background:#431407;border:1px solid #ea580c;border-radius:12px;padding:14px;">
+      <div style="color:#fdba74;font-weight:700;font-size:0.85rem;margin-bottom:8px;">💰 Financial Domain</div>
+      <div style="font-size:0.75rem;color:#94a3b8;line-height:2;">
+        → wallets (user_id FK UNIQUE)<br>
+        → transactions (user_id, wallet_id, ride_id FK)<br>
+        → payment_orders (user_id, ride_id FK)<br>
+        → payment_refunds (payment_order_id FK)<br>
+        → saved_payment_methods (user_id FK)
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px;">
+    <!-- KYC -->
+    <div style="background:#4a1942;border:1px solid #db2777;border-radius:12px;padding:14px;">
+      <div style="color:#f9a8d4;font-weight:700;font-size:0.85rem;margin-bottom:8px;">🪪 KYC Domain</div>
+      <div style="font-size:0.75rem;color:#94a3b8;line-height:2;">
+        → kyc_documents (user_id FK)<br>
+        → driver_kyc_status (user_id PK/FK)<br>
+        → kyc_fraud_flags (document_id FK)<br>
+        → kyc_audit_log (user_id, document_id)
+      </div>
+    </div>
+    <!-- Subscription -->
+    <div style="background:#1e1b4b;border:1px solid #6366f1;border-radius:12px;padding:14px;">
+      <div style="color:#a5b4fc;font-weight:700;font-size:0.85rem;margin-bottom:8px;">⭐ Subscription</div>
+      <div style="font-size:0.75rem;color:#94a3b8;line-height:2;">
+        → subscription_plans (master)<br>
+        → user_subscriptions (user_id, plan_id FK)<br>
+        → subscription_payments (subscription_id FK)
+      </div>
+    </div>
+    <!-- Social -->
+    <div style="background:#1c1917;border:1px solid #78716c;border-radius:12px;padding:14px;">
+      <div style="color:#d6d3d1;font-weight:700;font-size:0.85rem;margin-bottom:8px;">💬 Social & Safety</div>
+      <div style="font-size:0.75rem;color:#94a3b8;line-height:2;">
+        → reviews (ride_id, reviewer, reviewee FK)<br>
+        → review_responses (review_id FK)<br>
+        → rating_summaries (user_id FK)<br>
+        → emergency_contacts (user_id FK)<br>
+        → sos_alerts (ride_id, user_id FK)
+      </div>
+    </div>
+    <!-- Platform -->
+    <div style="background:#1f2937;border:1px solid #4b5563;border-radius:12px;padding:14px;">
+      <div style="color:#9ca3af;font-weight:700;font-size:0.85rem;margin-bottom:8px;">🏗️ Platform</div>
+      <div style="font-size:0.75rem;color:#94a3b8;line-height:2;">
+        → coupons + coupon_usages<br>
+        → referrals (referrer, referred FK)<br>
+        → support_tickets + support_messages<br>
+        → notifications (user_id FK)<br>
+        → saved_addresses (user_id FK)<br>
+        → api_logs / socket_logs
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 8: CORE TABLES ═══ -->
+<div class="section">
+  <h2>🗄️ 8. Database Tables — Detailed Schema</h2>
+
+  <h3>8.1 — users (Central User Table)</h3>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr>
+    <tr><td class="pk">id</td><td>UUID</td><td><strong>PRIMARY KEY</strong></td><td>uuid_generate_v4()</td></tr>
+    <tr><td>phone_number</td><td>VARCHAR(15)</td><td>NOT NULL</td><td>Indian 10-digit</td></tr>
+    <tr><td>email</td><td>VARCHAR(255)</td><td></td><td>Optional</td></tr>
+    <tr><td>full_name</td><td>VARCHAR(100)</td><td></td><td></td></tr>
+    <tr><td>role</td><td>VARCHAR(20)</td><td class="check">CHECK (passenger, driver, admin)</td><td>Multi-role = separate rows</td></tr>
+    <tr><td>is_verified</td><td>BOOLEAN</td><td>DEFAULT FALSE</td><td>OTP verified</td></tr>
+    <tr><td>is_active</td><td>BOOLEAN</td><td>DEFAULT TRUE</td><td>Soft delete</td></tr>
+    <tr><td colspan="4" style="color:#f59e0b;font-size:0.8rem;">🔑 UNIQUE(phone_number, role) | UNIQUE(email, role) | INDEX: phone, role, is_verified</td></tr>
+  </table>
+
+  <h3>8.2 — sessions (Auth Sessions — Access Token Only)</h3>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr>
+    <tr><td class="pk">id</td><td>SERIAL</td><td><strong>PRIMARY KEY</strong></td><td></td></tr>
+    <tr><td class="fk">user_id</td><td>UUID</td><td>FK → users(id) CASCADE</td><td></td></tr>
+    <tr><td>access_token</td><td>TEXT</td><td><strong>UNIQUE, NOT NULL</strong></td><td>JWT — auto-rotated by middleware</td></tr>
+    <tr><td>device_type</td><td>VARCHAR(50)</td><td class="check">CHECK (android, ios, web)</td><td></td></tr>
+    <tr><td>ip_address</td><td>INET</td><td></td><td></td></tr>
+    <tr><td>is_revoked</td><td>BOOLEAN</td><td>DEFAULT FALSE</td><td></td></tr>
+    <tr><td>expires_at</td><td>TIMESTAMP</td><td>NOT NULL</td><td>24h TTL</td></tr>
+    <tr><td colspan="4" style="color:#f59e0b;font-size:0.8rem;">🔑 INDEX: user_id, access_token, expires_at, is_revoked</td></tr>
+  </table>
+
+  <h3>8.3 — drivers (Driver Profile)</h3>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr>
+    <tr><td class="pk">id</td><td>SERIAL</td><td><strong>PRIMARY KEY</strong></td><td></td></tr>
+    <tr><td class="fk">user_id</td><td>UUID</td><td>FK → users(id) CASCADE, UNIQUE</td><td>1:1 with users</td></tr>
+    <tr><td>is_available</td><td>BOOLEAN</td><td>DEFAULT TRUE</td><td>Can receive rides</td></tr>
+    <tr><td>is_on_duty</td><td>BOOLEAN</td><td>DEFAULT FALSE</td><td>Online status</td></tr>
+    <tr><td>current_latitude</td><td>DECIMAL(10,8)</td><td></td><td>Live GPS</td></tr>
+    <tr><td>current_longitude</td><td>DECIMAL(11,8)</td><td></td><td>Live GPS</td></tr>
+    <tr><td>rating</td><td>DECIMAL(3,2)</td><td>DEFAULT 0.0</td><td></td></tr>
+    <tr><td>total_earnings</td><td>DECIMAL(10,2)</td><td>DEFAULT 0.0</td><td></td></tr>
+    <tr><td>subscription_status</td><td>VARCHAR(20)</td><td class="check">CHECK (active, inactive, expired)</td><td></td></tr>
+  </table>
+
+  <h3>8.4 — rides (Core Ride Table)</h3>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr>
+    <tr><td class="pk">id</td><td>SERIAL</td><td><strong>PRIMARY KEY</strong></td><td></td></tr>
+    <tr><td>ride_number</td><td>VARCHAR(50)</td><td>UNIQUE, NOT NULL</td><td>Human-readable</td></tr>
+    <tr><td class="fk">passenger_id</td><td>UUID</td><td>FK → users(id) CASCADE</td><td></td></tr>
+    <tr><td class="fk">driver_id</td><td>INTEGER</td><td>FK → drivers(id)</td><td>NULL until assigned</td></tr>
+    <tr><td>vehicle_type</td><td>VARCHAR(50)</td><td class="check">CHECK (bike, auto, car)</td><td></td></tr>
+    <tr><td>pickup_latitude/longitude</td><td>DECIMAL</td><td>NOT NULL</td><td></td></tr>
+    <tr><td>dropoff_latitude/longitude</td><td>DECIMAL</td><td>NOT NULL</td><td></td></tr>
+    <tr><td>distance_km</td><td>DECIMAL(10,2)</td><td>NOT NULL</td><td></td></tr>
+    <tr><td>estimated_fare</td><td>DECIMAL(10,2)</td><td>NOT NULL</td><td>At booking time</td></tr>
+    <tr><td>final_fare</td><td>DECIMAL(10,2)</td><td></td><td>After completion</td></tr>
+    <tr><td>status</td><td>VARCHAR(50)</td><td class="check">CHECK 7 states</td><td>requested→completed</td></tr>
+    <tr><td>payment_method</td><td>VARCHAR(50)</td><td class="check">CHECK (cash, card, wallet, upi)</td><td></td></tr>
+    <tr><td colspan="4" style="color:#f59e0b;font-size:0.8rem;">🔑 INDEX: passenger_id, driver_id, status, requested_at, vehicle_type</td></tr>
+  </table>
+
+  <h3>8.5 — wallets + transactions</h3>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Constraints</th><th>Notes</th></tr>
+    <tr><td class="pk">wallets.id</td><td>SERIAL</td><td>PK</td><td></td></tr>
+    <tr><td class="fk">wallets.user_id</td><td>UUID</td><td>FK → users(id), UNIQUE</td><td>1:1</td></tr>
+    <tr><td>wallets.balance</td><td>DECIMAL(10,2)</td><td>DEFAULT 0.0</td><td>Current balance</td></tr>
+    <tr><td colspan="4" style="border-top:2px solid #334155;"></td></tr>
+    <tr><td class="pk">transactions.id</td><td>SERIAL</td><td>PK</td><td></td></tr>
+    <tr><td class="fk">transactions.user_id</td><td>UUID</td><td>FK → users(id)</td><td></td></tr>
+    <tr><td class="fk">transactions.wallet_id</td><td>INTEGER</td><td>FK → wallets(id)</td><td></td></tr>
+    <tr><td class="fk">transactions.ride_id</td><td>INTEGER</td><td>FK → rides(id)</td><td></td></tr>
+    <tr><td>type</td><td>VARCHAR(20)</td><td class="check">CHECK (credit, debit)</td><td></td></tr>
+    <tr><td>category</td><td>VARCHAR(50)</td><td class="check">CHECK 6 values</td><td>ride_payment, refund, recharge, referral_bonus, cancellation_fee, withdrawal</td></tr>
+  </table>
+</div>
+
+<!-- ═══ SECTION 9: KYC PIPELINE ═══ -->
+<div class="section">
+  <h2>🪪 9. KYC Verification Pipeline</h2>
+
+  <h3>6 Required Documents</h3>
+  <div class="arch-row" style="margin-bottom:20px;">
+    <div class="arch-box box-middle">🪪 Aadhaar<small>OCR → Cashfree</small></div>
+    <div class="arch-box box-middle">📄 PAN<small>OCR → Cashfree</small></div>
+    <div class="arch-box box-middle">🪪 Driving Licence<small>OCR → Cashfree</small></div>
+    <div class="arch-box box-middle">🚗 Vehicle RC<small>OCR → Cashfree</small></div>
+    <div class="arch-box box-middle">🏦 Bank Account<small>Penny Drop</small></div>
+    <div class="arch-box box-middle">🤳 Selfie<small>Face Match</small></div>
+  </div>
+
+  <h3>Verification Flow</h3>
+  <div class="vflow">
+    <div class="vflow-step fs-blue">📸 Driver Submits Document (S3 upload)</div>
+    <div class="vflow-arrow">⬇️</div>
+    <div class="vflow-step fs-purple">🔍 Cashfree API → OCR / Penny Drop / Face Match</div>
+    <div class="vflow-arrow">⬇️</div>
+    <div class="vflow-step" style="background:#1e1b4b;border:2px solid #6366f1;color:#a5b4fc;">
+      📊 Confidence Score (0-100)<br>
+      <small>≥ 85 → ✅ Auto-Verified | 60-84 → 👀 Manual Review | &lt; 60 → ❌ Auto-Rejected</small>
+    </div>
+    <div class="vflow-arrow">⬇️</div>
+    <div class="vflow-step fs-orange">🔎 Cross-Verification: Name match across docs? Duplicate hash?</div>
+    <div class="vflow-arrow">⬇️</div>
+    <div class="vflow-branch">
+      <div class="vflow-step fs-red" style="text-align:center;">🚩 Fraud Flag<br><small>If mismatch found</small></div>
+      <div class="vflow-step fs-green" style="text-align:center;">✅ Approved<br><small>All clear</small></div>
+    </div>
+    <div class="vflow-arrow">⬇️</div>
+    <div class="vflow-step fs-green">🎉 All 6 docs verified → Driver KYC = VERIFIED → Can go online</div>
+  </div>
+
+  <h3>KYC Tables</h3>
+  <table>
+    <tr><th>Table</th><th>PK/FK</th><th>Purpose</th></tr>
+    <tr><td><strong>kyc_documents</strong></td><td class="fk">user_id FK → users</td><td>Each document: type, method, status, OCR data, confidence score, fraud score, S3 URL</td></tr>
+    <tr><td><strong>driver_kyc_status</strong></td><td class="pk">user_id PK/FK → users</td><td>Aggregate: overall_status, submitted count, verified count (1:1 with user)</td></tr>
+    <tr><td><strong>kyc_fraud_flags</strong></td><td class="fk">document_id FK → kyc_documents</td><td>Flag type (DUPLICATE, NAME_MISMATCH, FACE_MISMATCH), severity (LOW/MED/HIGH)</td></tr>
+    <tr><td><strong>kyc_audit_log</strong></td><td>user_id, document_id</td><td>Append-only audit trail: action, actor_type, before/after state JSONB</td></tr>
+  </table>
+</div>
+
+<!-- ═══ SECTION 10: PRICING ENGINE ═══ -->
+<div class="section">
+  <h2>💰 10. Pricing Engine — DB-Driven</h2>
+
+  <h3>Fare Calculation Flow</h3>
+  <div class="flow" style="flex-wrap:wrap;">
+    <div class="flow-step fs-blue">📍 Pickup/Drop</div><span class="flow-arrow">→</span>
+    <div class="flow-step fs-purple">🗺️ Google Maps<br><small>Distance + Duration</small></div><span class="flow-arrow">→</span>
+    <div class="flow-step fs-orange">💵 Base Fare<br><small>+ km × rate</small></div><span class="flow-arrow">→</span>
+    <div class="flow-step fs-pink">⏰ Peak?<br><small>Convenience fee</small></div><span class="flow-arrow">→</span>
+    <div class="flow-step fs-purple">📏 Distance Tier<br><small>0.75x-1.4x</small></div><span class="flow-arrow">→</span>
+    <div class="flow-step fs-green">⭐ Subscriber?<br><small>Free km + discount</small></div><span class="flow-arrow">→</span>
+    <div class="flow-step fs-red">📈 Surge<br><small>Max 1.75x</small></div><span class="flow-arrow">→</span>
+    <div class="flow-step" style="background:#14532d;border:2px solid #22c55e;color:#4ade80;font-size:0.9rem;">🧾 Final Fare</div>
+  </div>
+
+  <h3>7 Pricing Config Tables</h3>
+  <table>
+    <tr><th>Table</th><th>Key Fields</th><th>Purpose</th></tr>
+    <tr><td><strong>pricing_vehicle_config</strong></td><td>vehicle_type (UNIQUE), base_fare, per_km_rate, minimum_fare, platform_fee</td><td>Per-vehicle fare structure (bike ₹20 → luxury ₹200)</td></tr>
+    <tr><td><strong>pricing_convenience_fee</strong></td><td>vehicle_type FK, off_peak_base, peak_base</td><td>Peak vs off-peak convenience fee</td></tr>
+    <tr><td><strong>pricing_distance_tiers</strong></td><td>tier_name, min_km, max_km, multiplier</td><td>short=0.75x, standard=1.0x, long=1.2x, very_long=1.4x</td></tr>
+    <tr><td><strong>pricing_subscriber_rules</strong></td><td>tier_name, free_km, discount_pct, surge_cap</td><td>Subscriber benefits per tier</td></tr>
+    <tr><td><strong>pricing_gst_config</strong></td><td>gst_enabled, rider_rate=5%, platform_rate=18%</td><td>Tax configuration (single row)</td></tr>
+    <tr><td><strong>pricing_penalty_config</strong></td><td>offense_type, offense_count, penalty_amount, suspension_days</td><td>Escalating penalties per offense</td></tr>
+    <tr><td><strong>pricing_settings</strong></td><td>setting_key (PK), setting_value</td><td>Global knobs: surge_max, peak_hours, cancel fee, etc.</td></tr>
+  </table>
+</div>
+
+<!-- ═══ SECTION 11: REMAINING TABLES ═══ -->
+<div class="section">
+  <h2>📋 11. Remaining Tables Summary</h2>
+
+  <h3>Driver Earnings & Cash</h3>
+  <table>
+    <tr><th>Table</th><th>FK</th><th>Purpose</th></tr>
+    <tr><td><strong>driver_earnings_weekly</strong></td><td class="fk">driver_id FK</td><td>Weekly aggregate: ride_earnings, tips, incentives, penalties, net. UNIQUE(driver_id, week_start)</td></tr>
+    <tr><td><strong>driver_earnings_monthly</strong></td><td class="fk">driver_id FK</td><td>Monthly aggregate + withdrawals, rating snapshot. UNIQUE(driver_id, year, month)</td></tr>
+    <tr><td><strong>driver_cash_balance</strong></td><td class="fk">driver_id FK UNIQUE</td><td>Real-time pending amount, ₹2000 limit, is_limit_exceeded flag</td></tr>
+    <tr><td><strong>cash_deposits</strong></td><td class="fk">driver_id FK</td><td>UPI/bank deposit history, status (pending/verified/rejected)</td></tr>
+    <tr><td><strong>cash_collections</strong></td><td class="fk">ride_id FK, driver_id FK</td><td>Per-ride cash: final_fare, platform_fee, net_earnings</td></tr>
+  </table>
+
+  <h3>Driver Performance & Penalties</h3>
+  <table>
+    <tr><th>Table</th><th>FK</th><th>Purpose</th></tr>
+    <tr><td><strong>driver_score</strong></td><td class="pk">driver_id PK/FK</td><td>Tier (PLATINUM/GOLD/SILVER/WATCHLIST), acceptance/completion/cancel rates</td></tr>
+    <tr><td><strong>driver_metrics_daily</strong></td><td class="fk">driver_id FK</td><td>Daily counts: assigned, accepted, completed, cancelled, complaints</td></tr>
+    <tr><td><strong>driver_vehicle</strong></td><td class="fk">driver_id FK UNIQUE</td><td>RC, insurance, permit details + verification_status</td></tr>
+    <tr><td><strong>driver_penalties</strong></td><td class="fk">driver_id FK</td><td>Offense + penalty type (warning→fine→ban), appeal system</td></tr>
+    <tr><td><strong>driver_penalty_summary</strong></td><td class="fk">driver_id FK UNIQUE</td><td>Cached: total_points, total_fines, is_banned</td></tr>
+    <tr><td><strong>incentive_plans</strong></td><td>—</td><td>Admin targets: "10 rides = ₹200" (ride_count/earning/peak types)</td></tr>
+    <tr><td><strong>driver_incentive_progress</strong></td><td class="fk">driver_id FK, plan_id FK</td><td>Progress tracking: current_value, is_completed, is_bonus_credited</td></tr>
+    <tr><td><strong>driver_destination_mode</strong></td><td class="fk">driver_id FK</td><td>"Going Home" filter: dest coords, 3km radius, max 2/day</td></tr>
+  </table>
+
+  <h3>Ride Sub-Tables</h3>
+  <table>
+    <tr><th>Table</th><th>FK</th><th>Cardinality</th><th>Purpose</th></tr>
+    <tr><td><strong>ride_cancellations</strong></td><td class="fk">ride_id FK UNIQUE</td><td>1:1</td><td>12 reason codes, penalty amount, driver_distance_meters</td></tr>
+    <tr><td><strong>ride_otps</strong></td><td class="fk">ride_id FK</td><td>1:many</td><td>4-digit OTP, 3 max attempts, 10 min expiry</td></tr>
+    <tr><td><strong>ride_invoices</strong></td><td class="fk">ride_id FK UNIQUE</td><td>1:1</td><td>12+ fare components, GST, total_amount, invoice_number</td></tr>
+    <tr><td><strong>ride_rejections</strong></td><td class="fk">ride_id, driver_id FK</td><td>many:many</td><td>8 reason codes, is_auto_reject (timeout)</td></tr>
+    <tr><td><strong>scheduled_rides</strong></td><td class="fk">passenger_id, ride_id FK</td><td>1:1</td><td>Future booking, cron triggers 15min before</td></tr>
+  </table>
+
+  <h3>Social, Safety & Platform</h3>
+  <table>
+    <tr><th>Table</th><th>FK</th><th>Purpose</th></tr>
+    <tr><td><strong>reviews</strong></td><td class="fk">ride_id, reviewer_id, reviewee_id FK</td><td>1-5 stars, tags[], tip, UNIQUE(ride_id,reviewer,reviewee)</td></tr>
+    <tr><td><strong>review_responses</strong></td><td class="fk">review_id FK UNIQUE</td><td>Reply to review (1:1)</td></tr>
+    <tr><td><strong>rating_summaries</strong></td><td class="fk">user_id FK UNIQUE</td><td>Cached avg_rating, total_reviews, star breakdown</td></tr>
+    <tr><td><strong>emergency_contacts</strong></td><td class="fk">user_id FK</td><td>Max 5 contacts, UNIQUE(user_id, phone)</td></tr>
+    <tr><td><strong>sos_alerts</strong></td><td class="fk">ride_id, triggered_by FK</td><td>Location snapshot, status flow, admin resolution</td></tr>
+    <tr><td><strong>coupons</strong></td><td>—</td><td>Promo codes: percentage/flat, limits, vehicle filter</td></tr>
+    <tr><td><strong>coupon_usages</strong></td><td class="fk">coupon_id, user_id, ride_id FK</td><td>Who used, which ride, discount amount</td></tr>
+    <tr><td><strong>referral_codes</strong></td><td class="fk">user_id FK UNIQUE</td><td>Unique code per user, total_referrals</td></tr>
+    <tr><td><strong>referrals</strong></td><td class="fk">referrer_id, referred_id FK</td><td>Status: pending→completed, bonus on first ride</td></tr>
+    <tr><td><strong>support_tickets</strong></td><td class="fk">user_id, ride_id FK</td><td>6 categories, 4 priorities, assignment, resolution</td></tr>
+    <tr><td><strong>support_messages</strong></td><td class="fk">ticket_id, sender_id FK</td><td>User ↔ Admin conversation</td></tr>
+    <tr><td><strong>saved_addresses</strong></td><td class="fk">user_id FK</td><td>Home/Work/Other, UNIQUE(user_id, type, label)</td></tr>
+    <tr><td><strong>notifications</strong></td><td class="fk">user_id, ride_id FK</td><td>Push log: type, title, body, is_read</td></tr>
+  </table>
+
+  <h3>Payment Tables</h3>
+  <table>
+    <tr><th>Table</th><th>FK</th><th>Purpose</th></tr>
+    <tr><td><strong>payment_orders</strong></td><td class="fk">user_id, ride_id FK</td><td>Razorpay orders: 5 purpose types, 7 status states, gateway IDs</td></tr>
+    <tr><td><strong>payment_refunds</strong></td><td class="fk">payment_order_id, user_id FK</td><td>Refund tracking: source/wallet method</td></tr>
+    <tr><td><strong>saved_payment_methods</strong></td><td class="fk">user_id FK</td><td>Tokenized cards/UPI (never raw card data)</td></tr>
+    <tr><td><strong>subscription_plans</strong></td><td>—</td><td>4 seeded plans: Basic ₹99, Prime ₹199, Elite ₹399, Annual ₹999</td></tr>
+    <tr><td><strong>user_subscriptions</strong></td><td class="fk">user_id, plan_id FK</td><td>Active subscription + free_rides_used counter</td></tr>
+    <tr><td><strong>subscription_payments</strong></td><td class="fk">user_id, subscription_id, plan_id FK</td><td>Payment history per subscription</td></tr>
+  </table>
+
+  <h3>Logging & Observability</h3>
+  <table>
+    <tr><th>Table</th><th>Purpose</th></tr>
+    <tr><td><strong>api_logs</strong></td><td>Every API request: module, method, path, status, duration_ms, request/response JSONB. 14 module-level views.</td></tr>
+    <tr><td><strong>socket_logs</strong></td><td>WebSocket events: level, event, socket_id, user_id, ride_id, metadata JSONB</td></tr>
+  </table>
+</div>
+
+<!-- ═══ SECTION 12: TECH STACK + INDEX COUNT ═══ -->
+<div class="section">
+  <h2>🛠️ 12. Tech Stack & Index Summary</h2>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+    <div>
+      <h3>Technology Stack</h3>
+      <table>
+        <tr><th>Component</th><th>Technology</th></tr>
+        <tr><td>Runtime</td><td>Node.js</td></tr>
+        <tr><td>Framework</td><td>Express.js</td></tr>
+        <tr><td>Database</td><td>PostgreSQL</td></tr>
+        <tr><td>Cache/Queue</td><td>Redis + BullMQ</td></tr>
+        <tr><td>Real-time</td><td>Socket.IO</td></tr>
+        <tr><td>Auth</td><td>JWT HS256 + DB sessions</td></tr>
+        <tr><td>Payments</td><td>Razorpay</td></tr>
+        <tr><td>KYC</td><td>Cashfree (OCR, Penny Drop)</td></tr>
+        <tr><td>Maps</td><td>Google Maps API</td></tr>
+        <tr><td>SMS</td><td>Twilio</td></tr>
+        <tr><td>Email</td><td>SendGrid</td></tr>
+        <tr><td>Push</td><td>Firebase FCM</td></tr>
+        <tr><td>Storage</td><td>AWS S3</td></tr>
+        <tr><td>Security</td><td>Helmet, CORS, HPP</td></tr>
+        <tr><td>Logging</td><td>Winston + PostgreSQL</td></tr>
+        <tr><td>Scheduling</td><td>node-cron</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Index Count by Table</h3>
+      <table>
+        <tr><th>Table</th><th>Indexes</th></tr>
+        <tr><td>users</td><td>3</td></tr>
+        <tr><td>sessions</td><td>4</td></tr>
+        <tr><td>rides</td><td>5</td></tr>
+        <tr><td>payment_orders</td><td>5</td></tr>
+        <tr><td>kyc_documents</td><td>4 (2 unique)</td></tr>
+        <tr><td>ride_cancellations</td><td>4</td></tr>
+        <tr><td>driver_penalties</td><td>5 (2 partial)</td></tr>
+        <tr><td>api_logs</td><td>6</td></tr>
+        <tr><td>support_tickets</td><td>5 (3 partial)</td></tr>
+        <tr><td>coupons</td><td>2 (1 partial)</td></tr>
+        <tr><td>ride_rejections</td><td>5</td></tr>
+        <tr><td style="color:#f59e0b;font-weight:700;">TOTAL</td><td style="color:#f59e0b;font-weight:700;">~70+ indexes</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="text-align:center;padding:40px 20px;color:#475569;font-size:0.85rem;">
+  <p>📄 <strong>GoMobility Engineering</strong> — CTO Architecture Document</p>
+  <p>40+ Database Tables | 15 Business Modules | 70+ Indexes | Complete Ride-Hailing Lifecycle</p>
+  <p style="margin-top:8px;color:#334155;">May 2026 | v1.0</p>
+</div>
+
+
+
+</div><!-- /container -->
+</body>
+</html>

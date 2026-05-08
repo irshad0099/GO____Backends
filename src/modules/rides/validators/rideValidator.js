@@ -86,8 +86,8 @@ export const acceptRideValidators = [
 export const updateRideStatusValidators = [
     param('rideId').isInt().withMessage('Invalid ride ID'),
     body('status').isIn([
-        'driver_arrived', 'in_progress', 'completed', 'cancelled'
-    ]).withMessage('Invalid status'),
+        'driver_arrived', 'completed', 'cancelled'
+    ]).withMessage('Invalid status (in_progress requires OTP verification)'),
     body('cancellationReason').optional().isString().isLength({ max: 500 })
 ];
 

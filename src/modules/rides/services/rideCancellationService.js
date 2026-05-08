@@ -64,6 +64,11 @@ export const cancelRide = async (userId, rideId, data) => {
             cancellation_reason: data.reason_code,
         });
 
+        // FIX: Free up the driver if one was already assigned
+        if (ride.driver_id) {
+            await driverRepo.updateDriver(ride.driver_id, { is_on_duty: false });
+        }
+
         // Penalty actually charge karo wallet se
         if (penaltyApplied && penaltyAmount > 0) {
             try {
@@ -125,6 +130,9 @@ export const driverCancelRide = async (driverUserId, rideId) => {
             cancelled_by:         'driver',
             cancellation_reason:  'emergency',
         });
+
+        // FIX: Free up the driver
+        await driverRepo.updateDriver(driver.id, { is_on_duty: false });
 
         logger.info(`[driverCancelRide] driver=${driver.id} emergency cancelled ride=${rideId}`);
         return { rideId, status: 'cancelled', message: 'Ride cancelled successfully' };

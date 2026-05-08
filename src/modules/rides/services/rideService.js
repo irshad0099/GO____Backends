@@ -292,6 +292,9 @@ const durationMinutes = mapsResult.durationMinutes;
         // console.log(`Ride requested: ${rideNumber} for user ${userId} | Nearby drivers notified: ${signals.nearbyDrivers.length}`,signals.nearbyDrivers);
         // ── SOCKET: broadcast new ride request to nearby drivers ──────────────
         if (signals.nearbyDrivers.length > 0) {
+            const userQuery = await db.query('SELECT full_name FROM users WHERE id = $1', [userId]);
+            const passengerName = userQuery.rows[0]?.full_name || 'Passenger';
+
             const pickupLocation = {
                 latitude:  rideData.pickupLatitude,
                 longitude: rideData.pickupLongitude,
@@ -306,6 +309,7 @@ const durationMinutes = mapsResult.durationMinutes;
                 safeEmit(() => emitToDriver(d.user_id || d.id, 'ride:new_request', {
                     rideId:           ride.id,
                     rideNumber:       ride.ride_number,
+                    passengerName:    passengerName,
                     pickupLocation,
                     dropoffLocation,
                     estimatedFare:    fare.estimatedFare,
@@ -548,6 +552,15 @@ const etaMinutes = etaResult.etaMinutes;
 
 
 
+        // ── GENERATE OTP ON ACCEPT ───────────────────────────────────────────
+        let generatedOtpCode = null;
+        try {
+            const otpResult = await rideOtpService.generateRideOTP(rideId, ride.passenger_phone);
+            generatedOtpCode = otpResult.otpCode;
+        } catch (otpErr) {
+            logger.warn(`Failed to generate OTP on accept for ride ${rideId}: ${otpErr.message}`);
+        }
+
         // ── SOCKET: notify passenger of driver assignment ─────────────────────
         // const etaMinutes = Math.ceil(pickupDistanceKm * 3);
         const assignmentData = {
@@ -561,7 +574,8 @@ const etaMinutes = etaResult.etaMinutes;
             vehicleColor:          driver.vehicle_color,
             vehicleModel:          driver.vehicle_model,
             estimatedArrivalTime:  etaMinutes,
-            assignedAt:            new Date().toISOString()
+            assignedAt:            new Date().toISOString(),
+            otp:                   generatedOtpCode
         };
         safeEmit(() => sendAssignmentToPassenger(ride.passenger_id, assignmentData), 'ride:driver_assigned');
 

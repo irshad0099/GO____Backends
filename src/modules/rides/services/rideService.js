@@ -861,6 +861,7 @@ if (status === 'cancelled') {
         safeEmit(() => emitRideStatusUpdate(rideId, driver.id, ride.passenger_id, status, {
             rideNumber:         updatedRide.ride_number,
             cancellationReason: additionalFields.cancellation_reason || null,
+            message:            `Ride status updated to ${status}`,
             ...(status === 'completed' && {
                 finalFare:            additionalFields.final_fare,
                 subscriptionDiscount: Number(ride.subscription_discount) || 0,
@@ -870,9 +871,18 @@ if (status === 'cancelled') {
         }), `ride:status_changed:${status}`);
 
         if (status === 'driver_arrived') {
+            let currentOtp = null;
+            try {
+                const otpRow = await rideOtpRepo.findLatest(rideId);
+                if (otpRow) currentOtp = otpRow.otp_code;
+            } catch (err) {
+                logger.warn(`Could not fetch OTP for driver_arrived: ${err.message}`);
+            }
+
             safeEmit(() => notifyDriverArrival(rideId, ride.passenger_id, driver.id, {
                 latitude:  driver.current_latitude,
-                longitude: driver.current_longitude
+                longitude: driver.current_longitude,
+                otp:       currentOtp
             }), 'ride:driver_arrived');
         }
 

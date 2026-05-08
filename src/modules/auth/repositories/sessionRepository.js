@@ -1,7 +1,7 @@
 import { db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 
-export const createSession = async ({ userId, refreshToken, ipAddress, userAgent, deviceId, deviceType }) => {
+export const createSession = async ({ userId, accessToken, ipAddress, userAgent, deviceId, deviceType }) => {
     try {
         // Calculate expiry (7 days from now)
         const expiresAt = new Date();
@@ -9,10 +9,10 @@ export const createSession = async ({ userId, refreshToken, ipAddress, userAgent
 
         const result = await db.query(
             `INSERT INTO sessions 
-             (user_id, refresh_token, ip_address, user_agent, device_id, device_type, expires_at)
+             (user_id, access_token, ip_address, user_agent, device_id, device_type, expires_at)
              VALUES ($1, $2, $3, $4, $5, $6, $7)
              RETURNING id, user_id, created_at`,
-            [userId, refreshToken, ipAddress, userAgent, deviceId, deviceType, expiresAt]
+            [userId, accessToken, ipAddress, userAgent, deviceId, deviceType, expiresAt]
         );
 
         return result.rows[0];
@@ -22,14 +22,14 @@ export const createSession = async ({ userId, refreshToken, ipAddress, userAgent
     }
 };
 
-export const findSession = async (refreshToken) => {
+export const findSession = async (accessToken) => {
     try {
         const result = await db.query(
             `SELECT s.*, u.is_active 
              FROM sessions s
              JOIN users u ON s.user_id = u.id
-             WHERE s.refresh_token = $1 AND s.expires_at > NOW() AND s.is_revoked = false`,
-            [refreshToken]
+             WHERE s.access_token = $1 AND s.expires_at > NOW() AND s.is_revoked = false`,
+            [accessToken]
         );
 
         return result.rows[0];
@@ -55,11 +55,11 @@ export const findSessionsByUserId = async (userId) => {
     }
 };
 
-export const deleteSession = async (refreshToken) => {
+export const deleteSession = async (accessToken) => {
     try {
         await db.query(
-            `DELETE FROM sessions WHERE refresh_token = $1`,
-            [refreshToken]
+            `DELETE FROM sessions WHERE access_token = $1`,
+            [accessToken]
         );
     } catch (error) {
         logger.error('Delete session repository error:', error);
@@ -67,16 +67,33 @@ export const deleteSession = async (refreshToken) => {
     }
 };
 
-export const revokeSession = async (refreshToken) => {
+export const revokeSession = async (accessToken) => {
     try {
         await db.query(
             `UPDATE sessions 
              SET is_revoked = true, updated_at = NOW()
-             WHERE refresh_token = $1`,
-            [refreshToken]
+             WHERE access_token = $1`,
+            [accessToken]
         );
     } catch (error) {
         logger.error('Revoke session repository error:', error);
+        throw error;
+    }
+};
+
+export const updateSessionToken = async (oldAccessToken, newAccessToken) => {
+    try {
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 7);
+
+        await db.query(
+            `UPDATE sessions 
+             SET access_token = $1, expires_at = $2, updated_at = NOW()
+             WHERE access_token = $3 AND is_revoked = false`,
+            [newAccessToken, expiresAt, oldAccessToken]
+        );
+    } catch (error) {
+        logger.error('Update session token repository error:', error);
         throw error;
     }
 };
@@ -100,7 +117,7 @@ export const cleanupExpiredSessions = async () => {
         const result = await db.query(
             `DELETE FROM sessions WHERE expires_at <= NOW()`
         );
-        
+
         logger.info(`Cleaned up ${result.rowCount} expired sessions`);
         return result.rowCount;
     } catch (error) {

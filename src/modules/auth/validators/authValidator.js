@@ -13,11 +13,7 @@ export const validateOTP = () => {
         .isNumeric().withMessage('OTP must contain only numbers');
 };
 
-export const validateRefreshToken = () => {
-    return body('refreshToken')
-        .notEmpty().withMessage('Refresh token is required')
-        .isString().withMessage('Invalid refresh token format');
-};
+
 
 export const signupValidators = [
     validatePhone(),
@@ -110,10 +106,4 @@ export const verifySignupValidators = [
 
 // ];
 
-export const logoutValidators = [
-    validateRefreshToken()
-];
-
-export const refreshTokenValidators = [
-    validateRefreshToken()
-];
+export const logoutValidators = [];

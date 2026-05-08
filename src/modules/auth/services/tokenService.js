@@ -18,20 +18,6 @@ export const generateAccessToken = (user) => {
     );
 };
 
-export const generateRefreshToken = (user) => {
-    return jwt.sign(
-        {
-            userId: user.id,
-            type: 'refresh'
-        },
-        ENV.JWT_REFRESH_SECRET,
-        {
-            expiresIn: ENV.JWT_REFRESH_EXPIRY,
-            algorithm: 'HS256'
-        }
-    );
-};
-
 export const verifyToken = (token) => {
     try {
         const decoded = jwt.verify(token, ENV.JWT_SECRET, {

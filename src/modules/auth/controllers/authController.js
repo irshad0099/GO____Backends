@@ -5,7 +5,7 @@ import * as userRepo from '../../users/repositories/user.repository.js';
 
 export const signup = async (req, res, next) => {
     try {
-        const { phone, email, fullName,role="passenger" } = req.body;
+        const { phone, email, fullName, role = "passenger" } = req.body;
 
         const result = await authService.signup({
             phone,
@@ -22,7 +22,7 @@ export const signup = async (req, res, next) => {
 
 export const verifySignup = async (req, res, next) => {
     try {
-        const { phone, otp, email, fullName,role } = req.body;
+        const { phone, otp, email, fullName, role } = req.body;
 
         const result = await authService.verifySignup({
             phone,
@@ -108,10 +108,10 @@ export const verifySignin = async (req, res, next) => {
             ipAddress: req.ip,
             userAgent: req.headers['user-agent']
         });
-        res.status(200).json({ 
-            success: true, 
-            message: 'Login successful', 
-            data: result 
+        res.status(200).json({
+            success: true,
+            message: 'Login successful',
+            data: result
         });
     } catch (error) {
         next(error);
@@ -121,15 +121,14 @@ export const verifySignin = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
     try {
-        const { refreshToken } = req.body;
 
         // ── Access token header se lo — blacklist ke liye ─────────────────────
-        const authHeader  = req.headers.authorization || '';
+        const authHeader = req.headers.authorization || '';
         const accessToken = authHeader.startsWith('Bearer ')
             ? authHeader.split(' ')[1]
             : null;
 
-        const result = await authService.logout(refreshToken, accessToken);
+        const result = await authService.logout(accessToken);
 
         sendResponse(res, 200, 'Logged out successfully', result);
     } catch (error) {

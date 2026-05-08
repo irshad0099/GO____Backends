@@ -75,12 +75,11 @@ export const verifySignup = async ({ phone, otp, email, fullName,role }) => {
 
         // Generate tokens
         const accessToken = tokenService.generateAccessToken(user);
-        const refreshToken = tokenService.generateRefreshToken(user);
 
         // Create session
         await sessionRepo.createSession({
             userId: user.id,
-            refreshToken,
+            accessToken,
             deviceId: null,
             deviceType: null,
             ipAddress: null,
@@ -91,7 +90,6 @@ export const verifySignup = async ({ phone, otp, email, fullName,role }) => {
 
         const response = {
             accessToken,
-            refreshToken,
             user: {
                 id: user.id,
                 phone: user.phone_number,
@@ -184,11 +182,10 @@ export const verifySignin = async ({ phone, email, otp, ipAddress, userAgent, ro
         await userRepo.updateUser(user.id, { last_login: new Date() });
 
         const accessToken  = tokenService.generateAccessToken(user);
-        const refreshToken = tokenService.generateRefreshToken(user);
 
         await sessionRepo.createSession({
             userId: user.id,
-            refreshToken,
+            accessToken,
             ipAddress,
             userAgent
         });
@@ -197,7 +194,6 @@ export const verifySignin = async ({ phone, email, otp, ipAddress, userAgent, ro
 
         const response = {
             accessToken,
-            refreshToken,
             user: {
                 id:        user.id,
                 phone:     user.phone_number,
@@ -225,58 +221,22 @@ export const verifySignin = async ({ phone, email, otp, ipAddress, userAgent, ro
     }
 };
 
-export const logout = async (refreshToken, accessToken = null) => {
+export const logout = async (accessToken) => {
     try {
+        if (!accessToken) {
+            throw new AuthError('No token provided for logout');
+        }
+        
         // DB session delete karo
-        await sessionRepo.deleteSession(refreshToken);
+        await sessionRepo.deleteSession(accessToken);
  
         // ── Access token blacklist mein dalo — reuse na ho sake ───────────────
-        if (accessToken) {
-            await blacklistToken(accessToken, 86400); // 24 hours blacklist
-            logger.info('Access token blacklisted successfully');
-        }
+        await blacklistToken(accessToken, 86400); // 24 hours blacklist
+        logger.info('Access token blacklisted successfully');
  
         return { message: 'Logged out successfully' };
     } catch (error) {
         logger.error('Logout service error:', error);
         throw error;
-    }
-};
-
-export const refreshToken = async (refreshToken) => {
-    try {
-        // Verify refresh token
-        const decoded = tokenService.verifyToken(refreshToken);
-
-        // Check if session exists
-        const session = await sessionRepo.findSession(refreshToken);
-        if (!session || session.is_revoked) {
-            throw new AuthError('Invalid refresh token');
-        }
-
-        // Get user
-        const user = await userRepo.findUserById(decoded.userId);
-        if (!user || !user.is_active) {
-            throw new AuthError('User not found or inactive');
-        }
-
-        // Generate new tokens
-        const newAccessToken = tokenService.generateAccessToken(user);
-        const newRefreshToken = tokenService.generateRefreshToken(user);
-
-        // Delete old session and create new one
-        await sessionRepo.deleteSession(refreshToken);
-        await sessionRepo.createSession({
-            userId: user.id,
-            refreshToken: newRefreshToken
-        });
-
-        return {
-            accessToken: newAccessToken,
-            refreshToken: newRefreshToken
-        };
-    } catch (error) {
-        logger.error('Refresh token service error:', error);
-        throw new AuthError('Invalid or expired refresh token');
     }
 };

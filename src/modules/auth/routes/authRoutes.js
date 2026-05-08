@@ -40,12 +40,6 @@ router.post(
     controller.verifySignin
 );
 
-router.post(
-    '/refresh-token',
-    validate(validator.refreshTokenValidators),
-    controller.refreshToken
-);
-
 // Protected routes
 router.post(
     '/logout',

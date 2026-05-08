@@ -90,13 +90,18 @@ export const updateEstimatedArrival = (rideId, passengerId, estimatedMinutes) =>
  */
 export const notifyDriverArrival = (rideId, passengerId, driverId, location) => {
     try {
-        emitToPassenger(passengerId, 'ride:driver_arrived', {
+        const payload = {
             rideId,
             driverId,
-            location,
+            location: { latitude: location.latitude, longitude: location.longitude },
             message: 'Your driver has arrived!',
             timestamp: new Date().toISOString()
-        });
+        };
+        if (location.otp) {
+            payload.otp = location.otp;
+        }
+        
+        emitToPassenger(passengerId, 'ride:driver_arrived', payload);
 
         logger.info('🔔 Driver arrival notification sent', { rideId, passengerId });
     } catch (error) {

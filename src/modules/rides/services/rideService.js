@@ -13,13 +13,13 @@ import logger from '../../../core/logger/logger.js';
 import { ENV } from '../../../config/envConfig.js';
 import { db } from '../../../infrastructure/database/postgres.js';
 import { getDistanceAndDuration, getDriverETA, geocodeAddress } from '../../../core/services/googleMapsService.js';
-import { 
-    sendRideReceipt, 
-    sendRideCancelledEmail 
+import {
+    sendRideReceipt,
+    sendRideCancelledEmail
 } from '../../../core/services/emailService.js';
 
-import { 
-    getCachedNearbyDrivers, 
+import {
+    getCachedNearbyDrivers,
     setCachedNearbyDrivers,
     getCachedSurge,        // ++ ADD
     setCachedSurge,        // ++ ADD
@@ -62,9 +62,9 @@ const safeEmit = (fn, label) => {
 
 
 const gatherDemandSignals = async (vehicleType, latitude, longitude) => {
-    const searchRadius    = Number(ENV.DEFAULT_SEARCH_RADIUS_KM) || 5;
-    const demandWindow    = Number(ENV.DEMAND_WINDOW_MINUTES)    || 10;
-    const velocityWindow  = Number(ENV.VELOCITY_WINDOW_MINUTES)  || 5;
+    const searchRadius = Number(ENV.DEFAULT_SEARCH_RADIUS_KM) || 5;
+    const demandWindow = Number(ENV.DEMAND_WINDOW_MINUTES) || 10;
+    const velocityWindow = Number(ENV.VELOCITY_WINDOW_MINUTES) || 5;
 
     const [rideRequests, requestVelocity, nearbyDrivers, weatherSignal] = await Promise.all([
         rideRepo.countRecentRideRequests(vehicleType, latitude, longitude, searchRadius, demandWindow),
@@ -100,21 +100,21 @@ export const requestRide = async (userId, rideData) => {
 
 
         // ─── Geocoding — agar lat/lng nahi hai toh address se convert karo ──────────
-if (!rideData.pickupLatitude || !rideData.pickupLongitude) {
-    if (!rideData.pickupAddress) throw new ApiError(400, 'Pickup address or coordinates required');
-    const geocoded = await geocodeAddress(rideData.pickupAddress);
-    rideData.pickupLatitude  = geocoded.latitude;
-    rideData.pickupLongitude = geocoded.longitude;
-    rideData.pickupAddress   = geocoded.formattedAddress;
-}
+        if (!rideData.pickupLatitude || !rideData.pickupLongitude) {
+            if (!rideData.pickupAddress) throw new ApiError(400, 'Pickup address or coordinates required');
+            const geocoded = await geocodeAddress(rideData.pickupAddress);
+            rideData.pickupLatitude = geocoded.latitude;
+            rideData.pickupLongitude = geocoded.longitude;
+            rideData.pickupAddress = geocoded.formattedAddress;
+        }
 
-if (!rideData.dropoffLatitude || !rideData.dropoffLongitude) {
-    if (!rideData.dropoffAddress) throw new ApiError(400, 'Dropoff address or coordinates required');
-    const geocoded = await geocodeAddress(rideData.dropoffAddress);
-    rideData.dropoffLatitude  = geocoded.latitude;
-    rideData.dropoffLongitude = geocoded.longitude;
-    rideData.dropoffAddress   = geocoded.formattedAddress;
-}
+        if (!rideData.dropoffLatitude || !rideData.dropoffLongitude) {
+            if (!rideData.dropoffAddress) throw new ApiError(400, 'Dropoff address or coordinates required');
+            const geocoded = await geocodeAddress(rideData.dropoffAddress);
+            rideData.dropoffLatitude = geocoded.latitude;
+            rideData.dropoffLongitude = geocoded.longitude;
+            rideData.dropoffAddress = geocoded.formattedAddress;
+        }
 
         // const distanceKm = rideCalculator.calculateDistance(
         //     rideData.pickupLatitude, rideData.pickupLongitude,
@@ -123,11 +123,11 @@ if (!rideData.dropoffLatitude || !rideData.dropoffLongitude) {
         // const durationMinutes = rideCalculator.calculateDuration(distanceKm, rideData.vehicleType);
 
         const mapsResult = await getDistanceAndDuration(
-    rideData.pickupLatitude, rideData.pickupLongitude,
-    rideData.dropoffLatitude, rideData.dropoffLongitude
-);
-const distanceKm = mapsResult.distanceKm;
-const durationMinutes = mapsResult.durationMinutes;
+            rideData.pickupLatitude, rideData.pickupLongitude,
+            rideData.dropoffLatitude, rideData.dropoffLongitude
+        );
+        const distanceKm = mapsResult.distanceKm;
+        const durationMinutes = mapsResult.durationMinutes;
 
         const signals = await gatherDemandSignals(
             rideData.vehicleType,
@@ -140,37 +140,37 @@ const durationMinutes = mapsResult.durationMinutes;
 
         // ── Subscription snapshot — LOCKED at request time (Edge 10.2) ──────
         const subSnapshot = await subscriptionService.fetchActiveSubscription(userId);
-        const lockedIsSubscribed   = Boolean(subSnapshot?.hasActiveSubscription);
+        const lockedIsSubscribed = Boolean(subSnapshot?.hasActiveSubscription);
         const lockedSubscriberTier = lockedIsSubscribed
             ? (subSnapshot.data?.plan?.slug || 'basic')
             : 'none';
 
         const goFare = rideCalculator.calculateEstimatedFare({
-            vehicleType:              rideData.vehicleType,
+            vehicleType: rideData.vehicleType,
             distanceKm,
             estimatedDurationMinutes: durationMinutes,
-            pickupDistanceKm:         signals.pickupDistanceKm,
+            pickupDistanceKm: signals.pickupDistanceKm,
             driverDailyRideCount,
-            rideRequests:             signals.rideRequests,
-            availableDrivers:         signals.availableDrivers,
-            requestVelocity:          signals.requestVelocity,
-            weatherSignal:            signals.weatherSignal,
-            subscriberTier:           lockedSubscriberTier,
-            isSubscribed:             lockedIsSubscribed
+            rideRequests: signals.rideRequests,
+            availableDrivers: signals.availableDrivers,
+            requestVelocity: signals.requestVelocity,
+            weatherSignal: signals.weatherSignal,
+            subscriberTier: lockedSubscriberTier,
+            isSubscribed: lockedIsSubscribed
         });
 
         const fare = {
-            baseFare:          goFare.passenger.baseFare,
-            distanceFare:      goFare.passenger.distanceFare,
-            timeFare:          durationMinutes,
-            surgeMultiplier:   goFare.passenger.surgeMultiplier,
-            estimatedFare:     goFare.passenger.passengerTotal,
-            convenienceFee:    goFare.passenger.convenienceFee ?? 0,
-            isPeak:            goFare.passenger.isPeak ?? false,
+            baseFare: goFare.passenger.baseFare,
+            distanceFare: goFare.passenger.distanceFare,
+            timeFare: durationMinutes,
+            surgeMultiplier: goFare.passenger.surgeMultiplier,
+            estimatedFare: goFare.passenger.passengerTotal,
+            convenienceFee: goFare.passenger.convenienceFee ?? 0,
+            isPeak: goFare.passenger.isPeak ?? false,
             demandSupplyRatio: goFare.signals.demandSupplyRatio ?? 1.0,
-            fareBeforeGst:     goFare.passenger.fareBeforeGst ?? goFare.passenger.passengerTotal,
-            gstOnFare:         goFare.passenger.gstOnFare ?? 0,
-            surgeCapApplied:   goFare.signals.surgeCap
+            fareBeforeGst: goFare.passenger.fareBeforeGst ?? goFare.passenger.passengerTotal,
+            gstOnFare: goFare.passenger.gstOnFare ?? 0,
+            surgeCapApplied: goFare.signals.surgeCap
         };
 
         // ── Step 1: Subscription benefits (surgeProtection) ────────────────
@@ -181,24 +181,24 @@ const durationMinutes = mapsResult.durationMinutes;
             const subPlanBenefits = subSnapshot?.data?.plan?.benefits;
             if (lockedIsSubscribed && subPlanBenefits?.surgeProtection && fare.surgeMultiplier > 1) {
                 const noSurgeFare = rideCalculator.calculateEstimatedFare({
-                    vehicleType:              rideData.vehicleType,
+                    vehicleType: rideData.vehicleType,
                     distanceKm,
                     estimatedDurationMinutes: durationMinutes,
-                    pickupDistanceKm:         signals.pickupDistanceKm,
+                    pickupDistanceKm: signals.pickupDistanceKm,
                     driverDailyRideCount,
-                    rideRequests:             0,
-                    availableDrivers:         1,
-                    requestVelocity:          0,
-                    weatherSignal:            null,
-                    subscriberTier:           lockedSubscriberTier,
-                    isSubscribed:             lockedIsSubscribed
+                    rideRequests: 0,
+                    availableDrivers: 1,
+                    requestVelocity: 0,
+                    weatherSignal: null,
+                    subscriberTier: lockedSubscriberTier,
+                    isSubscribed: lockedIsSubscribed
                 });
-                fareForSubscription  = noSurgeFare.passenger.passengerTotal;
+                fareForSubscription = noSurgeFare.passenger.passengerTotal;
                 fare.surgeMultiplier = 1.0;
-                fare.convenienceFee  = noSurgeFare.passenger.convenienceFee ?? 0;
-                fare.isPeak          = noSurgeFare.passenger.isPeak ?? false;
-                fare.fareBeforeGst   = noSurgeFare.passenger.fareBeforeGst ?? fareForSubscription;
-                fare.gstOnFare       = noSurgeFare.passenger.gstOnFare ?? 0;
+                fare.convenienceFee = noSurgeFare.passenger.convenienceFee ?? 0;
+                fare.isPeak = noSurgeFare.passenger.isPeak ?? false;
+                fare.fareBeforeGst = noSurgeFare.passenger.fareBeforeGst ?? fareForSubscription;
+                fare.gstOnFare = noSurgeFare.passenger.gstOnFare ?? 0;
             }
 
             subscriptionResult = await subscriptionService.applyRideBenefits(userId, fareForSubscription);
@@ -235,37 +235,37 @@ const durationMinutes = mapsResult.durationMinutes;
 
         const ride = await rideRepo.createRide({
             rideNumber,
-            passengerId:         userId,
-            vehicleType:         rideData.vehicleType,
-            pickupLatitude:      rideData.pickupLatitude,
-            pickupLongitude:     rideData.pickupLongitude,
-            pickupAddress:       rideData.pickupAddress,
-            pickupLocationName:  rideData.pickupLocationName,
-            dropoffLatitude:     rideData.dropoffLatitude,
-            dropoffLongitude:    rideData.dropoffLongitude,
-            dropoffAddress:      rideData.dropoffAddress,
+            passengerId: userId,
+            vehicleType: rideData.vehicleType,
+            pickupLatitude: rideData.pickupLatitude,
+            pickupLongitude: rideData.pickupLongitude,
+            pickupAddress: rideData.pickupAddress,
+            pickupLocationName: rideData.pickupLocationName,
+            dropoffLatitude: rideData.dropoffLatitude,
+            dropoffLongitude: rideData.dropoffLongitude,
+            dropoffAddress: rideData.dropoffAddress,
             dropoffLocationName: rideData.dropoffLocationName,
             distanceKm,
             durationMinutes,
-            baseFare:             fare.baseFare,
-            distanceFare:         fare.distanceFare,
-            timeFare:             fare.timeFare,
-            surgeMultiplier:      fare.surgeMultiplier,
-            estimatedFare:        fare.estimatedFare,
-            convenienceFee:       fare.convenienceFee,
-            isPeak:               fare.isPeak,
-            demandSupplyRatio:    fare.demandSupplyRatio,
-            paymentMethod:        paymentMethod,
-            couponId:             couponResult?.couponId || null,
-            couponDiscount:       couponResult?.discountApplied || 0,
+            baseFare: fare.baseFare,
+            distanceFare: fare.distanceFare,
+            timeFare: fare.timeFare,
+            surgeMultiplier: fare.surgeMultiplier,
+            estimatedFare: fare.estimatedFare,
+            convenienceFee: fare.convenienceFee,
+            isPeak: fare.isPeak,
+            demandSupplyRatio: fare.demandSupplyRatio,
+            paymentMethod: paymentMethod,
+            couponId: couponResult?.couponId || null,
+            couponDiscount: couponResult?.discountApplied || 0,
             subscriptionDiscount: subscriptionResult?.discountAmount || 0,
-            isFreeRide:           subscriptionResult?.isFreeRide || false,
+            isFreeRide: subscriptionResult?.isFreeRide || false,
             lockedIsSubscribed,
             lockedSubscriberTier,
-            lockedSurgeCap:       fare.surgeCapApplied,
-            lockedIsPeak:         fare.isPeak,
-            fareBeforeGst:        fare.fareBeforeGst,
-            gstOnFare:            fare.gstOnFare
+            lockedSurgeCap: fare.surgeCapApplied,
+            lockedIsPeak: fare.isPeak,
+            fareBeforeGst: fare.fareBeforeGst,
+            gstOnFare: fare.gstOnFare
         });
 
         // ── FCM 1: Nearby drivers ko ride request notification (queued) ──────
@@ -296,27 +296,27 @@ const durationMinutes = mapsResult.durationMinutes;
             const passengerName = userQuery.rows[0]?.full_name || 'Passenger';
 
             const pickupLocation = {
-                latitude:  rideData.pickupLatitude,
+                latitude: rideData.pickupLatitude,
                 longitude: rideData.pickupLongitude,
-                address:   rideData.pickupAddress
+                address: rideData.pickupAddress
             };
             const dropoffLocation = {
-                latitude:  rideData.dropoffLatitude,
+                latitude: rideData.dropoffLatitude,
                 longitude: rideData.dropoffLongitude,
-                address:   rideData.dropoffAddress
+                address: rideData.dropoffAddress
             };
             signals.nearbyDrivers.slice(0, 100).forEach(d => {
                 safeEmit(() => emitToDriver(d.user_id || d.id, 'ride:new_request', {
-                    rideId:           ride.id,
-                    rideNumber:       ride.ride_number,
-                    passengerName:    passengerName,
+                    rideId: ride.id,
+                    rideNumber: ride.ride_number,
+                    passengerName: passengerName,
                     pickupLocation,
                     dropoffLocation,
-                    estimatedFare:    fare.estimatedFare,
+                    estimatedFare: fare.estimatedFare,
                     distanceKm,
                     durationMinutes,
-                    vehicleType:      rideData.vehicleType,
-                    timestamp:        new Date().toISOString()
+                    vehicleType: rideData.vehicleType,
+                    timestamp: new Date().toISOString()
                 }), 'ride:new_request');
             });
         }
@@ -324,37 +324,37 @@ const durationMinutes = mapsResult.durationMinutes;
         logger.info(`Ride requested: ${rideNumber} for user ${userId}`);
 
         return {
-            rideId:           ride.id,
-            rideNumber:       ride.ride_number,
-            vehicleType:      ride.vehicle_type,
-            pickupAddress:    ride.pickup_address,
-            dropoffAddress:   ride.dropoff_address,
-            distanceKm:       ride.distance_km,
-            durationMinutes:  ride.duration_minutes,
-            estimatedFare:    ride.estimated_fare,
-            surgeMultiplier:  ride.surge_multiplier,
+            rideId: ride.id,
+            rideNumber: ride.ride_number,
+            vehicleType: ride.vehicle_type,
+            pickupAddress: ride.pickup_address,
+            dropoffAddress: ride.dropoff_address,
+            distanceKm: ride.distance_km,
+            durationMinutes: ride.duration_minutes,
+            estimatedFare: ride.estimated_fare,
+            surgeMultiplier: ride.surge_multiplier,
             passengerFareBreakdown: goFare.passenger,
             driverEarningBreakdown: goFare.driver,
-            pricingSignals:         goFare.signals,
+            pricingSignals: goFare.signals,
             ...(subscriptionResult?.hasSubscription && {
                 subscription: {
-                    planName:       subscriptionResult.benefits?.planName,
-                    isFreeRide:     subscriptionResult.isFreeRide,
+                    planName: subscriptionResult.benefits?.planName,
+                    isFreeRide: subscriptionResult.isFreeRide,
                     discountApplied: subscriptionResult.discountAmount,
-                    originalFare:   subscriptionResult.originalAmount,
+                    originalFare: subscriptionResult.originalAmount,
                     surgeProtected: subscriptionResult.benefits?.surgeProtection && fare.surgeMultiplier === 1.0
                 }
             }),
             ...(couponResult && {
                 coupon: {
-                    code:            couponResult.code,
+                    code: couponResult.code,
                     discountApplied: couponResult.discountApplied,
-                    originalFare:    couponResult.originalAmount,
-                    message:         couponResult.message
+                    originalFare: couponResult.originalAmount,
+                    message: couponResult.message
                 }
             }),
-            status:        ride.status,
-            requestedAt:   ride.requested_at,
+            status: ride.status,
+            requestedAt: ride.requested_at,
             nearbyDrivers: signals.availableDrivers,
             message: 'Ride requested successfully. Finding nearby drivers...'
         };
@@ -378,12 +378,12 @@ export const calculateFare = async (fareData) => {
         // );
         // const durationMinutes = rideCalculator.calculateDuration(distanceKm, vehicleType);
         const mapsResult = await getDistanceAndDuration(
-    pickupLatitude, pickupLongitude,
-    dropoffLatitude, dropoffLongitude
-);
-const distanceKm = mapsResult.distanceKm;
-const durationMinutes = mapsResult.durationMinutes;
-        const signals         = await gatherDemandSignals(vehicleType, pickupLatitude, pickupLongitude);
+            pickupLatitude, pickupLongitude,
+            dropoffLatitude, dropoffLongitude
+        );
+        const distanceKm = mapsResult.distanceKm;
+        const durationMinutes = mapsResult.durationMinutes;
+        const signals = await gatherDemandSignals(vehicleType, pickupLatitude, pickupLongitude);
         const selectedDriverId = signals.availableDrivers > 0 ? signals.nearbyDrivers[0].id : null;
         const driverDailyRideCount = await rideRepo.getDriverDailyRideCount(selectedDriverId);
 
@@ -391,12 +391,12 @@ const durationMinutes = mapsResult.durationMinutes;
             vehicleType,
             distanceKm,
             estimatedDurationMinutes: durationMinutes,
-            pickupDistanceKm:         signals.pickupDistanceKm,
+            pickupDistanceKm: signals.pickupDistanceKm,
             driverDailyRideCount,
-            rideRequests:             signals.rideRequests,
-            availableDrivers:         signals.availableDrivers,
-            requestVelocity:          signals.requestVelocity,
-            weatherSignal:            signals.weatherSignal
+            rideRequests: signals.rideRequests,
+            availableDrivers: signals.availableDrivers,
+            requestVelocity: signals.requestVelocity,
+            weatherSignal: signals.weatherSignal
         });
     } catch (error) {
         logger.error('Calculate fare service error:', error);
@@ -419,9 +419,9 @@ const calculateCompletionFare = async (ride) => {
     }
 
     // GPS-tracked actual distance — fallback to estimated if tracking failed/unreliable
-    const trackedKm        = await getActualDistance(ride.id);
-    const estimatedKm      = Number(ride.distance_km) || 0;
-    const finalDistanceKm  = trackedKm ?? estimatedKm;
+    const trackedKm = await getActualDistance(ride.id);
+    const estimatedKm = Number(ride.distance_km) || 0;
+    const finalDistanceKm = trackedKm ?? estimatedKm;
 
     if (trackedKm !== null) {
         logger.info(`[Fare] rideId=${ride.id} using GPS distance: ${trackedKm}km (estimated was ${estimatedKm}km)`);
@@ -429,24 +429,24 @@ const calculateCompletionFare = async (ride) => {
         logger.warn(`[Fare] rideId=${ride.id} GPS tracking unavailable, using estimated: ${estimatedKm}km`);
     }
 
-    const pickupDistanceKm     = Number(ride.driver_pickup_distance_km) || 0;
+    const pickupDistanceKm = Number(ride.driver_pickup_distance_km) || 0;
     const driverDailyRideCount = await rideRepo.getDriverDailyRideCount(ride.driver_id);
 
     return rideCalculator.calculateFinalRideFare({
-        vehicleType:              ride.vehicle_type,
-        distanceKm:               finalDistanceKm,
+        vehicleType: ride.vehicle_type,
+        distanceKm: finalDistanceKm,
         estimatedDurationMinutes: Number(ride.duration_minutes) || 0,
         actualDurationMinutes,
         waitedMinutes,
-        surgeMultiplier:          Number(ride.surge_multiplier) || 1,
+        surgeMultiplier: Number(ride.surge_multiplier) || 1,
         pickupDistanceKm,
         driverDailyRideCount,
-        lockedConvenienceFee:     ride.convenience_fee != null ? Number(ride.convenience_fee) : null,
-        lockedIsPeak:             ride.locked_is_peak != null ? ride.locked_is_peak
-                                 : (ride.is_peak != null ? ride.is_peak : null),
-        lockedSubscriberTier:     ride.locked_subscriber_tier || 'none',
-        lockedIsSubscribed:       Boolean(ride.locked_is_subscribed),
-        lockedSurgeCap:           ride.locked_surge_cap != null ? Number(ride.locked_surge_cap) : null
+        lockedConvenienceFee: ride.convenience_fee != null ? Number(ride.convenience_fee) : null,
+        lockedIsPeak: ride.locked_is_peak != null ? ride.locked_is_peak
+            : (ride.is_peak != null ? ride.is_peak : null),
+        lockedSubscriberTier: ride.locked_subscriber_tier || 'none',
+        lockedIsSubscribed: Boolean(ride.locked_is_subscribed),
+        lockedSurgeCap: ride.locked_surge_cap != null ? Number(ride.locked_surge_cap) : null
     });
 };
 
@@ -473,16 +473,16 @@ export const findNearbyDrivers = async (vehicleType, latitude, longitude) => {
         );
 
         const formatted = drivers.map(driver => ({
-            id:            driver.id,
-            name:          driver.full_name,
-            vehicleType:   driver.vehicle_type,
+            id: driver.id,
+            name: driver.full_name,
+            vehicleType: driver.vehicle_type,
             vehicleNumber: driver.vehicle_number,
-            vehicleModel:  driver.vehicle_model,
-            vehicleColor:  driver.vehicle_color,
-            rating:        parseFloat(driver.rating || 0).toFixed(1),
-            distance:      parseFloat(driver.distance).toFixed(1),
+            vehicleModel: driver.vehicle_model,
+            vehicleColor: driver.vehicle_color,
+            rating: parseFloat(driver.rating || 0).toFixed(1),
+            distance: parseFloat(driver.distance).toFixed(1),
             location: {
-                latitude:  driver.current_latitude,
+                latitude: driver.current_latitude,
                 longitude: driver.current_longitude
             }
         }));
@@ -514,17 +514,17 @@ export const acceptRide = async (driverUserId, rideId) => {
         if (!ride) throw new NotFoundError('Ride not found');
         if (ride.status !== 'requested') throw new ConflictError('Ride is no longer available');
 
-    
+
 
         const etaResult = (driver.current_latitude && driver.current_longitude)
-    ? await getDriverETA(
-        driver.current_latitude, driver.current_longitude,
-        ride.pickup_latitude, ride.pickup_longitude
-      )
-    : { etaMinutes: 5, distanceKm: 0 };
+            ? await getDriverETA(
+                driver.current_latitude, driver.current_longitude,
+                ride.pickup_latitude, ride.pickup_longitude
+            )
+            : { etaMinutes: 5, distanceKm: 0 };
 
-const pickupDistanceKm = etaResult.distanceKm;
-const etaMinutes = etaResult.etaMinutes;
+        const pickupDistanceKm = etaResult.distanceKm;
+        const etaMinutes = etaResult.etaMinutes;
 
         const updatedRide = await rideRepo.assignDriverToRide(rideId, driver.id, pickupDistanceKm);
         if (!updatedRide) throw new ConflictError('Ride is no longer available or you are already on duty');
@@ -534,17 +534,17 @@ const etaMinutes = etaResult.etaMinutes;
         if (ride.passenger_fcm_token) {
             await addNotificationJob('ride-accepted', {
                 fcmToken: ride.passenger_fcm_token,
-                title:    'Driver Found!',
-                body:     `${driver.full_name} is on the way — ${Math.ceil(pickupDistanceKm * 3)} mins away`,
+                title: 'Driver Found!',
+                body: `${driver.full_name} is on the way — ${Math.ceil(pickupDistanceKm * 3)} mins away`,
                 data: {
-                    type:          'ride_accepted',
-                    rideId:        String(rideId),
-                    driverName:    driver.full_name,
-                    driverPhone:   String(driver.phone_number || ''),
+                    type: 'ride_accepted',
+                    rideId: String(rideId),
+                    driverName: driver.full_name,
+                    driverPhone: String(driver.phone_number || ''),
                     vehicleNumber: String(driver.vehicle_number || ''),
-                    vehicleModel:  String(driver.vehicle_model || ''),
-                    vehicleColor:  String(driver.vehicle_color || ''),
-                    eta:           String(Math.ceil(pickupDistanceKm * 3)),
+                    vehicleModel: String(driver.vehicle_model || ''),
+                    vehicleColor: String(driver.vehicle_color || ''),
+                    eta: String(Math.ceil(pickupDistanceKm * 3)),
                 },
             });
         }
@@ -565,48 +565,50 @@ const etaMinutes = etaResult.etaMinutes;
         // const etaMinutes = Math.ceil(pickupDistanceKm * 3);
         const assignmentData = {
             rideId,
-            driverId:              driver.id,
-            driverName:            driver.full_name,
-            driverPhone:           driver.phone_number,
-            driverRating:          driver.rating || 0,
-            vehicleNumber:         driver.vehicle_number,
-            vehicleType:           driver.vehicle_type,
-            vehicleColor:          driver.vehicle_color,
-            vehicleModel:          driver.vehicle_model,
-            estimatedArrivalTime:  etaMinutes,
-            assignedAt:            new Date().toISOString(),
-            otp:                   generatedOtpCode
+            driverId: driver.id,
+            driverName: driver.full_name,
+            driverPhone: driver.phone_number,
+            driverRating: driver.rating || 0,
+            vehicleNumber: driver.vehicle_number,
+            vehicleType: driver.vehicle_type,
+            vehicleColor: driver.vehicle_color,
+            vehicleModel: driver.vehicle_model,
+            estimatedArrivalTime: etaMinutes,
+            assignedAt: new Date().toISOString(),
+            otp: generatedOtpCode
         };
         safeEmit(() => sendAssignmentToPassenger(ride.passenger_id, assignmentData), 'ride:driver_assigned');
 
         // ── SOCKET: confirm assignment to driver ──────────────────────────────
         safeEmit(() => sendAssignmentToDriver(driver.user_id || driverUserId, {
-            id:                rideId,
-            rideNumber:        updatedRide.ride_number,
-            passengerName:     ride.passenger_name,
-            passengerPhone:    ride.passenger_phone,
-            pickupLocation:    {
-                latitude:  ride.pickup_latitude,
+            id: rideId,
+            rideNumber: updatedRide.ride_number,
+            passengerName: ride.passenger_name,
+            passengerPhone: ride.passenger_phone,
+            pickupLocation: {
+                latitude: ride.pickup_latitude,
                 longitude: ride.pickup_longitude,
-                address:   ride.pickup_address
+                address: ride.pickup_address
             },
-            dropoffLocation:   {
-                latitude:  ride.dropoff_latitude,
+            dropoffLocation: {
+                latitude: ride.dropoff_latitude,
                 longitude: ride.dropoff_longitude,
-                address:   ride.dropoff_address
+                address: ride.dropoff_address
             },
-            estimatedFare:     ride.estimated_fare,
+            estimatedFare: ride.estimated_fare,
             estimatedDistance: ride.distance_km,
-            estimatedDuration: ride.duration_minutes
+            estimatedDuration: ride.duration_minutes,
+            otp: generatedOtpCode
         }), 'ride:assignment_confirmed');
 
         logger.info(`Driver ${driverUserId} accepted ride ${rideId}`);
 
         return {
-            rideId:     updatedRide.id,
+            rideId: updatedRide.id,
             rideNumber: updatedRide.ride_number,
-            status:     updatedRide.status,
-            message:    'Ride accepted successfully'
+            status: updatedRide.status,
+            message: 'Ride accepted successfully',
+            otp: generatedOtpCode
         };
     } catch (error) {
         logger.error('Accept ride service error:', error);
@@ -659,40 +661,40 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
 
         let additionalFields = {};
 
-        
-        
+
+
 
 
         // ── FCM 3a: Ride cancelled (queued) ──────────────────────────────────
-if (status === 'cancelled') {
-    additionalFields.cancelled_by        = 'driver';
-    additionalFields.cancellation_reason = cancellationReason || 'Driver cancelled';
-    await driverRepo.updateDriver(driver.id, { is_on_duty: false });
+        if (status === 'cancelled') {
+            additionalFields.cancelled_by = 'driver';
+            additionalFields.cancellation_reason = cancellationReason || 'Driver cancelled';
+            await driverRepo.updateDriver(driver.id, { is_on_duty: false });
 
-    if (ride.passenger_fcm_token) {
-        await addNotificationJob('ride-cancelled', {
-            fcmToken: ride.passenger_fcm_token,
-            title:    'Ride Cancelled',
-            body:     'Your driver cancelled the ride. Please book again.',
-            data: {
-                type:   'ride_cancelled',
-                rideId: String(rideId),
-                reason: cancellationReason || 'Driver cancelled',
-            },
-        });
-    }
+            if (ride.passenger_fcm_token) {
+                await addNotificationJob('ride-cancelled', {
+                    fcmToken: ride.passenger_fcm_token,
+                    title: 'Ride Cancelled',
+                    body: 'Your driver cancelled the ride. Please book again.',
+                    data: {
+                        type: 'ride_cancelled',
+                        rideId: String(rideId),
+                        reason: cancellationReason || 'Driver cancelled',
+                    },
+                });
+            }
 
-    // Email notification
-    if (ride.passenger_email) {
-        sendRideCancelledEmail({
-            to:          ride.passenger_email,
-            riderName:   ride.passenger_name || 'Rider',
-            rideNumber:  ride.ride_number,
-            cancelledBy: 'Driver',
-            reason:      cancellationReason || 'Driver cancelled',
-        }).catch(err => logger.error('Cancel email error:', err));
-    }
-}
+            // Email notification
+            if (ride.passenger_email) {
+                sendRideCancelledEmail({
+                    to: ride.passenger_email,
+                    riderName: ride.passenger_name || 'Rider',
+                    rideNumber: ride.ride_number,
+                    cancelledBy: 'Driver',
+                    reason: cancellationReason || 'Driver cancelled',
+                }).catch(err => logger.error('Cancel email error:', err));
+            }
+        }
 
 
 
@@ -701,10 +703,10 @@ if (status === 'cancelled') {
             if (ride.passenger_fcm_token) {
                 await addNotificationJob('driver-arrived', {
                     fcmToken: ride.passenger_fcm_token,
-                    title:    'Driver Arrived!',
-                    body:     `${driver.full_name} is waiting at your pickup point`,
+                    title: 'Driver Arrived!',
+                    body: `${driver.full_name} is waiting at your pickup point`,
                     data: {
-                        type:   'driver_arrived',
+                        type: 'driver_arrived',
                         rideId: String(rideId),
                     },
                 });
@@ -717,16 +719,16 @@ if (status === 'cancelled') {
             const driverLat = Number(driver.current_latitude);
             const driverLon = Number(driver.current_longitude);
             if (driverLat && driverLon) {
-                startRideTracking(rideId, driverLat, driverLon).catch(() => {});
+                startRideTracking(rideId, driverLat, driverLon).catch(() => { });
             }
 
             if (ride.passenger_fcm_token) {
                 await addNotificationJob('ride-started', {
                     fcmToken: ride.passenger_fcm_token,
-                    title:    'Ride Started!',
-                    body:     `Your ride to ${ride.dropoff_location_name || ride.dropoff_address} has begun`,
+                    title: 'Ride Started!',
+                    body: `Your ride to ${ride.dropoff_location_name || ride.dropoff_address} has begun`,
                     data: {
-                        type:   'ride_started',
+                        type: 'ride_started',
                         rideId: String(rideId),
                     },
                 });
@@ -735,29 +737,29 @@ if (status === 'cancelled') {
 
         // ── Ride completed — critical path + async jobs ───────────────────────
         if (status === 'completed') {
-            const completedAt       = new Date();
+            const completedAt = new Date();
             const rideWithTimestamp = { ...ride, completed_at: completedAt };
-            const finalResult       = await calculateCompletionFare(rideWithTimestamp);
+            const finalResult = await calculateCompletionFare(rideWithTimestamp);
 
             let passengerFinalFare = finalResult.passenger.finalFare;
             if (ride.is_free_ride) {
                 passengerFinalFare = 0;
             } else {
-                const subDiscount    = Number(ride.subscription_discount) || 0;
-                const couponDiscount = Number(ride.coupon_discount)        || 0;
-                passengerFinalFare   = Math.max(0, passengerFinalFare - subDiscount - couponDiscount);
+                const subDiscount = Number(ride.subscription_discount) || 0;
+                const couponDiscount = Number(ride.coupon_discount) || 0;
+                passengerFinalFare = Math.max(0, passengerFinalFare - subDiscount - couponDiscount);
             }
 
-            additionalFields.actual_fare          = passengerFinalFare;
-            additionalFields.final_fare           = passengerFinalFare;
-            additionalFields.payment_status       = 'pending';
+            additionalFields.actual_fare = passengerFinalFare;
+            additionalFields.final_fare = passengerFinalFare;
+            additionalFields.payment_status = 'pending';
 
             // Wallet payment — turant debit karo ride complete hone pe
             if (ride.payment_method === 'wallet' && !ride.is_free_ride && passengerFinalFare > 0) {
                 try {
                     await payForRide(ride.passenger_id, {
-                        ride_id:     rideId,
-                        amount:      passengerFinalFare,
+                        ride_id: rideId,
+                        amount: passengerFinalFare,
                         description: `Wallet payment for ride #${ride.ride_number}`,
                     });
                     additionalFields.payment_status = 'completed';
@@ -766,12 +768,12 @@ if (status === 'cancelled') {
                     // payment_status 'pending' rehne do — manually resolve hoga
                 }
             }
-            additionalFields.fare_before_gst      = finalResult.passenger.fareBeforeGst ?? 0;
-            additionalFields.gst_on_fare          = finalResult.passenger.gstOnFare ?? 0;
-            additionalFields.gst_on_platform_fee  = finalResult.driver.gstOnPlatformFee ?? 0;
-            additionalFields.passenger_total      = finalResult.passenger.passengerTotal ?? passengerFinalFare;
-            additionalFields.pickup_compensation  = finalResult.driver.pickupDistanceCompensation ?? 0;
-            additionalFields.waiting_charges      = finalResult.driver.waitingEarnings ?? 0;
+            additionalFields.fare_before_gst = finalResult.passenger.fareBeforeGst ?? 0;
+            additionalFields.gst_on_fare = finalResult.passenger.gstOnFare ?? 0;
+            additionalFields.gst_on_platform_fee = finalResult.driver.gstOnPlatformFee ?? 0;
+            additionalFields.passenger_total = finalResult.passenger.passengerTotal ?? passengerFinalFare;
+            additionalFields.pickup_compensation = finalResult.driver.pickupDistanceCompensation ?? 0;
+            additionalFields.waiting_charges = finalResult.driver.waitingEarnings ?? 0;
             additionalFields.traffic_compensation = finalResult.driver.trafficDelayCompensation ?? 0;
 
             // GPS-tracked actual distance save karo (null hoga agar tracking fail hua)
@@ -779,35 +781,35 @@ if (status === 'cancelled') {
             if (trackedKmFinal !== null) {
                 additionalFields.actual_distance_km = trackedKmFinal;
             }
-            clearRideTracking(rideId).catch(() => {});
+            clearRideTracking(rideId).catch(() => { });
 
             // SYNC: driver ko immediately off-duty karo — naya ride accept kar sake
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
 
             // ASYNC: driver stats (total_rides, total_earnings) + coupon recording
             await addRideCompletionJob(rideId, {
-                driverId:            driver.id,
-                driverTotalRides:    driver.total_rides,
+                driverId: driver.id,
+                driverTotalRides: driver.total_rides,
                 driverTotalEarnings: driver.total_earnings,
-                netEarnings:         finalResult.driver.netEarnings,
-                couponId:            ride.coupon_id || null,
-                passengerId:         ride.passenger_id,
-                couponDiscount:      Number(ride.coupon_discount) || 0,
-                finalFare:           finalResult.passenger.finalFare,
+                netEarnings: finalResult.driver.netEarnings,
+                couponId: ride.coupon_id || null,
+                passengerId: ride.passenger_id,
+                couponDiscount: Number(ride.coupon_discount) || 0,
+                finalFare: finalResult.passenger.finalFare,
             });
 
             // ASYNC: FCM — passenger ko complete notification
             if (ride.passenger_fcm_token) {
                 await addNotificationJob('ride-completed-passenger', {
                     fcmToken: ride.passenger_fcm_token,
-                    title:    'Ride Completed!',
-                    body:     ride.is_free_ride
+                    title: 'Ride Completed!',
+                    body: ride.is_free_ride
                         ? 'Your free ride is complete! Rate your experience.'
                         : `Total fare: Rs.${passengerFinalFare}. Rate your experience!`,
                     data: {
-                        type:       'ride_completed',
-                        rideId:     String(rideId),
-                        finalFare:  String(passengerFinalFare),
+                        type: 'ride_completed',
+                        rideId: String(rideId),
+                        finalFare: String(passengerFinalFare),
                         isFreeRide: String(ride.is_free_ride || false),
                     },
                 });
@@ -817,11 +819,11 @@ if (status === 'cancelled') {
             if (ride.driver_fcm_token) {
                 await addNotificationJob('ride-earnings-driver', {
                     fcmToken: ride.driver_fcm_token,
-                    title:    'Ride Earnings',
-                    body:     `Ride complete! You earned Rs.${finalResult.driver.netEarnings.toFixed(0)}`,
+                    title: 'Ride Earnings',
+                    body: `Ride complete! You earned Rs.${finalResult.driver.netEarnings.toFixed(0)}`,
                     data: {
-                        type:        'ride_earnings',
-                        rideId:      String(rideId),
+                        type: 'ride_earnings',
+                        rideId: String(rideId),
                         netEarnings: String(finalResult.driver.netEarnings),
                     },
                 });
@@ -830,24 +832,24 @@ if (status === 'cancelled') {
             // Email receipt
             if (ride.passenger_email) {
                 sendRideReceipt({
-                    to:                   ride.passenger_email,
-                    riderName:            ride.passenger_name || 'Rider',
-                    rideNumber:           ride.ride_number,
-                    vehicleType:          ride.vehicle_type,
-                    pickupAddress:        ride.pickup_address,
-                    dropoffAddress:       ride.dropoff_address,
-                    distanceKm:           ride.distance_km,
-                    durationMinutes:      ride.duration_minutes,
-                    baseFare:             ride.base_fare,
-                    distanceFare:         ride.distance_fare,
-                    convenienceFee:       ride.convenience_fee,
-                    surgeMultiplier:      ride.surge_multiplier,
-                    finalFare:            passengerFinalFare,
-                    paymentMethod:        ride.payment_method,
-                    rideDate:             new Date(),
+                    to: ride.passenger_email,
+                    riderName: ride.passenger_name || 'Rider',
+                    rideNumber: ride.ride_number,
+                    vehicleType: ride.vehicle_type,
+                    pickupAddress: ride.pickup_address,
+                    dropoffAddress: ride.dropoff_address,
+                    distanceKm: ride.distance_km,
+                    durationMinutes: ride.duration_minutes,
+                    baseFare: ride.base_fare,
+                    distanceFare: ride.distance_fare,
+                    convenienceFee: ride.convenience_fee,
+                    surgeMultiplier: ride.surge_multiplier,
+                    finalFare: passengerFinalFare,
+                    paymentMethod: ride.payment_method,
+                    rideDate: new Date(),
                     subscriptionDiscount: Number(ride.subscription_discount) || 0,
-                    couponDiscount:       Number(ride.coupon_discount) || 0,
-                    isFreeRide:           ride.is_free_ride || false
+                    couponDiscount: Number(ride.coupon_discount) || 0,
+                    isFreeRide: ride.is_free_ride || false
                 }).catch(err => logger.error('Receipt email error:', err));
             }
 
@@ -859,14 +861,14 @@ if (status === 'cancelled') {
 
         // ── SOCKET: broadcast status change to ride room ──────────────────────
         safeEmit(() => emitRideStatusUpdate(rideId, driver.id, ride.passenger_id, status, {
-            rideNumber:         updatedRide.ride_number,
+            rideNumber: updatedRide.ride_number,
             cancellationReason: additionalFields.cancellation_reason || null,
-            message:            `Ride status updated to ${status}`,
+            message: `Ride status updated to ${status}`,
             ...(status === 'completed' && {
-                finalFare:            additionalFields.final_fare,
+                finalFare: additionalFields.final_fare,
                 subscriptionDiscount: Number(ride.subscription_discount) || 0,
-                couponDiscount:       Number(ride.coupon_discount) || 0,
-                isFreeRide:           ride.is_free_ride || false
+                couponDiscount: Number(ride.coupon_discount) || 0,
+                isFreeRide: ride.is_free_ride || false
             })
         }), `ride:status_changed:${status}`);
 
@@ -876,26 +878,28 @@ if (status === 'cancelled') {
                 const otpRow = await rideOtpRepo.findLatest(rideId);
                 if (otpRow) currentOtp = otpRow.otp_code;
             } catch (err) {
+                console.log("OTP ERROR : ", err);
                 logger.warn(`Could not fetch OTP for driver_arrived: ${err.message}`);
             }
 
             safeEmit(() => notifyDriverArrival(rideId, ride.passenger_id, driver.id, {
-                latitude:  driver.current_latitude,
+                latitude: driver.current_latitude,
                 longitude: driver.current_longitude,
-                otp:       currentOtp
+                otp: currentOtp
             }), 'ride:driver_arrived');
         }
 
         return {
-            rideId:     updatedRide.id,
+            rideId: updatedRide.id,
             rideNumber: updatedRide.ride_number,
-            status:     updatedRide.status,
+            status: updatedRide.status,
+            otp: currentOtp,
             ...(status === 'completed' && {
-                estimatedFare:        ride.estimated_fare,
-                finalFare:            additionalFields.final_fare,
+                estimatedFare: ride.estimated_fare,
+                finalFare: additionalFields.final_fare,
                 subscriptionDiscount: Number(ride.subscription_discount) || 0,
-                couponDiscount:       Number(ride.coupon_discount) || 0,
-                isFreeRide:           ride.is_free_ride || false
+                couponDiscount: Number(ride.coupon_discount) || 0,
+                isFreeRide: ride.is_free_ride || false
             }),
             message: `Ride status updated to ${status}`
         };
@@ -944,13 +948,13 @@ export const getRideDetails = async (userId, rideId, userRole) => {
 export const getPassengerRideHistory = async (userId, { page = 1, limit = 10, status }) => {
     try {
         const offset = (page - 1) * limit;
-        const rides  = await rideRepo.findRidesByPassenger(userId, { limit, offset, status });
-        const total  = await rideRepo.countRidesByPassenger(userId, status);
+        const rides = await rideRepo.findRidesByPassenger(userId, { limit, offset, status });
+        const total = await rideRepo.countRidesByPassenger(userId, status);
 
         return {
             rides: rides.map(formatRideListResponse),
             pagination: {
-                page:  parseInt(page),
+                page: parseInt(page),
                 limit: parseInt(limit),
                 total,
                 pages: Math.ceil(total / limit)
@@ -968,13 +972,13 @@ export const getDriverRideHistory = async (driverUserId, { page = 1, limit = 10,
         if (!driver) throw new NotFoundError('Driver not found');
 
         const offset = (page - 1) * limit;
-        const rides  = await rideRepo.findRidesByDriver(driver.id, { limit, offset, status });
-        const total  = await rideRepo.countRidesByDriver(driver.id, status);
+        const rides = await rideRepo.findRidesByDriver(driver.id, { limit, offset, status });
+        const total = await rideRepo.countRidesByDriver(driver.id, status);
 
         return {
             rides: rides.map(formatRideListResponse),
             pagination: {
-                page:  parseInt(page),
+                page: parseInt(page),
                 limit: parseInt(limit),
                 total,
                 pages: Math.ceil(total / limit)
@@ -1021,16 +1025,16 @@ export const getDriverRideSummary = async (driverUserId, rideId) => {
         if (ride.driver_id !== driver.id) throw new ApiError(403, 'This ride is not yours');
         if (ride.status !== 'completed') throw new ApiError(400, 'Ride not completed yet');
 
-        const tripFare      = parseFloat(ride.actual_fare || ride.estimated_fare || 0);
-        const waitBonus     = parseFloat(ride.waiting_charges || 0);
-        const platformFee   = parseFloat(ride.platform_share || 0);
-        const netEarnings   = Math.max(0, tripFare + waitBonus - platformFee);
+        const tripFare = parseFloat(ride.actual_fare || ride.estimated_fare || 0);
+        const waitBonus = parseFloat(ride.waiting_charges || 0);
+        const platformFee = parseFloat(ride.platform_share || 0);
+        const netEarnings = Math.max(0, tripFare + waitBonus - platformFee);
 
         return {
             rideId,
-            pickup:          ride.pickup_address,
-            dropoff:         ride.dropoff_address,
-            distanceKm:      parseFloat(ride.actual_distance_km || ride.distance_km || 0),
+            pickup: ride.pickup_address,
+            dropoff: ride.dropoff_address,
+            distanceKm: parseFloat(ride.actual_distance_km || ride.distance_km || 0),
             durationMinutes: ride.duration_minutes,
             earnings: {
                 tripFare,
@@ -1067,7 +1071,7 @@ export const rateRide = async (userId, rideId, rating, review) => {
                 'New Rating Received!',
                 `${stars} You got ${rating} stars${review ? ` — "${review}"` : ''}`,
                 {
-                    type:   'new_rating',
+                    type: 'new_rating',
                     rideId: String(rideId),
                     rating: String(rating),
                 }
@@ -1084,12 +1088,12 @@ export const rateRide = async (userId, rideId, rating, review) => {
 // ─── Internal Helpers ────────────────────────────────────────────────────────
 const validateStatusTransition = (currentStatus, newStatus) => {
     const validTransitions = {
-        'requested':       ['driver_assigned', 'cancelled'],
+        'requested': ['driver_assigned', 'cancelled'],
         'driver_assigned': ['driver_arrived', 'cancelled'],
-        'driver_arrived':  ['in_progress', 'cancelled'],
-        'in_progress':     ['completed'],
-        'completed':       [],
-        'cancelled':       []
+        'driver_arrived': ['in_progress', 'cancelled'],
+        'in_progress': ['completed'],
+        'completed': [],
+        'cancelled': []
     };
 
     if (!validTransitions[currentStatus]?.includes(newStatus)) {
@@ -1114,42 +1118,42 @@ const updateDriverRating = async (driverId) => {
 };
 
 const formatRideResponse = (ride) => ({
-    id:              ride.id,
-    rideNumber:      ride.ride_number,
-    vehicleType:     ride.vehicle_type,
-    pickupAddress:   ride.pickup_address,
-    pickupLocation:  { latitude: ride.pickup_latitude,  longitude: ride.pickup_longitude  },
-    dropoffAddress:  ride.dropoff_address,
+    id: ride.id,
+    rideNumber: ride.ride_number,
+    vehicleType: ride.vehicle_type,
+    pickupAddress: ride.pickup_address,
+    pickupLocation: { latitude: ride.pickup_latitude, longitude: ride.pickup_longitude },
+    dropoffAddress: ride.dropoff_address,
     dropoffLocation: { latitude: ride.dropoff_latitude, longitude: ride.dropoff_longitude },
-    distanceKm:      ride.distance_km,
+    distanceKm: ride.distance_km,
     durationMinutes: ride.duration_minutes,
-    estimatedFare:   ride.estimated_fare,
-    actualFare:      ride.actual_fare,
-    finalFare:       ride.final_fare,
-    status:          ride.status,
-    paymentStatus:   ride.payment_status,
-    paymentMethod:   ride.payment_method,
-    requestedAt:     ride.requested_at,
-    driverAssignedAt:    ride.driver_assigned_at,
-    startedAt:           ride.started_at,
-    completedAt:         ride.completed_at,
-    cancelledAt:         ride.cancelled_at,
-    cancelledBy:         ride.cancelled_by,
-    cancellationReason:  ride.cancellation_reason,
+    estimatedFare: ride.estimated_fare,
+    actualFare: ride.actual_fare,
+    finalFare: ride.final_fare,
+    status: ride.status,
+    paymentStatus: ride.payment_status,
+    paymentMethod: ride.payment_method,
+    requestedAt: ride.requested_at,
+    driverAssignedAt: ride.driver_assigned_at,
+    startedAt: ride.started_at,
+    completedAt: ride.completed_at,
+    cancelledAt: ride.cancelled_at,
+    cancelledBy: ride.cancelled_by,
+    cancellationReason: ride.cancellation_reason,
     passenger: ride.passenger_name ? {
-        name:  ride.passenger_name,
+        name: ride.passenger_name,
         phone: ride.passenger_phone
     } : null,
     driver: ride.driver_name ? {
-        name:          ride.driver_name,
-        phone:         ride.driver_phone,
-        vehicleType:   ride.vehicle_type,
+        name: ride.driver_name,
+        phone: ride.driver_phone,
+        vehicleType: ride.vehicle_type,
         vehicleNumber: ride.vehicle_number,
-        vehicleModel:  ride.vehicle_model,
-        vehicleColor:  ride.vehicle_color
+        vehicleModel: ride.vehicle_model,
+        vehicleColor: ride.vehicle_color
     } : null,
     driverLocation: ride.driver_current_latitude ? {
-        latitude:  ride.driver_current_latitude,
+        latitude: ride.driver_current_latitude,
         longitude: ride.driver_current_longitude
     } : null,
     rating: ride.rating,
@@ -1157,19 +1161,19 @@ const formatRideResponse = (ride) => ({
 });
 
 const formatRideListResponse = (ride) => ({
-    id:             ride.id,
-    rideNumber:     ride.ride_number,
-    vehicleType:    ride.vehicle_type,
-    pickupAddress:  ride.pickup_address,
+    id: ride.id,
+    rideNumber: ride.ride_number,
+    vehicleType: ride.vehicle_type,
+    pickupAddress: ride.pickup_address,
     dropoffAddress: ride.dropoff_address,
-    distanceKm:     ride.distance_km,
-    estimatedFare:  ride.estimated_fare,
-    actualFare:     ride.actual_fare,
-    finalFare:      ride.final_fare,
-    status:         ride.status,
-    paymentStatus:  ride.payment_status,
-    requestedAt:    ride.requested_at,
-    completedAt:    ride.completed_at,
-    passengerName:  ride.passenger_name,
-    driverName:     ride.driver_name
+    distanceKm: ride.distance_km,
+    estimatedFare: ride.estimated_fare,
+    actualFare: ride.actual_fare,
+    finalFare: ride.final_fare,
+    status: ride.status,
+    paymentStatus: ride.payment_status,
+    requestedAt: ride.requested_at,
+    completedAt: ride.completed_at,
+    passengerName: ride.passenger_name,
+    driverName: ride.driver_name
 });

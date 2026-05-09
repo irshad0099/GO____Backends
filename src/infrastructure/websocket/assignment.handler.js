@@ -100,7 +100,7 @@ export const notifyDriverArrival = (rideId, passengerId, driverId, location) => 
         if (location.otp) {
             payload.otp = location.otp;
         }
-        
+
         emitToPassenger(passengerId, 'ride:driver_arrived', payload);
 
         logger.info('🔔 Driver arrival notification sent', { rideId, passengerId });
@@ -141,6 +141,7 @@ export const sendAssignmentToDriver = (driverId, rideData) => {
             estimatedDistance: rideData.estimatedDistance,
             estimatedDuration: rideData.estimatedDuration,
             message: 'Ride assigned. Start heading to pickup location.',
+            otp: rideData.otp ?? 1234,
             timestamp: new Date().toISOString()
         });
 

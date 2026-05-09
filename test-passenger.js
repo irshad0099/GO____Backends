@@ -2,7 +2,7 @@
 import { io } from "socket.io-client";
 
 // Passenger Token from your Postman request
-const PASSENGER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1NGYzOThiYS1lZDRjLTQwZDYtYTc5YS0xNTIyZTU3ZTY5NjUiLCJwaG9uZSI6Ijk4NzY1NDMyMTAiLCJyb2xlIjoicGFzc2VuZ2VyIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3ODE4ODA1OCwiZXhwIjoxNzc4Mjc0NDU4fQ.3Q8ujPJ9D4ztMghgu-nqbCjJg4BOjuamCmMjXhvBwSQ";
+const PASSENGER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1NGYzOThiYS1lZDRjLTQwZDYtYTc5YS0xNTIyZTU3ZTY5NjUiLCJwaG9uZSI6Ijk4NzY1NDMyMTAiLCJyb2xlIjoicGFzc2VuZ2VyIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3ODMzMjc1MSwiZXhwIjoxNzc4NDE5MTUxfQ.NLhupzsyu8mauXW3tP50ihUOz4BzDUEbKLaFdm2Km0s";
 const BASE_URL = "https://api.gomobility.co.in";
 
 const socket = io(BASE_URL, {
@@ -34,8 +34,13 @@ socket.on("ride:accepted", (data) => {
 
 // 2. Driver Formally Assigned (DB Updated)
 socket.on("ride:driver_assigned", (data) => {
-    console.log("\n🚗 [EVENT] ride:driver_assigned -> DRIVER IS ON THE WAY!");
-    console.log(`Name: ${data.driverName} | Vehicle: ${data.vehicleColor} ${data.vehicleModel} (${data.vehicleNumber})`);
+    console.log(`\n🚗 [EVENT] ride:driver_assigned -> DRIVER IS ON THE WAY!`);
+    console.log(`Name: ${data.driverName} | Vehicle: ${data.vehicleColor} ${data.vehicleModel} (${data.vehicleNumber}),${data}`);
+    if (data.otp) {
+        console.log(`==============================================`);
+        console.log(`🔐 OTP GENERATED: ${data.otp}`);
+        console.log(`==============================================`);
+    }
 
     // Auto-Join Ride Room (Crucial for live tracking)
     socket.emit("ride:join", { rideId: data.rideId });
@@ -60,6 +65,17 @@ socket.on("ride:status_update", (data) => {
         socket.emit("ride:leave", { rideId: data.rideId });
         console.log("📡 Emitted ride:leave and exited the tracking room.");
         console.log("🏁 Ride journey finished!");
+    }
+});
+
+socket.on("ride:driver_arrived", (data) => {
+    console.log(`\n📢 [EVENT] ride:driver_arrived -> ${data.message || 'Driver has arrived at pickup location!'}`);
+    console.log(data);
+    if (data.otp) {
+        console.log(`==============================================`);
+        console.log(`🔐 RIDE OTP IS: ${data.otp}`);
+        console.log(`👉 Tell this OTP to the driver to start the ride!`);
+        console.log(`==============================================`);
     }
 });
 

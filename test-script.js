@@ -14,6 +14,7 @@ const socket = io(BASE_URL, {
 });
 
 let locationInterval = null;
+let idleLocationInterval = null;
 
 // Helper function to call REST APIs
 async function callApi(endpoint, method, body = null) {
@@ -44,6 +45,7 @@ socket.on("connect_error", (err) => {
 socket.on("disconnect", (reason) => {
     console.log("Disconnected:", reason);
     if (locationInterval) clearInterval(locationInterval);
+    if (idleLocationInterval) clearInterval(idleLocationInterval);
 });
 
 socket.on("connect", () => {
@@ -56,12 +58,24 @@ socket.on("connect", () => {
     // Listen for auth:success
     socket.on("auth:success", (data) => {
         console.log("🔓 Auth Success:", data);
+
+        console.log("📍 Starting Idle Location updates (every 5s)...");
+        let idleLat = 28.7041;
+        let idleLng = 77.1025;
+        
+        idleLocationInterval = setInterval(() => {
+            idleLat += 0.0001; // simulate movement
+            socket.emit("driver:idle_location", {
+                latitude: idleLat,
+                longitude: idleLng
+            });
+        }, 5000);
     });
 
     // ─── STEP 3: RIDE REQUEST RECEIVED ──────────────────────────────
     socket.on("ride:new_request", async (data) => {
         console.log("\n🚀 [1] NEW RIDE REQUEST RECEIVED!");
-        console.log(`Ride ID: ${data.rideId} | Fare: ₹${data.estimatedFare}`);
+        console.log(`Ride ID: ${data.rideId} | Passenger: ${data.passengerName || 'Unknown'} | Fare: ₹${data.estimatedFare}`);
         
         // Simulating driver looking at screen for 2 seconds...
         setTimeout(async () => {
@@ -86,6 +100,9 @@ socket.on("connect", () => {
     socket.on("ride:assignment_confirmed", (data) => {
         console.log("\n✅ [3] RIDE ASSIGNMENT CONFIRMED by Server!");
         console.log(`Passenger: ${data.passengerName}`);
+        if (data.otp) {
+            console.log(`🔐 OTP (Driver's Copy): ${data.otp}`);
+        }
         
         // Step 5: Join Ride Room
         socket.emit("ride:join", { rideId: data.rideId });
@@ -95,6 +112,9 @@ socket.on("connect", () => {
     // ─── STEP 5: JOINED ROOM ──────────────────────────────
     socket.on("ride:joined", (data) => {
         console.log("\n🚪 [4] JOINED RIDE ROOM:", data.message);
+        
+        // Stop idle location updates since we are now in a ride
+        if (idleLocationInterval) clearInterval(idleLocationInterval);
         
         // Step 6: Start Live Location Tracking
         let lat = 28.7041;
@@ -135,6 +155,19 @@ socket.on("connect", () => {
             clearInterval(locationInterval);
             socket.emit("ride:leave", { rideId: data.rideId });
             console.log("📡 Emitted ride:leave and stopped location updates.\n");
+
+            // Resume idle location updates
+            console.log("📍 Resuming Idle Location updates...");
+            let idleLat = 28.7041;
+            let idleLng = 77.1025;
+            idleLocationInterval = setInterval(() => {
+                idleLat += 0.0001;
+                socket.emit("driver:idle_location", {
+                    latitude: idleLat,
+                    longitude: idleLng
+                });
+            }, 5000);
+
             console.log("🎉 END TO END RIDE FLOW COMPLETED! 🎉");
         }, 15000);
     });

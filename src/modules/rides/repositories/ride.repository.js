@@ -12,20 +12,20 @@ export const createRide = async (rideData) => {
             distanceKm, durationMinutes,
             baseFare, distanceFare, timeFare, surgeMultiplier, estimatedFare,
             paymentMethod,
-            couponId             = null,
-            couponDiscount       = 0,
-            convenienceFee       = 0,
-            isPeak               = false,
-            demandSupplyRatio    = 1.0,
+            couponId = null,
+            couponDiscount = 0,
+            convenienceFee = 0,
+            isPeak = false,
+            demandSupplyRatio = 1.0,
             subscriptionDiscount = 0,
-            isFreeRide           = false,
+            isFreeRide = false,
             // ── v3.0 locked snapshot fields ────────────────────────────────
-            lockedIsSubscribed   = false,
+            lockedIsSubscribed = false,
             lockedSubscriberTier = null,
-            lockedSurgeCap       = 1.75,
-            lockedIsPeak         = null,
-            fareBeforeGst        = 0,
-            gstOnFare            = 0
+            lockedSurgeCap = 1.75,
+            lockedIsPeak = null,
+            fareBeforeGst = 0,
+            gstOnFare = 0
         } = rideData;
 
         const result = await db.query(
@@ -69,6 +69,7 @@ export const findRideById = async (rideId) => {
         const result = await db.query(
             `SELECT r.*,
                     r.vehicle_type          AS ride_vehicle_type,
+                    r.payment_status        AS payment_status,
                     u.full_name             AS passenger_name,
                     u.phone_number          AS passenger_phone,
                     u.email                 AS passenger_email,
@@ -232,14 +233,14 @@ export const updateRideStatus = async (rideId, status, additionalFields = {}) =>
     try {
         const statusFieldMap = {
             'driver_arrived': 'driver_arrived_at',
-            'in_progress':    'started_at',
-            'completed':      'completed_at',
-            'cancelled':      'cancelled_at'
+            'in_progress': 'started_at',
+            'completed': 'completed_at',
+            'cancelled': 'cancelled_at'
         };
 
         const timestampField = statusFieldMap[status];
 
-        let query  = `UPDATE rides SET status = $1, updated_at = NOW()`;
+        let query = `UPDATE rides SET status = $1, updated_at = NOW()`;
         const params = [status];
         let paramIndex = 2;
 
@@ -389,7 +390,7 @@ export const findRidesByDriver = async (driverId, { limit = 10, offset = 0, stat
 
 export const countRidesByPassenger = async (passengerId, status) => {
     try {
-        let query  = `SELECT COUNT(*) FROM rides WHERE passenger_id = $1`;
+        let query = `SELECT COUNT(*) FROM rides WHERE passenger_id = $1`;
         const params = [passengerId];
         if (status) { query += ` AND status = $2`; params.push(status); }
         const result = await db.query(query, params);
@@ -402,12 +403,12 @@ export const countRidesByPassenger = async (passengerId, status) => {
 
 export const countRidesByDriver = async (driverId, status, dateFrom, dateTo) => {
     try {
-        let query  = `SELECT COUNT(*) FROM rides WHERE driver_id = $1`;
+        let query = `SELECT COUNT(*) FROM rides WHERE driver_id = $1`;
         const params = [driverId];
         let paramIndex = 2;
-        if (status)   { query += ` AND status = $${paramIndex}`; params.push(status); paramIndex++; }
+        if (status) { query += ` AND status = $${paramIndex}`; params.push(status); paramIndex++; }
         if (dateFrom) { query += ` AND requested_at >= $${paramIndex}`; params.push(dateFrom); paramIndex++; }
-        if (dateTo)   { query += ` AND requested_at <= $${paramIndex}`; params.push(dateTo); paramIndex++; }
+        if (dateTo) { query += ` AND requested_at <= $${paramIndex}`; params.push(dateTo); paramIndex++; }
         const result = await db.query(query, params);
         return parseInt(result.rows[0].count);
     } catch (error) {

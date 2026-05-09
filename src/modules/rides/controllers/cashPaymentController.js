@@ -25,7 +25,7 @@ export const confirmCashPayment = async (req, res, next) => {
         }
 
         // Check if payment status is cash_collected
-        if (ride.paymentStatus !== 'cash') {
+        if (ride?.paymentMethod !== 'cash' && ride?.paymentStatus !== 'pending')  {
             throw new ApiError(400, 'Cash payment not recorded for this ride');
         }
 

@@ -6697,3 +6697,908 @@ AuthError: Invalid token
 2026-05-04 17:01:58 [ERROR]: [PaymentWorker] Worker error: connect ETIMEDOUT
 2026-05-04 17:01:58 [ERROR]: [NotificationWorker] Worker error: connect ETIMEDOUT
 2026-05-04 17:01:58 [ERROR]: [RideCompletionWorker] Worker error: connect ETIMEDOUT
+2026-05-06 00:16:23 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-06 00:16:23 [INFO]: 🔥 Firebase initialized successfully
+2026-05-06 00:16:23 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-05-06 00:16:23 [INFO]: [Email] SendGrid initialized successfully
+2026-05-06 00:16:24 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-06 00:16:25 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-06 00:16:25 [INFO]: ✅ Redis Cloud ready
+2026-05-06 00:16:25 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-06 00:16:25 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-06 00:16:25 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
+2026-05-06 00:16:25 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-06 00:16:25 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-07 01:30:23 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-07 01:30:23 [INFO]: 🔥 Firebase initialized successfully
+2026-05-07 01:30:24 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-05-07 01:30:24 [INFO]: [Email] SendGrid initialized successfully
+2026-05-07 01:30:25 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-07 01:30:25 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-07 01:30:25 [INFO]: ✅ Redis Cloud ready
+2026-05-07 01:30:26 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-07 01:30:26 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-07 01:30:26 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
+2026-05-07 01:30:26 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-07 01:30:26 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-07 01:30:28 [INFO]: 🔐 OTP send initiated
+2026-05-07 01:30:28 [DEBUG]: 💾 OTP saved to database
+2026-05-07 01:30:28 [DEBUG]: 📤 SMS sending initiated
+2026-05-07 01:30:28 [DEBUG]: 📡 MSG91 API Request
+2026-05-07 01:30:29 [DEBUG]: 📨 MSG91 API Response Received
+2026-05-07 01:30:29 [INFO]: ✅ SMS sent successfully via MSG91
+2026-05-07 01:30:29 [INFO]: ✅ OTP sent successfully
+2026-05-07 01:57:39 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-07 01:57:39 [INFO]: 🔥 Firebase initialized successfully
+2026-05-07 01:57:39 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-05-07 01:57:40 [INFO]: [Email] SendGrid initialized successfully
+2026-05-07 01:57:40 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-07 01:57:41 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-07 01:57:41 [INFO]: ✅ Redis Cloud ready
+2026-05-07 01:57:41 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-07 01:57:41 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-07 01:57:41 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
+2026-05-07 01:57:41 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-07 01:57:41 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-07 03:00:00 [INFO]: [ApiLogCleanup] Deleted 0 old log entries
+2026-05-09 14:34:21 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-09 14:34:21 [INFO]: 🔥 Firebase initialized successfully
+2026-05-09 14:34:21 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-05-09 14:34:21 [INFO]: [Email] SendGrid initialized successfully
+2026-05-09 14:34:22 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-09 14:34:22 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-09 14:34:22 [INFO]: ✅ Redis Cloud ready
+2026-05-09 14:34:22 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-09 14:34:22 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-09 14:34:23 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
+2026-05-09 14:34:23 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-09 14:34:23 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-09 16:12:37 [ERROR]: [NotificationWorker] Worker error: connect ETIMEDOUT
+2026-05-09 16:12:37 [ERROR]: [RideCompletionWorker] Worker error: connect ETIMEDOUT
+2026-05-09 16:12:37 [ERROR]: [PaymentWorker] Worker error: connect ETIMEDOUT
+2026-05-09 16:12:38 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:38 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:41 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:41 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:42 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:42 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:43 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:43 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:43 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:44 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:44 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:45 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:45 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:46 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:46 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:46 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:47 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:47 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:49 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:49 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:49 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:50 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:50 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:52 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:52 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:52 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:54 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:54 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:55 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:55 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:55 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:57 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:57 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:57 [ERROR]: [NotificationWorker] Worker error: read ECONNRESET
+2026-05-09 16:12:58 [ERROR]: [RideCompletionWorker] Worker error: read ECONNRESET
+2026-05-09 16:12:58 [ERROR]: [PaymentWorker] Worker error: read ECONNRESET
+2026-05-09 16:12:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:58 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:58 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:58 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:58 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:58 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:58 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:59 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:59 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:59 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:59 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:59 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:59 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:12:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:00 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:00 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:00 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:00 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:01 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:01 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:01 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:01 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:01 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:01 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:02 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:02 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:03 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:03 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:04 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:04 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:04 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:04 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:04 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:04 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:05 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:05 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:05 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:06 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:06 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:07 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:07 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:07 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:08 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:08 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:08 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:08 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:08 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:08 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:10 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:10 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:10 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:11 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:11 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:11 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:11 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:11 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:11 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:13 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:13 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:13 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:14 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:14 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:14 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:15 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:15 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:16 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:16 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:16 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:17 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:17 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:19 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:19 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:19 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:19 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:19 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:19 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:21 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:21 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:22 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:22 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:22 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:23 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:23 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:25 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:25 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:25 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:25 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:25 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:25 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:28 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:28 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:28 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:28 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:28 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:28 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:30 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:30 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:31 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:31 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:31 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:33 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:33 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:34 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:34 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:36 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:36 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:38 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:38 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:41 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:41 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:43 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:43 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:43 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:44 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:44 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:46 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:46 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:46 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:47 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:47 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:49 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:49 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:49 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:50 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:50 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:52 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:52 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:52 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:53 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:53 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:55 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:55 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:55 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:56 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:56 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:58 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:58 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:59 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:59 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:13:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:01 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:01 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:01 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:02 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:02 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:04 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:04 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:04 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:05 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:05 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:05 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:07 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:07 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:07 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:08 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:08 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:08 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:10 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:10 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:10 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:11 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:11 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:11 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:13 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:13 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:13 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:14 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:14 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:14 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:16 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:16 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:16 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:17 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:17 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:19 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:19 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:19 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:20 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:20 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:22 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:22 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:22 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:23 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:23 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:25 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:25 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:25 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:26 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:26 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:28 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:28 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:28 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:29 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:29 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:29 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:31 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:31 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:31 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:32 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:32 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:32 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:34 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:34 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:35 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:35 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:35 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:42 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:42 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:43 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:43 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:43 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:45 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:45 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:46 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:46 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:46 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:48 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:48 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:48 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:49 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:49 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:49 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:51 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:51 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:52 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:52 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:52 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:54 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:54 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:55 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:55 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:55 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:57 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:57 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:58 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:14:58 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:00 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:00 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:01 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:01 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:01 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:03 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:03 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:04 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:04 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:04 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:06 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:06 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:07 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:07 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:07 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:09 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:09 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:10 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:10 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:10 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:12 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:12 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:13 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:13 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:13 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:15 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:15 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:16 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:16 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:16 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:18 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:18 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:19 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:19 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:19 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:21 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:21 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:22 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:22 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:22 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:24 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:24 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:25 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:25 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:25 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:27 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:27 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:28 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:28 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:28 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:30 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:30 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:31 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:31 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:31 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:33 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:33 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:34 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:34 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:36 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:36 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:42 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:42 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:44 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:44 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:45 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:45 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:47 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:47 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:48 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:48 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:48 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:50 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:50 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:51 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:51 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:53 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:53 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:54 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:54 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:56 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:56 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:57 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:57 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:59 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:59 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:15:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:00 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:00 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:02 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:02 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:03 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:03 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:05 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:05 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:05 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:06 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:06 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:08 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:08 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:08 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:09 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:09 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:11 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:11 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:11 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:12 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:12 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:14 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:14 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:14 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:15 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:15 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:17 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:17 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:18 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:18 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:20 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:20 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:21 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:21 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:23 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:23 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:24 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:24 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:26 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:26 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:27 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:27 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:29 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:29 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:29 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:30 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:30 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:32 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:32 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:32 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:33 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:33 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:33 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:35 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:35 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:35 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:36 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:36 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:36 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:38 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:38 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:38 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:39 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:39 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:39 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:41 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:41 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:41 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:42 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:42 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:42 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:44 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:44 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:44 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:45 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:45 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:45 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:47 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:47 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:47 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:48 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:48 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:48 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:50 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:50 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:50 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:51 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:51 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:51 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:53 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:53 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:53 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:54 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:54 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:54 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:56 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:56 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:56 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:57 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:57 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:57 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:59 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:59 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:16:59 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:00 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:00 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:00 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:02 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:02 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:02 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:03 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:03 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:03 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:05 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:05 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:05 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:06 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:06 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:06 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:08 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:08 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:08 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:09 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:09 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:09 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:11 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:11 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:11 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:12 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:12 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:12 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:14 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:14 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:14 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:15 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:15 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:15 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:17 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:17 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:17 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:18 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:18 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:18 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:20 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:20 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:20 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:21 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:21 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:21 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:23 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:23 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:23 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:24 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:24 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:24 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:26 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:26 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:26 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:27 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:27 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:27 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:29 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:29 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:29 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:30 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:30 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:17:30 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:25 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:25 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:25 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:25 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:25 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:25 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:25 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:25 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:25 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:25 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:25 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:25 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:26 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:26 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:26 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:26 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:26 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:26 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:26 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:27 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:27 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:27 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:27 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:27 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:28 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:28 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:28 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:28 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:28 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:28 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:28 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:28 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:28 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:28 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:29 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:29 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:29 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:29 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:30 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:30 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:31 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:31 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:31 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:31 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:31 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:31 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:31 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:31 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:32 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:32 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:32 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:32 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:33 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:33 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:34 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:34 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:34 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:34 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:34 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:34 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:34 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:35 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:35 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:36 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:36 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:37 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:37 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:37 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:37 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:37 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:38 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:38 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:39 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:39 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:40 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:40 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:40 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:41 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:41 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:42 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:42 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:43 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:43 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:43 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:43 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:43 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:43 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:43 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:43 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:45 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:45 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:46 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:46 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:46 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:46 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:46 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:46 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:46 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:46 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:47 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:47 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:49 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:49 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:49 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:49 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:49 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:49 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:49 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:49 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:50 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:50 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:52 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:52 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:52 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:52 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:52 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:52 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:52 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:52 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:54 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:54 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:55 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:55 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:55 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:55 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:55 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:55 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:55 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:55 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:57 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:57 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:26:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:58 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:58 [ERROR]: [PaymentWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:58 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:58 [ERROR]: [RideCompletionWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
+2026-05-09 16:26:59 [ERROR]: ❌ Redis error:
+2026-05-09 16:26:59 [WARN]: ⚠️ Redis connection closed
+2026-05-09 16:27:02 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-09 16:27:03 [INFO]: ✅ Redis Cloud ready
+2026-05-09 16:32:38 [ERROR]: ❌ FCM error:
+2026-05-09 16:32:38 [INFO]: [NotificationWorker] Sent: driver-arrived | job: 116
+2026-05-09 16:40:30 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-09 16:40:30 [INFO]: 🔥 Firebase initialized successfully
+2026-05-09 16:40:30 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-05-09 16:40:30 [INFO]: [Email] SendGrid initialized successfully
+2026-05-09 16:40:31 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-09 16:40:32 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-09 16:40:32 [INFO]: ✅ Redis Cloud ready
+2026-05-09 16:40:33 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-09 16:40:33 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-09 16:40:33 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
+2026-05-09 16:40:33 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-09 16:40:33 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-09 16:44:19 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-09 16:44:19 [INFO]: 🔥 Firebase initialized successfully
+2026-05-09 16:44:19 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-05-09 16:44:19 [INFO]: [Email] SendGrid initialized successfully
+2026-05-09 16:44:20 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-09 16:44:21 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-09 16:44:21 [INFO]: ✅ Redis Cloud ready
+2026-05-09 16:44:21 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-09 16:44:21 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-09 16:44:21 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
+2026-05-09 16:44:21 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-09 16:44:21 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-09 16:46:00 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-09 16:46:00 [INFO]: 🔥 Firebase initialized successfully
+2026-05-09 16:46:00 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-05-09 16:46:00 [INFO]: [Email] SendGrid initialized successfully
+2026-05-09 16:46:01 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-09 16:46:01 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-09 16:46:01 [INFO]: ✅ Redis Cloud ready
+2026-05-09 16:46:02 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-09 16:46:02 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-09 16:46:02 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
+2026-05-09 16:46:02 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-09 16:46:02 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-09 16:46:03 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-09 16:46:04 [INFO]: 🔥 Firebase initialized successfully
+2026-05-09 16:46:04 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-05-09 16:46:04 [INFO]: [Email] SendGrid initialized successfully
+2026-05-09 16:46:04 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-09 16:46:04 [INFO]: ✅ Redis Cloud ready
+2026-05-09 16:46:04 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-09 16:46:05 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-09 16:46:05 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-09 16:46:05 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
+2026-05-09 16:46:05 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-09 16:46:05 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM

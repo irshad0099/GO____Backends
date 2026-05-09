@@ -660,6 +660,7 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
         validateStatusTransition(ride.status, status);
 
         let additionalFields = {};
+        let currentOtp = null;
 
 
 
@@ -872,22 +873,56 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             })
         }), `ride:status_changed:${status}`);
 
-        if (status === 'driver_arrived') {
-            let currentOtp = null;
-            try {
-                const otpRow = await rideOtpRepo.findLatest(rideId);
-                if (otpRow) currentOtp = otpRow.otp_code;
-            } catch (err) {
-                console.log("OTP ERROR : ", err);
-                logger.warn(`Could not fetch OTP for driver_arrived: ${err.message}`);
-            }
+        // if (status === 'driver_arrived') {
+        //     let currentOtp = null;
+        //     try {
+        //         const otpRow = await rideOtpRepo.findLatest(rideId);
+        //         if (otpRow) currentOtp = otpRow.otp_code;
+        //     } catch (err) {
+        //         console.log("OTP ERROR : ", err);
+        //         logger.warn(`Could not fetch OTP for driver_arrived: ${err.message}`);
+        //     }
 
-            safeEmit(() => notifyDriverArrival(rideId, ride.passenger_id, driver.id, {
+        //     safeEmit(() => notifyDriverArrival(rideId, ride.passenger_id, driver.id, {
+        //         latitude: driver.current_latitude,
+        //         longitude: driver.current_longitude,
+        //         otp: currentOtp
+        //     }), 'ride:driver_arrived');
+        // }
+
+
+        // ── DRIVER ARRIVED ─────────────────────────────────────────────
+if (status === 'driver_arrived') {
+    try {
+        // Latest active OTP fetch karo
+        const otpRow = await rideOtpRepo.findLatest(rideId);
+
+        if (otpRow) {
+            currentOtp = otpRow.otp_code;
+        }
+    } catch (err) {
+        console.log("OTP ERROR :", err);
+
+        logger.warn(
+            `Could not fetch OTP for driver_arrived: ${err.message}`
+        );
+    }
+
+    // Passenger + Driver ko socket event bhejo
+    safeEmit(() =>
+        notifyDriverArrival(
+            rideId,
+            ride.passenger_id,
+            driver.id,
+            {
                 latitude: driver.current_latitude,
                 longitude: driver.current_longitude,
                 otp: currentOtp
-            }), 'ride:driver_arrived');
-        }
+            }
+        ),
+        'ride:driver_arrived'
+    );
+}
 
         return {
             rideId: updatedRide.id,

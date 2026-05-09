@@ -25,7 +25,7 @@ export const confirmCashPayment = async (req, res, next) => {
         }
 
         // Check if payment status is cash_collected
-        if (ride.paymentStatus !== 'cash_collected') {
+        if (ride.paymentStatus !== 'cash') {
             throw new ApiError(400, 'Cash payment not recorded for this ride');
         }
 

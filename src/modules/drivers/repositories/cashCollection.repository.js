@@ -53,26 +53,51 @@ export const initCashBalance = async (driverId) => {
     }
 };
 
-// ─── Add to pending (cash ride complete hone pe platform share add) ─────────
-export const addToPending = async (client, driverId, platformShare, cashCollected) => {
+// ─── Add to pending (cash ride complete hone pe platform share + net earnings hold) ─────────
+export const addToPending = async (client, driverId, platformShare, cashCollected, netEarnings = 0) => {
     try {
         const { rows } = await (client || db).query(
             `UPDATE driver_cash_balance
-             SET pending_amount = pending_amount + $2,
-                 total_cash_collected = total_cash_collected + $3,
-                 total_platform_share = total_platform_share + $2,
-                 is_limit_exceeded = CASE
+             SET pending_amount        = pending_amount + $2,
+                 pending_net_earnings  = pending_net_earnings + $5,
+                 total_cash_collected  = total_cash_collected + $3,
+                 total_platform_share  = total_platform_share + $2,
+                 is_limit_exceeded     = CASE
                     WHEN (pending_amount + $2) >= cash_limit THEN TRUE
                     ELSE is_limit_exceeded
                  END,
                  updated_at = NOW()
              WHERE driver_id = $1
              RETURNING *`,
-            [driverId, platformShare, cashCollected]
+            [driverId, platformShare, cashCollected, 0, netEarnings]
         );
         return rows[0];
     } catch (error) {
         logger.error('Add to pending cash repository error:', error);
+        throw error;
+    }
+};
+
+// ─── pending_net_earnings clear karo aur amount return karo (deposit pe earnings release) ────
+export const releaseNetEarnings = async (client, driverId) => {
+    try {
+        // Pehle current value lo, phir 0 set karo
+        const { rows: current } = await (client || db).query(
+            `SELECT pending_net_earnings FROM driver_cash_balance WHERE driver_id = $1`,
+            [driverId]
+        );
+        const amount = parseFloat(current[0]?.pending_net_earnings ?? 0);
+        if (amount > 0) {
+            await (client || db).query(
+                `UPDATE driver_cash_balance
+                 SET pending_net_earnings = 0, updated_at = NOW()
+                 WHERE driver_id = $1`,
+                [driverId]
+            );
+        }
+        return amount;
+    } catch (error) {
+        logger.error('Release net earnings repository error:', error);
         throw error;
     }
 };

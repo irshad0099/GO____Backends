@@ -27,8 +27,6 @@ const rideCompletionWorker = new Worker('ride-completion', async (job) => {
         rideId,
         driverId,
         driverTotalRides,
-        driverTotalEarnings,
-        netEarnings,
         couponId,
         passengerId,
         couponDiscount,
@@ -37,10 +35,10 @@ const rideCompletionWorker = new Worker('ride-completion', async (job) => {
 
     logger.info(`[RideCompletionWorker] Processing | rideId: ${rideId} | job: ${job.id}`);
 
-    // 1. Driver stats update — total_rides + total_earnings
+    // 1. Driver total_rides update only
+    // total_earnings is handled by earningsService.creditDriverEarnings — updating here would double-count
     await driverRepo.updateDriver(driverId, {
-        total_rides:    driverTotalRides + 1,
-        total_earnings: parseFloat(driverTotalEarnings || 0) + parseFloat(netEarnings || 0),
+        total_rides: driverTotalRides + 1,
     });
 
     // 2. Coupon usage record — agar ride pe coupon laga tha

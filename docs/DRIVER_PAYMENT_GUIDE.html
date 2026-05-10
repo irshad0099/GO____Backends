@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Driver Payment Guide — GoMobility</title>
+<style>
+  :root {
+    --bg: #0b0d14;
+    --surface: #13151f;
+    --card: #1a1d2a;
+    --border: #252836;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --orange: #f97316;
+    --cyan: #22d3ee;
+    --indigo: #6366f1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ── Layout ── */
+  .wrapper { max-width: 900px; margin: 0 auto; padding: 48px 32px 80px; }
+
+  /* ── Page Title ── */
+  .page-title {
+    text-align: center;
+    padding: 48px 0 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+  .page-title h1 { font-size: 32px; font-weight: 800; color: var(--text); }
+  .page-title p  { color: var(--muted); margin-top: 8px; font-size: 15px; }
+  .page-title .tag {
+    display: inline-block;
+    background: #1c2a1a;
+    color: var(--green);
+    border: 1px solid var(--green);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 12px;
+  }
+
+  /* ── Method Nav ── */
+  .method-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .method-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .nav-cash    { background: #2d2000; color: var(--yellow); border: 1px solid #78350f; }
+  .nav-upi     { background: #1e1030; color: var(--purple); border: 1px solid #6b21a8; }
+  .nav-qr      { background: #001f2d; color: var(--cyan);   border: 1px solid #0e7490; }
+  .nav-wallet  { background: #052e16; color: var(--green);  border: 1px solid #166534; }
+  .nav-card    { background: #0c1d3a; color: var(--blue);   border: 1px solid #1e40af; }
+  .nav-corp    { background: #2d1500; color: var(--orange); border: 1px solid #92400e; }
+
+  /* ── Section ── */
+  .method-section {
+    margin-bottom: 72px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .method-header {
+    padding: 24px 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .method-header.cash   { background: linear-gradient(135deg, #1c1200, #2d1e00); border-bottom: 1px solid #78350f; }
+  .method-header.upi    { background: linear-gradient(135deg, #13091f, #1e1030); border-bottom: 1px solid #6b21a8; }
+  .method-header.qr     { background: linear-gradient(135deg, #001520, #001f2d); border-bottom: 1px solid #0e7490; }
+  .method-header.wallet { background: linear-gradient(135deg, #031a0e, #052e16); border-bottom: 1px solid #166534; }
+  .method-header.card   { background: linear-gradient(135deg, #070f1f, #0c1d3a); border-bottom: 1px solid #1e40af; }
+  .method-header.corp   { background: linear-gradient(135deg, #1a0e00, #2d1500); border-bottom: 1px solid #92400e; }
+  .method-icon { font-size: 36px; }
+  .method-title { font-size: 22px; font-weight: 800; }
+  .cash   .method-title { color: var(--yellow); }
+  .upi    .method-title { color: var(--purple); }
+  .qr     .method-title { color: var(--cyan);   }
+  .wallet .method-title { color: var(--green);  }
+  .card   .method-title { color: var(--blue);   }
+  .corp   .method-title { color: var(--orange); }
+  .method-subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+  .method-body { padding: 28px; background: var(--card); }
+
+  /* ── What / When / Why ── */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .info-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .info-box .info-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .info-box .info-text { font-size: 13px; color: var(--text); }
+  .label-what  { color: var(--cyan); }
+  .label-when  { color: var(--yellow); }
+  .label-why   { color: var(--purple); }
+
+  /* ── Flow Steps ── */
+  .flow-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 28px; }
+  .step  { display: flex; gap: 16px; position: relative; }
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 15px; top: 38px; bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0; margin-top: 2px; z-index: 1;
+  }
+  .step-num.s-yellow { background: var(--yellow); color: #000; }
+  .step-num.s-green  { background: var(--green);  color: #fff; }
+  .step-num.s-blue   { background: var(--blue);   color: #fff; }
+  .step-num.s-red    { background: var(--red);    color: #fff; }
+  .step-num.s-purple { background: var(--purple); color: #fff; }
+  .step-num.s-orange { background: var(--orange); color: #fff; }
+  .step-body { padding-bottom: 22px; flex: 1; }
+  .step-body strong { font-size: 14px; color: var(--text); display: block; }
+  .step-body p { color: var(--muted); font-size: 12px; margin-top: 3px; }
+
+  /* ── API Blocks ── */
+  .api-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .api-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .http-method {
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: monospace;
+  }
+  .m-post   { background: #1e3a8a; color: #93c5fd; }
+  .m-get    { background: #064e3b; color: #6ee7b7; }
+  .m-patch  { background: #78350f; color: #fcd34d; }
+  .m-delete { background: #7f1d1d; color: #fca5a5; }
+  .api-url  { font-family: monospace; font-size: 13px; color: var(--cyan); }
+  .api-body { padding: 16px; }
+  .api-purpose { color: var(--text); font-size: 13px; margin-bottom: 10px; font-weight: 500; }
+  .api-when-note {
+    background: #1a1500;
+    border-left: 3px solid var(--yellow);
+    padding: 8px 12px;
+    border-radius: 0 6px 6px 0;
+    font-size: 12px;
+    color: #fcd34d;
+    margin-bottom: 14px;
+  }
+
+  /* ── Code ── */
+  .code-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-top: 12px;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+  pre {
+    background: #0d0f18;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 12px;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    line-height: 1.6;
+  }
+  .k { color: #ff79c6; }
+  .s { color: #f1fa8c; }
+  .n { color: #bd93f9; }
+  .b { color: #50fa7b; }
+  .c { color: #6272a4; font-style: italic; }
+
+  /* ── Alert Boxes ── */
+  .alert {
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  .alert-warn  { background: #1c1200; border-left: 3px solid var(--yellow); color: #fcd34d; }
+  .alert-green { background: #031a0e; border-left: 3px solid var(--green);  color: #86efac; }
+  .alert-red   { background: #1f0707; border-left: 3px solid var(--red);    color: #fca5a5; }
+  .alert-blue  { background: #0c1a3a; border-left: 3px solid var(--blue);   color: #93c5fd; }
+  .alert-purple{ background: #1a0d2e; border-left: 3px solid var(--purple); color: #d8b4fe; }
+
+  /* ── Summary Table ── */
+  table { width: 100%; border-collapse: collapse; }
+  th { background: var(--surface); color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  code { background: #0d0f18; padding: 2px 7px; border-radius: 4px; font-family: monospace; font-size: 12px; color: var(--cyan); }
+
+  /* ── Wallet Credit Box ── */
+  .wallet-calc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+  }
+  .wallet-calc-title { font-size: 12px; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .calc-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .calc-row:last-child { border-bottom: none; border-top: 2px solid var(--border); padding-top: 12px; margin-top: 4px; }
+  .calc-label { color: var(--muted); font-size: 13px; }
+  .calc-value { font-family: monospace; font-size: 14px; font-weight: 700; }
+  .cv-white  { color: var(--text); }
+  .cv-red    { color: var(--red); }
+  .cv-green  { color: var(--green); }
+  .cv-yellow { color: var(--yellow); }
+
+  @media (max-width: 700px) {
+    .wrapper { padding: 24px 16px 60px; }
+    .info-grid { grid-template-columns: 1fr; }
+    .method-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- ═══════════════════════ TITLE ═══════════════════════ -->
+<div class="page-title">
+  <h1>Driver Payment Guide</h1>
+  <p>Sabhi 6 payment methods — kab, kyun, kaise, kaunsi API — driver ke liye complete reference</p>
+  <span class="tag">🚗 Driver App Only</span>
+</div>
+
+<!-- ═══════════════════════ NAV ═══════════════════════ -->
+<div class="method-nav">
+  <a class="nav-cash"   href="#cash">💵 Cash</a>
+  <a class="nav-upi"    href="#upi">📱 Personal UPI</a>
+  <a class="nav-qr"     href="#qr">📷 QR Code</a>
+  <a class="nav-wallet" href="#wallet">👛 Wallet</a>
+  <a class="nav-card"   href="#card">💳 Card / Online UPI</a>
+  <a class="nav-corp"   href="#corp">🏢 Corporate</a>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     1. CASH
+════════════════════════════════════════════════════════════ -->
+<div class="method-section" id="cash">
+  <div class="method-header cash">
+    <div class="method-icon">💵</div>
+    <div>
+      <div class="method-title">Cash Payment</div>
+      <div class="method-subtitle">Passenger physically driver ko cash deta hai — sabse common method</div>
+    </div>
+  </div>
+
+  <div class="method-body">
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="info-label label-what">Kya hota hai</div>
+        <div class="info-text">Passenger ride complete hone ke baad driver ko cash physically deta hai. Driver ke haath mein poora fare aata hai — jisme company ka hissa bhi hota hai.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label label-when">Kab hota hai</div>
+        <div class="info-text">Jab passenger ne ride book karte waqt payment method = <strong>cash</strong> select kiya ho. Ride request mein ye dikha dega.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label label-why">Kyun important hai</div>
+        <div class="info-text">Driver ke paas company ka paisa bhi hota hai. Woh platform fee deposit na kare toh naye rides milne band ho jaate hain.</div>
+      </div>
+    </div>
+
+    <!-- Fare Split Calculation -->
+    <div class="wallet-calc">
+      <div class="wallet-calc-title">💡 Paise ka hisaab — example ₹120 ride</div>
+      <div class="calc-row">
+        <span class="calc-label">Passenger ka total fare</span>
+        <span class="calc-value cv-white">₹120.00</span>
+      </div>
+      <div class="calc-row">
+        <span class="calc-label">Platform fee (company ka hissa ~15%)</span>
+        <span class="calc-value cv-red">- ₹18.00</span>
+      </div>
+      <div class="calc-row">
+        <span class="calc-label">Driver ki net earning</span>
+        <span class="calc-value cv-green">= ₹102.00</span>
+      </div>
+      <div class="calc-row">
+        <span class="calc-label" style="color:var(--yellow);font-weight:600">Driver ke haath mein physically</span>
+        <span class="calc-value cv-yellow">₹120 (dono ka paise)</span>
+      </div>
+    </div>
+
+    <div class="alert alert-warn">
+      ⚠️ <strong>Wallet mein immediately paisa NAHI aata.</strong> Driver ko pehle ₹18 company ko deposit karna hoga — tab ₹102 wallet mein credit hoga. Ye Rapido/Ola wala model hai — driver fraud rokne ke liye.
+    </div>
+
+    <!-- Flow Steps -->
+    <div class="flow-title">Step-by-Step Flow — Driver Kya Kare</div>
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num s-yellow">1</div>
+        <div class="step-body">
+          <strong>Ride accept karo</strong>
+          <p>Socket event <code>ride:new_request</code> mein <code>paymentMethod: "cash"</code> dikhega. Driver ko pata chal jaye ki ye cash ride hai.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num s-yellow">2</div>
+        <div class="step-body">
+          <strong>Ride complete karo — drop pe pahuncho</strong>
+          <p>PATCH status=completed call karo. Abhi payment nahi hui.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num s-green">3</div>
+        <div class="step-body">
+          <strong>Passenger se cash lo — ₹120</strong>
+          <p>Physically cash lo. Change do agar chahiye. Abhi screen pe pending dues dikhega — socket event <code>driver:cash_dues_updated</code> aayega.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num s-blue">4</div>
+        <div class="step-body">
+          <strong>Collect-Confirm API call karo</strong>
+          <p>"Maine cash le liya" — ye confirm karna zaroori hai. Iske baad backend dues track karta hai.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num s-red">5</div>
+        <div class="step-body">
+          <strong>Platform fee deposit karo (₹18)</strong>
+          <p>Driver ke paas ₹120 hai — usmein ₹18 company ka hai. Ye deposit karna zaroori hai. Daily/weekly karo. Limit exceed hone se pehle karo.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num s-green">6</div>
+        <div class="step-body">
+          <strong>₹102 wallet mein aa gaya ✅</strong>
+          <p>Deposit submit karte hi backend held earnings (₹102) automatically wallet mein credit kar deta hai.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- API 1: collect-confirm -->
+    <div class="flow-title">APIs — Cash Ride Mein Driver Kya Call Kare</div>
+
+    <div class="api-block">
+      <div class="api-top">
+        <span class="http-method m-post">POST</span>
+        <span class="api-url">/api/v1/rides/:rideId/collect-confirm</span>
+      </div>
+      <div class="api-body">
+        <div class="api-purpose">Driver confirm karta hai ki cash physically mil gayi</div>
+        <div class="api-when-note">📌 Kab: Ride complete hone ke baad, passenger se cash lene ke turant baad call karo</div>
+
+        <div class="code-label">Request — Headers</div>
+        <pre>Authorization: Bearer &lt;driver_jwt_token&gt;
+Content-Type: application/json</pre>
+
+        <div class="code-label">Request — Body</div>
+        <pre>{
+  <span class="k">"method"</span>: <span class="s">"cash"</span>
+}</pre>
+
+        <div class="code-label">Response — Success (200)</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"Collection recorded. Deposit ₹18 to receive your ₹102 earnings."</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"rideId"</span>:         <span class="n">123</span>,
+    <span class="k">"method"</span>:         <span class="s">"cash"</span>,
+    <span class="k">"finalFare"</span>:      <span class="n">120.00</span>,   <span class="c">// Passenger ne diya</span>
+    <span class="k">"platformFee"</span>:    <span class="n">18.00</span>,    <span class="c">// Company ko dena hai — deposit karo</span>
+    <span class="k">"netEarnings"</span>:    <span class="n">102.00</span>,   <span class="c">// Driver ka hissa — deposit ke baad wallet mein aayega</span>
+    <span class="k">"pendingDues"</span>:    <span class="n">18.00</span>,    <span class="c">// Total pending dues (cumulative)</span>
+    <span class="k">"walletCredited"</span>: <span class="b">false</span>     <span class="c">// Abhi nahi, deposit ke baad hoga</span>
+  }
+}</pre>
+
+        <div class="code-label">Socket Event — Saath mein ye bhi aayega</div>
+        <pre><span class="c">// Listen karo: driver:cash_dues_updated</span>
+{
+  <span class="k">"rideId"</span>:          <span class="n">123</span>,
+  <span class="k">"netEarnings"</span>:     <span class="n">102</span>,
+  <span class="k">"platformShareDue"</span>: <span class="n">18</span>,
+  <span class="k">"message"</span>:         <span class="s">"Deposit ₹18 to receive your ₹102 earnings"</span>
+}</pre>
+      </div>
+    </div>
+
+    <!-- API 2: cash/balance -->
+    <div class="api-block">
+      <div class="api-top">
+        <span class="http-method m-get">GET</span>
+        <span class="api-url">/api/v1/drivers/cash/balance</span>
+      </div>
+      <div class="api-body">
+        <div class="api-purpose">Kitna deposit karna baaki hai — aur limit kya hai</div>
+        <div class="api-when-note">📌 Kab: Home screen pe daily dikhao. Deposit screen open karne se pehle. Rides shuru karne se pehle check karo.</div>
+
+        <div class="code-label">Request — Headers only (no body)</div>
+        <pre>Authorization: Bearer &lt;driver_jwt_token&gt;</pre>
+
+        <div class="code-label">Response — Success (200)</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"pendingAmount"</span>:      <span class="n">54.00</span>,   <span class="c">// ← YE DEPOSIT KARNA HAI (company ka paisa)</span>
+    <span class="k">"totalCashCollected"</span>:  <span class="n">680.00</span>,  <span class="c">// Abhi tak kitna cash liya total</span>
+    <span class="k">"totalDeposited"</span>:      <span class="n">626.00</span>,  <span class="c">// Kitna deposit kiya</span>
+    <span class="k">"totalPlatformShare"</span>:  <span class="n">54.00</span>,   <span class="c">// Company ka total hissa (pending)</span>
+    <span class="k">"cashLimit"</span>:           <span class="n">500.00</span>,  <span class="c">// Max allowed — exceed = rides band</span>
+    <span class="k">"isLimitExceeded"</span>:     <span class="b">false</span>,   <span class="c">// true hone pe koi ride nahi milegi!</span>
+    <span class="k">"depositDueDate"</span>:      <span class="s">"2024-01-03"</span>  <span class="c">// Iss date tak deposit karo</span>
+  }
+}</pre>
+        <div class="alert alert-red" style="margin-top:12px">🚫 <strong>isLimitExceeded: true</strong> — iska matlab driver ko ab koi nayi ride nahi milegi jab tak deposit na kare. Ye banner prominently dikhao app mein.</div>
+      </div>
+    </div>
+
+    <!-- API 3: deposit -->
+    <div class="api-block">
+      <div class="api-top">
+        <span class="http-method m-post">POST</span>
+        <span class="api-url">/api/v1/drivers/cash/deposit</span>
+      </div>
+      <div class="api-body">
+        <div class="api-purpose">Platform fee deposit karo — company ka paisa wapas do, apni earning wallet mein pao</div>
+        <div class="api-when-note">📌 Kab: Driver ne actual mein paisa transfer kiya ho (UPI / bank). Reference number saath mein dena zaroori hai proof ke liye.</div>
+
+        <div class="code-label">Request — Headers</div>
+        <pre>Authorization: Bearer &lt;driver_jwt_token&gt;
+Content-Type: application/json</pre>
+
+        <div class="code-label">Request — Body</div>
+        <pre>{
+  <span class="k">"amount"</span>:           <span class="n">54.00</span>,           <span class="c">// Pending amount se zyada nahi ho sakta</span>
+  <span class="k">"deposit_method"</span>:   <span class="s">"upi"</span>,           <span class="c">// "upi" | "bank_transfer" | "cash_counter"</span>
+  <span class="k">"reference_number"</span>: <span class="s">"UPI123456789"</span>, <span class="c">// UPI transaction ID / Bank ref</span>
+  <span class="k">"deposit_proof"</span>:    <span class="s">"https://..."</span>   <span class="c">// Screenshot URL (optional but recommended)</span>
+}</pre>
+
+        <div class="code-label">Response — Success (201)</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"Deposit submitted. ₹102 earnings credited to your wallet."</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"depositId"</span>:        <span class="n">89</span>,
+    <span class="k">"amount"</span>:           <span class="n">54.00</span>,
+    <span class="k">"depositMethod"</span>:    <span class="s">"upi"</span>,
+    <span class="k">"referenceNumber"</span>:  <span class="s">"UPI123456789"</span>,
+    <span class="k">"status"</span>:           <span class="s">"pending"</span>,     <span class="c">// Admin verify karega — "verified" | "rejected" bhi aata hai</span>
+    <span class="k">"earningsReleased"</span>: <span class="n">102.00</span>,       <span class="c">// Itna wallet mein aa gaya ABHI</span>
+    <span class="k">"walletBalance"</span>:    <span class="n">352.00</span>         <span class="c">// Naya wallet balance</span>
+  }
+}</pre>
+
+        <div class="code-label">Response — Error: amount exceeds pending (400)</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="b">false</span>,
+  <span class="k">"message"</span>: <span class="s">"Deposit amount cannot exceed pending amount (₹54)"</span>
+}</pre>
+      </div>
+    </div>
+
+    <!-- API 4: deposit history -->
+    <div class="api-block">
+      <div class="api-top">
+        <span class="http-method m-get">GET</span>
+        <span class="api-url">/api/v1/drivers/cash/deposits</span>
+      </div>
+      <div class="api-body">
+        <div class="api-purpose">Past deposits ki history — status track karo (admin ne verify kiya ya nahi)</div>
+        <div class="api-when-note">📌 Kab: Deposit history screen pe. Agar status "rejected" hai toh driver ko retry karna hoga.</div>
+
+        <div class="code-label">Query Params (optional)</div>
+        <pre>?limit=20&amp;offset=0</pre>
+
+        <div class="code-label">Response</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: [
+    {
+      <span class="k">"id"</span>:              <span class="n">89</span>,
+      <span class="k">"amount"</span>:          <span class="n">54.00</span>,
+      <span class="k">"depositMethod"</span>:   <span class="s">"upi"</span>,
+      <span class="k">"referenceNumber"</span>: <span class="s">"UPI123456789"</span>,
+      <span class="k">"status"</span>:          <span class="s">"verified"</span>,      <span class="c">// pending | verified | rejected</span>
+      <span class="k">"verifiedAt"</span>:      <span class="s">"2024-01-01T14:00:00Z"</span>,
+      <span class="k">"rejectionReason"</span>: <span class="b">null</span>,              <span class="c">// rejected hone pe reason aata hai</span>
+      <span class="k">"createdAt"</span>:       <span class="s">"2024-01-01T11:00:00Z"</span>
+    }
+  ]
+}</pre>
+      </div>
+    </div>
+
+    <div class="alert alert-blue">
+      💡 <strong>Auto-Deduction Bonus:</strong> Agar driver ne deposit nahi kiya aur koi online ride complete karta hai, toh backend automatically cash dues online earning se kaat leta hai aur held earnings (₹102) wallet mein release kar deta hai — driver ko kuch nahi karna.
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     2. PERSONAL UPI
+════════════════════════════════════════════════════════════ -->
+<div class="method-section" id="upi">
+  <div class="method-header upi">
+    <div class="method-icon">📱</div>
+    <div>
+      <div class="method-title">Personal UPI Payment</div>
+      <div class="method-subtitle">Passenger directly driver ke personal UPI ID pe pay karta hai</div>
+    </div>
+  </div>
+
+  <div class="method-body">
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="info-label label-what">Kya hota hai</div>
+        <div class="info-text">Passenger driver ka UPI QR scan karta hai ya UPI ID pe pay karta hai. Paise seedha driver ke bank account mein jaate hain.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label label-when">Kab hota hai</div>
+        <div class="info-text">Jab passenger ne <strong>personal_upi</strong> select kiya ho. Cash jaise hi hai — difference sirf transfer method ka hai.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label label-why">Cash se farq</div>
+        <div class="info-text">Physically cash nahi — digital transfer. Lekin company ka paisa driver ke paas hi rehta hai (bank mein). Deposit same tarike se karna hoga.</div>
+      </div>
+    </div>
+
+    <div class="wallet-calc">
+      <div class="wallet-calc-title">💡 Paise ka hisaab — ₹120 ride</div>
+      <div class="calc-row"><span class="calc-label">Passenger UPI transfer</span><span class="calc-value cv-white">₹120.00</span></div>
+      <div class="calc-row"><span class="calc-label">Platform fee (company)</span><span class="calc-value cv-red">- ₹18.00</span></div>
+      <div class="calc-row"><span class="calc-label">Driver ki earning</span><span class="calc-value cv-green">= ₹102.00</span></div>
+      <div class="calc-row"><span class="calc-label" style="color:var(--yellow);font-weight:600">Driver ke bank mein</span><span class="calc-value cv-yellow">₹120 (company ka bhi saath)</span></div>
+    </div>
+
+    <div class="alert alert-purple">
+      📱 <strong>Driver ka UPI profile screen mein dikhao</strong> — passenger ko scan karna hoga. Payment receive hone ke baad hi collect-confirm call karo.
+    </div>
+
+    <div class="flow-title">Step-by-Step Flow</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num s-purple">1</div>
+        <div class="step-body">
+          <strong>Ride complete — passenger ko UPI dikhao</strong>
+          <p>Driver apna QR code ya UPI ID dikhata hai. App mein ek "Show UPI QR" screen honi chahiye.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num s-purple">2</div>
+        <div class="step-body">
+          <strong>Passenger pay kare — driver confirm kare ki aa gaya</strong>
+          <p>Driver ko notification milega (UPI app se). Amount verify karo. Partial payment accept mat karo.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num s-blue">3</div>
+        <div class="step-body">
+          <strong>Collect-Confirm call karo — method: personal_upi</strong>
+          <p>Cash wali API same hai — sirf method alag bhejo.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num s-red">4</div>
+        <div class="step-body">
+          <strong>Platform fee deposit karo (same as cash)</strong>
+          <p>₹18 company ko dena hoga. Same deposit API use karo.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num s-green">5</div>
+        <div class="step-body">
+          <strong>₹102 wallet mein credit ✅</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-block">
+      <div class="api-top">
+        <span class="http-method m-post">POST</span>
+        <span class="api-url">/api/v1/rides/:rideId/collect-confirm</span>
+      </div>
+      <div class="api-body">
+        <div class="api-purpose">Driver confirm karta hai ki personal UPI pe payment receive ho gayi</div>
+        <div class="api-when-note">📌 Kab: Passenger se UPI payment confirm hone ke baad — paise account mein dikhne ke baad call karo</div>
+
+        <div class="code-label">Request — Body</div>
+        <pre>{
+  <span class="k">"method"</span>: <span class="s">"personal_upi"</span>   <span class="c">// "cash" ki jagah "personal_upi"</span>
+}</pre>
+
+        <div class="code-label">Response — Success (200)</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"Collection recorded. Deposit ₹18 to receive your ₹102 earnings."</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"rideId"</span>:         <span class="n">123</span>,
+    <span class="k">"method"</span>:         <span class="s">"personal_upi"</span>,
+    <span class="k">"finalFare"</span>:      <span class="n">120.00</span>,
+    <span class="k">"platformFee"</span>:    <span class="n">18.00</span>,
+    <span class="k">"netEarnings"</span>:    <span class="n">102.00</span>,
+    <span class="k">"pendingDues"</span>:    <span class="n">18.00</span>,
+    <span class="k">"walletCredited"</span>: <span class="b">false</span>
+  }
+}</pre>
+      </div>
+    </div>
+
+    <div class="alert alert-warn">
+      Deposit ke liye same APIs use karo jo cash mein hain: <code>GET /drivers/cash/balance</code> → <code>POST /drivers/cash/deposit</code>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     3. QR CODE PAYMENT
+════════════════════════════════════════════════════════════ -->
+<div class="method-section" id="qr">
+  <div class="method-header qr">
+    <div class="method-icon">📷</div>
+    <div>
+      <div class="method-title">QR Code Payment</div>
+      <div class="method-subtitle">Driver GoMobility ka QR generate karta hai — passenger scan karke pay karta hai. No cash exchange, no deposit.</div>
+    </div>
+  </div>
+
+  <div class="method-body">
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="info-label label-what">Kya hota hai</div>
+        <div class="info-text">Driver app se GoMobility ka dynamic UPI QR generate hota hai. Passenger apne UPI app (PhonePe, GPay, Paytm) se scan karke pay karta hai — paise company ke UPI pe jaate hain.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label label-when">Kab hota hai</div>
+        <div class="info-text">Jab passenger ne ride book karte waqt <strong>qr</strong> payment method select kiya ho. Ya driver cash lene ke bajaye QR dikhana chahta ho.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label label-why">Personal UPI se farq</div>
+        <div class="info-text"><strong>Personal UPI</strong> = paise driver ke personal account mein jaate hain → deposit karna padta hai.<br><br><strong>QR (GoMobility)</strong> = paise company ke account mein jaate hain → deposit nahi, earning auto-credit.</div>
+      </div>
+    </div>
+
+    <div class="wallet-calc">
+      <div class="wallet-calc-title">💡 Paise ka hisaab — ₹120 ride</div>
+      <div class="calc-row"><span class="calc-label">Passenger QR scan karke pay karta hai</span><span class="calc-value cv-white">₹120.00</span></div>
+      <div class="calc-row"><span class="calc-label">Paise jaate hain</span><span class="calc-value" style="color:var(--cyan)">gomobility@upi (company)</span></div>
+      <div class="calc-row"><span class="calc-label">Platform fee (company)</span><span class="calc-value cv-red">- ₹18.00</span></div>
+      <div class="calc-row"><span class="calc-label">Driver wallet mein credit</span><span class="calc-value cv-green">= ₹102.00 ← automatic</span></div>
+    </div>
+
+    <div class="alert alert-green">
+      ✅ <strong>Driver ko deposit nahi karna.</strong> QR pe payment verify hote hi backend automatically driver ka ₹102 wallet mein credit kar deta hai. Wallet rides jaisa hi experience.
+    </div>
+
+    <div class="alert alert-warn">
+      ⏱️ <strong>QR 15 minutes mein expire ho jaata hai.</strong> Agar passenger 15 min mein scan na kare toh QR close karo aur naya generate karo ya dusra method use karo.
+    </div>
+
+    <!-- QR Flow -->
+    <div class="flow-title">Step-by-Step Flow — Driver Kya Kare</div>
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num s-yellow">1</div>
+        <div class="step-body">
+          <strong>Ride complete karo — PATCH status=completed</strong>
+          <p>Pehle ride status complete karo. Phir QR generate karo.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--cyan);color:#000">2</div>
+        <div class="step-body">
+          <strong>QR Generate karo — API call karo</strong>
+          <p>Backend se QR image milegi (base64 format). App mein screen pe dikhao — bada aur clear dikhna chahiye.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--cyan);color:#000">3</div>
+        <div class="step-body">
+          <strong>Passenger ko scan karne do</strong>
+          <p>Passenger apna PhonePe / GPay / Paytm / koi bhi UPI app kholta hai → QR scan karta hai → amount auto-fill hota hai → pay karta hai.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num s-blue">4</div>
+        <div class="step-body">
+          <strong>Status poll karo ya verify API call karo</strong>
+          <p>Passenger ke pay karne ke baad verify API call karo confirm karne ke liye. Ya 3-5 sec interval pe status poll karo.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num s-green">5</div>
+        <div class="step-body">
+          <strong>Payment confirmed → QR close karo → Earning wallet mein ✅</strong>
+          <p>Verify success hone pe QR close karo. Driver ka ₹102 automatically wallet mein credit.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num s-red">6</div>
+        <div class="step-body">
+          <strong>QR expire ho gaya? → Close karo → Dusra try karo</strong>
+          <p>Agar 15 min mein scan na hua toh QR close API call karo. Passenger ko cash ya dusra method use karne kaho.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- API 1: Generate QR -->
+    <div class="flow-title">APIs — QR Payment Mein Driver Kya Call Kare</div>
+
+    <div class="api-block">
+      <div class="api-top">
+        <span class="http-method m-post">POST</span>
+        <span class="api-url">/api/v1/payments/qr/generate</span>
+      </div>
+      <div class="api-body">
+        <div class="api-purpose">GoMobility ka dynamic UPI QR code generate karo — passenger scan karega</div>
+        <div class="api-when-note">📌 Kab: Ride complete hone ke baad, jab payment method "qr" ho. QR image milegi jo screen pe dikhani hai.</div>
+
+        <div class="code-label">Request — Headers</div>
+        <pre>Authorization: Bearer &lt;driver_jwt_token&gt;
+Content-Type: application/json</pre>
+
+        <div class="code-label">Request — Body</div>
+        <pre>{
+  <span class="k">"amount"</span>:      <span class="n">120</span>,              <span class="c">// Ride ka final fare (rupees mein)</span>
+  <span class="k">"purpose"</span>:     <span class="s">"ride_payment"</span>,  <span class="c">// Fixed value — ye bhejo</span>
+  <span class="k">"ride_id"</span>:     <span class="n">123</span>,              <span class="c">// Current ride ID</span>
+  <span class="k">"description"</span>: <span class="s">"Payment for ride #123"</span>  <span class="c">// Optional</span>
+}</pre>
+
+        <div class="code-label">Response — Success (201)</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"QR code generated successfully"</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"order"</span>: {
+      <span class="k">"orderNumber"</span>:   <span class="s">"ORD-1716123456-AB3K"</span>,   <span class="c">// Ye save karo — verify mein chahiye</span>
+      <span class="k">"gatewayOrderId"</span>: <span class="s">"order_Razorpay123"</span>,
+      <span class="k">"amount"</span>:         <span class="n">120</span>,
+      <span class="k">"status"</span>:         <span class="s">"created"</span>,
+      <span class="k">"expiresAt"</span>:      <span class="s">"2024-01-01T10:45:00Z"</span>   <span class="c">// 15 min baad expire</span>
+    },
+    <span class="k">"qrCode"</span>: <span class="s">"data:image/png;base64,iVBOR..."</span>,  <span class="c">// ← YE IMAGE DIKHAO screen pe</span>
+    <span class="k">"upiUrl"</span>: <span class="s">"upi://pay?pa=gomobility@upi&amp;pn=GoMobility&amp;am=120&amp;..."</span>,
+    <span class="k">"expiresAt"</span>: <span class="s">"2024-01-01T10:45:00Z"</span>
+  }
+}</pre>
+
+        <div class="code-label">Frontend pe kaise dikhao</div>
+        <pre><span class="c">// qrCode ko img tag mein seedha use karo:</span>
+&lt;img src="data:image/png;base64,iVBOR..." /&gt;
+
+<span class="c">// Ya React mein:</span>
+&lt;Image source=&#123;&#123; uri: data.qrCode &#125;&#125; style=&#123;&#123; width: 280, height: 280 &#125;&#125; /&gt;</pre>
+      </div>
+    </div>
+
+    <!-- API 2: Status Poll -->
+    <div class="api-block">
+      <div class="api-top">
+        <span class="http-method m-get">GET</span>
+        <span class="api-url">/api/v1/payments/qr/status/:order_number</span>
+      </div>
+      <div class="api-body">
+        <div class="api-purpose">QR payment ka status check karo — passenger ne pay kiya ya nahi</div>
+        <div class="api-when-note">📌 Kab: QR dikhane ke baad har 3-5 seconds mein poll karo jab tak status "success" ya "expired" na aaye. Infinite polling mat karo — max 15 min tak.</div>
+
+        <div class="code-label">URL Example</div>
+        <pre>GET /api/v1/payments/qr/status/ORD-1716123456-AB3K</pre>
+
+        <div class="code-label">Response — Pending (passenger ne abhi scan nahi kiya)</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"order"</span>: { <span class="k">"orderNumber"</span>: <span class="s">"ORD-..."</span>, <span class="k">"status"</span>: <span class="s">"created"</span>, <span class="k">"amount"</span>: <span class="n">120</span> },
+    <span class="k">"qrStatus"</span>: <span class="s">"pending"</span>,
+    <span class="k">"expiresAt"</span>: <span class="s">"2024-01-01T10:45:00Z"</span>
+  }
+}</pre>
+
+        <div class="code-label">Response — Success (passenger ne pay kar diya)</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"order"</span>: { <span class="k">"orderNumber"</span>: <span class="s">"ORD-..."</span>, <span class="k">"status"</span>: <span class="s">"success"</span>, <span class="k">"amount"</span>: <span class="n">120</span> },
+    <span class="k">"qrStatus"</span>: <span class="s">"completed"</span>,   <span class="c">// ← Yahan aane pe QR close karo, earning check karo</span>
+    <span class="k">"expiresAt"</span>: <span class="s">"2024-01-01T10:45:00Z"</span>
+  }
+}</pre>
+      </div>
+    </div>
+
+    <!-- API 3: Verify -->
+    <div class="api-block">
+      <div class="api-top">
+        <span class="http-method m-post">POST</span>
+        <span class="api-url">/api/v1/payments/qr/verify</span>
+      </div>
+      <div class="api-body">
+        <div class="api-purpose">Razorpay se payment confirm karo — earning credit trigger hota hai</div>
+        <div class="api-when-note">📌 Kab: Jab status API mein "success" aaye, ya Razorpay webhook se payment ID aaye. Status poll + verify — dono ek saath use karo robust system ke liye.</div>
+
+        <div class="code-label">Request — Body</div>
+        <pre>{
+  <span class="k">"order_number"</span>:       <span class="s">"ORD-1716123456-AB3K"</span>,  <span class="c">// Generate pe mila tha</span>
+  <span class="k">"gateway_payment_id"</span>:  <span class="s">"pay_Razorpay456"</span>,       <span class="c">// Razorpay se milta hai</span>
+  <span class="k">"gateway_signature"</span>:   <span class="s">"sha256_signature_here"</span>  <span class="c">// Razorpay signature</span>
+}</pre>
+
+        <div class="code-label">Response — Success (200)</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"QR payment verified successfully"</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"status"</span>: <span class="s">"success"</span>,
+    <span class="k">"amount"</span>: <span class="n">120</span>,
+    <span class="k">"netEarnings"</span>: <span class="n">102</span>,    <span class="c">// Driver ka hissa — wallet mein aa gaya</span>
+    <span class="k">"platformFee"</span>: <span class="n">18</span>
+  }
+}</pre>
+      </div>
+    </div>
+
+    <!-- API 4: Close QR -->
+    <div class="api-block">
+      <div class="api-top">
+        <span class="http-method m-post">POST</span>
+        <span class="api-url">/api/v1/payments/qr/close</span>
+      </div>
+      <div class="api-body">
+        <div class="api-purpose">QR code close/expire karo — payment complete ya cancel hone pe</div>
+        <div class="api-when-note">📌 Kab: (1) Payment verify hone ke baad — used QR ko close karo. (2) Passenger ne scan nahi kiya, driver dusra method use karna chahta hai. (3) 15 min expire hone pe.</div>
+
+        <div class="code-label">Request — Body</div>
+        <pre>{
+  <span class="k">"order_number"</span>: <span class="s">"ORD-1716123456-AB3K"</span>
+}</pre>
+
+        <div class="code-label">Response — Success (200)</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"QR payment closed successfully"</span>,
+  <span class="k">"data"</span>: {}
+}</pre>
+      </div>
+    </div>
+
+    <!-- Polling Logic -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:20px;">
+      <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:600">💡 Polling Logic — Frontend mein kaise implement karo</div>
+      <pre><span class="c">// QR generate hone ke baad ye logic chalao:</span>
+
+<span class="k">const</span> orderNumber = <span class="s">"ORD-1716123456-AB3K"</span>;
+<span class="k">const</span> maxWait = <span class="n">15 * 60 * 1000</span>; <span class="c">// 15 minutes</span>
+<span class="k">const</span> startTime = Date.now();
+
+<span class="k">const</span> pollInterval = setInterval(<span class="k">async</span> () => {
+  <span class="c">// 15 min ho gaye? Polling band karo</span>
+  <span class="k">if</span> (Date.now() - startTime > maxWait) {
+    clearInterval(pollInterval);
+    <span class="c">// QR close karo, user ko batao</span>
+    <span class="k">await</span> closeQR(orderNumber);
+    showMessage(<span class="s">"QR expire ho gaya. Dusra method try karo."</span>);
+    <span class="k">return</span>;
+  }
+
+  <span class="k">const</span> res = <span class="k">await</span> fetch(<span class="s">`/api/v1/payments/qr/status/${orderNumber}`</span>);
+  <span class="k">const</span> data = <span class="k">await</span> res.json();
+
+  <span class="k">if</span> (data.data.qrStatus === <span class="s">"completed"</span>) {
+    clearInterval(pollInterval);
+    <span class="k">await</span> closeQR(orderNumber);   <span class="c">// QR close karo</span>
+    showSuccess(<span class="s">"Payment complete! ₹102 wallet mein aa gaya."</span>);
+  }
+}, <span class="n">4000</span>); <span class="c">// Har 4 seconds mein check</span></pre>
+    </div>
+
+    <div class="alert alert-blue">
+      📷 <strong>QR Screen Design Tips:</strong> QR image ko kam se kam 280×280px dikhao. Saath mein amount bhi bada dikhao (₹120). Timer countdown dikhao (15:00 se 00:00). Agar expire ho jaaye toh "QR Refresh karo" button dikhao.
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     4. WALLET
+════════════════════════════════════════════════════════════ -->
+<div class="method-section" id="wallet">
+  <div class="method-header wallet">
+    <div class="method-icon">👛</div>
+    <div>
+      <div class="method-title">Wallet Payment</div>
+      <div class="method-subtitle">Passenger apne GoMobility app wallet se pay karta hai — driver ke liye sabse simple</div>
+    </div>
+  </div>
+
+  <div class="method-body">
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="info-label label-what">Kya hota hai</div>
+        <div class="info-text">Passenger ke GoMobility wallet se automatically payment deduct hoti hai ride complete hone pe. Driver kuch nahi karta.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label label-when">Kab hota hai</div>
+        <div class="info-text">Jab passenger ne ride book karte waqt <strong>wallet</strong> select kiya ho. Passenger ke wallet mein balance hona chahiye.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label label-why">Driver ke liye kya fayda</div>
+        <div class="info-text">Koi collect-confirm nahi, koi deposit nahi. Earning seedha driver wallet mein aa jaati hai. Zero pending dues.</div>
+      </div>
+    </div>
+
+    <div class="wallet-calc">
+      <div class="wallet-calc-title">💡 Paise ka hisaab — ₹120 ride</div>
+      <div class="calc-row"><span class="calc-label">Passenger wallet se deduct</span><span class="calc-value cv-white">₹120.00</span></div>
+      <div class="calc-row"><span class="calc-label">Platform fee (company)</span><span class="calc-value cv-red">- ₹18.00</span></div>
+      <div class="calc-row"><span class="calc-label">Driver wallet mein credit</span><span class="calc-value cv-green">= ₹102.00 ← turant</span></div>
+    </div>
+
+    <div class="alert alert-green">
+      ✅ <strong>Driver ko kuch nahi karna.</strong> Ride complete hote hi backend automatically driver wallet mein ₹102 credit kar deta hai. Socket event milega confirmation ke liye.
+    </div>
+
+    <div class="flow-title">Step-by-Step Flow</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num s-green">1</div>
+        <div class="step-body">
+          <strong>Ride complete karo — PATCH status=completed</strong>
+          <p>Yahi ek kaam hai driver ka is method mein.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num s-green">2</div>
+        <div class="step-body">
+          <strong>Backend automatically process karta hai</strong>
+          <p>Passenger wallet debit → Driver wallet credit → Transaction record banata hai. Sab automatic.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num s-green">3</div>
+        <div class="step-body">
+          <strong>Socket event aata hai — wallet balance update karo</strong>
+          <p>Listen karo: <code>driver:earnings_credited</code> — naya balance isme milega.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-block">
+      <div class="api-top">
+        <span class="http-method m-patch">PATCH</span>
+        <span class="api-url">/api/v1/rides/:rideId/status</span>
+      </div>
+      <div class="api-body">
+        <div class="api-purpose">Ride complete karo — wallet rides mein yahi ek API call hoti hai</div>
+        <div class="api-when-note">📌 Kab: Drop location pe pahunchne ke baad</div>
+
+        <div class="code-label">Request — Body</div>
+        <pre>{ <span class="k">"status"</span>: <span class="s">"completed"</span> }</pre>
+
+        <div class="code-label">Response — Success (200)</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"Ride status updated successfully"</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"rideId"</span>:        <span class="n">123</span>,
+    <span class="k">"status"</span>:        <span class="s">"completed"</span>,
+    <span class="k">"finalFare"</span>:     <span class="n">120.00</span>,
+    <span class="k">"paymentMethod"</span>: <span class="s">"wallet"</span>,
+    <span class="k">"completedAt"</span>:   <span class="s">"2024-01-01T10:30:00Z"</span>
+  }
+}</pre>
+
+        <div class="code-label">Socket Event — earning credit confirm</div>
+        <pre><span class="c">// Ye event sunna — driver:earnings_credited</span>
+{
+  <span class="k">"rideId"</span>:        <span class="n">123</span>,
+  <span class="k">"netEarnings"</span>:   <span class="n">102.00</span>,
+  <span class="k">"walletBalance"</span>: <span class="n">452.00</span>,  <span class="c">// Naya balance — update karo UI</span>
+  <span class="k">"paymentMethod"</span>: <span class="s">"wallet"</span>
+}</pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     4. CARD / ONLINE UPI / RAZORPAY
+════════════════════════════════════════════════════════════ -->
+<div class="method-section" id="card">
+  <div class="method-header card">
+    <div class="method-icon">💳</div>
+    <div>
+      <div class="method-title">Card / Online UPI Payment</div>
+      <div class="method-subtitle">Passenger Razorpay se — debit/credit card ya UPI — pay karta hai. Driver kuch nahi karta.</div>
+    </div>
+  </div>
+
+  <div class="method-body">
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="info-label label-what">Kya hota hai</div>
+        <div class="info-text">Passenger app mein card / online UPI se Razorpay gateway pe pay karta hai. Payment confirm hone par backend driver ko credit karta hai.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label label-when">Kab hota hai</div>
+        <div class="info-text">Jab passenger ne ride book karte waqt <strong>card / upi / qr</strong> select kiya ho aur Razorpay se pay kiya ho.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label label-why">Driver ke liye</div>
+        <div class="info-text">Wallet jaisa hi — kuch nahi karna. Payment gateway confirm karta hai, webhook aata hai, driver wallet credit hota hai automatically.</div>
+      </div>
+    </div>
+
+    <div class="alert alert-blue">
+      💳 <strong>Driver sirf ride complete karo.</strong> Razorpay webhook backend ko payment confirm karta hai. Uske baad driver wallet automatically credit hota hai — wallet rides jaisa hi.
+    </div>
+
+    <div class="wallet-calc">
+      <div class="wallet-calc-title">💡 Paise ka hisaab — ₹120 ride</div>
+      <div class="calc-row"><span class="calc-label">Passenger card/UPI se</span><span class="calc-value cv-white">₹120.00</span></div>
+      <div class="calc-row"><span class="calc-label">Platform fee (company)</span><span class="calc-value cv-red">- ₹18.00</span></div>
+      <div class="calc-row"><span class="calc-label">Driver wallet mein credit</span><span class="calc-value cv-green">= ₹102.00 ← automatic</span></div>
+    </div>
+
+    <div class="flow-title">Step-by-Step Flow</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num s-blue">1</div>
+        <div class="step-body">
+          <strong>Ride complete karo — PATCH status=completed</strong>
+          <p>Driver ka kaam sirf itna hai.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num s-blue">2</div>
+        <div class="step-body">
+          <strong>Passenger Razorpay se pay karta hai (passenger side)</strong>
+          <p>Ye passenger app karta hai. Driver kuch nahi karta. Payment gateway webhook fire hota hai backend ko.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num s-green">3</div>
+        <div class="step-body">
+          <strong>Driver wallet automatically credit ✅</strong>
+          <p>Webhook receive hone ke baad backend driver ko credit karta hai. Socket event aata hai.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-block">
+      <div class="api-top">
+        <span class="http-method m-patch">PATCH</span>
+        <span class="api-url">/api/v1/rides/:rideId/status</span>
+      </div>
+      <div class="api-body">
+        <div class="api-purpose">Ride complete karo — ye ek hi API driver call karta hai card rides mein</div>
+        <div class="code-label">Request — Body</div>
+        <pre>{ <span class="k">"status"</span>: <span class="s">"completed"</span> }</pre>
+        <div class="code-label">Socket Event — earning credit confirm</div>
+        <pre><span class="c">// driver:earnings_credited event aayega</span>
+{
+  <span class="k">"rideId"</span>:        <span class="n">123</span>,
+  <span class="k">"netEarnings"</span>:   <span class="n">102.00</span>,
+  <span class="k">"walletBalance"</span>: <span class="n">554.00</span>,
+  <span class="k">"paymentMethod"</span>: <span class="s">"card"</span>
+}</pre>
+      </div>
+    </div>
+
+    <div class="alert alert-warn">
+      ⏱️ Card/UPI payments mein <strong>thodi der lag sakti hai</strong> — Razorpay webhook process hone ka waqt. Agar 2-3 min mein socket event na aaye toh driver se kaho "payment process ho rahi hai". Panic mat karo.
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     5. CORPORATE
+════════════════════════════════════════════════════════════ -->
+<div class="method-section" id="corp">
+  <div class="method-header corp">
+    <div class="method-icon">🏢</div>
+    <div>
+      <div class="method-title">Corporate Payment</div>
+      <div class="method-subtitle">Business rides — company account se payment hoti hai, driver kuch nahi karta</div>
+    </div>
+  </div>
+
+  <div class="method-body">
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="info-label label-what">Kya hota hai</div>
+        <div class="info-text">Corporate client (company) ke employee ne ride book ki. Payment employee ki company ke account se hoti hai.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label label-when">Kab hota hai</div>
+        <div class="info-text">Jab passenger corporate account use karke ride book kare. Driver ko ride request mein <strong>payment: corporate</strong> dikhega.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label label-why">Driver ke liye</div>
+        <div class="info-text">Wallet rides jaisa — ride complete karo, earning automatic. Koi cash nahi, koi deposit nahi.</div>
+      </div>
+    </div>
+
+    <div class="alert alert-green">
+      🏢 <strong>Driver ko kuch nahi karna</strong> — ride complete karo, earning wallet mein aa jaati hai automatically. Corporate rides mein usually fare slightly higher hoti hai.
+    </div>
+
+    <div class="flow-title">Step-by-Step Flow</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num s-orange">1</div>
+        <div class="step-body">
+          <strong>Ride complete karo — PATCH status=completed</strong>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num s-green">2</div>
+        <div class="step-body">
+          <strong>Backend corporate account se deduct karta hai, driver wallet credit hota hai ✅</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-block">
+      <div class="api-top">
+        <span class="http-method m-patch">PATCH</span>
+        <span class="api-url">/api/v1/rides/:rideId/status</span>
+      </div>
+      <div class="api-body">
+        <div class="code-label">Request — Body</div>
+        <pre>{ <span class="k">"status"</span>: <span class="s">"completed"</span> }</pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     COMPARISON TABLE
+════════════════════════════════════════════════════════════ -->
+<div style="margin-top: 56px; margin-bottom: 40px;">
+  <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--indigo)">
+    📊 Sabhi Payment Methods — Ek Nazar Mein
+  </div>
+
+  <table style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+    <thead>
+      <tr>
+        <th>Method</th>
+        <th>Driver kya kare</th>
+        <th>APIs Call Karo</th>
+        <th>Earning Kab Milegi</th>
+        <th>Deposit Zaroori?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="color:var(--yellow);font-weight:700">💵 Cash</td>
+        <td>Cash lo → Confirm karo → Deposit karo</td>
+        <td><code>collect-confirm</code> <code>cash/balance</code> <code>cash/deposit</code></td>
+        <td style="color:var(--yellow)">Deposit ke baad</td>
+        <td style="color:var(--red)">✓ HAA</td>
+      </tr>
+      <tr>
+        <td style="color:var(--purple);font-weight:700">📱 Personal UPI</td>
+        <td>UPI dikhao → Confirm lo → Deposit karo</td>
+        <td><code>collect-confirm</code> <code>cash/deposit</code></td>
+        <td style="color:var(--yellow)">Deposit ke baad</td>
+        <td style="color:var(--red)">✓ HAA</td>
+      </tr>
+      <tr>
+        <td style="color:var(--cyan);font-weight:700">📷 QR Code</td>
+        <td>QR generate → Screen pe dikhao → Verify karo → Close karo</td>
+        <td><code>qr/generate</code> <code>qr/status</code> <code>qr/verify</code> <code>qr/close</code></td>
+        <td style="color:var(--green)">Verify ke baad (automatic)</td>
+        <td style="color:var(--green)">✗ Nahi</td>
+      </tr>
+      <tr>
+        <td style="color:var(--green);font-weight:700">👛 Wallet</td>
+        <td>Sirf ride complete karo</td>
+        <td><code>status=completed</code></td>
+        <td style="color:var(--green)">Turant (automatic)</td>
+        <td style="color:var(--green)">✗ Nahi</td>
+      </tr>
+      <tr>
+        <td style="color:var(--blue);font-weight:700">💳 Card/UPI Online</td>
+        <td>Sirf ride complete karo</td>
+        <td><code>status=completed</code></td>
+        <td style="color:var(--green)">Automatic (2-3 min)</td>
+        <td style="color:var(--green)">✗ Nahi</td>
+      </tr>
+      <tr>
+        <td style="color:var(--orange);font-weight:700">🏢 Corporate</td>
+        <td>Sirf ride complete karo</td>
+        <td><code>status=completed</code></td>
+        <td style="color:var(--green)">Turant (automatic)</td>
+        <td style="color:var(--green)">✗ Nahi</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SOCKET EVENTS SUMMARY
+════════════════════════════════════════════════════════════ -->
+<div style="background:var(--card);border:1px solid #3730a3;border-radius:12px;padding:24px;margin-bottom:40px;">
+  <div style="font-size:16px;font-weight:700;color:#a5b4fc;margin-bottom:16px">⚡ Payment Related Socket Events — Driver Kya Sunne</div>
+
+  <table style="width:100%">
+    <tr>
+      <th>Event Name</th>
+      <th>Kab Aata Hai</th>
+      <th>Data</th>
+    </tr>
+    <tr>
+      <td><code style="color:#a5b4fc">driver:cash_dues_updated</code></td>
+      <td>Cash/UPI ride complete ke baad collect-confirm pe</td>
+      <td>netEarnings, platformShareDue, message</td>
+    </tr>
+    <tr>
+      <td><code style="color:#86efac">driver:earnings_credited</code></td>
+      <td>Wallet / Card / Corporate / QR ride ka earning credit hone pe</td>
+      <td>netEarnings, walletBalance, paymentMethod</td>
+    </tr>
+    <tr>
+      <td><code style="color:var(--cyan)">ride:status_changed</code></td>
+      <td>QR verify hone ke baad ride status update confirm</td>
+      <td>rideId, status, timestamp</td>
+    </tr>
+  </table>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     IMPORTANT RULES
+════════════════════════════════════════════════════════════ -->
+<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;">
+  <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:16px">⚠️ Important Rules — Frontend Developer Note</div>
+
+  <div class="alert alert-red">🚫 Cash/UPI rides mein <strong>collect-confirm se pehle status=completed mat karo</strong> — ride complete, phir payment lo, phir confirm karo. Sahi order: <code>status=completed</code> → cash lo → <code>collect-confirm</code></div>
+
+  <div class="alert alert-warn">💰 <strong>Cash limit exceed hone pe driver ko block karo</strong> — <code>isLimitExceeded: true</code> aane pe ride accept button disable karo aur deposit karne ka prominent prompt dikhao.</div>
+
+  <div class="alert alert-blue">📱 <strong>Wallet balance update</strong> — Har earning credit hone ke baad socket event se balance update karo. REST API baar baar mat call karo — socket se real-time update lo.</div>
+
+  <div class="alert alert-green">✅ <strong>Idempotency</strong> — Agar <code>collect-confirm</code> ya <code>cash/deposit</code> same ride ke liye dobara call ho jaaye, backend safely handle karta hai — duplicate charge nahi hoga.</div>
+
+  <div class="alert" style="background:#001520;border-left:3px solid var(--cyan);color:var(--cyan)">📷 <strong>QR Rules:</strong> (1) QR generate hone ke baad <code>orderNumber</code> zaroor save karo — verify aur close dono mein chahiye. (2) Payment hone ke baad QR close karna bhoolna mat — warna dusra koi use kar sakta hai. (3) 15 min ka timer screen pe dikhao — user ko pata ho kitna time bacha hai. (4) QR expire ho gaye toh <code>qr/close</code> call karo phir naya generate karo.</div>
+</div>
+
+<div style="text-align:center;padding:32px 0 0;color:var(--muted);font-size:12px">
+  GoMobility — Driver Payment Guide &nbsp;·&nbsp; May 2026 &nbsp;·&nbsp; Payment Methods Only
+</div>
+
+</div><!-- /wrapper -->
+</body>
+</html>

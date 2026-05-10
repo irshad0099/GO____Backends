@@ -262,7 +262,20 @@ export const getDriverEarnings = async (driverId, startDate, endDate) => {
 
 // Cash ride complete hone pe driver ka pending balance badhao
 // driver_cash_balance row pehle se nahi hai toh create karo (first cash ride)
-export const incrementDriverCashBalance = async (client, driverId, platformFee) => {
+export const incrementDriverCashBalance = async (client, driverId, platformFee, finalFare = 0, netEarnings = 0) => {
     await initCashBalance(driverId);
-    return addToPending(client, driverId, platformFee, 0);
+    return addToPending(client, driverId, platformFee, finalFare, netEarnings);
+};
+
+// Cash dues settle hone pe total_earnings update karo (display stat)
+export const incrementTotalEarnings = async (client, driverId, amount) => {
+    const { rows } = await (client || db).query(
+        `UPDATE drivers
+         SET total_earnings = COALESCE(total_earnings, 0) + $1,
+             updated_at = CURRENT_TIMESTAMP
+         WHERE id = $2
+         RETURNING total_earnings`,
+        [amount, driverId]
+    );
+    return rows[0];
 };

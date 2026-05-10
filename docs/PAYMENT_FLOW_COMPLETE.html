@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoMobility — Payment Flow Complete Documentation</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; line-height: 1.7; }
+
+  .cover {
+    background: linear-gradient(135deg, #1a1f2e 0%, #0f1117 50%, #1a1f2e 100%);
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    border-bottom: 1px solid #2d3748; padding: 40px;
+  }
+  .cover-logo { font-size: 56px; margin-bottom: 16px; }
+  .cover h1 { font-size: 42px; font-weight: 800; background: linear-gradient(90deg, #f6ad55, #ed8936); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+  .cover h2 { font-size: 22px; color: #a0aec0; font-weight: 400; margin-bottom: 32px; }
+  .cover-meta { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+  .cover-meta-item { background: #1a202c; border: 1px solid #2d3748; border-radius: 12px; padding: 16px 24px; }
+  .cover-meta-item .label { font-size: 11px; color: #718096; text-transform: uppercase; letter-spacing: 1px; }
+  .cover-meta-item .value { font-size: 16px; font-weight: 600; color: #f6ad55; margin-top: 4px; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 60px 24px; }
+
+  h2.section-title {
+    font-size: 28px; font-weight: 700; color: #f6ad55;
+    border-left: 4px solid #ed8936; padding-left: 16px;
+    margin: 60px 0 28px;
+  }
+  h3.sub-title {
+    font-size: 18px; font-weight: 600; color: #90cdf4;
+    margin: 32px 0 14px; padding-left: 12px;
+    border-left: 3px solid #4299e1;
+  }
+  h4.mini-title { font-size: 15px; font-weight: 600; color: #68d391; margin: 20px 0 10px; }
+
+  p { color: #cbd5e0; margin-bottom: 12px; }
+
+  .toc { background: #1a202c; border: 1px solid #2d3748; border-radius: 16px; padding: 32px; margin: 40px 0; }
+  .toc h3 { color: #f6ad55; font-size: 18px; margin-bottom: 20px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 8px 0; }
+  .toc a { color: #90cdf4; text-decoration: none; font-size: 15px; }
+  .toc a:hover { color: #f6ad55; }
+
+  .card {
+    background: #1a202c; border: 1px solid #2d3748;
+    border-radius: 16px; padding: 28px; margin-bottom: 20px;
+  }
+  .card-orange { border-color: #ed8936; }
+  .card-blue { border-color: #4299e1; }
+  .card-green { border-color: #48bb78; }
+  .card-red { border-color: #fc8181; }
+  .card-purple { border-color: #9f7aea; }
+
+  .badge {
+    display: inline-block; padding: 4px 12px; border-radius: 20px;
+    font-size: 12px; font-weight: 600; margin-right: 8px; margin-bottom: 8px;
+  }
+  .badge-orange { background: #7b341e; color: #fbd38d; }
+  .badge-blue { background: #1a365d; color: #90cdf4; }
+  .badge-green { background: #1c4532; color: #9ae6b4; }
+  .badge-red { background: #742a2a; color: #feb2b2; }
+  .badge-purple { background: #322659; color: #d6bcfa; }
+  .badge-gray { background: #2d3748; color: #a0aec0; }
+
+  pre, code {
+    font-family: 'Courier New', monospace;
+    background: #0d1117; border-radius: 10px;
+    font-size: 13px; line-height: 1.6;
+  }
+  pre { padding: 20px; overflow-x: auto; border: 1px solid #2d3748; margin: 12px 0; }
+  code { padding: 2px 6px; font-size: 13px; }
+
+  .flow-box {
+    background: #0d1117; border: 1px solid #2d3748; border-radius: 12px;
+    padding: 20px; margin: 12px 0; font-family: 'Courier New', monospace;
+    font-size: 13px; line-height: 2;
+  }
+  .flow-step { display: flex; align-items: flex-start; margin: 6px 0; }
+  .step-num {
+    background: #f6ad55; color: #000; border-radius: 50%;
+    width: 24px; height: 24px; display: inline-flex;
+    align-items: center; justify-content: center;
+    font-weight: 700; font-size: 12px; margin-right: 12px;
+    flex-shrink: 0; margin-top: 2px;
+  }
+
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th { background: #2d3748; color: #f6ad55; padding: 12px 16px; text-align: left; font-weight: 600; }
+  td { padding: 11px 16px; border-bottom: 1px solid #2d3748; color: #cbd5e0; vertical-align: top; }
+  tr:hover td { background: #1a202c; }
+
+  .api-block { background: #0d1117; border-radius: 12px; margin: 16px 0; overflow: hidden; border: 1px solid #2d3748; }
+  .api-header { display: flex; align-items: center; padding: 14px 20px; gap: 12px; border-bottom: 1px solid #2d3748; }
+  .method { padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 13px; }
+  .method-post { background: #276749; color: #9ae6b4; }
+  .method-get { background: #1a365d; color: #90cdf4; }
+  .method-patch { background: #7b341e; color: #fbd38d; }
+  .method-delete { background: #742a2a; color: #feb2b2; }
+  .api-url { color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 14px; }
+  .api-desc { color: #a0aec0; font-size: 13px; margin-left: auto; }
+  .api-body { padding: 16px 20px; }
+
+  .bug-card { border-radius: 12px; padding: 20px; margin: 14px 0; }
+  .bug-before { background: #2d1515; border: 1px solid #fc8181; }
+  .bug-after { background: #1c4532; border: 1px solid #48bb78; }
+  .bug-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .bug-label-red { color: #fc8181; }
+  .bug-label-green { color: #68d391; }
+
+  .alert {
+    border-radius: 12px; padding: 16px 20px; margin: 16px 0;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .alert-warning { background: #2d2416; border: 1px solid #d69e2e; }
+  .alert-info { background: #1a2a3a; border: 1px solid #4299e1; }
+  .alert-success { background: #1a2e22; border: 1px solid #48bb78; }
+  .alert-icon { font-size: 20px; flex-shrink: 0; }
+  .alert-text { color: #e2e8f0; font-size: 14px; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 700px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .divider { border: none; border-top: 1px solid #2d3748; margin: 48px 0; }
+
+  .payment-method-card {
+    border-radius: 16px; padding: 28px; margin-bottom: 32px;
+    border: 1px solid;
+  }
+  .pm-wallet { background: #1a2a3a; border-color: #4299e1; }
+  .pm-cash { background: #1c2e1c; border-color: #48bb78; }
+  .pm-upi { background: #2d2416; border-color: #d69e2e; }
+  .pm-online { background: #2d1f3d; border-color: #9f7aea; }
+  .pm-corporate { background: #1a2a2d; border-color: #4fd1c5; }
+
+  .pm-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .pm-icon { font-size: 36px; }
+  .pm-title { font-size: 22px; font-weight: 700; }
+  .pm-subtitle { font-size: 14px; color: #a0aec0; }
+
+  .timeline { position: relative; padding-left: 32px; margin: 16px 0; }
+  .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: #2d3748; }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-item::before {
+    content: ''; position: absolute; left: -26px; top: 6px;
+    width: 12px; height: 12px; border-radius: 50%; background: #f6ad55;
+    border: 2px solid #0f1117;
+  }
+  .timeline-item.green::before { background: #48bb78; }
+  .timeline-item.blue::before { background: #4299e1; }
+  .timeline-item.red::before { background: #fc8181; }
+  .timeline-item .tl-title { font-weight: 600; color: #e2e8f0; font-size: 14px; }
+  .timeline-item .tl-desc { color: #a0aec0; font-size: 13px; margin-top: 4px; }
+  .timeline-item .tl-code { font-family: 'Courier New', monospace; font-size: 12px; color: #68d391; margin-top: 6px; background: #0d1117; padding: 6px 10px; border-radius: 6px; }
+
+  footer { background: #1a202c; border-top: 1px solid #2d3748; padding: 32px; text-align: center; color: #718096; font-size: 14px; margin-top: 80px; }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-logo">💳</div>
+  <h1>GoMobility Payment Flow</h1>
+  <h2>Complete Technical Documentation — Driver & Passenger Side</h2>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="label">Version</div>
+      <div class="value">2.0 — Final</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Date</div>
+      <div class="value">May 2026</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Model</div>
+      <div class="value">Rapido / Uber Style</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Payment Methods</div>
+      <div class="value">5 Types</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="toc">
+    <h3>📋 Table of Contents</h3>
+    <ol>
+      <li><a href="#overview">Payment System Overview</a></li>
+      <li><a href="#bugs">Kya Galat Tha — Bugs Found & Fixed</a></li>
+      <li><a href="#wallet">Payment Method 1: Wallet</a></li>
+      <li><a href="#cash">Payment Method 2: Cash (Rapido Model)</a></li>
+      <li><a href="#personal-upi">Payment Method 3: Personal UPI</a></li>
+      <li><a href="#online">Payment Method 4: Online / Card (Razorpay)</a></li>
+      <li><a href="#corporate">Payment Method 5: Corporate</a></li>
+      <li><a href="#passenger-apis">Passenger Side APIs</a></li>
+      <li><a href="#driver-apis">Driver Side APIs</a></li>
+      <li><a href="#fraud">Fraud Prevention — Cash Model</a></li>
+      <li><a href="#summary">Final Summary Table</a></li>
+    </ol>
+  </div>
+
+  <!-- SECTION 1: OVERVIEW -->
+  <h2 class="section-title" id="overview">1. Payment System Overview</h2>
+
+  <div class="card">
+    <p>GoMobility mein <strong>5 tarah ke payment methods</strong> hain. Har method ka alag flow hai. Passenger choose karta hai method ride book karte waqt. Driver ko ussi ke hisaab se kaam karna hota hai.</p>
+  </div>
+
+  <table>
+    <tr>
+      <th>Payment Method</th>
+      <th>Passenger Kya Karta Hai</th>
+      <th>Driver Kya Karta Hai</th>
+      <th>Fraud Risk</th>
+    </tr>
+    <tr>
+      <td><span class="badge badge-blue">wallet</span></td>
+      <td>App wallet se auto-pay</td>
+      <td>Kuch nahi — auto credit</td>
+      <td>✅ Zero</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-green">cash</span></td>
+      <td>Physical cash deta hai</td>
+      <td>Cash leke confirm karta hai</td>
+      <td>⚠️ High (fixed)</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-orange">personal_upi</span></td>
+      <td>Driver ki UPI pe scan karta hai</td>
+      <td>UPI receive keke confirm karta hai</td>
+      <td>⚠️ High (fixed)</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-purple">online / card</span></td>
+      <td>Razorpay QR / card se pay</td>
+      <td>Kuch nahi — webhook pe auto credit</td>
+      <td>✅ Zero</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-gray">corporate</span></td>
+      <td>Company invoice hoti hai</td>
+      <td>Kuch nahi — platform credit karta hai</td>
+      <td>✅ Zero</td>
+    </tr>
+  </table>
+
+  <h3 class="sub-title">Fare Calculation — Driver Ko Kitna Milta Hai</h3>
+  <div class="flow-box">
+Passenger ne pay kiya:       ₹120  (finalFare)
+Platform commission (18%):  -₹18   (platformFee)
+────────────────────────────────────
+Driver net earnings:         ₹102   ← wallet mein aata hai
+
++ Extras (agar applicable):
+  Pickup compensation:       +₹5    (door se pickup tha)
+  Waiting charges:           +₹10   (driver wait kiya)
+  Traffic compensation:      +₹3    (jam mein tha)
+  </div>
+
+  <!-- SECTION 2: BUGS -->
+  <h2 class="section-title" id="bugs">2. Kya Galat Tha — Bugs Found & Fixed</h2>
+
+  <div class="alert alert-warning">
+    <div class="alert-icon">⚠️</div>
+    <div class="alert-text"><strong>4 critical bugs</strong> mile the original code mein. Sab fix ho gaye hain. Neeche detail mein explain kiya hai kya galat tha aur kya sahi kiya.</div>
+  </div>
+
+  <!-- BUG 1 -->
+  <h3 class="sub-title">Bug 1 — CRITICAL: Wallet Ride Pe Driver Wallet Credit NAHI Hota Tha</h3>
+
+  <div class="bug-card bug-before">
+    <div class="bug-label bug-label-red">❌ Pehle — Galat</div>
+    <p>Wallet ride complete hoti thi — passenger ka paisa wallet se kata jaata tha, lekin <strong>driver ke wallet mein kuch nahi jaata tha</strong>.</p>
+    <pre>rideService.js → payForRide(passenger)   ✅ passenger debit hua
+rideService.js → creditDriverEarnings()  ❌ YEH CALL THHHI HI NAHI
+rideCompletionWorker → total_rides +1    ✅ sirf stats
+Driver wallet balance = unchanged        ❌ PAISA GAYA KAHAN?</pre>
+  </div>
+
+  <div class="bug-card bug-after">
+    <div class="bug-label bug-label-green">✅ Ab — Sahi</div>
+    <p><code>rideService.js</code> mein wallet payment ke turant baad <code>creditDriverEarnings()</code> call ki jaati hai.</p>
+    <pre>rideService.js → payForRide(passenger)      ✅ passenger debit
+rideService.js → creditDriverEarnings()     ✅ driver credit turant
+  (earningsService → wallet balance += ₹102)
+  (cash dues agar hain → auto-deduct bhi)</pre>
+  </div>
+
+  <!-- BUG 2 -->
+  <h3 class="sub-title">Bug 2 — CRITICAL: total_earnings Double Count Hota Tha</h3>
+
+  <div class="bug-card bug-before">
+    <div class="bug-label bug-label-red">❌ Pehle — Galat</div>
+    <p>Online ride pe <code>total_earnings</code> column <strong>2 baar update</strong> hota tha.</p>
+    <pre>earningsService.creditDriverEarnings():
+  drivers.total_earnings = 0 + 87 = ₹87   ← pehli baar
+
+rideCompletionWorker:
+  drivers.total_earnings = 87 + 87 = ₹174  ← doosri baar ❌
+
+Result: Dashboard pe ₹174 dikhta tha jabki actual ₹87 tha</pre>
+  </div>
+
+  <div class="bug-card bug-after">
+    <div class="bug-label bug-label-green">✅ Ab — Sahi</div>
+    <p><code>rideCompletionWorker</code> se <code>total_earnings</code> update hataaya. Ab sirf <code>earningsService</code> update karta hai — jab paisa actually wallet mein aata hai.</p>
+    <pre>rideCompletionWorker ab sirf:
+  drivers.total_rides = 10 + 1 = 11   ✅ rides count
+  coupon record karo (agar tha)        ✅
+
+total_earnings → earningsService update karta hai ✅ (ek baar)</pre>
+  </div>
+
+  <!-- BUG 3 -->
+  <h3 class="sub-title">Bug 3 — Cash Ride Pe Driver Wallet Credit Turant Ho Jaata Tha (Fraud Risk)</h3>
+
+  <div class="bug-card bug-before">
+    <div class="bug-label bug-label-red">❌ Pehle — Galat (Fraud Possible)</div>
+    <pre>Passenger cash deta hai driver ko: ₹120
+
+Driver confirm karta hai → backend:
+  Driver wallet credit: +₹102   ❌ TURANT
+  Cash dues track:       ₹18    (sirf record, koi enforcement nahi)
+
+Driver ke paas:
+  Physical cash: ₹120
+  Wallet:        ₹102
+  Total:         ₹222  ← ₹18 kabhi na de — system rok nahi sakta tha</pre>
+  </div>
+
+  <div class="bug-card bug-after">
+    <div class="bug-label bug-label-green">✅ Ab — Rapido Model</div>
+    <pre>Passenger cash deta hai driver ko: ₹120
+
+Driver confirm karta hai → backend:
+  pending_amount       += ₹18   (company ka — held)
+  pending_net_earnings += ₹102  (driver ka — bhi held)
+  Wallet credit:         ₹0     ✅ kuch nahi gaya
+
+Paisa milega jab:
+  Option A: Driver ₹18 deposit kare → ₹102 wallet mein
+  Option B: Agle online ride pe ₹18 auto-deduct → ₹102 release</pre>
+  </div>
+
+  <!-- BUG 4 -->
+  <h3 class="sub-title">Bug 4 — Minor: Duplicate Function + Dead Import</h3>
+
+  <div class="bug-card bug-before">
+    <div class="bug-label bug-label-red">❌ Pehle — Confusing</div>
+    <pre>creditDriverEarnings() do jagah define thi:
+  walletService.js    ← purani simple version (no idempotency)
+  earningsService.js  ← naya full version (idempotency + cash dues)
+
+rideCollectionService.js mein import tha par call nahi hoti thi (dead code)</pre>
+  </div>
+
+  <div class="bug-card bug-after">
+    <div class="bug-label bug-label-green">✅ Ab — Clean</div>
+    <pre>creditDriverEarnings() sirf ek jagah:
+  earningsService.js  ✅ (idempotency + cash auto-deduction)
+
+walletService.js se purani function delete
+rideCollectionService.js se dead import delete</pre>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 3: WALLET PAYMENT -->
+  <h2 class="section-title" id="wallet">3. Payment Method 1 — Wallet</h2>
+
+  <div class="payment-method-card pm-wallet">
+    <div class="pm-header">
+      <div class="pm-icon">👛</div>
+      <div>
+        <div class="pm-title" style="color:#90cdf4">Wallet Payment</div>
+        <div class="pm-subtitle">Passenger ke app wallet se auto-debit. Sabse simple aur safest.</div>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item blue">
+        <div class="tl-title">Step 1 — Ride Book Karo</div>
+        <div class="tl-desc">Passenger ride request karta hai</div>
+        <div class="tl-code">POST /api/v1/rides/request → payment_method: "wallet"</div>
+      </div>
+      <div class="timeline-item blue">
+        <div class="tl-title">Step 2 — Driver Accept Karta Hai</div>
+        <div class="tl-desc">Socket + REST API dono se accept hota hai</div>
+        <div class="tl-code">POST /api/v1/rides/:id/accept</div>
+      </div>
+      <div class="timeline-item blue">
+        <div class="tl-title">Step 3 — Ride Complete</div>
+        <div class="tl-desc">Driver status completed mark karta hai</div>
+        <div class="tl-code">PATCH /api/v1/rides/:id/status → { status: "completed" }</div>
+      </div>
+      <div class="timeline-item green">
+        <div class="tl-title">Step 4 — Passenger Wallet Debit (Auto)</div>
+        <div class="tl-desc">Backend turant passenger wallet se ₹120 kaata hai</div>
+        <div class="tl-code">payForRide() → wallets.balance -= ₹120 (idempotent)</div>
+      </div>
+      <div class="timeline-item green">
+        <div class="tl-title">Step 5 — Driver Wallet Credit (Auto)</div>
+        <div class="tl-desc">Passenger debit ke baad driver ko ₹102 milta hai</div>
+        <div class="tl-code">creditDriverEarnings() → wallets.balance += ₹102
+  + cash dues auto-deduct agar pending tha</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-title">Step 6 — Stats Update (Queue)</div>
+        <div class="tl-desc">BullMQ queue mein job jaata hai</div>
+        <div class="tl-code">rideCompletionWorker → total_rides += 1, coupon record</div>
+      </div>
+    </div>
+
+    <h4 class="mini-title">Idempotency Protection</h4>
+    <div class="flow-box">
+payForRide()          → ride_id se existing debit check → agar hai toh skip ✅
+creditDriverEarnings() → driver_earnings_transactions check → agar hai toh skip ✅
+    </div>
+  </div>
+
+  <!-- SECTION 4: CASH -->
+  <h2 class="section-title" id="cash">4. Payment Method 2 — Cash (Rapido Model)</h2>
+
+  <div class="payment-method-card pm-cash">
+    <div class="pm-header">
+      <div class="pm-icon">💵</div>
+      <div>
+        <div class="pm-title" style="color:#68d391">Cash Payment</div>
+        <div class="pm-subtitle">Passenger physically cash deta hai driver ko. Fraud prevention ke liye Rapido model implement kiya hai.</div>
+      </div>
+    </div>
+
+    <div class="alert alert-warning">
+      <div class="alert-icon">💡</div>
+      <div class="alert-text"><strong>Rapido Model:</strong> Driver ka paisa wallet mein TURANT nahi aata. Pehle platform fee settle karni hoti hai — tabhi earnings release hoti hain.</div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item green">
+        <div class="tl-title">Step 1 — Ride Complete</div>
+        <div class="tl-desc">Status complete, koi wallet transaction nahi hoti</div>
+        <div class="tl-code">rides.payment_status = 'pending' (kuch nahi kata/credit)</div>
+      </div>
+      <div class="timeline-item green">
+        <div class="tl-title">Step 2 — Passenger Cash Deta Hai (Physical)</div>
+        <div class="tl-desc">Driver ke haath mein ₹120 cash aata hai</div>
+        <div class="tl-code">No API — physical transaction</div>
+      </div>
+      <div class="timeline-item green">
+        <div class="tl-title">Step 3 — Driver Cash Confirm Karta Hai</div>
+        <div class="tl-desc">Driver app mein "Cash Mila" tap karta hai</div>
+        <div class="tl-code">POST /api/v1/cash-payment/confirm
+  → pending_amount += ₹18        (company ka — held)
+  → pending_net_earnings += ₹102 (driver ka — held)
+  → Wallet: ₹0 change            (kuch nahi mila abhi)</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-title">Step 4A — Driver Platform Fee Deposit Karta Hai (Manual)</div>
+        <div class="tl-desc">Driver UPI/bank se company ko ₹18 bhejta hai</div>
+        <div class="tl-code">POST /api/v1/drivers/cash/deposit
+  → pending_amount -= ₹18
+  → releaseNetEarnings() → ₹102 wallet mein credit ✅
+  → total_earnings += ₹102 ✅</div>
+      </div>
+      <div class="timeline-item blue">
+        <div class="tl-title">Step 4B — Auto Deduction (Next Online Ride Se)</div>
+        <div class="tl-desc">Driver ne manual deposit nahi kiya — agle online ride pe auto-deduct</div>
+        <div class="tl-code">creditDriverEarnings() — online ride pe:
+  Online earning: ₹95
+  Cash dues auto-deduct: -₹18
+  Net wallet credit: ₹77
+  + Held ₹102 bhi release → wallet mein ✅</div>
+      </div>
+    </div>
+
+    <h4 class="mini-title">DB Tables — Kya Track Hota Hai</h4>
+    <table>
+      <tr><th>Table</th><th>Column</th><th>Kya Store Hota Hai</th></tr>
+      <tr><td>driver_cash_balance</td><td>pending_amount</td><td>Company ka pending fee (₹18)</td></tr>
+      <tr><td>driver_cash_balance</td><td>pending_net_earnings</td><td>Driver ka held earnings (₹102)</td></tr>
+      <tr><td>driver_cash_balance</td><td>total_cash_collected</td><td>Life mein total cash collect kiya</td></tr>
+      <tr><td>driver_cash_balance</td><td>cash_limit</td><td>Max pending allowed (₹2000)</td></tr>
+      <tr><td>cash_collections</td><td>ride_id, method</td><td>Per-ride collection record</td></tr>
+      <tr><td>cash_deposits</td><td>amount, status</td><td>Har deposit attempt</td></tr>
+    </table>
+  </div>
+
+  <!-- SECTION 5: PERSONAL UPI -->
+  <h2 class="section-title" id="personal-upi">5. Payment Method 3 — Personal UPI</h2>
+
+  <div class="payment-method-card pm-upi">
+    <div class="pm-header">
+      <div class="pm-icon">📱</div>
+      <div>
+        <div class="pm-title" style="color:#f6e05e">Personal UPI</div>
+        <div class="pm-subtitle">Passenger driver ki personal UPI pe scan karta hai. Cash jaisa hi — same Rapido model.</div>
+      </div>
+    </div>
+
+    <p>Personal UPI aur Cash ka backend flow <strong>bilkul same hai</strong>. Fark sirf itna hai ki passenger physically cash nahi deta — UPI app se driver ke number pe transfer karta hai.</p>
+
+    <div class="flow-box">
+Passenger → Driver UPI pe ₹120 bhejta hai (Google Pay / PhonePe)
+Driver confirm karta hai → POST /cash-payment/confirm { method: "personal_upi" }
+
+Baaki sab same as Cash:
+  pending_amount += ₹18   (company ka)
+  pending_net_earnings += ₹102 (driver ka — held)
+  Release: deposit ya auto-deduction pe
+    </div>
+
+    <div class="alert alert-info">
+      <div class="alert-icon">ℹ️</div>
+      <div class="alert-text">API endpoint aur payload Cash ke bilkul same hai — sirf <code>"method": "personal_upi"</code> use karo.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: ONLINE -->
+  <h2 class="section-title" id="online">6. Payment Method 4 — Online / Card (Razorpay)</h2>
+
+  <div class="payment-method-card pm-online">
+    <div class="pm-header">
+      <div class="pm-icon">💳</div>
+      <div>
+        <div class="pm-title" style="color:#b794f4">Online / Card</div>
+        <div class="pm-subtitle">Razorpay QR ya Card se payment. Platform ke paas paisa aata hai — driver ko automatically credit.</div>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-title">Step 1 — Ride Complete</div>
+        <div class="tl-desc">payment_status = 'pending' (Razorpay ka wait)</div>
+        <div class="tl-code">PATCH /api/v1/rides/:id/status → { status: "completed" }</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-title">Step 2 — Passenger Razorpay QR Scan Karta Hai</div>
+        <div class="tl-desc">Passenger app mein QR dikhta hai, scan karo</div>
+        <div class="tl-code">Razorpay payment gateway handle karta hai</div>
+      </div>
+      <div class="timeline-item green">
+        <div class="tl-title">Step 3 — Razorpay Webhook Aata Hai</div>
+        <div class="tl-desc">Payment confirm hone pe Razorpay backend ko notify karta hai</div>
+        <div class="tl-code">POST /api/v1/payments/webhook (Razorpay se)</div>
+      </div>
+      <div class="timeline-item green">
+        <div class="tl-title">Step 4 — postPaymentWorker Process Karta Hai</div>
+        <div class="tl-desc">Ride payment_status update + driver earnings</div>
+        <div class="tl-code">processOnlinePaymentSuccess():
+  rides.payment_status = 'paid'
+  creditDriverEarnings() → driver wallet += ₹102
+  cash dues auto-deduct agar pending tha ✅</div>
+      </div>
+    </div>
+
+    <div class="alert alert-success">
+      <div class="alert-icon">🔒</div>
+      <div class="alert-text">Idempotency: Agar webhook 2 baar aaye, <code>payment_status === 'paid'</code> check se second call skip ho jaati hai.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: CORPORATE -->
+  <h2 class="section-title" id="corporate">7. Payment Method 5 — Corporate</h2>
+
+  <div class="payment-method-card pm-corporate">
+    <div class="pm-header">
+      <div class="pm-icon">🏢</div>
+      <div>
+        <div class="pm-title" style="color:#81e6d9">Corporate</div>
+        <div class="pm-subtitle">Company ki taraf se billing. Driver ko immediately credit — platform collection risk leta hai.</div>
+      </div>
+    </div>
+
+    <div class="flow-box">
+Ride complete hoti hai
+    ↓
+processCorporateBilling():
+  rides.payment_status = 'billed_corporate'
+  creditDriverEarnings(paymentMethod: 'corporate')
+    → Driver wallet += netEarnings  ✅ (turant)
+    ↓
+Company ko monthly invoice jaati hai (backend admin handle karta hai)
+    </div>
+
+    <div class="alert alert-info">
+      <div class="alert-icon">ℹ️</div>
+      <div class="alert-text">Corporate rides mein driver cash confirm API call <strong>nahi karta</strong>. Agar kare toh error milega: <code>"Corporate rides are billed directly to the company"</code></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 8: PASSENGER APIs -->
+  <h2 class="section-title" id="passenger-apis">8. Passenger Side APIs</h2>
+
+  <!-- RIDE REQUEST -->
+  <h3 class="sub-title">8.1 Ride Book Karo</h3>
+  <div class="api-block">
+    <div class="api-header">
+      <span class="method method-post">POST</span>
+      <span class="api-url">/api/v1/rides/request</span>
+      <span class="api-desc">Naya ride book karo</span>
+    </div>
+    <div class="api-body">
+      <h4 class="mini-title">Request Payload</h4>
+      <pre>{
+  "pickupLat":    28.7041,
+  "pickupLng":    77.1025,
+  "dropLat":      28.7200,
+  "dropLng":      77.1100,
+  "vehicleType":  "auto",          // "bike" | "auto" | "car"
+  "paymentMethod": "wallet",       // "wallet" | "cash" | "personal_upi" | "online" | "corporate"
+  "couponCode":   "SAVE20",        // optional
+  "scheduledAt":  null             // null = abhi, ISO string = schedule
+}</pre>
+      <h4 class="mini-title">Response</h4>
+      <pre>{
+  "success": true,
+  "data": {
+    "rideId":          "123",
+    "rideNumber":      "GM-2026-00123",
+    "status":          "requested",
+    "estimatedFare":   120.00,
+    "paymentMethod":   "wallet",
+    "pickup":          { "address": "...", "lat": 28.7041, "lng": 77.1025 },
+    "dropoff":         { "address": "...", "lat": 28.7200, "lng": 77.1100 },
+    "vehicleType":     "auto",
+    "surgeMultiplier": 1.2,
+    "isFreeRide":      false
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- WALLET BALANCE -->
+  <h3 class="sub-title">8.2 Wallet Balance Check Karo</h3>
+  <div class="api-block">
+    <div class="api-header">
+      <span class="method method-get">GET</span>
+      <span class="api-url">/api/v1/wallet/balance</span>
+      <span class="api-desc">Quick balance check (ride book karne se pehle)</span>
+    </div>
+    <div class="api-body">
+      <h4 class="mini-title">Response</h4>
+      <pre>{
+  "success": true,
+  "data": {
+    "balance": 850.00
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- WALLET RECHARGE -->
+  <h3 class="sub-title">8.3 Wallet Recharge Karo</h3>
+  <div class="api-block">
+    <div class="api-header">
+      <span class="method method-post">POST</span>
+      <span class="api-url">/api/v1/wallet/recharge</span>
+      <span class="api-desc">Razorpay/UPI se wallet mein paisa daalo</span>
+    </div>
+    <div class="api-body">
+      <h4 class="mini-title">Request Payload</h4>
+      <pre>{
+  "amount":                  500,
+  "payment_method":          "upi",      // "upi" | "card" | "netbanking"
+  "payment_gateway":         "razorpay",
+  "gateway_transaction_id":  "pay_xyz123"
+}</pre>
+      <h4 class="mini-title">Response</h4>
+      <pre>{
+  "success": true,
+  "message": "₹500 added to wallet",
+  "data": {
+    "transaction": {
+      "transactionNumber": "TXN1716123456789AB3K",
+      "amount":            500,
+      "type":              "credit",
+      "category":          "wallet_recharge",
+      "status":            "success"
+    },
+    "newBalance": 1350.00
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- WALLET TRANSACTIONS -->
+  <h3 class="sub-title">8.4 Transaction History</h3>
+  <div class="api-block">
+    <div class="api-header">
+      <span class="method method-get">GET</span>
+      <span class="api-url">/api/v1/wallet/transactions?limit=20&offset=0&type=debit</span>
+      <span class="api-desc">Paginated transaction history</span>
+    </div>
+    <div class="api-body">
+      <h4 class="mini-title">Query Params</h4>
+      <table>
+        <tr><th>Param</th><th>Values</th><th>Description</th></tr>
+        <tr><td>type</td><td>credit / debit</td><td>Filter by type</td></tr>
+        <tr><td>category</td><td>ride_payment / wallet_recharge / ride_refund / cancellation_fee</td><td>Filter by category</td></tr>
+        <tr><td>limit</td><td>number (default 20)</td><td>Per page</td></tr>
+        <tr><td>offset</td><td>number (default 0)</td><td>Skip records</td></tr>
+      </table>
+      <h4 class="mini-title">Response</h4>
+      <pre>{
+  "success": true,
+  "data": {
+    "transactions": [
+      {
+        "transactionNumber": "TXN...",
+        "amount":            120.00,
+        "type":              "debit",
+        "category":          "ride_payment",
+        "paymentMethod":     "wallet",
+        "status":            "success",
+        "rideId":            123,
+        "createdAt":         "2026-05-10T11:30:00Z"
+      }
+    ],
+    "pagination": {
+      "total":   45,
+      "limit":   20,
+      "offset":  0,
+      "hasMore": true
+    }
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- CANCEL RIDE -->
+  <h3 class="sub-title">8.5 Ride Cancel Karo</h3>
+  <div class="api-block">
+    <div class="api-header">
+      <span class="method method-post">POST</span>
+      <span class="api-url">/api/v1/rides/:rideId/cancel</span>
+      <span class="api-desc">Passenger ki taraf se cancellation</span>
+    </div>
+    <div class="api-body">
+      <h4 class="mini-title">Request Payload</h4>
+      <pre>{
+  "reason_code":            "driver_too_far",
+  "reason_text":            "Driver bahut door hai",
+  "driver_distance_meters": 800
+}</pre>
+      <h4 class="mini-title">Response</h4>
+      <pre>{
+  "success": true,
+  "data": {
+    "rideId":        123,
+    "status":        "cancelled",
+    "penaltyApplied": true,
+    "penaltyAmount":  30,
+    "message":       "Ride cancelled. Cancellation fee of ₹30 applied."
+  }
+}</pre>
+      <div class="alert alert-warning" style="margin-top:12px">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-text">Penalty tab lagti hai jab driver assigned ho + 800m se paas aa chuka ho. Penalty wallet se auto-debit hoti hai.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 9: DRIVER APIs -->
+  <h2 class="section-title" id="driver-apis">9. Driver Side APIs</h2>
+
+  <!-- ACCEPT RIDE -->
+  <h3 class="sub-title">9.1 Ride Accept Karo</h3>
+  <div class="api-block">
+    <div class="api-header">
+      <span class="method method-post">POST</span>
+      <span class="api-url">/api/v1/rides/:rideId/accept</span>
+      <span class="api-desc">Ride accept karo (REST API — zaroori hai)</span>
+    </div>
+    <div class="api-body">
+      <div class="alert alert-warning">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-text"><strong>Dual Step:</strong> Ride accept karte waqt <strong>dono</strong> karna padta hai — pehle socket emit (<code>ride:accept</code>) phir yeh REST API. Sirf socket se DB update nahi hoti.</div>
+      </div>
+      <h4 class="mini-title">Request</h4>
+      <pre>No body needed — rideId URL mein hai
+Authorization: Bearer &lt;DRIVER_TOKEN&gt;</pre>
+      <h4 class="mini-title">Response</h4>
+      <pre>{
+  "success": true,
+  "data": {
+    "rideId":          123,
+    "status":          "driver_assigned",
+    "etaMinutes":      8,
+    "passengerName":   "Rahul Kumar",
+    "passengerPhone":  "9876543210",
+    "pickup":          { "address": "...", "lat": 28.70, "lng": 77.10 },
+    "dropoff":         { "address": "...", "lat": 28.72, "lng": 77.11 },
+    "estimatedFare":   120.00,
+    "paymentMethod":   "cash",
+    "otp":             "4821"
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- UPDATE STATUS -->
+  <h3 class="sub-title">9.2 Ride Status Update Karo</h3>
+  <div class="api-block">
+    <div class="api-header">
+      <span class="method method-patch">PATCH</span>
+      <span class="api-url">/api/v1/rides/:rideId/status</span>
+      <span class="api-desc">Ride ka status change karo step by step</span>
+    </div>
+    <div class="api-body">
+      <h4 class="mini-title">Status Flow</h4>
+      <div class="flow-box">
+requested → driver_assigned → driver_arrived → in_progress → completed
+      </div>
+      <h4 class="mini-title">Request Payload</h4>
+      <pre>{
+  "status": "driver_arrived"   // ya "in_progress" ya "completed"
+}</pre>
+      <h4 class="mini-title">Completed Response (Wallet Payment)</h4>
+      <pre>{
+  "success": true,
+  "data": {
+    "rideId":      123,
+    "status":      "completed",
+    "finalFare":   120.00,
+    "paymentMethod": "wallet",
+    "earnings": {
+      "netEarnings":  102.00,
+      "platformFee":  18.00
+    }
+  }
+}</pre>
+      <h4 class="mini-title">Completed Response (Cash Payment)</h4>
+      <pre>{
+  "success": true,
+  "data": {
+    "rideId":      123,
+    "status":      "completed",
+    "finalFare":   120.00,
+    "paymentMethod": "cash",
+    "message":     "Collect cash from passenger. Then confirm via /cash-payment/confirm"
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- CASH CONFIRM -->
+  <h3 class="sub-title">9.3 Cash Collection Confirm Karo</h3>
+  <div class="api-block">
+    <div class="api-header">
+      <span class="method method-post">POST</span>
+      <span class="api-url">/api/v1/cash-payment/confirm</span>
+      <span class="api-desc">Cash ya Personal UPI lene ke baad confirm karo</span>
+    </div>
+    <div class="api-body">
+      <h4 class="mini-title">Request Payload</h4>
+      <pre>{
+  "ride_id": 123,
+  "method":  "cash"   // ya "personal_upi"
+}</pre>
+      <h4 class="mini-title">Response</h4>
+      <pre>{
+  "success": true,
+  "message": "Cash collected. Deposit ₹18 to receive your ₹102 earnings.",
+  "data": {
+    "rideId":          123,
+    "method":          "cash",
+    "finalFare":       120.00,
+    "netEarnings":     102.00,
+    "platformShareDue": 18.00,   // company ko dena hai
+    "earningsOnHold":  102.00    // wallet mein tabhi aayega jab deposit ho
+  }
+}</pre>
+      <div class="alert alert-warning" style="margin-top:12px">
+        <div class="alert-icon">💡</div>
+        <div class="alert-text">Socket event bhi aayega: <code>driver:cash_dues_updated</code> — app mein "Deposit ₹18 to receive ₹102" dikhao.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CASH BALANCE -->
+  <h3 class="sub-title">9.4 Pending Dues Check Karo</h3>
+  <div class="api-block">
+    <div class="api-header">
+      <span class="method method-get">GET</span>
+      <span class="api-url">/api/v1/drivers/cash/balance</span>
+      <span class="api-desc">Kitna pending hai company ko dena</span>
+    </div>
+    <div class="api-body">
+      <h4 class="mini-title">Response</h4>
+      <pre>{
+  "success": true,
+  "data": {
+    "pendingAmount":       54.00,   // company ko dena hai (multiple rides ka total)
+    "pendingNetEarnings":  306.00,  // driver ka ruka hua paisa
+    "totalCashCollected":  360.00,  // aaj tak total cash liya
+    "totalDeposited":      0,
+    "cashLimit":           2000.00, // is se zyada hone pe block
+    "isLimitExceeded":     false
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- DEPOSIT -->
+  <h3 class="sub-title">9.5 Platform Fee Deposit Karo</h3>
+  <div class="api-block">
+    <div class="api-header">
+      <span class="method method-post">POST</span>
+      <span class="api-url">/api/v1/drivers/cash/deposit</span>
+      <span class="api-desc">Company ko UPI/bank se paisa bhejo</span>
+    </div>
+    <div class="api-body">
+      <h4 class="mini-title">Request Payload</h4>
+      <pre>{
+  "amount":           54.00,
+  "deposit_method":   "upi",          // "upi" | "bank_transfer" | "cash_center"
+  "reference_number": "UPI123456789", // transaction ID
+  "deposit_proof":    "https://s3.../screenshot.jpg"  // optional
+}</pre>
+      <h4 class="mini-title">Response</h4>
+      <pre>{
+  "success": true,
+  "depositId":        45,
+  "amount":           54.00,
+  "depositMethod":    "upi",
+  "status":           "pending",       // admin verify karega
+  "referenceNumber":  "UPI123456789",
+  "earningsReleased": 306.00,         // driver wallet mein aa gaya ✅
+  "walletBalance":    1408.00,        // naya balance
+  "message":          "Deposit submitted. ₹306 earnings credited to your wallet."
+}</pre>
+    </div>
+  </div>
+
+  <!-- EARNINGS -->
+  <h3 class="sub-title">9.6 Earnings History</h3>
+  <div class="grid2">
+    <div class="api-block">
+      <div class="api-header">
+        <span class="method method-get">GET</span>
+        <span class="api-url">/api/v1/drivers/earnings/weekly</span>
+      </div>
+      <div class="api-body">
+        <pre>{
+  "weekStart":        "2026-05-05",
+  "weekEnd":          "2026-05-11",
+  "totalRides":       18,
+  "completedRides":   16,
+  "netEarnings":      1564.00,
+  "cashCollected":    480.00,
+  "onlineEarnings":   1084.00,
+  "avgEarningPerRide": 97.75
+}</pre>
+      </div>
+    </div>
+    <div class="api-block">
+      <div class="api-header">
+        <span class="method method-get">GET</span>
+        <span class="api-url">/api/v1/drivers/earnings/current-week</span>
+      </div>
+      <div class="api-body">
+        <pre>{
+  "totalRides":     8,
+  "netEarnings":    720.00,
+  "cashCollected":  240.00,
+  "onlineEarnings": 480.00,
+  "hoursOnline":    4.5
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 10: FRAUD PREVENTION -->
+  <h2 class="section-title" id="fraud">10. Fraud Prevention — Cash Model Detail</h2>
+
+  <div class="card card-red">
+    <h4 class="mini-title" style="color:#fc8181">Problem Statement</h4>
+    <p>Pehle ka system: Driver ₹120 cash physically leta tha + ₹102 wallet mein bhi milta tha. ₹18 company ka — koi enforcement nahi tha. Driver kabhi deposit na kare — system rok nahi sakta tha.</p>
+  </div>
+
+  <h3 class="sub-title">3 Layer Protection (Rapido Jaisa)</h3>
+
+  <div class="card card-green">
+    <h4 class="mini-title" style="color:#68d391">Layer 1 — No Upfront Wallet Credit</h4>
+    <pre>Cash confirm karo:
+  wallet: ₹0 change  ← fraud impossible
+  pending_net_earnings: ₹102 held ← driver ka paisa ruka hai
+  pending_amount: ₹18 tracked ← company ka paisa track hua</pre>
+  </div>
+
+  <div class="card card-blue">
+    <h4 class="mini-title" style="color:#90cdf4">Layer 2 — Auto Deduction from Online Earnings</h4>
+    <pre>Driver ne agle din online ride ki. Earning: ₹95.
+
+creditDriverEarnings() automatically:
+  Cash dues check: pending_amount = ₹18
+  Auto-deduct: ₹18
+  Net credit: ₹77 (95-18)
+  + Held ₹102 bhi wallet mein release ✅
+
+Driver chahe deposit na kare — system khud kat lega.</pre>
+  </div>
+
+  <div class="card card-orange">
+    <h4 class="mini-title" style="color:#f6ad55">Layer 3 — Cash Limit Block</h4>
+    <pre>pending_amount >= ₹2000 (cash_limit):
+  is_limit_exceeded = TRUE
+  Driver ko naya ride accept karne se rok sakte hain (admin action)
+
+2 ghante baad bhi pending:
+  payment_status = 'admin_review_required'
+  Admin ko alert</pre>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 11: SUMMARY TABLE -->
+  <h2 class="section-title" id="summary">11. Final Summary Table</h2>
+
+  <table>
+    <tr>
+      <th>Payment Method</th>
+      <th>Passenger Kab Pay Karta Hai</th>
+      <th>Driver Ko Kab Milta Hai</th>
+      <th>Driver Kya Kare</th>
+      <th>total_earnings Update</th>
+    </tr>
+    <tr>
+      <td><span class="badge badge-blue">wallet</span></td>
+      <td>Ride complete pe auto-debit</td>
+      <td>Turant (ride complete pe)</td>
+      <td>Kuch nahi</td>
+      <td>creditDriverEarnings pe ✅</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-green">cash</span></td>
+      <td>Physically driver ko</td>
+      <td>Deposit karne ke baad</td>
+      <td>Confirm + deposit karo</td>
+      <td>Deposit/auto-deduct pe ✅</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-orange">personal_upi</span></td>
+      <td>Driver ki UPI pe</td>
+      <td>Deposit karne ke baad</td>
+      <td>Confirm + deposit karo</td>
+      <td>Deposit/auto-deduct pe ✅</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-purple">online/card</span></td>
+      <td>Razorpay se</td>
+      <td>Webhook confirm pe</td>
+      <td>Kuch nahi</td>
+      <td>postPaymentWorker pe ✅</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-gray">corporate</span></td>
+      <td>Company invoice</td>
+      <td>Turant (platform risk leta hai)</td>
+      <td>Kuch nahi</td>
+      <td>processCorporateBilling pe ✅</td>
+    </tr>
+  </table>
+
+  <h3 class="sub-title">Files Changed — Summary</h3>
+  <table>
+    <tr><th>File</th><th>Kya Badla</th><th>Kyun</th></tr>
+    <tr>
+      <td><code>rideService.js</code></td>
+      <td>creditDriverEarnings import + call added for wallet rides</td>
+      <td>Bug 1 fix — driver wallet credit ho rahi thi hi nahi</td>
+    </tr>
+    <tr>
+      <td><code>rideService.js</code></td>
+      <td>addRideCompletionJob se driverTotalEarnings + netEarnings hataya</td>
+      <td>Bug 2 fix — double count prevent kiya</td>
+    </tr>
+    <tr>
+      <td><code>rideCompletionWorker.js</code></td>
+      <td>total_earnings update hataaya — sirf total_rides</td>
+      <td>Bug 2 fix — earningsService already karta hai</td>
+    </tr>
+    <tr>
+      <td><code>rideCollectionService.js</code></td>
+      <td>creditDriverEarnings call hatayi + dead import clean</td>
+      <td>Bug 3 fix — Rapido model: cash pe turant credit nahi</td>
+    </tr>
+    <tr>
+      <td><code>walletService.js</code></td>
+      <td>Purani duplicate creditDriverEarnings function delete</td>
+      <td>Bug 4 fix — confusion avoid kiya</td>
+    </tr>
+    <tr>
+      <td><code>earningsService.js</code></td>
+      <td>cashRepo import + auto-deduction logic add kiya</td>
+      <td>Online ride pe pending cash dues auto-deduct hone chahiye</td>
+    </tr>
+    <tr>
+      <td><code>earningsService.js</code></td>
+      <td>incrementTotalEarnings call for cash held release</td>
+      <td>total_earnings stat update for cash rides</td>
+    </tr>
+    <tr>
+      <td><code>cashCollectionService.js</code></td>
+      <td>Deposit pe releaseNetEarnings + creditWallet + incrementTotalEarnings</td>
+      <td>Driver earnings release on deposit</td>
+    </tr>
+    <tr>
+      <td><code>cashCollection.repository.js</code></td>
+      <td>addToPending mein netEarnings param + releaseNetEarnings function</td>
+      <td>pending_net_earnings track karne ke liye</td>
+    </tr>
+    <tr>
+      <td><code>driver.repository.js</code></td>
+      <td>incrementDriverCashBalance signature update + incrementTotalEarnings add</td>
+      <td>Cash model support</td>
+    </tr>
+    <tr>
+      <td><code>056_add_pending_net_earnings.sql</code></td>
+      <td>driver_cash_balance mein pending_net_earnings column add</td>
+      <td>Driver ka held earnings track karne ke liye</td>
+    </tr>
+  </table>
+
+  <div class="alert alert-success" style="margin-top:40px">
+    <div class="alert-icon">✅</div>
+    <div class="alert-text">
+      <strong>Ab payment flow 100% sahi hai — Rapido/Uber jaisa:</strong><br><br>
+      • Wallet rides: passenger debit + driver credit ek hi flow mein ✅<br>
+      • Cash rides: driver ka paisa hold hota hai jab tak platform fee settle na ho ✅<br>
+      • Online rides: Razorpay webhook pe idempotent credit ✅<br>
+      • total_earnings: sirf ek baar update hota hai, jab paisa actually wallet mein aata hai ✅<br>
+      • Koi duplicate function calls nahi ✅<br>
+      • Har operation idempotent hai — double charge/credit impossible ✅
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>GoMobility — Payment Flow Documentation v2.0</p>
+  <p style="margin-top:8px; color:#4a5568;">Node.js + Express 5 | PostgreSQL | Redis | Socket.IO | Razorpay</p>
+</footer>
+
+</body>
+</html>

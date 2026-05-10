@@ -1,5 +1,6 @@
 import * as earningsRepo from '../repositories/earnings.repository.js';
 import * as driverRepo from '../repositories/driver.repository.js';
+import * as cashRepo from '../repositories/cashCollection.repository.js';
 import { creditWallet } from '../../wallet/repositories/wallet.repository.js';
 import { pool } from '../../../infrastructure/database/postgres.js';
 import { NotFoundError } from '../../../core/errors/ApiError.js';
@@ -130,7 +131,43 @@ export const creditDriverEarnings = async ({
             };
         }
 
-        // Credit driver wallet with net earnings
+        // ── Auto-deduction: pending cash dues hain toh online earning se kat lo ──
+        // Rapido model: cash ride ka platform fee jo driver ne deposit nahi kiya,
+        // wo online earning se automatically kat jaata hai
+        let autoDeductedAmount = 0;
+        const cashBalance = await cashRepo.findCashBalance(driver.id);
+        const pendingCashDues = parseFloat(cashBalance?.pending_amount ?? 0);
+        const heldNetEarnings = parseFloat(cashBalance?.pending_net_earnings ?? 0);
+
+        if (pendingCashDues > 0 && paymentMethod !== 'cash' && paymentMethod !== 'personal_upi') {
+            autoDeductedAmount = Math.min(pendingCashDues, netEarnings);
+            netEarnings = netEarnings - autoDeductedAmount;
+
+            // Cash dues settle karo
+            await cashRepo.deductFromPending(client, driver.id, autoDeductedAmount);
+
+            // Auto-deduct deposit record banao
+            await cashRepo.insertDeposit({
+                driver_id:        driver.id,
+                amount:           autoDeductedAmount,
+                deposit_method:   'auto_deduct',
+                reference_number: `AUTO-${rideId}-${Date.now()}`,
+                deposit_proof:    null,
+            });
+
+            // Pending net earnings from cash rides wallet mein release karo
+            if (heldNetEarnings > 0) {
+                await cashRepo.releaseNetEarnings(client, driver.id);
+                await creditWallet(client, driverUserId, heldNetEarnings);
+                // total_earnings stat update karo — cash ride ka paisa ab actually mila
+                await driverRepo.incrementTotalEarnings(client, driver.id, heldNetEarnings);
+                logger.info(`[Earnings] Cash held earnings released | Driver: ${driver.id} | Amount: ₹${heldNetEarnings}`);
+            }
+
+            logger.info(`[Earnings] Auto-deducted cash dues | Driver: ${driver.id} | Deducted: ₹${autoDeductedAmount} | Remaining dues: ₹${pendingCashDues - autoDeductedAmount}`);
+        }
+
+        // Credit driver wallet with net earnings (auto-deduction ke baad jo bacha)
         const updatedWallet = await creditWallet(client, driverUserId, netEarnings);
 
         // Record the earnings transaction
@@ -175,11 +212,15 @@ export const creditDriverEarnings = async ({
             success: true,
             message: 'Driver earnings credited successfully',
             data: {
-                earningsTransaction: earningsTxn.rows[0],
-                walletBalance: parseFloat(updatedWallet.balance),
+                earningsTransaction:  earningsTxn.rows[0],
+                walletBalance:        parseFloat(updatedWallet.balance),
                 netEarnings,
                 platformFee,
                 paymentMethod,
+                ...(autoDeductedAmount > 0 && {
+                    autoDeducted:      autoDeductedAmount,
+                    cashHeldReleased:  heldNetEarnings,
+                }),
             },
         };
     } catch (error) {

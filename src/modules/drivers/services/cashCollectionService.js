@@ -1,5 +1,7 @@
 import * as cashRepo from '../repositories/cashCollection.repository.js';
 import * as driverRepo from '../repositories/driver.repository.js';
+import { creditWallet } from '../../wallet/repositories/wallet.repository.js';
+import { pool } from '../../../infrastructure/database/postgres.js';
 import { NotFoundError, ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 
@@ -31,7 +33,10 @@ export const getCashBalance = async (userId) => {
 
 // ─── Submit cash deposit ────────────────────────────────────────────────────
 export const submitDeposit = async (userId, depositData) => {
+    const client = await pool.connect();
     try {
+        await client.query('BEGIN');
+
         const driver = await driverRepo.findDriverByUserId(userId);
         if (!driver) throw new NotFoundError('Driver profile');
 
@@ -44,25 +49,50 @@ export const submitDeposit = async (userId, depositData) => {
             throw new ApiError(400, `Deposit amount cannot exceed pending amount (₹${balance.pending_amount})`);
         }
 
+        // Deposit record banao
         const deposit = await cashRepo.insertDeposit({
-            driver_id: driver.id,
-            amount: depositData.amount,
-            deposit_method: depositData.deposit_method,
+            driver_id:        driver.id,
+            amount:           depositData.amount,
+            deposit_method:   depositData.deposit_method,
             reference_number: depositData.reference_number,
-            deposit_proof: depositData.deposit_proof
+            deposit_proof:    depositData.deposit_proof,
         });
 
+        // Pending dues kam karo
+        await cashRepo.deductFromPending(client, driver.id, depositData.amount);
+
+        // Held net earnings release karo → driver wallet mein
+        // (Rapido model: deposit submit hote hi earnings credit hoti hain, admin baad mein verify karta hai)
+        const heldEarnings = await cashRepo.releaseNetEarnings(client, driver.id);
+        let walletBalance = null;
+        if (heldEarnings > 0) {
+            const updatedWallet = await creditWallet(client, driver.user_id, heldEarnings);
+            walletBalance = parseFloat(updatedWallet.balance);
+            // total_earnings stat update karo — cash ride ka paisa ab actually mila
+            await driverRepo.incrementTotalEarnings(client, driver.id, heldEarnings);
+            logger.info(`[Deposit] Released held earnings | Driver: ${driver.id} | Amount: ₹${heldEarnings}`);
+        }
+
+        await client.query('COMMIT');
+
         return {
-            depositId: deposit.id,
-            amount: parseFloat(deposit.amount),
-            depositMethod: deposit.deposit_method,
-            status: deposit.status,
-            referenceNumber: deposit.reference_number,
-            message: 'Deposit submitted. Pending verification.'
+            depositId:        deposit.id,
+            amount:           parseFloat(deposit.amount),
+            depositMethod:    deposit.deposit_method,
+            status:           deposit.status,
+            referenceNumber:  deposit.reference_number,
+            earningsReleased: heldEarnings,
+            walletBalance,
+            message: heldEarnings > 0
+                ? `Deposit submitted. ₹${heldEarnings.toFixed(0)} earnings credited to your wallet.`
+                : 'Deposit submitted. Pending verification.',
         };
     } catch (error) {
+        await client.query('ROLLBACK').catch(() => {});
         logger.error('Submit deposit service error:', error);
         throw error;
+    } finally {
+        client.release();
     }
 };
 

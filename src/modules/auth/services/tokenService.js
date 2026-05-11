@@ -36,6 +36,22 @@ export const verifyToken = (token) => {
     }
 };
 
+export const generateRefreshToken = (user) => {
+    return jwt.sign(
+        {
+            userId: user.id,
+            phone: user.phone_number,
+            role: user.role,
+            type: 'refresh'
+        },
+        ENV.JWT_SECRET,
+        {
+            expiresIn: ENV.JWT_REFRESH_EXPIRY || '7d',
+            algorithm: 'HS256'
+        }
+    );
+};
+
 export const decodeToken = (token) => {
     return jwt.decode(token);
 };

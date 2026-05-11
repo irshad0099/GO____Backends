@@ -19,25 +19,27 @@ import {
 
 const router = express.Router();
 
-router.use(authenticate);
+// router.use(authenticate); // Removed global authentication - apply per route
 
 // ─── Scheduled Rides (Book for Later) ───────────────────────────────────────
 // POST /api/v1/rides/schedule
 router.post(
     '/schedule',
+    authenticate,
     authorize('passenger'),
     joiValidate(scheduleRideSchema),
     schedCtrl.scheduleRide
 );
 
 // GET /api/v1/rides/scheduled — my scheduled rides
-router.get('/scheduled', authorize('passenger'), schedCtrl.getMyScheduled);
+router.get('/scheduled', authenticate, authorize('passenger'), schedCtrl.getMyScheduled);
 
 // DELETE /api/v1/rides/scheduled/:id — cancel scheduled ride
-router.delete('/scheduled/:id', authorize('passenger'), schedCtrl.cancelScheduled);
+router.delete('/scheduled/:id', authenticate, authorize('passenger'), schedCtrl.cancelScheduled);
 
 // GET /nearby-drivers – uses QUERY validators
 router.get('/nearby-drivers',
+    authenticate,
     validate([
         validator.validateVehicleTypeQuery(),
         validator.validateLatitudeQuery('latitude'),
@@ -46,9 +48,10 @@ router.get('/nearby-drivers',
     controller.findNearbyDrivers
 );
 
-router.post('/calculate-fare', controller.calculateFare);
+router.post('/calculate-fare', authenticate, controller.calculateFare);
 
 router.post('/request',
+    authenticate,
     authorize('passenger'),
     validate(validator.requestRideValidators),
     controller.requestRide

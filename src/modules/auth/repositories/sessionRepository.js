@@ -1,7 +1,7 @@
 import { db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 
-export const createSession = async ({ userId, accessToken, ipAddress, userAgent, deviceId, deviceType }) => {
+export const createSession = async ({ userId, accessToken, refreshToken, ipAddress, userAgent, deviceId, deviceType }) => {
     try {
         // Calculate expiry (7 days from now)
         const expiresAt = new Date();
@@ -9,10 +9,10 @@ export const createSession = async ({ userId, accessToken, ipAddress, userAgent,
 
         const result = await db.query(
             `INSERT INTO sessions 
-             (user_id, access_token, ip_address, user_agent, device_id, device_type, expires_at)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)
+             (user_id, access_token, refresh_token, ip_address, user_agent, device_id, device_type, expires_at)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
              RETURNING id, user_id, created_at`,
-            [userId, accessToken, ipAddress, userAgent, deviceId, deviceType, expiresAt]
+            [userId, accessToken, refreshToken, ipAddress, userAgent, deviceId, deviceType, expiresAt]
         );
 
         return result.rows[0];

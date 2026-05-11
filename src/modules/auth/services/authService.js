@@ -182,10 +182,12 @@ export const verifySignin = async ({ phone, email, otp, ipAddress, userAgent, ro
         await userRepo.updateUser(user.id, { last_login: new Date() });
 
         const accessToken  = tokenService.generateAccessToken(user);
+        const refreshToken = tokenService.generateRefreshToken(user);
 
         await sessionRepo.createSession({
             userId: user.id,
             accessToken,
+            refreshToken,
             ipAddress,
             userAgent
         });

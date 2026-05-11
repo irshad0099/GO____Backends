@@ -1,12 +1,12 @@
 import express from 'express';
 import { createRidePayment, calculateRidePayment, getRidePaymentStatus } from '../controllers/ridePaymentController.js';
-import { authenticate } from '../../../core/middleware/auth.middleware.js';
+import { authenticate, authorize } from '../../../core/middleware/auth.middleware.js';
 import Joi from 'joi';
 
 const router = express.Router();
 
-// All ride payment routes require authentication
-router.use(authenticate);
+// All ride payment routes require driver authentication (for cash collection)
+router.use(authenticate, authorize('driver'));
 
 // ─── Custom Joi Validation Middleware ─────────────────────────────────────
 const validateJoi = (schema) => (req, res, next) => {
@@ -32,7 +32,9 @@ const validateJoi = (schema) => (req, res, next) => {
 
 const createPaymentSchema = Joi.object({
     ride_id: Joi.number().integer().positive().required(),
-    payment_method: Joi.string().valid('cash', 'card', 'wallet', 'upi', 'qr').required(),
+    payment_method: Joi.string().valid('cash', 'qr').required().messages({
+        'any.only': 'Drivers can only collect cash or QR payments'
+    }),
     payment_gateway: Joi.string().valid('razorpay', 'stripe').optional(),
 });
 
@@ -42,7 +44,7 @@ const calculatePaymentSchema = Joi.object({
     pickupLongitude: Joi.number().required(),
     dropoffLatitude: Joi.number().required(),
     dropoffLongitude: Joi.number().required(),
-    payment_method: Joi.string().valid('cash', 'card', 'wallet', 'upi', 'qr').default('card'),
+    payment_method: Joi.string().valid('cash', 'card', 'wallet', 'qr').default('card'),
 });
 
 // ─── Routes ─────────────────────────────────────────────────────────

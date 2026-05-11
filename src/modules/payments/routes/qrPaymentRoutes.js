@@ -1,26 +1,36 @@
 import express from 'express';
-import { authenticate } from '../../../core/middleware/auth.middleware.js';
+import { authenticate, authorize } from '../../../core/middleware/auth.middleware.js';
 import { ridePaymentLimiter } from '../../../core/middleware/rateLimiter.middleware.js';
 import * as controller from '../controllers/qrPaymentController.js';
-import { createOrderSchema, verifyPaymentSchema, validate } from '../validators/paymentValidator.js';
+import { body } from 'express-validator';
 
 const router = express.Router();
 
-// ─── QR Payment Generation ────────────────────────────────────────────────
+// ─── QR Payment Generation (Driver only) ───────────────────────────────────
+// Driver generates QR after ride completion
 router.post(
     '/generate',
     authenticate,
+    authorize('driver'),
     ridePaymentLimiter,
-    validate(createOrderSchema),
+    [
+        body('ride_id').isInt().withMessage('Valid ride ID is required')
+    ],
     controller.generatePaymentQR
 );
 
-// ─── QR Payment Verification ────────────────────────────────────────────────
+// ─── QR Payment Verification (Passenger only) ───────────────────────────────
+// Passenger scans QR and completes payment
 router.post(
     '/verify',
     authenticate,
+    authorize('passenger'),
     ridePaymentLimiter,
-    validate(verifyPaymentSchema),
+    [
+        body('order_number').notEmpty().withMessage('Order number is required'),
+        body('gateway_payment_id').notEmpty().withMessage('Gateway payment ID is required'),
+        body('gateway_signature').notEmpty().withMessage('Gateway signature is required')
+    ],
     controller.verifyQRPayment
 );
 

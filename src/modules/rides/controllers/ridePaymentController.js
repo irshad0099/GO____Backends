@@ -9,23 +9,20 @@ export const createRidePayment = async (req, res, next) => {
         const userId = req.user.id;
         const { ride_id, payment_method, payment_gateway } = req.body;
 
-        // First get ride details to calculate fare
-        const ride = await rideService.getRideDetails(userId, ride_id, 'passenger');
+        // First get ride details to calculate fare - now checking for driver access
+        const ride = await rideService.getRideDetails(userId, ride_id, 'driver');
         if (!ride) {
-            throw new ApiError('Ride not found', 404);
+            throw new ApiError('Ride not found or access denied', 404);
         }
 
-        // Check if ride is completed (only completed rides can be paid)
+        // Check if ride is completed (only completed rides can have payment collected)
         if (ride.status !== 'completed') {
-            throw new ApiError('Ride must be completed before payment', 400);
+            throw new ApiError('Ride must be completed before collecting cash payment', 400);
         }
 
-        // Check if payment already exists for this ride
-        // TODO: Add payment check in rideService
-
-        // Handle cash payment differently
+        // Handle cash payment collection by driver
         if (payment_method === 'cash') {
-            // For cash payments, mark as collected by driver
+            // For cash payments, driver confirms cash collection
             const updatedRide = await updateRidePaymentStatus(ride_id, {
                 payment_status: 'cash_collected',
                 payment_method: 'cash',
@@ -34,16 +31,27 @@ export const createRidePayment = async (req, res, next) => {
 
             res.status(200).json({
                 success: true,
-                message: 'Cash payment recorded. Please pay driver directly.',
+                message: 'Cash payment collected successfully by driver',
                 data: {
                     ride: updatedRide,
                     payment_method: 'cash',
                     amount: ride.finalFare || ride.estimatedFare,
-                    status: 'cash_collected'
+                    status: 'cash_collected',
+                    collected_by: 'driver',
+                    collected_at: new Date()
                 }
             });
             return;
         }
+
+        // Handle QR payment collection by driver
+        if (payment_method === 'qr') {
+            // For QR payments, driver needs to generate QR first
+            throw new ApiError('Please use QR payment endpoint to generate QR code for this ride', 400);
+        }
+
+        // For other payment methods (not supported for driver collection)
+        throw new ApiError('Drivers can only collect cash or QR payments', 400);
 
         // For other payment methods (QR, UPI, Wallet), create payment order
         const paymentOrder = await createOrder(userId, {

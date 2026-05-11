@@ -34,7 +34,6 @@ import {
     getActivePaymentOrderByRideId,
     updatePaymentOrderStatus,
 } from '../../payments/repositories/payment.Repository.js';
-import { creditDriverEarnings } from '../../drivers/services/earningsService.js';
 import { closeDynamicQR } from '../../../infrastructure/external/payment.gateway.js';
 import { emitToPassenger, emitToDriver } from '../../../infrastructure/websocket/socket.events.js';
 import { addNotificationJob } from '../../../infrastructure/queue/rideQueue.js';
@@ -170,40 +169,27 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
             [method, platformFee, rideId]
         );
 
-        // ── 5. Credit driver wallet (net earnings) ─────────────────────────────
-        await creditDriverEarnings({
-            driverUserId:           driver.user_id,
-            rideId,
-            netEarnings,
-            platformFee,
-            paymentMethod:          method,
-            collectionMethodActual: method,
-        });
-
-        // ── 6. Update driver cash_balance (platform share due) ─────────────────
-        if (platformFee > 0) {
-            await driverRepo.incrementDriverCashBalance(client, driver.id, platformFee);
-        }
+        // ── 5. Track cash dues + hold driver's net earnings (NO wallet credit yet) ──
+        // Rapido model: wallet credit tab hoga jab platform fee deposit ho ya online earning se auto-deduct ho
+        await driverRepo.incrementDriverCashBalance(client, driver.id, platformFee, finalFare, netEarnings);
 
         await client.query('COMMIT');
 
-        // ── 7. Async side effects (non-blocking) ───────────────────────────────
+        // ── 6. Async side effects (non-blocking) ───────────────────────────────
         safeEmit(() => emitToPassenger(ride.passenger_id, 'ride:payment_settled', {
             rideId,
             amount: finalFare,
             method,
-            platformFee,
             message: `Driver confirmed ${method} payment received`,
         }), 'passenger');
 
-        safeEmit(() => emitToDriver(driverUserId, 'driver:earnings_credited', {
+        safeEmit(() => emitToDriver(driverUserId, 'driver:cash_dues_updated', {
             rideId,
             netEarnings,
-            method,
-            walletUpdated: true,
+            platformShareDue: platformFee,
+            message: `Deposit ₹${platformFee} to receive your ₹${netEarnings.toFixed(0)} earnings`,
         }), 'driver');
 
-        // Add notification job for receipt email/SMS
         await addNotificationJob('send-collection-receipt', {
             rideId,
             passengerId: ride.passenger_id,
@@ -212,18 +198,18 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
             method,
         });
 
-        logger.info(`[Collect] Manual collection confirmed | Ride: ${rideId} | Driver: ${driver.id} | Method: ${method} | Fare: ₹${finalFare}`);
+        logger.info(`[Collect] Cash collected | Ride: ${rideId} | Driver: ${driver.id} | Method: ${method} | Fare: ₹${finalFare} | PlatformDue: ₹${platformFee} | NetHeld: ₹${netEarnings}`);
 
         return {
             success: true,
-            message: 'Cash collection confirmed successfully',
+            message: `Cash collected. Deposit ₹${platformFee} to receive your ₹${netEarnings.toFixed(0)} earnings.`,
             data: {
                 rideId,
                 method,
                 finalFare,
                 netEarnings,
                 platformShareDue: platformFee,
-                cashBalanceUpdated: platformFee > 0,
+                earningsOnHold:   netEarnings,
             },
         };
     } catch (error) {

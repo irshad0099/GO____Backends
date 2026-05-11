@@ -2,6 +2,7 @@ import * as rideRepo from '../repositories/ride.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as walletRepo from '../../wallet/repositories/wallet.repository.js';
 import { payForRide } from '../../wallet/services/walletService.js';
+import { creditDriverEarnings } from '../../drivers/services/earningsService.js';
 import * as rideOtpService from './rideOtpService.js';
 import * as rideOtpRepo from '../repositories/rideOtp.repository.js';
 import * as rideCalculator from '../../../core/utils/rideCalculator.js';
@@ -755,7 +756,7 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             additionalFields.final_fare = passengerFinalFare;
             additionalFields.payment_status = 'pending';
 
-            // Wallet payment — turant debit karo ride complete hone pe
+            // Wallet payment — passenger debit + driver credit turant ride complete hone pe
             if (ride.payment_method === 'wallet' && !ride.is_free_ride && passengerFinalFare > 0) {
                 try {
                     await payForRide(ride.passenger_id, {
@@ -764,6 +765,20 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
                         description: `Wallet payment for ride #${ride.ride_number}`,
                     });
                     additionalFields.payment_status = 'completed';
+
+                    // Passenger wallet debit hua — ab driver ko credit karo
+                    try {
+                        await creditDriverEarnings({
+                            driverUserId:  driver.user_id,
+                            rideId,
+                            netEarnings:   finalResult.driver.netEarnings,
+                            platformFee:   finalResult.driver.platformFee,
+                            paymentMethod: 'wallet',
+                        });
+                    } catch (driverCreditErr) {
+                        // Passenger charged ho gaya — driver credit fail hone pe log karo, ride block mat karo
+                        logger.error(`[RideService] Driver wallet credit FAILED for ride ${rideId}:`, driverCreditErr.message);
+                    }
                 } catch (walletErr) {
                     logger.error(`[RideService] Wallet deduction failed for ride ${rideId}:`, walletErr.message);
                     // payment_status 'pending' rehne do — manually resolve hoga
@@ -776,6 +791,7 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             additionalFields.pickup_compensation = finalResult.driver.pickupDistanceCompensation ?? 0;
             additionalFields.waiting_charges = finalResult.driver.waitingEarnings ?? 0;
             additionalFields.traffic_compensation = finalResult.driver.trafficDelayCompensation ?? 0;
+            additionalFields.platform_share = finalResult.driver.platformFee ?? 0;
 
             // GPS-tracked actual distance save karo (null hoga agar tracking fail hua)
             const trackedKmFinal = await getActualDistance(rideId);
@@ -787,16 +803,15 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             // SYNC: driver ko immediately off-duty karo — naya ride accept kar sake
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
 
-            // ASYNC: driver stats (total_rides, total_earnings) + coupon recording
+            // ASYNC: driver stats (total_rides) + coupon recording
+            // total_earnings is handled by earningsService (creditDriverEarnings) — not here
             await addRideCompletionJob(rideId, {
-                driverId: driver.id,
+                driverId:       driver.id,
                 driverTotalRides: driver.total_rides,
-                driverTotalEarnings: driver.total_earnings,
-                netEarnings: finalResult.driver.netEarnings,
-                couponId: ride.coupon_id || null,
-                passengerId: ride.passenger_id,
+                couponId:       ride.coupon_id || null,
+                passengerId:    ride.passenger_id,
                 couponDiscount: Number(ride.coupon_discount) || 0,
-                finalFare: finalResult.passenger.finalFare,
+                finalFare:      finalResult.passenger.finalFare,
             });
 
             // ASYNC: FCM — passenger ko complete notification

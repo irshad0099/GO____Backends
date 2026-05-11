@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoMobility — Driver App API Guide</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --card: #20232f;
+    --border: #2e3147;
+    --accent: #6366f1;
+    --accent2: #22d3ee;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --orange: #f97316;
+    --purple: #a855f7;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --code-bg: #0d1117;
+    --tag-get: #065f46;
+    --tag-post: #1e40af;
+    --tag-patch: #78350f;
+    --tag-delete: #7f1d1d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; line-height: 1.6; }
+
+  /* Layout */
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; padding: 20px 0; z-index: 100; }
+  .main { margin-left: 260px; padding: 40px; max-width: 1000px; }
+
+  /* Sidebar */
+  .sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); }
+  .sidebar-logo h2 { font-size: 16px; color: var(--accent); }
+  .sidebar-logo p { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .sidebar-section { padding: 12px 20px 4px; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+  .sidebar a { display: block; padding: 7px 20px; font-size: 12px; color: var(--muted); text-decoration: none; border-left: 2px solid transparent; }
+  .sidebar a:hover { color: var(--text); background: var(--card); border-left-color: var(--accent); }
+
+  /* Page header */
+  .page-header { padding: 32px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+  .page-header h1 { font-size: 28px; color: var(--text); }
+  .page-header p { color: var(--muted); margin-top: 8px; max-width: 680px; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-driver { background: #1e3a5f; color: var(--accent2); }
+  .badge-auth { background: #3b1f5e; color: var(--purple); }
+
+  /* Sections */
+  .section { margin-bottom: 56px; }
+  .section-title { font-size: 20px; font-weight: 700; color: var(--text); padding-bottom: 12px; border-bottom: 2px solid var(--accent); margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
+  .section-title span { font-size: 22px; }
+
+  /* API Card */
+  .api-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+  .api-header { padding: 14px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
+  .method { padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 700; font-family: monospace; }
+  .GET    { background: var(--tag-get);    color: #6ee7b7; }
+  .POST   { background: var(--tag-post);   color: #93c5fd; }
+  .PATCH  { background: var(--tag-patch);  color: #fcd34d; }
+  .DELETE { background: var(--tag-delete); color: #fca5a5; }
+  .PUT    { background: #1c3a4a; color: #67e8f9; }
+  .endpoint { font-family: monospace; font-size: 13px; color: var(--accent2); }
+  .api-meta { padding: 14px 20px; }
+  .api-purpose { color: var(--text); margin-bottom: 12px; font-weight: 500; }
+  .api-when { background: #1a1d27; border-left: 3px solid var(--yellow); padding: 10px 14px; border-radius: 0 6px 6px 0; margin-bottom: 14px; font-size: 13px; color: var(--muted); }
+  .api-when strong { color: var(--yellow); }
+
+  /* Code blocks */
+  .code-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; margin-top: 14px; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font-size: 12px; font-family: 'Cascadia Code', 'Fira Code', monospace; }
+  .k { color: #ff79c6; } /* key */
+  .s { color: #f1fa8c; } /* string */
+  .n { color: #bd93f9; } /* number */
+  .b { color: #50fa7b; } /* bool/null */
+  .c { color: #6272a4; } /* comment */
+
+  /* Flow diagram */
+  .flow { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin-bottom: 20px; }
+  .flow-title { font-size: 14px; font-weight: 700; color: var(--accent2); margin-bottom: 16px; }
+  .flow-steps { display: flex; flex-direction: column; gap: 0; }
+  .flow-step { display: flex; gap: 16px; position: relative; }
+  .flow-step:not(:last-child)::after { content: ''; position: absolute; left: 15px; top: 36px; bottom: -4px; width: 2px; background: var(--border); }
+  .flow-num { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 2px; z-index: 1; }
+  .flow-num.green { background: var(--green); }
+  .flow-num.yellow { background: var(--yellow); color: #000; }
+  .flow-num.red { background: var(--red); }
+  .flow-num.purple { background: var(--purple); }
+  .flow-content { padding-bottom: 20px; flex: 1; }
+  .flow-content strong { color: var(--text); font-size: 13px; }
+  .flow-content p { color: var(--muted); font-size: 12px; margin-top: 3px; }
+  .flow-content .api-ref { display: inline-block; background: var(--code-bg); border: 1px solid var(--border); padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 11px; color: var(--accent2); margin-top: 5px; }
+  .flow-content .socket-ref { display: inline-block; background: #1e1b33; border: 1px solid #4338ca; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 11px; color: #a5b4fc; margin-top: 5px; }
+
+  /* Socket events */
+  .socket-card { background: #16193b; border: 1px solid #3730a3; border-radius: 8px; padding: 14px 18px; margin-bottom: 12px; }
+  .socket-event { font-family: monospace; font-size: 13px; color: #a5b4fc; font-weight: 700; }
+  .socket-type { font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-left: 8px; }
+  .socket-listen { background: #1e3a5f; color: var(--accent2); }
+  .socket-emit { background: #1e4620; color: #86efac; }
+  .socket-desc { color: var(--muted); font-size: 12px; margin-top: 5px; }
+
+  /* Payment method grid */
+  .pm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+  .pm-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .pm-title { font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+  .pm-card.cash    .pm-title { color: var(--yellow); }
+  .pm-card.upi     .pm-title { color: var(--purple); }
+  .pm-card.wallet  .pm-title { color: var(--green); }
+  .pm-card.online  .pm-title { color: var(--accent2); }
+  .pm-card.corp    .pm-title { color: var(--orange); }
+  .pm-desc { color: var(--muted); font-size: 12px; }
+  .pm-driver { margin-top: 8px; font-size: 12px; }
+  .pm-driver strong { color: var(--text); }
+
+  /* Alert box */
+  .alert { border-radius: 8px; padding: 14px 18px; margin-bottom: 16px; font-size: 13px; }
+  .alert-info  { background: #0c1a3a; border-left: 3px solid var(--accent); color: #93c5fd; }
+  .alert-warn  { background: #2d1f00; border-left: 3px solid var(--yellow); color: #fcd34d; }
+  .alert-green { background: #052e16; border-left: 3px solid var(--green); color: #86efac; }
+  .alert-red   { background: #2d0a0a; border-left: 3px solid var(--red); color: #fca5a5; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+  th { background: var(--surface); color: var(--muted); font-size: 11px; text-transform: uppercase; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 12px; vertical-align: top; }
+  td code { background: var(--code-bg); padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px; color: var(--accent2); }
+  tr:last-child td { border-bottom: none; }
+
+  /* Headers base URL */
+  .base-url { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; font-family: monospace; font-size: 13px; color: var(--yellow); margin-bottom: 24px; }
+
+  /* Auth header note */
+  .auth-note { background: #1e1b2e; border: 1px solid #4c1d95; border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; font-size: 12px; color: #c4b5fd; }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; }
+    .pm-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ===== SIDEBAR ===== -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h2>🚗 GoMobility</h2>
+    <p>Driver App — API Guide</p>
+  </div>
+
+  <div class="sidebar-section">Getting Started</div>
+  <a href="#base">Base URL & Auth</a>
+  <a href="#socket">Socket Events</a>
+  <a href="#payment-methods">Payment Methods</a>
+
+  <div class="sidebar-section">Core Flow</div>
+  <a href="#flow-ride">Complete Ride Flow</a>
+  <a href="#flow-cash">Cash Payment Flow</a>
+  <a href="#flow-upi">Personal UPI Flow</a>
+  <a href="#flow-online">Online/Wallet Flow</a>
+
+  <div class="sidebar-section">APIs</div>
+  <a href="#api-setup">Setup & Profile</a>
+  <a href="#api-location">Location & Availability</a>
+  <a href="#api-ride">Ride Management</a>
+  <a href="#api-otp">OTP</a>
+  <a href="#api-payment">Payment & Cash</a>
+  <a href="#api-earnings">Earnings</a>
+  <a href="#api-score">Score & Performance</a>
+  <a href="#api-incentive">Incentives</a>
+  <a href="#api-penalty">Penalties</a>
+  <a href="#api-destination">Destination Mode</a>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+
+<div class="page-header">
+  <div style="margin-bottom:10px">
+    <span class="badge badge-driver">Driver App</span>
+    &nbsp;<span class="badge badge-auth">Auth Required</span>
+  </div>
+  <h1>GoMobility — Driver API Guide</h1>
+  <p>Ye document <strong>sirf driver app ke liye</strong> hai. Har API ka — kab call karo, kyun karo, kya bhejo, kya milega — sab yahan clearly likha hai. Frontend developer ko yahi doc follow karni hai.</p>
+</div>
+
+
+<!-- ============================= BASE URL ============================= -->
+<section class="section" id="base">
+  <div class="section-title"><span>🔗</span> Base URL &amp; Authentication</div>
+
+  <div class="base-url">Base URL: https://your-domain.com/api/v1</div>
+
+  <div class="auth-note">
+    <strong style="color:#a78bfa">🔑 Har API mein Authorization header dena zaroori hai (except login/register)</strong><br><br>
+    <code style="background:#0d1117;padding:4px 8px;border-radius:4px;color:#f1fa8c">Authorization: Bearer &lt;your_jwt_token&gt;</code><br><br>
+    Token login/OTP verify ke baad milta hai. Token expire hone par refresh karo.
+  </div>
+
+  <table>
+    <tr>
+      <th>Header</th><th>Value</th><th>Required</th>
+    </tr>
+    <tr>
+      <td><code>Authorization</code></td>
+      <td><code>Bearer &lt;jwt_token&gt;</code></td>
+      <td style="color:var(--red)">✓ Sabhi APIs mein</td>
+    </tr>
+    <tr>
+      <td><code>Content-Type</code></td>
+      <td><code>application/json</code></td>
+      <td style="color:var(--yellow)">POST/PUT/PATCH mein</td>
+    </tr>
+  </table>
+</section>
+
+
+<!-- ============================= SOCKET EVENTS ============================= -->
+<section class="section" id="socket">
+  <div class="section-title"><span>⚡</span> Socket Events — Driver ko kaunse events sunne hain</div>
+
+  <div class="alert alert-info">
+    Driver app login karne ke baad <strong>socket connect</strong> karo. Auth karo: <code>socket.emit('auth:login', &#123; userId, role: 'driver' &#125;)</code>. Phir in events ko listen karo:
+  </div>
+
+  <div class="socket-card">
+    <div><span class="socket-event">ride:new_request</span><span class="socket-type socket-listen">LISTEN</span></div>
+    <div class="socket-desc">Nayi ride request aane par ye event milta hai. Driver ko accept/reject karna hoga 30 seconds mein.</div>
+    <div class="code-label">Data jo milega</div>
+    <pre>{
+  <span class="k">"rideId"</span>: <span class="n">123</span>,
+  <span class="k">"passenger"</span>: { <span class="k">"name"</span>: <span class="s">"Rahul"</span>, <span class="k">"rating"</span>: <span class="n">4.5</span> },
+  <span class="k">"pickup"</span>: { <span class="k">"address"</span>: <span class="s">"Connaught Place, Delhi"</span>, <span class="k">"lat"</span>: <span class="n">28.63</span>, <span class="k">"lng"</span>: <span class="n">77.22</span> },
+  <span class="k">"drop"</span>: { <span class="k">"address"</span>: <span class="s">"Hauz Khas, Delhi"</span>, <span class="k">"lat"</span>: <span class="n">28.54</span>, <span class="k">"lng"</span>: <span class="n">77.20</span> },
+  <span class="k">"estimatedFare"</span>: <span class="n">120</span>,
+  <span class="k">"paymentMethod"</span>: <span class="s">"cash"</span>,  <span class="c">// cash | wallet | upi | card | corporate</span>
+  <span class="k">"distanceKm"</span>: <span class="n">5.2</span>,
+  <span class="k">"vehicleType"</span>: <span class="s">"auto"</span>,
+  <span class="k">"timeoutSeconds"</span>: <span class="n">30</span>
+}</pre>
+  </div>
+
+  <div class="socket-card">
+    <div><span class="socket-event">driver:cash_dues_updated</span><span class="socket-type socket-listen">LISTEN</span></div>
+    <div class="socket-desc">Cash ride complete hone ke baad driver ko ye event milta hai. Screen pe pending deposit dikhao.</div>
+    <div class="code-label">Data jo milega</div>
+    <pre>{
+  <span class="k">"rideId"</span>: <span class="n">123</span>,
+  <span class="k">"netEarnings"</span>: <span class="n">102</span>,         <span class="c">// Driver ka share</span>
+  <span class="k">"platformShareDue"</span>: <span class="n">18</span>,      <span class="c">// Company ko dena hai</span>
+  <span class="k">"message"</span>: <span class="s">"Deposit ₹18 to receive your ₹102 earnings"</span>
+}</pre>
+  </div>
+
+  <div class="socket-card">
+    <div><span class="socket-event">driver:earnings_credited</span><span class="socket-type socket-listen">LISTEN</span></div>
+    <div class="socket-desc">Online/wallet ride mein driver ka wallet credited hone par ye event aata hai.</div>
+    <div class="code-label">Data jo milega</div>
+    <pre>{
+  <span class="k">"rideId"</span>: <span class="n">123</span>,
+  <span class="k">"netEarnings"</span>: <span class="n">102</span>,
+  <span class="k">"walletBalance"</span>: <span class="n">350.50</span>,
+  <span class="k">"paymentMethod"</span>: <span class="s">"wallet"</span>
+}</pre>
+  </div>
+
+  <div class="socket-card">
+    <div><span class="socket-event">ride:otp_verified</span><span class="socket-type socket-listen">LISTEN</span></div>
+    <div class="socket-desc">OTP verify hone ke baad ride in_progress hoti hai — ye confirm karta hai.</div>
+    <pre>{ <span class="k">"rideId"</span>: <span class="n">123</span>, <span class="k">"verifiedAt"</span>: <span class="s">"2024-01-01T10:00:00Z"</span>, <span class="k">"message"</span>: <span class="s">"OTP verified. Ride started!"</span> }</pre>
+  </div>
+
+  <div class="socket-card">
+    <div><span class="socket-event">ride:status_changed</span><span class="socket-type socket-listen">LISTEN</span></div>
+    <div class="socket-desc">Ride ka status change hone par milta hai (dono sides ko).</div>
+    <pre>{ <span class="k">"rideId"</span>: <span class="n">123</span>, <span class="k">"status"</span>: <span class="s">"in_progress"</span>, <span class="k">"timestamp"</span>: <span class="s">"..."</span> }</pre>
+  </div>
+
+  <div class="socket-card">
+    <div><span class="socket-event">driver:location_update</span><span class="socket-type socket-emit">EMIT</span></div>
+    <div class="socket-desc">Driver apni location bhejta hai (har 3-5 seconds). Ride active hai tab <code>ride:join</code> karna zaroori hai tracking ke liye.</div>
+    <pre><span class="c">// Ride join karo (accept karne ke baad):</span>
+socket.emit(<span class="s">'ride:join'</span>, { <span class="k">rideId</span>: <span class="n">123</span> });
+
+<span class="c">// Har 3-5 sec location bhejo:</span>
+socket.emit(<span class="s">'driver:location_update'</span>, {
+  <span class="k">latitude</span>: <span class="n">28.63</span>,
+  <span class="k">longitude</span>: <span class="n">77.22</span>,
+  <span class="k">rideId</span>: <span class="n">123</span>  <span class="c">// active ride mein</span>
+});</pre>
+  </div>
+
+  <div class="socket-card">
+    <div><span class="socket-event">driver:availability_toggle</span><span class="socket-type socket-emit">EMIT</span></div>
+    <div class="socket-desc">Driver online/offline toggle karne par emit karo.</div>
+    <pre>socket.emit(<span class="s">'driver:availability_toggle'</span>, { <span class="k">isAvailable</span>: <span class="b">true</span> });</pre>
+  </div>
+</section>
+
+
+<!-- ============================= PAYMENT METHODS ============================= -->
+<section class="section" id="payment-methods">
+  <div class="section-title"><span>💳</span> Payment Methods — Driver ko kya karna hota hai</div>
+
+  <div class="pm-grid">
+    <div class="pm-card cash">
+      <div class="pm-title">💵 Cash</div>
+      <div class="pm-desc">Passenger driver ko physically cash deta hai.</div>
+      <div class="pm-driver"><strong>Driver kya kare:</strong> Cash lene ke baad <code>collect-confirm</code> API call karo. Platform fee baad mein deposit karni hogi.</div>
+    </div>
+    <div class="pm-card upi">
+      <div class="pm-title">📱 Personal UPI</div>
+      <div class="pm-desc">Passenger driver ke personal UPI pe pay karta hai (driver ka own UPI).</div>
+      <div class="pm-driver"><strong>Driver kya kare:</strong> Payment receive hone ke baad <code>collect-confirm</code> method=personal_upi se call karo.</div>
+    </div>
+    <div class="pm-card wallet">
+      <div class="pm-title">👛 Wallet / Card / Online UPI</div>
+      <div class="pm-desc">Passenger app wallet, card ya online UPI se pay karta hai — payment automatic process hota hai.</div>
+      <div class="pm-driver"><strong>Driver kya kare:</strong> Kuch nahi karna. Earning automatically wallet mein credit ho jaati hai.</div>
+    </div>
+    <div class="pm-card corp">
+      <div class="pm-title">🏢 Corporate</div>
+      <div class="pm-desc">Corporate account se payment hoti hai (business rides).</div>
+      <div class="pm-driver"><strong>Driver kya kare:</strong> Ride complete karo. Payment backend handle karta hai.</div>
+    </div>
+  </div>
+
+  <div class="alert alert-warn">
+    <strong>⚠️ Cash/Personal UPI rides mein earning immediately wallet mein NAHI aati.</strong>
+    Driver ko platform fee (<em>company ka hissa</em>) deposit karna hoga. Tab hi apni earning wallet mein milegi (Rapido model).
+  </div>
+</section>
+
+
+<!-- ============================= RIDE FLOW ============================= -->
+<section class="section" id="flow-ride">
+  <div class="section-title"><span>🗺️</span> Complete Ride Flow — Step by Step</div>
+
+  <div class="flow">
+    <div class="flow-title">Standard Ride Flow (Driver Side)</div>
+    <div class="flow-steps">
+
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <strong>App Open → Online Ho Jao</strong>
+          <p>Driver app open karo, location update karo, phir online toggle karo.</p>
+          <span class="api-ref">PATCH /api/v1/drivers/availability</span>
+          <span class="api-ref" style="margin-left:6px">PUT /api/v1/drivers/location</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-content">
+          <strong>Nayi Ride Request Aai</strong>
+          <p>Socket event milega — 30 seconds ka timer dikhao. Driver accept ya reject kar sakta hai.</p>
+          <span class="socket-ref">LISTEN: ride:new_request</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-num green">3</div>
+        <div class="flow-content">
+          <strong>Ride Accept Karo</strong>
+          <p>Accept button press karo. Ride join karo socket se. Location updates shuru karo.</p>
+          <span class="api-ref">POST /api/v1/rides/:rideId/accept</span>
+          <span class="socket-ref" style="margin-left:6px">EMIT: ride:join &#123;rideId&#125;</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-num yellow">4</div>
+        <div class="flow-content">
+          <strong>Pickup Pe Pohoncho → OTP Generate Karo</strong>
+          <p>Pickup location pe pahunchne ke baad OTP generate karo — passenger ke phone pe SMS jayega.</p>
+          <span class="api-ref">POST /api/v1/rides/:rideId/generate-otp</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-num yellow">5</div>
+        <div class="flow-content">
+          <strong>Passenger Se OTP Lo → Verify Karo</strong>
+          <p>Passenger batayega 4-digit OTP. Driver app mein enter karo. OTP verify hone pe ride automatically in_progress ho jaati hai.</p>
+          <span class="api-ref">POST /api/v1/rides/:rideId/verify-otp</span>
+          <span class="socket-ref" style="margin-left:6px">LISTEN: ride:otp_verified</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-num">6</div>
+        <div class="flow-content">
+          <strong>Drop Pe Pohoncho → Ride Complete Karo</strong>
+          <p>Drop location pe pahunchne ke baad ride complete karo.</p>
+          <span class="api-ref">PATCH /api/v1/rides/:rideId/status  &#123;status: "completed"&#125;</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-num green">7</div>
+        <div class="flow-content">
+          <strong>Payment Collect Karo (method pe depend karta hai)</strong>
+          <p>Cash/UPI: collect-confirm API call karo. Wallet/Card: kuch nahi karna, auto-credit hogi.</p>
+          <span class="api-ref">POST /api/v1/rides/:rideId/collect-confirm</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-num">8</div>
+        <div class="flow-content">
+          <strong>Summary Dekho → Next Ride Ka Intezaar</strong>
+          <p>Trip summary screen dikhao. Rating bhi de sakte ho passenger ko.</p>
+          <span class="api-ref">GET /api/v1/rides/:rideId/driver-summary</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CASH FLOW -->
+<section class="section" id="flow-cash">
+  <div class="section-title"><span>💵</span> Cash Payment Flow — Details</div>
+
+  <div class="alert alert-warn">
+    Cash rides mein driver ke paas company ka paisa bhi hota hai. Ye platform fee deposit karni hoti hai — tab hi apna paisa milta hai.
+  </div>
+
+  <div class="flow">
+    <div class="flow-title">Cash Ride — Pura Flow</div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <strong>Ride Complete Hoi</strong>
+          <p>PATCH status=completed karo. Example: Fare = ₹120, Platform fee = ₹18, Driver share = ₹102</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num yellow">2</div>
+        <div class="flow-content">
+          <strong>Cash Physically Lo Passenger Se</strong>
+          <p>Passenger ₹120 cash deta hai. Driver ke paas ab ₹120 physically hai.</p>
+          <span class="socket-ref">LISTEN: driver:cash_dues_updated — screen pe ₹18 pending dikhao</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num green">3</div>
+        <div class="flow-content">
+          <strong>Collect Confirm API Call Karo</strong>
+          <p>Driver button press kare: "Maine cash le liya". Backend mein dues track hoti hain, wallet mein paisa abhi nahi jaata.</p>
+          <span class="api-ref">POST /api/v1/rides/:rideId/collect-confirm  &#123;method: "cash"&#125;</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num red">4</div>
+        <div class="flow-content">
+          <strong>Platform Fee Deposit Karo</strong>
+          <p>Driver ke paas ₹102 uska hai + ₹18 company ka. ₹18 deposit karna hai. Deposit ki ek limit hoti hai — exceed karne pe naye rides nahi milenge.</p>
+          <span class="api-ref">GET /api/v1/drivers/cash/balance — pending amount dekho</span>
+          <span class="api-ref" style="margin-left:0;margin-top:6px;display:inline-block">POST /api/v1/drivers/cash/deposit — deposit submit karo</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num green">5</div>
+        <div class="flow-content">
+          <strong>Earning Wallet Mein Aa Jaati Hai</strong>
+          <p>Deposit submit karne ke baad ₹102 automatically wallet mein credit ho jaata hai.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-green">
+    <strong>Auto-deduction:</strong> Agar driver ka cash pending hai aur koi online ride complete karta hai, toh wo online earning se automatically cash dues kat jaate hain aur held earnings wallet mein release hoti hain.
+  </div>
+</section>
+
+<!-- UPI FLOW -->
+<section class="section" id="flow-upi">
+  <div class="section-title"><span>📱</span> Personal UPI Flow</div>
+
+  <div class="flow">
+    <div class="flow-title">Personal UPI Ride — Flow</div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <strong>Ride Complete → Passenger Apne Driver Ka UPI Pe Pay Kare</strong>
+          <p>Driver apna UPI QR/ID dikhata hai. Passenger directly driver ke UPI pe pay karta hai.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num green">2</div>
+        <div class="flow-content">
+          <strong>Payment Confirm Hone Pe Collect Confirm Karo</strong>
+          <p>Driver ko payment receive hone ki confirmation milne ke baad collect-confirm API call karo.</p>
+          <span class="api-ref">POST /api/v1/rides/:rideId/collect-confirm  &#123;method: "personal_upi"&#125;</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num red">3</div>
+        <div class="flow-content">
+          <strong>Platform Fee Deposit Karo</strong>
+          <p>Cash ki tarah hi — platform fee deposit karni hogi aur tab earning wallet mein aayegi.</p>
+          <span class="api-ref">POST /api/v1/drivers/cash/deposit</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ONLINE FLOW -->
+<section class="section" id="flow-online">
+  <div class="section-title"><span>👛</span> Wallet / Card / Online UPI Flow</div>
+
+  <div class="flow">
+    <div class="flow-title">Online Payment — Driver Ke Liye Sabse Simple</div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <strong>Ride Complete Karo</strong>
+          <p>PATCH status=completed. Payment already passenger ke wallet/card se deduct ho jaata hai — driver kuch nahi karta.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num green">2</div>
+        <div class="flow-content">
+          <strong>Earning Automatically Wallet Mein Aa Jaati Hai</strong>
+          <p>Driver ko koi collect-confirm nahi karna. Backend automatically driver ka net earnings wallet mein credit karta hai.</p>
+          <span class="socket-ref">LISTEN: driver:earnings_credited — wallet balance update karo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-green">
+    <strong>Bonus:</strong> Agar driver ke cash dues pending hain, toh online ride ki earning se pehle wo dues automatically cut ho jaate hain, aur held cash earnings bhi release ho jaati hain.
+  </div>
+</section>
+
+
+<!-- ============================= APIs ============================= -->
+<section class="section" id="api-setup">
+  <div class="section-title"><span>👤</span> Setup &amp; Profile APIs</div>
+
+  <!-- FCM Token -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method POST">POST</span>
+      <span class="endpoint">/api/v1/drivers/fcm-token</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">FCM Token save karo — push notifications ke liye zaroori</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Driver app login hone ke baad immediately call karo. Bina iske ride request notification nahi milegi.</div>
+      <div class="code-label">Request Body</div>
+      <pre>{ <span class="k">"fcm_token"</span>: <span class="s">"FCM_TOKEN_FROM_FIREBASE_SDK"</span> }</pre>
+      <div class="code-label">Response</div>
+      <pre>{ <span class="k">"success"</span>: <span class="b">true</span>, <span class="k">"message"</span>: <span class="s">"FCM token saved successfully"</span> }</pre>
+    </div>
+  </div>
+
+  <!-- Register -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method POST">POST</span>
+      <span class="endpoint">/api/v1/drivers/register</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Driver profile register karo (first time)</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Sirf ek baar — pehli baar app use karne pe. User already auth hona chahiye.</div>
+      <div class="code-label">Request Body</div>
+      <pre>{
+  <span class="k">"license_number"</span>:    <span class="s">"DL-1234567890"</span>,
+  <span class="k">"license_expiry"</span>:    <span class="s">"2027-12-31"</span>,
+  <span class="k">"experience_years"</span>:  <span class="n">3</span>
+}</pre>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"Driver registration successful. Pending verification."</span>,
+  <span class="k">"data"</span>: { <span class="k">"id"</span>: <span class="n">45</span>, <span class="k">"user_id"</span>: <span class="n">101</span>, <span class="k">"is_verified"</span>: <span class="b">false</span>, <span class="k">"is_available"</span>: <span class="b">false</span> }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Get Profile -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/profile</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Driver ka apna profile dekho</div>
+      <div class="api-when"><strong>📌 Kab:</strong> App open hone pe, Profile screen pe, verification status check karne ke liye.</div>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"id"</span>: <span class="n">45</span>, <span class="k">"user_id"</span>: <span class="n">101</span>,
+    <span class="k">"full_name"</span>: <span class="s">"Ramesh Kumar"</span>,
+    <span class="k">"phone_number"</span>: <span class="s">"9876543210"</span>,
+    <span class="k">"is_verified"</span>: <span class="b">true</span>,
+    <span class="k">"is_available"</span>: <span class="b">false</span>,
+    <span class="k">"is_on_duty"</span>: <span class="b">false</span>,
+    <span class="k">"total_rides"</span>: <span class="n">234</span>,
+    <span class="k">"total_earnings"</span>: <span class="n">45600.50</span>,
+    <span class="k">"cash_balance"</span>: <span class="n">0</span>,       <span class="c">// pending platform fee to deposit</span>
+    <span class="k">"rating"</span>: <span class="n">4.7</span>,
+    <span class="k">"vehicle_type"</span>: <span class="s">"auto"</span>,
+    <span class="k">"vehicle_number"</span>: <span class="s">"DL01AB1234"</span>
+  }
+}</pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================= LOCATION ============================= -->
+<section class="section" id="api-location">
+  <div class="section-title"><span>📍</span> Location &amp; Availability APIs</div>
+
+  <!-- Update Location -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method PUT">PUT</span>
+      <span class="endpoint">/api/v1/drivers/location</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Driver ki current location update karo</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Jab driver online ho tab har 10-15 seconds mein. Socket se bhi bhej sakte ho but REST backup ke liye ye use karo.</div>
+      <div class="code-label">Request Body</div>
+      <pre>{ <span class="k">"latitude"</span>: <span class="n">28.6315</span>, <span class="k">"longitude"</span>: <span class="n">77.2167</span> }</pre>
+      <div class="code-label">Response</div>
+      <pre>{ <span class="k">"success"</span>: <span class="b">true</span>, <span class="k">"message"</span>: <span class="s">"Location updated successfully"</span> }</pre>
+    </div>
+  </div>
+
+  <!-- Toggle Availability -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method PATCH">PATCH</span>
+      <span class="endpoint">/api/v1/drivers/availability</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Driver online/offline toggle karo</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Jab driver duty start/end kare. Online hone pe rides milne lagti hain. Offline hone pe nahi milti.</div>
+      <div class="code-label">Request Body</div>
+      <pre>{
+  <span class="k">"isAvailable"</span>: <span class="b">true</span>,
+  <span class="k">"latitude"</span>: <span class="n">28.6315</span>,
+  <span class="k">"longitude"</span>: <span class="n">77.2167</span>
+}</pre>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"Driver is now available"</span>,
+  <span class="k">"data"</span>: { <span class="k">"isAvailable"</span>: <span class="b">true</span>, <span class="k">"lastOnlineAt"</span>: <span class="s">"2024-01-01T09:00:00Z"</span> }
+}</pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================= RIDE MANAGEMENT ============================= -->
+<section class="section" id="api-ride">
+  <div class="section-title"><span>🚖</span> Ride Management APIs</div>
+
+  <!-- Accept -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method POST">POST</span>
+      <span class="endpoint">/api/v1/rides/:rideId/accept</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Ride accept karo</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Socket pe ride:new_request aane ke baad driver ne Accept button press kiya ho. 30 seconds ke andar call karo warna timeout.</div>
+      <div class="code-label">Request Body</div>
+      <pre><span class="c">// Body nahi bhejni — rideId URL mein hoti hai</span>
+<span class="c">// POST /api/v1/rides/123/accept</span></pre>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"Ride accepted successfully"</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"rideId"</span>: <span class="n">123</span>,
+    <span class="k">"status"</span>: <span class="s">"accepted"</span>,
+    <span class="k">"passenger"</span>: { <span class="k">"name"</span>: <span class="s">"Rahul"</span>, <span class="k">"phone"</span>: <span class="s">"9876543210"</span>, <span class="k">"rating"</span>: <span class="n">4.5</span> },
+    <span class="k">"pickup"</span>: { <span class="k">"address"</span>: <span class="s">"Connaught Place"</span>, <span class="k">"lat"</span>: <span class="n">28.63</span>, <span class="k">"lng"</span>: <span class="n">77.22</span> },
+    <span class="k">"drop"</span>: { <span class="k">"address"</span>: <span class="s">"Hauz Khas"</span>, <span class="k">"lat"</span>: <span class="n">28.54</span>, <span class="k">"lng"</span>: <span class="n">77.20</span> },
+    <span class="k">"estimatedFare"</span>: <span class="n">120</span>
+  }
+}</pre>
+      <div class="alert alert-info" style="margin-top:12px">After accept: <code>socket.emit('ride:join', &#123; rideId: 123 &#125;)</code> karo — location tracking ke liye zaroori hai.</div>
+    </div>
+  </div>
+
+  <!-- Reject -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method POST">POST</span>
+      <span class="endpoint">/api/v1/rides/:rideId/reject</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Ride reject karo</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Driver ne Decline button press kiya. Baar baar reject karne se acceptance rate girta hai, penalty aa sakti hai.</div>
+      <div class="code-label">Request Body</div>
+      <pre>{ <span class="k">"reason_code"</span>: <span class="s">"too_far"</span> } <span class="c">// too_far | personal | no_fuel | other</span></pre>
+      <div class="code-label">Response</div>
+      <pre>{ <span class="k">"success"</span>: <span class="b">true</span>, <span class="k">"message"</span>: <span class="s">"Ride declined"</span> }</pre>
+    </div>
+  </div>
+
+  <!-- Update Status -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method PATCH">PATCH</span>
+      <span class="endpoint">/api/v1/rides/:rideId/status</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Ride ka status update karo</div>
+      <div class="api-when">
+        <strong>📌 Kab:</strong><br>
+        • <strong>arrived</strong> — Driver pickup location pe pahuncha<br>
+        • <strong>completed</strong> — Drop pe pahunchne ke baad, payment ke baad<br>
+        <em style="color:var(--muted)">(in_progress verify-otp API se automatically ho jaata hai)</em>
+      </div>
+      <div class="code-label">Request Body</div>
+      <pre>{ <span class="k">"status"</span>: <span class="s">"arrived"</span> }  <span class="c">// arrived | completed</span></pre>
+      <div class="code-label">Response (completed)</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"Ride status updated successfully"</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"rideId"</span>: <span class="n">123</span>,
+    <span class="k">"status"</span>: <span class="s">"completed"</span>,
+    <span class="k">"finalFare"</span>: <span class="n">120</span>,
+    <span class="k">"paymentMethod"</span>: <span class="s">"cash"</span>,
+    <span class="k">"completedAt"</span>: <span class="s">"2024-01-01T10:30:00Z"</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Driver Cancel -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method POST">POST</span>
+      <span class="endpoint">/api/v1/rides/:rideId/driver-cancel</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Emergency mein driver ride cancel karo</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Sirf emergency mein — vehicle breakdown, medical emergency. Normal cancel se acceptance rate girega.</div>
+      <div class="code-label">Request Body</div>
+      <pre><span class="c">// Body nahi chahiye</span></pre>
+      <div class="code-label">Response</div>
+      <pre>{ <span class="k">"success"</span>: <span class="b">true</span>, <span class="k">"message"</span>: <span class="s">"Ride cancelled"</span> }</pre>
+    </div>
+  </div>
+
+  <!-- Current Ride -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/rides/current</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Current active ride ka data lo</div>
+      <div class="api-when"><strong>📌 Kab:</strong> App restart hone ke baad, reconnect pe — active ride resume karne ke liye.</div>
+      <div class="code-label">Response (ride active hai tab)</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: { <span class="k">"rideId"</span>: <span class="n">123</span>, <span class="k">"status"</span>: <span class="s">"in_progress"</span>, <span class="k">"passenger"</span>: {...}, <span class="k">"pickup"</span>: {...}, <span class="k">"drop"</span>: {...} }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Driver Summary -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/rides/:rideId/driver-summary</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Ride complete hone ke baad trip summary screen ke liye data</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Ride complete hone ke baad — earning, fare breakup, tip dikhane ke liye.</div>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"rideId"</span>: <span class="n">123</span>,
+    <span class="k">"finalFare"</span>: <span class="n">120</span>,
+    <span class="k">"netEarnings"</span>: <span class="n">102</span>,
+    <span class="k">"platformFee"</span>: <span class="n">18</span>,
+    <span class="k">"paymentMethod"</span>: <span class="s">"cash"</span>,
+    <span class="k">"distanceKm"</span>: <span class="n">5.2</span>,
+    <span class="k">"durationMinutes"</span>: <span class="n">22</span>,
+    <span class="k">"passengerRating"</span>: <span class="n">4.5</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Ride History -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/rides/driver/history</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Driver ki past rides ki history</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Rides history screen pe.</div>
+      <div class="code-label">Query Params</div>
+      <pre>?page=1&amp;limit=10&amp;status=completed  <span class="c">// status: completed | cancelled</span></pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================= OTP ============================= -->
+<section class="section" id="api-otp">
+  <div class="section-title"><span>🔢</span> OTP APIs</div>
+
+  <!-- Generate OTP -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method POST">POST</span>
+      <span class="endpoint">/api/v1/rides/:rideId/generate-otp</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">4-digit OTP generate karo — passenger ke phone pe SMS jayega</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Jab driver pickup location pe pahunch jaye. OTP generate karo → passenger ko SMS milega → passenger driver ko batayega.</div>
+      <div class="code-label">Request Body</div>
+      <pre><span class="c">// Body nahi chahiye — rideId URL mein hai</span></pre>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"rideId"</span>: <span class="n">123</span>,
+    <span class="k">"smsSent"</span>: <span class="b">true</span>,
+    <span class="k">"message"</span>: <span class="s">"OTP sent to passenger's phone"</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Verify OTP -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method POST">POST</span>
+      <span class="endpoint">/api/v1/rides/:rideId/verify-otp</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Passenger ka OTP verify karo — ride in_progress ho jaati hai</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Passenger ne OTP bataya, driver app mein enter kare. OTP verify hone pe automatically ride in_progress ho jaati hai — PATCH status nahi karna.</div>
+      <div class="code-label">Request Body</div>
+      <pre>{ <span class="k">"otp"</span>: <span class="s">"4821"</span> }</pre>
+      <div class="code-label">Response (success)</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"Ride started"</span>,
+  <span class="k">"data"</span>: { <span class="k">"verified"</span>: <span class="b">true</span>, <span class="k">"rideId"</span>: <span class="n">123</span>, <span class="k">"verifiedAt"</span>: <span class="s">"2024-01-01T10:05:00Z"</span> }
+}</pre>
+      <div class="code-label">Response (wrong OTP)</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">false</span>,
+  <span class="k">"data"</span>: { <span class="k">"verified"</span>: <span class="b">false</span>, <span class="k">"attemptsLeft"</span>: <span class="n">2</span> }
+}</pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================= PAYMENT ============================= -->
+<section class="section" id="api-payment">
+  <div class="section-title"><span>💰</span> Payment &amp; Cash Settlement APIs</div>
+
+  <!-- Collect Confirm -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method POST">POST</span>
+      <span class="endpoint">/api/v1/rides/:rideId/collect-confirm</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Driver confirm karo ki cash/personal-upi payment collect ho gayi</div>
+      <div class="api-when">
+        <strong>📌 Kab:</strong> Ride complete status ke baad, jab payment method <strong>cash</strong> ya <strong>personal_upi</strong> ho.<br>
+        Wallet/Card rides mein ye call nahi karna — automatic credit hoti hai.
+      </div>
+      <div class="code-label">Request Body</div>
+      <pre>{
+  <span class="k">"method"</span>: <span class="s">"cash"</span>  <span class="c">// "cash" | "personal_upi"</span>
+}</pre>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"Collection recorded. Deposit ₹18 to receive your ₹102 earnings."</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"rideId"</span>: <span class="n">123</span>,
+    <span class="k">"method"</span>: <span class="s">"cash"</span>,
+    <span class="k">"finalFare"</span>: <span class="n">120</span>,
+    <span class="k">"platformFee"</span>: <span class="n">18</span>,
+    <span class="k">"netEarnings"</span>: <span class="n">102</span>,
+    <span class="k">"pendingDues"</span>: <span class="n">18</span>,    <span class="c">// Deposit karna hai</span>
+    <span class="k">"walletCredited"</span>: <span class="b">false</span>  <span class="c">// Deposit ke baad credit hogi</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Cash Balance -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/cash/balance</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Driver ka pending cash dues aur cash stats dekho</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Home screen pe pending dues dikhane ke liye. Deposit screen open karne se pehle. Daily dekho.</div>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"pendingAmount"</span>: <span class="n">54.00</span>,        <span class="c">// Ye deposit karna hai (company ka paisa)</span>
+    <span class="k">"totalCashCollected"</span>: <span class="n">340.00</span>,  <span class="c">// Aaj tak kitna cash liya</span>
+    <span class="k">"totalDeposited"</span>: <span class="n">286.00</span>,      <span class="c">// Kitna deposit kiya</span>
+    <span class="k">"totalPlatformShare"</span>: <span class="n">54.00</span>,   <span class="c">// Same as pendingAmount (net)</span>
+    <span class="k">"cashLimit"</span>: <span class="n">500.00</span>,           <span class="c">// Max limit — exceed hone pe rides band</span>
+    <span class="k">"isLimitExceeded"</span>: <span class="b">false</span>,
+    <span class="k">"depositDueDate"</span>: <span class="s">"2024-01-03"</span>  <span class="c">// Iss date tak deposit karo</span>
+  }
+}</pre>
+      <div class="alert alert-red" style="margin-top:12px"><strong>isLimitExceeded = true</strong> hone par driver ko naye rides nahi milenge. Immediately deposit karo.</div>
+    </div>
+  </div>
+
+  <!-- Submit Deposit -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method POST">POST</span>
+      <span class="endpoint">/api/v1/drivers/cash/deposit</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Platform fee deposit karo — company ka paisa wapas do</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Driver ne cash deposit kiya ho (bank transfer / in-person). Deposit karne ke baad held earnings automatically wallet mein credit ho jaati hain.</div>
+      <div class="code-label">Request Body</div>
+      <pre>{
+  <span class="k">"amount"</span>: <span class="n">54.00</span>,
+  <span class="k">"deposit_method"</span>: <span class="s">"upi"</span>,       <span class="c">// "upi" | "bank_transfer" | "cash_counter"</span>
+  <span class="k">"reference_number"</span>: <span class="s">"UPI123456789"</span>,
+  <span class="k">"deposit_proof"</span>: <span class="s">"https://s3.../screenshot.jpg"</span>  <span class="c">// optional</span>
+}</pre>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"message"</span>: <span class="s">"Deposit submitted. ₹102 earnings credited to your wallet."</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"depositId"</span>: <span class="n">89</span>,
+    <span class="k">"amount"</span>: <span class="n">54.00</span>,
+    <span class="k">"depositMethod"</span>: <span class="s">"upi"</span>,
+    <span class="k">"status"</span>: <span class="s">"pending"</span>,        <span class="c">// Admin verify karega</span>
+    <span class="k">"earningsReleased"</span>: <span class="n">102.00</span>,   <span class="c">// Wallet mein aa gaya</span>
+    <span class="k">"walletBalance"</span>: <span class="n">352.00</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Deposit History -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/cash/deposits</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Past deposits ki history — kab kiya, status kya hai</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Deposit history screen pe. Verification status track karne ke liye.</div>
+      <div class="code-label">Query Params</div>
+      <pre>?limit=20&amp;offset=0</pre>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: [{
+    <span class="k">"id"</span>: <span class="n">89</span>,
+    <span class="k">"amount"</span>: <span class="n">54.00</span>,
+    <span class="k">"depositMethod"</span>: <span class="s">"upi"</span>,
+    <span class="k">"referenceNumber"</span>: <span class="s">"UPI123456789"</span>,
+    <span class="k">"status"</span>: <span class="s">"verified"</span>,     <span class="c">// pending | verified | rejected</span>
+    <span class="k">"verifiedAt"</span>: <span class="s">"2024-01-01T14:00:00Z"</span>,
+    <span class="k">"rejectionReason"</span>: <span class="b">null</span>,
+    <span class="k">"createdAt"</span>: <span class="s">"2024-01-01T11:00:00Z"</span>
+  }]
+}</pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================= EARNINGS ============================= -->
+<section class="section" id="api-earnings">
+  <div class="section-title"><span>📊</span> Earnings APIs</div>
+
+  <div class="alert alert-info">Sabhi earnings APIs driver-only hain. Earnings screen ke alag-alag sections ke liye different APIs use karo.</div>
+
+  <!-- Current Week -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/earnings/current-week</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Is hafte ki live earnings — home screen / earnings widget ke liye</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Home screen pe earnings dikhane ke liye. Real-time hoti hai.</div>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"totalRides"</span>: <span class="n">18</span>,
+    <span class="k">"completedRides"</span>: <span class="n">16</span>,
+    <span class="k">"grossEarnings"</span>: <span class="n">2400.00</span>,
+    <span class="k">"netEarnings"</span>: <span class="n">2040.00</span>,
+    <span class="k">"cashCollected"</span>: <span class="n">800.00</span>,
+    <span class="k">"onlineEarnings"</span>: <span class="n">1240.00</span>,
+    <span class="k">"totalOnlineHours"</span>: <span class="n">32.5</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Weekly -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/earnings/weekly</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Past weeks ki earnings list</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Earnings history screen — weekly breakdown dikhane ke liye.</div>
+      <div class="code-label">Query Params</div>
+      <pre>?limit=10&amp;offset=0</pre>
+      <div class="code-label">Response (per week object)</div>
+      <pre>{
+  <span class="k">"weekStart"</span>: <span class="s">"2024-01-01"</span>, <span class="k">"weekEnd"</span>: <span class="s">"2024-01-07"</span>,
+  <span class="k">"totalRides"</span>: <span class="n">42</span>, <span class="k">"completedRides"</span>: <span class="n">40</span>, <span class="k">"cancelledRides"</span>: <span class="n">2</span>,
+  <span class="k">"rideEarnings"</span>: <span class="n">4800.00</span>, <span class="k">"tipEarnings"</span>: <span class="n">200.00</span>, <span class="k">"incentiveEarnings"</span>: <span class="n">500.00</span>,
+  <span class="k">"grossEarnings"</span>: <span class="n">5500.00</span>, <span class="k">"totalDeductions"</span>: <span class="n">660.00</span>, <span class="k">"netEarnings"</span>: <span class="n">4840.00</span>,
+  <span class="k">"cashCollected"</span>: <span class="n">1500.00</span>, <span class="k">"onlineEarnings"</span>: <span class="n">3340.00</span>,
+  <span class="k">"totalOnlineHours"</span>: <span class="n">48.5</span>, <span class="k">"avgEarningPerRide"</span>: <span class="n">121.00</span>
+}</pre>
+    </div>
+  </div>
+
+  <!-- Monthly -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/earnings/monthly</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Past months ki earnings</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Monthly earnings report screen.</div>
+      <div class="code-label">Query Params</div>
+      <pre>?limit=12&amp;offset=0</pre>
+    </div>
+  </div>
+
+  <!-- Statement -->
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/earnings/statement</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Custom date range mein earnings statement</div>
+      <div class="api-when"><strong>📌 Kab:</strong> ITR filing ke liye, custom period ka report chahiye ho.</div>
+      <div class="code-label">Query Params</div>
+      <pre>?from=2024-01-01&amp;to=2024-01-31</pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================= SCORE ============================= -->
+<section class="section" id="api-score">
+  <div class="section-title"><span>⭐</span> Score &amp; Performance APIs</div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/score</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Driver ka overall performance score</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Profile screen pe, score badge dikhane ke liye.</div>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"score"</span>: <span class="n">87.5</span>,         <span class="c">// 0-100</span>
+    <span class="k">"rating"</span>: <span class="n">4.7</span>,
+    <span class="k">"acceptanceRate"</span>: <span class="n">92.3</span>,
+    <span class="k">"completionRate"</span>: <span class="n">97.1</span>,
+    <span class="k">"level"</span>: <span class="s">"Gold"</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/badge</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Driver ka badge dekho (Bronze/Silver/Gold/Platinum)</div>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/metrics/daily</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Last N days ka daily performance breakdown</div>
+      <div class="code-label">Query Params</div>
+      <pre>?days=7  <span class="c">// default 7</span></pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================= INCENTIVES ============================= -->
+<section class="section" id="api-incentive">
+  <div class="section-title"><span>🎯</span> Incentives APIs</div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/incentives</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Active incentive plans dekho — kaunse targets available hain</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Incentive/Bonus screen open karne pe. Driver ko pata chale ki "10 rides karo, ₹200 bonus milega".</div>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: [{
+    <span class="k">"id"</span>: <span class="n">5</span>,
+    <span class="k">"name"</span>: <span class="s">"Weekend Bonus"</span>,
+    <span class="k">"description"</span>: <span class="s">"Complete 10 rides this weekend, earn ₹200 extra"</span>,
+    <span class="k">"targetRides"</span>: <span class="n">10</span>,
+    <span class="k">"bonusAmount"</span>: <span class="n">200</span>,
+    <span class="k">"validUntil"</span>: <span class="s">"2024-01-07T23:59:59Z"</span>
+  }]
+}</pre>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/incentives/progress</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Mera incentive progress — kitna complete hua</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Progress bar dikhane ke liye — "7/10 rides done".</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================= PENALTIES ============================= -->
+<section class="section" id="api-penalty">
+  <div class="section-title"><span>⚠️</span> Penalties APIs</div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/penalties</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Meri penalties list — warnings, suspensions</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Penalties screen. App open hone pe check karo — agar active penalty hai toh banner dikhao.</div>
+      <div class="code-label">Response (per penalty)</div>
+      <pre>{
+  <span class="k">"id"</span>: <span class="n">12</span>,
+  <span class="k">"type"</span>: <span class="s">"warning"</span>,     <span class="c">// warning | suspension | ban</span>
+  <span class="k">"reason"</span>: <span class="s">"Low acceptance rate (below 70%)"</span>,
+  <span class="k">"isActive"</span>: <span class="b">true</span>,
+  <span class="k">"isAcknowledged"</span>: <span class="b">false</span>,
+  <span class="k">"expiresAt"</span>: <span class="b">null</span>,
+  <span class="k">"createdAt"</span>: <span class="s">"2024-01-01T08:00:00Z"</span>
+}</pre>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/penalties/ban-status</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Kya driver banned hai?</div>
+      <div class="api-when"><strong>📌 Kab:</strong> App open pe check karo. Banned driver ko rides nahi milte.</div>
+      <div class="code-label">Response</div>
+      <pre>{
+  <span class="k">"success"</span>: <span class="b">true</span>,
+  <span class="k">"data"</span>: { <span class="k">"isBanned"</span>: <span class="b">false</span>, <span class="k">"reason"</span>: <span class="b">null</span>, <span class="k">"bannedUntil"</span>: <span class="b">null</span> }
+}</pre>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method PATCH">PATCH</span>
+      <span class="endpoint">/api/v1/drivers/penalties/:penaltyId/acknowledge</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Penalty acknowledge karo — "Maine dekha"</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Penalty notification/popup pe "OK, Samajh Gaya" button.</div>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method POST">POST</span>
+      <span class="endpoint">/api/v1/drivers/penalties/:penaltyId/appeal</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Penalty ka appeal karo — ghalat hai toh contest karo</div>
+      <div class="code-label">Request Body</div>
+      <pre>{ <span class="k">"reason"</span>: <span class="s">"Meri gaadi kharab ho gayi thi isliye cancel kiya, meri galti nahi thi"</span> }</pre>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/acceptance-rate</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Last 7 days ka acceptance rate</div>
+      <div class="api-when"><strong>📌 Kab:</strong> Profile/Stats screen. 70% se kam hone pe warning dikhao.</div>
+      <div class="code-label">Response</div>
+      <pre>{ <span class="k">"success"</span>: <span class="b">true</span>, <span class="k">"data"</span>: { <span class="k">"acceptanceRate"</span>: <span class="n">88.5</span> } }</pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================= DESTINATION MODE ============================= -->
+<section class="section" id="api-destination">
+  <div class="section-title"><span>🏠</span> Destination Mode — "Ghar Ja Raha Hoon"</div>
+
+  <div class="alert alert-info">Destination mode mein sirf wahi rides milti hain jo driver ke ghar/destination ki direction mein hain. Shift khatam hone pe useful hai.</div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method POST">POST</span>
+      <span class="endpoint">/api/v1/drivers/destination-mode</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Destination mode activate karo — "Ghar ja raha hoon"</div>
+      <div class="code-label">Request Body</div>
+      <pre>{
+  <span class="k">"destinationLat"</span>: <span class="n">28.5355</span>,
+  <span class="k">"destinationLng"</span>: <span class="n">77.3910</span>,
+  <span class="k">"destinationAddress"</span>: <span class="s">"Noida Sector 62"</span>
+}</pre>
+      <div class="code-label">Response</div>
+      <pre>{ <span class="k">"success"</span>: <span class="b">true</span>, <span class="k">"message"</span>: <span class="s">"Destination mode activated"</span> }</pre>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method GET">GET</span>
+      <span class="endpoint">/api/v1/drivers/destination-mode</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Current destination mode status</div>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header">
+      <span class="method DELETE">DELETE</span>
+      <span class="endpoint">/api/v1/drivers/destination-mode</span>
+    </div>
+    <div class="api-meta">
+      <div class="api-purpose">Destination mode band karo — normal rides milne lagein</div>
+    </div>
+  </div>
+
+
+  <!-- Quick Reference Table -->
+  <div class="section-title" style="margin-top:40px"><span>📋</span> Quick Reference — Sabhi Driver APIs</div>
+
+  <table>
+    <tr><th>Method</th><th>Endpoint</th><th>Kab Use Karo</th></tr>
+    <tr><td><code>POST</code></td><td><code>/drivers/fcm-token</code></td><td>Login ke baad — push notification ke liye</td></tr>
+    <tr><td><code>POST</code></td><td><code>/drivers/register</code></td><td>Sirf pehli baar — driver registration</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/profile</code></td><td>App open / profile screen</td></tr>
+    <tr><td><code>PUT</code></td><td><code>/drivers/profile</code></td><td>Profile update karne pe</td></tr>
+    <tr><td><code>PUT</code></td><td><code>/drivers/location</code></td><td>Online hone pe har 10-15 sec</td></tr>
+    <tr><td><code>PATCH</code></td><td><code>/drivers/availability</code></td><td>Online/offline toggle</td></tr>
+    <tr><td><code>POST</code></td><td><code>/rides/:id/accept</code></td><td>Ride accept karne pe</td></tr>
+    <tr><td><code>POST</code></td><td><code>/rides/:id/reject</code></td><td>Ride decline karne pe</td></tr>
+    <tr><td><code>PATCH</code></td><td><code>/rides/:id/status</code></td><td>arrived / completed status update</td></tr>
+    <tr><td><code>POST</code></td><td><code>/rides/:id/generate-otp</code></td><td>Pickup pe pohonchne ke baad</td></tr>
+    <tr><td><code>POST</code></td><td><code>/rides/:id/verify-otp</code></td><td>Passenger OTP enter karne pe</td></tr>
+    <tr><td><code>POST</code></td><td><code>/rides/:id/collect-confirm</code></td><td>Cash/UPI payment lene ke baad</td></tr>
+    <tr><td><code>POST</code></td><td><code>/rides/:id/driver-cancel</code></td><td>Emergency cancel</td></tr>
+    <tr><td><code>GET</code></td><td><code>/rides/current</code></td><td>App restart pe active ride resume</td></tr>
+    <tr><td><code>GET</code></td><td><code>/rides/:id/driver-summary</code></td><td>Trip complete screen</td></tr>
+    <tr><td><code>GET</code></td><td><code>/rides/driver/history</code></td><td>Rides history screen</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/cash/balance</code></td><td>Pending dues check karo (daily)</td></tr>
+    <tr><td><code>POST</code></td><td><code>/drivers/cash/deposit</code></td><td>Platform fee deposit karne pe</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/cash/deposits</code></td><td>Deposit history screen</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/earnings/current-week</code></td><td>Home screen earnings widget</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/earnings/weekly</code></td><td>Weekly earnings history</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/earnings/monthly</code></td><td>Monthly earnings report</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/earnings/statement</code></td><td>Custom date range statement</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/score</code></td><td>Performance score screen</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/badge</code></td><td>Badge/level display</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/metrics/daily</code></td><td>Daily performance chart</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/incentives</code></td><td>Incentive plans screen</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/incentives/progress</code></td><td>Incentive progress bar</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/penalties</code></td><td>Penalties screen / app open</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/penalties/ban-status</code></td><td>Login / app open pe check</td></tr>
+    <tr><td><code>PATCH</code></td><td><code>/drivers/penalties/:id/acknowledge</code></td><td>"Dekh liya" button</td></tr>
+    <tr><td><code>POST</code></td><td><code>/drivers/penalties/:id/appeal</code></td><td>Penalty contest karne pe</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/acceptance-rate</code></td><td>Stats screen</td></tr>
+    <tr><td><code>POST</code></td><td><code>/drivers/destination-mode</code></td><td>"Ghar ja raha hoon" activate</td></tr>
+    <tr><td><code>GET</code></td><td><code>/drivers/destination-mode</code></td><td>Current mode check</td></tr>
+    <tr><td><code>DELETE</code></td><td><code>/drivers/destination-mode</code></td><td>Mode band karo</td></tr>
+  </table>
+
+</section>
+
+<div style="border-top:1px solid var(--border);padding:24px 0;color:var(--muted);font-size:12px;text-align:center">
+  GoMobility Driver API Guide &nbsp;·&nbsp; Last updated: May 2026 &nbsp;·&nbsp; Sirf driver app ke liye
+</div>
+
+</main>
+</div>
+</body>
+</html>

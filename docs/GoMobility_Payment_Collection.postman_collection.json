@@ -1,0 +1,767 @@
+{
+  "info": {
+    "name": "GoMobility — Payment Testing (Full)",
+    "description": "Passenger + Driver side — sabhi payment methods ka complete test flow",
+    "_postman_id": "gomobility-payment-v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "BASE_URL",        "value": "https://api.gomobility.co.in/api/v1", "type": "string" },
+    { "key": "DRIVER_TOKEN",    "value": "PASTE_DRIVER_TOKEN_HERE",             "type": "string" },
+    { "key": "PASSENGER_TOKEN", "value": "PASTE_PASSENGER_TOKEN_HERE",          "type": "string" },
+    { "key": "RIDE_ID",         "value": "",                                     "type": "string" },
+    { "key": "ORDER_NUMBER",    "value": "",                                     "type": "string" }
+  ],
+  "item": [
+
+    {
+      "name": "🔑 1. AUTH",
+      "item": [
+        {
+          "name": "Passenger — Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{BASE_URL}}/auth/send-otp", "host": ["{{BASE_URL}}"], "path": ["auth","send-otp"] },
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"9876543210\"\n}" }
+          }
+        },
+        {
+          "name": "Passenger — Verify OTP → Save Token",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "var res = pm.response.json();",
+              "if(res.data && res.data.accessToken){",
+              "  pm.collectionVariables.set('PASSENGER_TOKEN', res.data.accessToken);",
+              "  console.log('✅ Passenger token saved');",
+              "}"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{BASE_URL}}/auth/verify-otp", "host": ["{{BASE_URL}}"], "path": ["auth","verify-otp"] },
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"XXXX\"\n}" }
+          }
+        },
+        {
+          "name": "Driver — Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{BASE_URL}}/auth/send-otp", "host": ["{{BASE_URL}}"], "path": ["auth","send-otp"] },
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"9200000001\"\n}" }
+          }
+        },
+        {
+          "name": "Driver — Verify OTP → Save Token",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "var res = pm.response.json();",
+              "if(res.data && res.data.accessToken){",
+              "  pm.collectionVariables.set('DRIVER_TOKEN', res.data.accessToken);",
+              "  console.log('✅ Driver token saved');",
+              "}"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{BASE_URL}}/auth/verify-otp", "host": ["{{BASE_URL}}"], "path": ["auth","verify-otp"] },
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"9200000001\",\n  \"otp\": \"XXXX\"\n}" }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "⚙️ 2. DRIVER SETUP",
+      "item": [
+        {
+          "name": "Driver — Go Online",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/drivers/availability", "host": ["{{BASE_URL}}"], "path": ["drivers","availability"] },
+            "body": { "mode": "raw", "raw": "{\n  \"isAvailable\": true,\n  \"latitude\": 28.6315,\n  \"longitude\": 77.2167\n}" }
+          }
+        },
+        {
+          "name": "Driver — Go Offline",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/drivers/availability", "host": ["{{BASE_URL}}"], "path": ["drivers","availability"] },
+            "body": { "mode": "raw", "raw": "{\n  \"isAvailable\": false,\n  \"latitude\": 28.6315,\n  \"longitude\": 77.2167\n}" }
+          }
+        },
+        {
+          "name": "Driver — Update Location",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/drivers/location", "host": ["{{BASE_URL}}"], "path": ["drivers","location"] },
+            "body": { "mode": "raw", "raw": "{\n  \"latitude\": 28.6315,\n  \"longitude\": 77.2167\n}" }
+          }
+        },
+        {
+          "name": "Driver — Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/drivers/profile", "host": ["{{BASE_URL}}"], "path": ["drivers","profile"] }
+          }
+        },
+        {
+          "name": "Driver — Save FCM Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/drivers/fcm-token", "host": ["{{BASE_URL}}"], "path": ["drivers","fcm-token"] },
+            "body": { "mode": "raw", "raw": "{\n  \"fcm_token\": \"TEST_FCM_TOKEN_123\"\n}" }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "💵 3. CASH PAYMENT FLOW",
+      "item": [
+        {
+          "name": "STEP 1 — Passenger: Request Ride (cash)",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "var res = pm.response.json();",
+              "if(res.data && res.data.rideId){",
+              "  pm.collectionVariables.set('RIDE_ID', res.data.rideId);",
+              "  console.log('✅ RIDE_ID saved:', res.data.rideId);",
+              "}"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{PASSENGER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/request", "host": ["{{BASE_URL}}"], "path": ["rides","request"] },
+            "body": { "mode": "raw", "raw": "{\n  \"pickupLatitude\": 28.6315,\n  \"pickupLongitude\": 77.2167,\n  \"dropLatitude\": 28.5355,\n  \"dropLongitude\": 77.3910,\n  \"pickupAddress\": \"Connaught Place, Delhi\",\n  \"dropoffAddress\": \"Noida Sector 62\",\n  \"vehicleType\": \"bike\",\n  \"paymentMethod\": \"cash\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 2 — Driver: Accept Ride",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/accept", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","accept"] }
+          }
+        },
+        {
+          "name": "STEP 3 — Driver: Status = arrived",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/status", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"arrived\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 4 — Driver: Generate OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/generate-otp", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","generate-otp"] }
+          }
+        },
+        {
+          "name": "STEP 5 — Driver: Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/verify-otp", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","verify-otp"] },
+            "body": { "mode": "raw", "raw": "{\n  \"otp\": \"XXXX\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 6 — Driver: Status = completed",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/status", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"completed\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 7 — Driver: Collect Confirm (cash) ⭐",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/collect-confirm", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","collect-confirm"] },
+            "body": { "mode": "raw", "raw": "{\n  \"method\": \"cash\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 8 — Driver: Check Cash Balance ⭐",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/drivers/cash/balance", "host": ["{{BASE_URL}}"], "path": ["drivers","cash","balance"] }
+          }
+        },
+        {
+          "name": "STEP 9 — Driver: Submit Deposit ⭐",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/drivers/cash/deposit", "host": ["{{BASE_URL}}"], "path": ["drivers","cash","deposit"] },
+            "body": { "mode": "raw", "raw": "{\n  \"amount\": 10,\n  \"deposit_method\": \"upi\",\n  \"reference_number\": \"TEST-UPI-001\",\n  \"deposit_proof\": null\n}" }
+          }
+        },
+        {
+          "name": "STEP 10 — Driver: Verify Wallet Balance ⭐",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/wallet/balance", "host": ["{{BASE_URL}}"], "path": ["wallet","balance"] }
+          }
+        },
+        {
+          "name": "Driver: Deposit History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/drivers/cash/deposits", "host": ["{{BASE_URL}}"], "path": ["drivers","cash","deposits"] }
+          }
+        },
+        {
+          "name": "Driver: Trip Summary",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/driver-summary", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","driver-summary"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📱 4. PERSONAL UPI FLOW",
+      "item": [
+        {
+          "name": "STEP 1 — Passenger: Request Ride (personal_upi)",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "var res = pm.response.json();",
+              "if(res.data && res.data.rideId){",
+              "  pm.collectionVariables.set('RIDE_ID', res.data.rideId);",
+              "  console.log('✅ RIDE_ID saved:', res.data.rideId);",
+              "}"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{PASSENGER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/request", "host": ["{{BASE_URL}}"], "path": ["rides","request"] },
+            "body": { "mode": "raw", "raw": "{\n  \"pickupLatitude\": 28.6315,\n  \"pickupLongitude\": 77.2167,\n  \"dropLatitude\": 28.5355,\n  \"dropLongitude\": 77.3910,\n  \"pickupAddress\": \"Connaught Place, Delhi\",\n  \"dropoffAddress\": \"Noida Sector 62\",\n  \"vehicleType\": \"bike\",\n  \"paymentMethod\": \"personal_upi\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 2 — Driver: Accept Ride",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/accept", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","accept"] }
+          }
+        },
+        {
+          "name": "STEP 3 — Driver: arrived → verify-otp → completed (same as cash)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/status", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"completed\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 4 — Driver: Collect Confirm (personal_upi) ⭐",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/collect-confirm", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","collect-confirm"] },
+            "body": { "mode": "raw", "raw": "{\n  \"method\": \"personal_upi\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 5 — Driver: Submit Deposit (same as cash)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/drivers/cash/deposit", "host": ["{{BASE_URL}}"], "path": ["drivers","cash","deposit"] },
+            "body": { "mode": "raw", "raw": "{\n  \"amount\": 10,\n  \"deposit_method\": \"upi\",\n  \"reference_number\": \"TEST-UPI-002\"\n}" }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📷 5. QR CODE FLOW",
+      "item": [
+        {
+          "name": "STEP 1 — Passenger: Request Ride (qr)",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "var res = pm.response.json();",
+              "if(res.data && res.data.rideId){",
+              "  pm.collectionVariables.set('RIDE_ID', res.data.rideId);",
+              "  console.log('✅ RIDE_ID saved:', res.data.rideId);",
+              "}"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{PASSENGER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/request", "host": ["{{BASE_URL}}"], "path": ["rides","request"] },
+            "body": { "mode": "raw", "raw": "{\n  \"pickupLatitude\": 28.6315,\n  \"pickupLongitude\": 77.2167,\n  \"dropLatitude\": 28.5355,\n  \"dropLongitude\": 77.3910,\n  \"pickupAddress\": \"Connaught Place, Delhi\",\n  \"dropoffAddress\": \"Noida Sector 62\",\n  \"vehicleType\": \"bike\",\n  \"paymentMethod\": \"qr\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 2 — Driver: Accept + Complete Ride",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/accept", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","accept"] }
+          }
+        },
+        {
+          "name": "STEP 3 — Driver: Status = completed",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/status", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"completed\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 4 — Driver: Generate QR Code ⭐",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "var res = pm.response.json();",
+              "if(res.data && res.data.order && res.data.order.orderNumber){",
+              "  pm.collectionVariables.set('ORDER_NUMBER', res.data.order.orderNumber);",
+              "  console.log('✅ ORDER_NUMBER saved:', res.data.order.orderNumber);",
+              "  console.log('📷 QR Code (base64) received - display in app');",
+              "}"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/payments/qr/generate", "host": ["{{BASE_URL}}"], "path": ["payments","qr","generate"] },
+            "body": { "mode": "raw", "raw": "{\n  \"amount\": 89,\n  \"purpose\": \"ride_payment\",\n  \"ride_id\": {{RIDE_ID}},\n  \"description\": \"Payment for ride\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 5 — Driver: Poll QR Status ⭐",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/payments/qr/status/{{ORDER_NUMBER}}", "host": ["{{BASE_URL}}"], "path": ["payments","qr","status","{{ORDER_NUMBER}}"] }
+          }
+        },
+        {
+          "name": "STEP 6 — Driver: Verify QR Payment ⭐",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/payments/qr/verify", "host": ["{{BASE_URL}}"], "path": ["payments","qr","verify"] },
+            "body": { "mode": "raw", "raw": "{\n  \"order_number\": \"{{ORDER_NUMBER}}\",\n  \"gateway_payment_id\": \"pay_TestRazorpay123\",\n  \"gateway_signature\": \"test_signature_xyz\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 7 — Driver: Close QR ⭐",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/payments/qr/close", "host": ["{{BASE_URL}}"], "path": ["payments","qr","close"] },
+            "body": { "mode": "raw", "raw": "{\n  \"order_number\": \"{{ORDER_NUMBER}}\"\n}" }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "👛 6. WALLET PAYMENT FLOW",
+      "item": [
+        {
+          "name": "Passenger: Check Wallet Balance",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{PASSENGER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/wallet/balance", "host": ["{{BASE_URL}}"], "path": ["wallet","balance"] }
+          }
+        },
+        {
+          "name": "Passenger: Recharge Wallet (if low)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{PASSENGER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/wallet/recharge", "host": ["{{BASE_URL}}"], "path": ["wallet","recharge"] },
+            "body": { "mode": "raw", "raw": "{\n  \"amount\": 500,\n  \"payment_method\": \"upi\",\n  \"gateway_transaction_id\": \"TEST_TXN_001\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 1 — Passenger: Request Ride (wallet)",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "var res = pm.response.json();",
+              "if(res.data && res.data.rideId){",
+              "  pm.collectionVariables.set('RIDE_ID', res.data.rideId);",
+              "  console.log('✅ RIDE_ID saved:', res.data.rideId);",
+              "}"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{PASSENGER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/request", "host": ["{{BASE_URL}}"], "path": ["rides","request"] },
+            "body": { "mode": "raw", "raw": "{\n  \"pickupLatitude\": 28.6315,\n  \"pickupLongitude\": 77.2167,\n  \"dropLatitude\": 28.5355,\n  \"dropLongitude\": 77.3910,\n  \"pickupAddress\": \"Connaught Place, Delhi\",\n  \"dropoffAddress\": \"Noida Sector 62\",\n  \"vehicleType\": \"bike\",\n  \"paymentMethod\": \"wallet\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 2 — Driver: Accept Ride",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/accept", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","accept"] }
+          }
+        },
+        {
+          "name": "STEP 3 — Driver: Generate OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/generate-otp", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","generate-otp"] }
+          }
+        },
+        {
+          "name": "STEP 4 — Driver: Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/verify-otp", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","verify-otp"] },
+            "body": { "mode": "raw", "raw": "{\n  \"otp\": \"XXXX\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 5 — Driver: Status = completed ⭐ (earning auto-credit hogi)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/status", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"completed\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 6 — Driver: Check Wallet (earning aai?) ⭐",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/wallet/balance", "host": ["{{BASE_URL}}"], "path": ["wallet","balance"] }
+          }
+        },
+        {
+          "name": "STEP 7 — Passenger: Check Wallet (deduct hua?) ⭐",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{PASSENGER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/wallet/balance", "host": ["{{BASE_URL}}"], "path": ["wallet","balance"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "💳 7. CARD / ONLINE UPI FLOW",
+      "item": [
+        {
+          "name": "STEP 1 — Passenger: Request Ride (upi/card)",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "var res = pm.response.json();",
+              "if(res.data && res.data.rideId){",
+              "  pm.collectionVariables.set('RIDE_ID', res.data.rideId);",
+              "  console.log('✅ RIDE_ID saved:', res.data.rideId);",
+              "}"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{PASSENGER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/request", "host": ["{{BASE_URL}}"], "path": ["rides","request"] },
+            "body": { "mode": "raw", "raw": "{\n  \"pickupLatitude\": 28.6315,\n  \"pickupLongitude\": 77.2167,\n  \"dropLatitude\": 28.5355,\n  \"dropLongitude\": 77.3910,\n  \"pickupAddress\": \"Connaught Place, Delhi\",\n  \"dropoffAddress\": \"Noida Sector 62\",\n  \"vehicleType\": \"bike\",\n  \"paymentMethod\": \"upi\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 2 — Passenger: Create Razorpay Order",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "var res = pm.response.json();",
+              "if(res.data && res.data.order){",
+              "  pm.collectionVariables.set('ORDER_NUMBER', res.data.order.orderNumber);",
+              "  console.log('✅ Razorpay order created:', res.data.order.orderNumber);",
+              "}"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{PASSENGER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/payments", "host": ["{{BASE_URL}}"], "path": ["payments"] },
+            "body": { "mode": "raw", "raw": "{\n  \"ride_id\": {{RIDE_ID}},\n  \"amount\": 89,\n  \"payment_method\": \"upi\",\n  \"payment_gateway\": \"razorpay\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 3 — Driver: Accept + Complete",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/status", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"completed\"\n}" }
+          }
+        },
+        {
+          "name": "STEP 4 — Driver: Check Wallet (auto-credit) ⭐",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/wallet/balance", "host": ["{{BASE_URL}}"], "path": ["wallet","balance"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📊 8. EARNINGS & REPORTS",
+      "item": [
+        {
+          "name": "Driver: Current Week Earnings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/drivers/earnings/current-week", "host": ["{{BASE_URL}}"], "path": ["drivers","earnings","current-week"] }
+          }
+        },
+        {
+          "name": "Driver: Weekly Earnings History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/drivers/earnings/weekly?limit=5&offset=0", "host": ["{{BASE_URL}}"], "path": ["drivers","earnings","weekly"], "query": [{"key":"limit","value":"5"},{"key":"offset","value":"0"}] }
+          }
+        },
+        {
+          "name": "Driver: Monthly Earnings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/drivers/earnings/monthly", "host": ["{{BASE_URL}}"], "path": ["drivers","earnings","monthly"] }
+          }
+        },
+        {
+          "name": "Driver: Earnings Statement (date range)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/drivers/earnings/statement?from=2026-05-01&to=2026-05-31", "host": ["{{BASE_URL}}"], "path": ["drivers","earnings","statement"], "query": [{"key":"from","value":"2026-05-01"},{"key":"to","value":"2026-05-31"}] }
+          }
+        },
+        {
+          "name": "Driver: Cash Balance",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/drivers/cash/balance", "host": ["{{BASE_URL}}"], "path": ["drivers","cash","balance"] }
+          }
+        },
+        {
+          "name": "Driver: Deposit History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/drivers/cash/deposits", "host": ["{{BASE_URL}}"], "path": ["drivers","cash","deposits"] }
+          }
+        },
+        {
+          "name": "Driver: Wallet Balance",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/wallet/balance", "host": ["{{BASE_URL}}"], "path": ["wallet","balance"] }
+          }
+        },
+        {
+          "name": "Driver: Wallet Transaction History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/wallet/transactions?limit=10&offset=0", "host": ["{{BASE_URL}}"], "path": ["wallet","transactions"], "query": [{"key":"limit","value":"10"},{"key":"offset","value":"0"}] }
+          }
+        },
+        {
+          "name": "Passenger: Wallet Transaction History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{PASSENGER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/wallet/transactions?limit=10&offset=0", "host": ["{{BASE_URL}}"], "path": ["wallet","transactions"], "query": [{"key":"limit","value":"10"},{"key":"offset","value":"0"}] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🔍 9. VERIFY / DEBUG",
+      "item": [
+        {
+          "name": "Ride Details",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}"] }
+          }
+        },
+        {
+          "name": "Ride Invoice",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/invoice", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","invoice"] }
+          }
+        },
+        {
+          "name": "Driver: Trip Summary",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/{{RIDE_ID}}/driver-summary", "host": ["{{BASE_URL}}"], "path": ["rides","{{RIDE_ID}}","driver-summary"] }
+          }
+        },
+        {
+          "name": "Driver: Current Active Ride",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/current", "host": ["{{BASE_URL}}"], "path": ["rides","current"] }
+          }
+        },
+        {
+          "name": "Driver: Ride History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/driver/history?page=1&limit=5", "host": ["{{BASE_URL}}"], "path": ["rides","driver","history"], "query": [{"key":"page","value":"1"},{"key":"limit","value":"5"}] }
+          }
+        },
+        {
+          "name": "Passenger: Ride History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{PASSENGER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/rides/passenger/history?page=1&limit=5", "host": ["{{BASE_URL}}"], "path": ["rides","passenger","history"], "query": [{"key":"page","value":"1"},{"key":"limit","value":"5"}] }
+          }
+        },
+        {
+          "name": "Driver: Score",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{DRIVER_TOKEN}}" }],
+            "url": { "raw": "{{BASE_URL}}/drivers/score", "host": ["{{BASE_URL}}"], "path": ["drivers","score"] }
+          }
+        }
+      ]
+    }
+
+  ]
+}

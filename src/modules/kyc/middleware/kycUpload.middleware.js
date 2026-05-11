@@ -12,10 +12,10 @@ const fileFilter = (req, file, cb) => {
     cb(new Error('Only JPEG, JPG, PNG or PDF files are allowed'));
 };
 
-// Images 5MB, PDF 1MB — per Cashfree. Express limit 5MB and enforce PDF-size at route/service level.
+// Images 10MB, PDF 1MB — selfie ke liye 10MB allowed. Enforce PDF-size at route/service level.
 export const kycUpload = multer({
     storage,
-    limits: { fileSize: 5 * 1024 * 1024 },
+    limits: { fileSize: 10 * 1024 * 1024 },
     fileFilter,
 });
 
@@ -36,7 +36,7 @@ export const enforcePdfSize = (req, res, next) => {
 export const handleKycUploadError = (err, req, res, next) => {
     if (err instanceof multer.MulterError) {
         const msg = err.code === 'LIMIT_FILE_SIZE'
-            ? 'File too large. Max 5MB for images, 1MB for PDF.'
+            ? 'File too large. Max 10MB for images, 1MB for PDF.'
             : err.message;
         return res.status(400).json({ success: false, message: msg });
     }

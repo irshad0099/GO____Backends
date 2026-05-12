@@ -318,7 +318,7 @@ export const requestRide = async (userId, rideData) => {
                     durationMinutes,
                     vehicleType: rideData.vehicleType,
                     timestamp: new Date().toISOString(),
-                    paymentMethod:paymentMethod
+                    paymentMethod: paymentMethod === 'upi' ? 'qr' : paymentMethod
                 }), 'ride:new_request');
             });
         }

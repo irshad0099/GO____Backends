@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 
 // The token from Postman
-const PASSENGER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1NGYzOThiYS1lZDRjLTQwZDYtYTc5YS0xNTIyZTU3ZTY5NjUiLCJwaG9uZSI6Ijk4NzY1NDMyMTAiLCJyb2xlIjoicGFzc2VuZ2VyIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3ODI2MzU4OCwiZXhwIjoxNzc4MzQ5OTg4fQ.E6mXWS6cah_WV3MIWACZXgdvaQPmK7T1tKsFmy8AMwg";
+const PASSENGER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1NGYzOThiYS1lZDRjLTQwZDYtYTc5YS0xNTIyZTU3ZTY5NjUiLCJwaG9uZSI6Ijk4NzY1NDMyMTAiLCJyb2xlIjoicGFzc2VuZ2VyIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3ODMzMjQ1OCwiZXhwIjoxNzc4NDE4ODU4fQ.hAsm5BW4OPwZw-rbEOsyaKe3OVjs-T2-8JEslJ_ZTX4";
 const BASE_URL = "https://api.gomobility.co.in";
 
 if (!PASSENGER_TOKEN) {
@@ -89,7 +89,7 @@ socket.on("connect", () => {
 
 socket.on("auth:success", (data) => {
     console.log("🔓 Auth Success. Initiating auto ride request...");
-    requestRide();
+    // requestRide();
 });
 
 socket.on("ride:accepted", (data) => {

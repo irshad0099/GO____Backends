@@ -4,7 +4,7 @@ import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import { chargeCancellationFee } from '../../wallet/services/walletService.js';
 import { NotFoundError, ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
-import { ENV } from '../../../config/envConfig.js';
+import { calculateCancellationPenalty } from '../../../core/utils/rideCalculator.js';
 
 export const cancelRide = async (userId, rideId, data) => {
     try {
@@ -29,11 +29,14 @@ export const cancelRide = async (userId, rideId, data) => {
         let platformShare = 0;
 
         // Penalty lagti hai agar: driver assigned hai + driver already near
-        if (ride.status !== 'requested' && data.driver_distance_meters > ENV.CANCELLATION_DISTANCE_THRESHOLD) {
-            penaltyApplied = true;
-            penaltyAmount = ENV.CANCELLATION_PENALTY;
-            driverShare = (penaltyAmount * ENV.CANCELLATION_DRIVER_SHARE_PERCENT) / 100;
-            platformShare = (penaltyAmount * ENV.CANCELLATION_PLATFORM_SHARE_PERCENT) / 100;
+        if (ride.status !== 'requested') {
+            const pen = calculateCancellationPenalty(data.driver_distance_meters);
+            if (pen.isApplicable) {
+                penaltyApplied = true;
+                penaltyAmount  = pen.penalty;
+                driverShare    = pen.driverShare;
+                platformShare  = pen.platformShare;
+            }
         }
 
         // Insert cancellation record

@@ -1,206 +1,140 @@
-import { appConfig } from '../../../config/app.config.js';
 import logger from '../../../core/logger/logger.js';
 import {
-    isPeakHour,
-    getConvenienceFee,
-    calculateSurgeMultiplier,
-    calculateWaitingCharges,
-    calculateTrafficCompensation,
-    calculatePickupCompensation,
-    calculatePlatformFee,
-    getCancellationPenalty,
-} from '../../pricing/utils/pricingutils.js';
+    calculateEstimatedFare,
+    calculateFinalRideFare,
+    calculateCancellationPenalty,
+    calculateSurgeByDemandSupply,
+    detectPeak,
+} from '../../../core/utils/rideCalculator.js';
+import {
+    getVehicleConfig,
+    getPricingConfig,
+} from '../services/pricingConfigLoader.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  MAIN FARE ESTIMATE
-//  Called when user requests ride — returns price estimate before booking
+//  FARE ESTIMATE — called when user requests ride
 // ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * @param {object} params
- * @param {string} params.vehicleType       - 'bike' | 'auto' | 'cab'
- * @param {number} params.distanceKm        - estimated route distance
- * @param {number} params.estimatedMinutes  - estimated trip duration
- * @param {number} params.rideRequests      - current demand (for surge)
- * @param {number} params.availableDrivers  - current supply (for surge)
- * @param {Date}   [params.rideTime]        - defaults to now
- */
 export const estimateFare = ({
     vehicleType,
     distanceKm,
     estimatedMinutes,
-    rideRequests      = 1,
-    availableDrivers  = 1,
-    rideTime          = new Date(),
+    rideRequests     = 1,
+    availableDrivers = 1,
+    rideTime         = new Date(),
 }) => {
-    const vehicle = appConfig.vehicleTypes[vehicleType];
-    if (!vehicle) {
+    const v = getVehicleConfig(vehicleType);
+    if (!v) {
         const err = new Error(`Unknown vehicle type: ${vehicleType}`);
         err.statusCode = 400;
         throw err;
     }
 
-    const peak           = isPeakHour(rideTime);
-    const surgeMulti     = calculateSurgeMultiplier(rideRequests, availableDrivers);
-    const convFee        = getConvenienceFee(vehicleType, peak);
-
-    // Section 9 Formula:
-    // Final Fare = (Base Fare + Distance × PerKm + WaitingCharges + ConvFee) × Surge
-    const baseFare       = vehicle.baseFare;
-    const distanceFare   = parseFloat((distanceKm * vehicle.perKm).toFixed(2));
-    const timeFare       = parseFloat((estimatedMinutes * vehicle.perMinute).toFixed(2));
-
-    const fareBeforeSurge = baseFare + distanceFare + timeFare + convFee;
-    let   finalFare       = parseFloat((fareBeforeSurge * surgeMulti).toFixed(2));
-
-    // Apply minimum fare
-    finalFare = Math.max(finalFare, vehicle.minimumFare);
+    const result = calculateEstimatedFare({
+        vehicleType,
+        distanceKm,
+        estimatedDurationMinutes: estimatedMinutes,
+        rideRequests,
+        availableDrivers,
+    });
 
     logger.info(
         `[Pricing] Estimate | Vehicle: ${vehicleType} | Dist: ${distanceKm}km | ` +
-        `Surge: ${surgeMulti}x | Peak: ${peak} | Fare: ₹${finalFare}`
+        `Surge: ${result.passenger.surgeMultiplier}x | Peak: ${result.passenger.isPeak} | ` +
+        `Fare: ₹${result.passenger.passengerTotal}`
     );
 
     return {
         success: true,
         data: {
             vehicleType,
-            vehicleLabel:     vehicle.label,
-            isPeak:           peak,
+            vehicleLabel:    v.displayName,
+            isPeak:          result.passenger.isPeak,
             breakdown: {
-                baseFare,
-                distanceFare,
-                timeFare,
-                convenienceFee:  convFee,
-                fareBeforeSurge: parseFloat(fareBeforeSurge.toFixed(2)),
-                surgeMultiplier: surgeMulti,
+                baseFare:        result.passenger.baseFare,
+                distanceFare:    result.passenger.distanceFare,
+                convenienceFee:  result.passenger.convenienceFee,
+                surgeMultiplier: result.passenger.surgeMultiplier,
             },
-            finalFare,
-            minimumFare:      vehicle.minimumFare,
-            currency:         'INR',
+            finalFare:    result.passenger.passengerTotal,
+            minimumFare:  result.passenger.minimumFare,
+            currency:     'INR',
         },
     };
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  FINAL FARE CALCULATION
-//  Called when ride COMPLETES — uses actual distance, time, waiting
+//  FINAL FARE — called when ride completes
 // ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * @param {object} params
- * @param {string} params.vehicleType
- * @param {number} params.actualDistanceKm
- * @param {number} params.estimatedMinutes    - for traffic grace calc
- * @param {number} params.actualMinutes       - real trip duration
- * @param {number} params.waitingMinutes      - how long driver waited at pickup
- * @param {number} params.pickupDistanceKm    - driver's pickup travel distance
- * @param {number} params.driverDailyRides    - driver's rides today (for platform fee)
- * @param {number} params.rideRequests        - for surge at booking time
- * @param {number} params.availableDrivers
- * @param {Date}   [params.rideTime]
- */
 export const calculateFinalFare = ({
     vehicleType,
     actualDistanceKm,
     estimatedMinutes,
     actualMinutes,
-    waitingMinutes        = 0,
-    pickupDistanceKm      = 0,
-    driverDailyRides      = 1,
-    rideRequests          = 1,
-    availableDrivers      = 1,
-    rideTime              = new Date(),
+    waitingMinutes       = 0,
+    pickupDistanceKm     = 0,
+    driverDailyRides     = 1,
+    rideRequests         = 1,
+    availableDrivers     = 1,
 }) => {
-    const vehicle = appConfig.vehicleTypes[vehicleType];
-    if (!vehicle) {
+    const v = getVehicleConfig(vehicleType);
+    if (!v) {
         const err = new Error(`Unknown vehicle type: ${vehicleType}`);
         err.statusCode = 400;
         throw err;
     }
 
-    const peak           = isPeakHour(rideTime);
-    const surgeMulti     = calculateSurgeMultiplier(rideRequests, availableDrivers);
-    const convFee        = getConvenienceFee(vehicleType, peak);
-
-    // Core fare components
-    const baseFare       = vehicle.baseFare;
-    const distanceFare   = parseFloat((actualDistanceKm * vehicle.perKm).toFixed(2));
-    const timeFare       = parseFloat((actualMinutes * vehicle.perMinute).toFixed(2));
-
-    // Section 5: Waiting charges (free for first 3 min)
-    const waitCharge     = calculateWaitingCharges(vehicleType, waitingMinutes);
-
-    // Section 6: Traffic delay compensation to driver
-    const trafficComp    = calculateTrafficCompensation(vehicleType, estimatedMinutes, actualMinutes);
-
-    // Section 9 Formula
-    const fareBeforeSurge = baseFare + distanceFare + timeFare + waitCharge + convFee;
-    let   riderFare       = parseFloat((fareBeforeSurge * surgeMulti).toFixed(2));
-    riderFare             = Math.max(riderFare, vehicle.minimumFare);
-
-    // ── Driver earnings breakdown ───────────────────────────────────────────
-    // Section 1: Platform fee deducted from driver
-    const platformFee    = calculatePlatformFee(vehicleType, driverDailyRides);
-
-    // Section 7: Extra pickup compensation (added to driver, not billed to rider)
-    const pickupComp     = calculatePickupCompensation(vehicleType, pickupDistanceKm);
-
-    // Section 9:
-    // Driver Earnings = Final Fare − Platform Fee + Pickup Distance Comp + Waiting Charges
-    const driverEarnings = parseFloat(
-        (riderFare - platformFee + pickupComp + trafficComp).toFixed(2)
-    );
+    const result = calculateFinalRideFare({
+        vehicleType,
+        distanceKm:               actualDistanceKm,
+        estimatedDurationMinutes: estimatedMinutes,
+        actualDurationMinutes:    actualMinutes,
+        waitingMinutes,
+        pickupDistanceKm,
+        driverDailyRideCount:     driverDailyRides,
+        rideRequests,
+        availableDrivers,
+    });
 
     logger.info(
         `[Pricing] Final | Vehicle: ${vehicleType} | Dist: ${actualDistanceKm}km | ` +
-        `Rider: ₹${riderFare} | Driver: ₹${driverEarnings} | Surge: ${surgeMulti}x`
+        `Rider: ₹${result.passenger.passengerTotal} | Driver: ₹${result.driver.netEarnings} | ` +
+        `Surge: ${result.passenger.surgeMultiplier}x`
     );
 
     return {
         success: true,
         data: {
             vehicleType,
-            vehicleLabel:     vehicle.label,
-            isPeak:           peak,
-
-            // What rider pays
+            vehicleLabel: v.displayName,
+            isPeak:       result.passenger.isPeak,
             riderFare: {
-                baseFare,
-                distanceFare,
-                timeFare,
-                waitingCharges:    waitCharge,
-                convenienceFee:    convFee,
-                fareBeforeSurge:   parseFloat(fareBeforeSurge.toFixed(2)),
-                surgeMultiplier:   surgeMulti,
-                totalFare:         riderFare,
-                currency:          'INR',
+                baseFare:        result.passenger.baseFare,
+                distanceFare:    result.passenger.distanceFare,
+                waitingCharges:  result.passenger.waitingCharges,
+                convenienceFee:  result.passenger.convenienceFee,
+                surgeMultiplier: result.passenger.surgeMultiplier,
+                totalFare:       result.passenger.passengerTotal,
+                currency:        'INR',
             },
-
-            // What driver earns
             driverEarnings: {
-                rideAmount:            riderFare,
-                platformFeeDeducted:   platformFee,
-                pickupCompensation:    pickupComp,
-                trafficCompensation:   trafficComp,
-                totalEarnings:         driverEarnings,
+                rideAmount:          result.driver.grossFare,
+                platformFeeDeducted: result.driver.platformFee,
+                pickupCompensation:  result.driver.pickupDistanceCompensation,
+                trafficCompensation: result.driver.trafficDelayCompensation,
+                totalEarnings:       result.driver.netEarnings,
             },
-
-            // Platform revenue
             platformRevenue: {
-                convenienceFee:   convFee,
-                platformFee,
-                totalRevenue:     parseFloat((convFee + platformFee).toFixed(2)),
+                convenienceFee: result.passenger.convenienceFee,
+                platformFee:    result.driver.platformFee,
+                totalRevenue:   result.passenger.convenienceFee + result.driver.platformFee,
             },
         },
     };
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  GET ALL VEHICLE ESTIMATES
-//  Returns fare estimate for all 3 vehicle types at once (like Ola home screen)
+//  ALL VEHICLE ESTIMATES — like Ola home screen
 // ─────────────────────────────────────────────────────────────────────────────
-
 export const getAllVehicleEstimates = ({
     distanceKm,
     estimatedMinutes,
@@ -208,11 +142,13 @@ export const getAllVehicleEstimates = ({
     availableDrivers = 1,
     rideTime         = new Date(),
 }) => {
-    const vehicleTypes = Object.keys(appConfig.vehicleTypes);
+    const vehicleTypes = Object.keys(getPricingConfig().vehicles);
 
     const estimates = vehicleTypes.map((type) =>
         estimateFare({ vehicleType: type, distanceKm, estimatedMinutes, rideRequests, availableDrivers, rideTime }).data
     );
+
+    const peakSignal = detectPeak({ rideRequests, availableDrivers });
 
     return {
         success: true,
@@ -220,51 +156,49 @@ export const getAllVehicleEstimates = ({
             estimates,
             distanceKm,
             estimatedMinutes,
-            isPeak: isPeakHour(rideTime),
+            isPeak: peakSignal.isPeak,
         },
     };
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  CANCELLATION FEE
-//  Section 4: ₹50 penalty if driver within 500m
 // ─────────────────────────────────────────────────────────────────────────────
-
 export const getCancellationFee = ({ driverDistanceMeters }) => {
-    const result = getCancellationPenalty(driverDistanceMeters);
+    const result = calculateCancellationPenalty(driverDistanceMeters);
 
     return {
         success: true,
         data: {
             driverDistanceMeters,
-            penaltyApplied:   result.penalty > 0,
-            penalty:          result.penalty,
-            driverShare:      result.driverShare,
-            platformShare:    result.platformShare,
-            reason:           result.penalty > 0
-                ? `Driver was within ${appConfig.cancellation.proximityPenaltyMeters}m of pickup`
+            penaltyApplied: result.isApplicable,
+            penalty:        result.penalty,
+            driverShare:    result.driverShare,
+            platformShare:  result.platformShare,
+            reason: result.isApplicable
+                ? `Driver was within ${result.thresholdMeters}m of pickup`
                 : 'No penalty — driver was not close to pickup point',
         },
     };
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  GET CURRENT SURGE INFO (for frontend display)
+//  SURGE INFO — for frontend display
 // ─────────────────────────────────────────────────────────────────────────────
-
 export const getSurgeInfo = ({ rideRequests, availableDrivers }) => {
-    const multiplier = calculateSurgeMultiplier(rideRequests, availableDrivers);
     const ratio      = availableDrivers > 0 ? rideRequests / availableDrivers : 99;
+    const multiplier = calculateSurgeByDemandSupply(ratio);
+    const surgeCap   = Number(getPricingConfig().settings?.surge_max_multiplier) || 1.75;
 
     return {
         success: true,
         data: {
-            surgeActive:      multiplier > 1.0,
-            surgeMultiplier:  multiplier,
-            demandSupplyRatio: parseFloat(ratio.toFixed(2)),
+            surgeActive:       multiplier > 1.0,
+            surgeMultiplier:   multiplier,
+            demandSupplyRatio: Math.round(ratio * 100) / 100,
             rideRequests,
             availableDrivers,
-            message: multiplier >= appConfig.surge.maxCap
+            message: multiplier >= surgeCap
                 ? 'High demand — surge pricing active'
                 : multiplier > 1.0
                     ? 'Moderate demand — slight surge active'

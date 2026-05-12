@@ -3,7 +3,6 @@ import * as rideRepo from '../../rides/repositories/ride.repository.js';
 import * as userService from "../../users/services/userService.js"
 import { NotFoundError, ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
-import { appConfig } from '../../../config/app.config.js';
 import { saveDriverLocation, getDriverLocation } from '../../../core/services/redisService.js';
 
 export const registerDriver = async (userId, driverData) => {

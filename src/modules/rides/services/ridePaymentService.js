@@ -77,18 +77,35 @@ export const getRidePaymentStatus = async (rideId) => {
  * @param {number} driverId - Driver ID
  * @returns {Promise<Object>} Updated ride details
  */
-export const confirmCashCollection = async (rideId, driverId) => {
+export const confirmCashCollection = async (rideId, userIdOfDriver) => {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
-        
-        const ride = await findRideById(rideId);
-        
+
+        // driver row fetch karo user_id se — rides.driver_id = drivers.id (not user_id)
+        const driverResult = await client.query(
+            `SELECT d.id FROM drivers d WHERE d.user_id = $1`,
+            [userIdOfDriver]
+        );
+
+        if (!driverResult.rows[0]) {
+            throw new ApiError(404, 'Driver profile not found');
+        }
+
+        const driverRowId = driverResult.rows[0].id;
+
+        const rideResult = await client.query(
+            `SELECT id, driver_id, payment_status FROM rides WHERE id = $1`,
+            [rideId]
+        );
+
+        const ride = rideResult.rows[0];
+
         if (!ride) {
             throw new ApiError(404, 'Ride not found');
         }
 
-        if (ride.driver_id !== driverId) {
+        if (ride.driver_id !== driverRowId) {
             throw new ApiError(403, 'You are not assigned to this ride');
         }
 
@@ -98,14 +115,14 @@ export const confirmCashCollection = async (rideId, driverId) => {
 
         // Mark cash as confirmed by driver
         const result = await client.query(
-            `UPDATE rides 
+            `UPDATE rides
              SET payment_status = 'cash_confirmed',
                  cash_confirmed_by_driver = $1,
                  cash_confirmed_at = NOW(),
-                 updated_at = NOW() 
-             WHERE id = $2 
+                 updated_at = NOW()
+             WHERE id = $2
              RETURNING *`,
-            [driverId, rideId]
+            [driverRowId, rideId]
         );
         
         await client.query('COMMIT');

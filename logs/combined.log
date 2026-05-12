@@ -7606,3 +7606,8 @@ AuthError: Invalid token
 2026-05-09 16:46:05 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
 2026-05-09 16:46:05 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
 2026-05-09 16:46:05 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-10 23:22:59 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-10 23:26:31 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-10 23:32:58 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-10 23:35:35 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-10 23:41:33 [INFO]: ✅ PostgreSQL connected successfully

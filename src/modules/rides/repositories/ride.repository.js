@@ -71,6 +71,7 @@ export const findRideById = async (rideId) => {
                     r.vehicle_type          AS ride_vehicle_type,
                     r.payment_status        AS payment_status,
                     r.payment_method        AS payment_method,
+                    r.driver_id             AS driver_id,
                     u.full_name             AS passenger_name,
                     u.phone_number          AS passenger_phone,
                     u.email                 AS passenger_email,

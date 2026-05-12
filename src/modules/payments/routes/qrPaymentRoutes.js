@@ -2,7 +2,7 @@ import express from 'express';
 import { authenticate } from '../../../core/middleware/auth.middleware.js';
 import { ridePaymentLimiter } from '../../../core/middleware/rateLimiter.middleware.js';
 import * as controller from '../controllers/qrPaymentController.js';
-import { createOrderSchema, verifyPaymentSchema, validate } from '../validators/paymentValidator.js';
+import { generateQRSchema, verifyPaymentSchema, validate } from '../validators/paymentValidator.js';
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ router.post(
     '/generate',
     authenticate,
     ridePaymentLimiter,
-    validate(createOrderSchema),
+    validate(generateQRSchema),
     controller.generatePaymentQR
 );
 

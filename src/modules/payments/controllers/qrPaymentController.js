@@ -11,26 +11,17 @@ import { validateQRPayment, closeRideQR } from '../../../core/services/qrService
 export const generatePaymentQR = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { amount, purpose, ride_id, description } = req.body;
-
-        // Validate required fields
-        if (!amount || !purpose) {
-            throw new ApiError(400, 'Amount and purpose are required');
-        }
-
-        if (amount <= 0) {
-            throw new ApiError(400, 'Amount must be greater than 0');
-        }
+        const { amount, ride_id } = req.body;
 
         // Create payment order with QR method
         const result = await createOrder(userId, {
             amount,
-            purpose,
-            payment_method: 'qr',
+            purpose:         'ride_payment',
+            payment_method:  'qr',
             payment_gateway: 'razorpay',
             ride_id,
-            description: description || `QR payment for ${purpose}`,
-            metadata: { qr_payment: true }
+            description:     `QR payment for ride #${ride_id}`,
+            metadata:        { qr_payment: true }
         });
 
         logger.info(`[QR Payment] QR generated | User: ${userId} | Order: ${result.data.order.orderNumber}`);

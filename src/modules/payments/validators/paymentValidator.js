@@ -39,6 +39,14 @@ export const createOrderSchema = Joi.object({
     metadata:    Joi.object().optional(),
 });
 
+// ─── QR Generate (Driver calls after ride complete) ──────────────────────────
+export const generateQRSchema = Joi.object({
+    ride_id: Joi.number().integer().positive().required()
+        .messages({ 'any.required': 'ride_id is required' }),
+    amount: Joi.number().positive().min(1).max(100000).precision(2).required()
+        .messages({ 'any.required': 'amount is required' }),
+});
+
 // ─── Verify Payment (Razorpay callback) ──────────────────────────────────────
 export const verifyPaymentSchema = Joi.object({
     gateway_order_id: Joi.string().required()

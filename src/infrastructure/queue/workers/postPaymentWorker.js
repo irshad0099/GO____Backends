@@ -1,7 +1,7 @@
 import { pool } from '../../database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 import { creditDriverEarnings } from '../../../modules/drivers/services/earningsService.js';
-import { emitToDriver, emitToPassenger } from '../../websocket/socket.events.js';
+import { emitPaymentReceived } from '../../../core/services/paymentSocketService.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  Post-Payment Worker
@@ -98,31 +98,13 @@ export const processOnlinePaymentSuccess = async (data) => {
         const targetDriverUserId = driverUserId || ride.driver_id;
         const targetPassengerUserId = passengerUserId || ride.passenger_id;
 
-        try {
-            emitToDriver(targetDriverUserId, 'payment:received', {
-                rideId,
-                amount: finalFare,
-                netEarnings,
-                platformFee,
-                paymentMethod: 'online',
-                walletBalance: driverCreditResult?.data?.walletBalance ?? null,
-                status: 'paid',
-                paidAt: new Date().toISOString(),
-            });
-        } catch (emitErr) {
-            logger.warn(`[PostPayment] Driver socket emit failed | Ride: ${rideId} | ${emitErr.message}`);
-        }
-
-        try {
-            emitToPassenger(targetPassengerUserId, 'payment:success', {
-                rideId,
-                amount: finalFare,
-                status: 'paid',
-                paidAt: new Date().toISOString(),
-            });
-        } catch (emitErr) {
-            logger.warn(`[PostPayment] Passenger socket emit failed | Ride: ${rideId} | ${emitErr.message}`);
-        }
+        emitPaymentReceived(targetDriverUserId, {
+            rideId,
+            amount:        finalFare,
+            netEarnings,
+            platformFee,
+            paymentMethod: 'online',
+        });
 
         return {
             success: true,

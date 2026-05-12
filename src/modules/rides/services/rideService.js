@@ -1,4 +1,5 @@
 import * as rideRepo from '../repositories/ride.repository.js';
+import { emitPaymentReceived } from '../../../core/services/paymentSocketService.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as walletRepo from '../../wallet/repositories/wallet.repository.js';
 import { payForRide } from '../../wallet/services/walletService.js';
@@ -776,8 +777,16 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
                             platformFee:   finalResult.driver.platformFee,
                             paymentMethod: 'wallet',
                         });
+
+                        // Driver ko payment:received event emit karo
+                        emitPaymentReceived(driver.user_id, {
+                            rideId,
+                            amount:        passengerFinalFare,
+                            netEarnings:   finalResult.driver.netEarnings,
+                            platformFee:   finalResult.driver.platformFee,
+                            paymentMethod: 'wallet',
+                        });
                     } catch (driverCreditErr) {
-                        // Passenger charged ho gaya — driver credit fail hone pe log karo, ride block mat karo
                         logger.error(`[RideService] Driver wallet credit FAILED for ride ${rideId}:`, driverCreditErr.message);
                     }
                 } catch (walletErr) {

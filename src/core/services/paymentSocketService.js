@@ -1,4 +1,5 @@
 import logger from '../logger/logger.js';
+import { emitToDriver, emitToPassenger } from '../../infrastructure/websocket/socket.events.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  Payment Socket Service
@@ -83,16 +84,18 @@ export const emitPaymentSuccess = (io, passengerUserId, data) => {
  * @param {number} driverUserId — Driver user ID
  * @param {Object} data — Earnings data
  */
-export const emitPaymentReceived = (io, driverUserId, data) => {
+export const emitPaymentReceived = (driverUserId, data) => {
     try {
-        io.to(`driver_${driverUserId}`).emit('payment:received', {
-            rideId: data.rideId,
-            netEarnings: data.netEarnings,
-            platformFee: data.platformFee,
+        emitToDriver(driverUserId, 'payment:received', {
+            rideId:        data.rideId,
+            amount:        data.amount,
+            netEarnings:   data.netEarnings,
+            platformFee:   data.platformFee,
             paymentMethod: data.paymentMethod,
-            timestamp: new Date().toISOString(),
+            status:        'paid',
+            paidAt:        data.paidAt || new Date().toISOString(),
         });
-        logger.info(`[Socket] Payment received emitted to driver ${driverUserId}`);
+        logger.info(`[Socket] payment:received emitted to driver ${driverUserId}`);
     } catch (error) {
         logger.error('[Socket] emitPaymentReceived error:', error);
     }

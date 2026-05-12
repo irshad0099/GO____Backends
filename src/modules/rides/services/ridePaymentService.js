@@ -127,7 +127,7 @@ export const confirmCashCollection = async (rideId, userIdOfDriver) => {
         
         await client.query('COMMIT');
 
-        logger.info(`[RidePayment] Cash confirmed by driver ${driverId} for ride ${rideId}`);
+        logger.info(`[RidePayment] Cash confirmed by driver ${driverRowId} for ride ${rideId}`);
         return result.rows[0];
     } catch (error) {
         await client.query('ROLLBACK');

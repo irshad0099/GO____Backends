@@ -109,7 +109,7 @@ export const confirmCashCollection = async (rideId, userIdOfDriver) => {
             throw new ApiError(403, 'You are not assigned to this ride');
         }
 
-        if (ride.payment_status !== 'cash_collected') {
+        if (ride.payment_status !== 'pending') {
             throw new ApiError(400, 'Cash payment not recorded for this ride');
         }
 

@@ -1,6 +1,7 @@
 import { pool } from '../../database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 import { creditDriverEarnings } from '../../../modules/drivers/services/earningsService.js';
+import { emitToDriver, emitToPassenger } from '../../websocket/socket.events.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  Post-Payment Worker
@@ -88,11 +89,39 @@ export const processOnlinePaymentSuccess = async (data) => {
                 paymentMethod: 'online',
             });
         } catch (earningsErr) {
-            // Payment ho gayi, driver credit fail hua — critical alert log karo
             logger.error(
                 `[PostPayment] CRITICAL: Driver earnings credit FAILED | Ride: ${rideId} | Driver: ${driverUserId || ride.driver_id} | Amount: ₹${netEarnings} | Error: ${earningsErr.message}`
             );
-            // payment_status = 'paid' rahega, earnings manually recover karni hogi
+        }
+
+        // 7. Socket emit — driver + passenger ko payment confirm batao
+        const targetDriverUserId = driverUserId || ride.driver_id;
+        const targetPassengerUserId = passengerUserId || ride.passenger_id;
+
+        try {
+            emitToDriver(targetDriverUserId, 'payment:received', {
+                rideId,
+                amount: finalFare,
+                netEarnings,
+                platformFee,
+                paymentMethod: 'online',
+                walletBalance: driverCreditResult?.data?.walletBalance ?? null,
+                status: 'paid',
+                paidAt: new Date().toISOString(),
+            });
+        } catch (emitErr) {
+            logger.warn(`[PostPayment] Driver socket emit failed | Ride: ${rideId} | ${emitErr.message}`);
+        }
+
+        try {
+            emitToPassenger(targetPassengerUserId, 'payment:success', {
+                rideId,
+                amount: finalFare,
+                status: 'paid',
+                paidAt: new Date().toISOString(),
+            });
+        } catch (emitErr) {
+            logger.warn(`[PostPayment] Passenger socket emit failed | Ride: ${rideId} | ${emitErr.message}`);
         }
 
         return {

@@ -317,7 +317,8 @@ export const requestRide = async (userId, rideData) => {
                     distanceKm,
                     durationMinutes,
                     vehicleType: rideData.vehicleType,
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    paymentMethod:paymentMethod
                 }), 'ride:new_request');
             });
         }

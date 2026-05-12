@@ -883,6 +883,7 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             message: `Ride status updated to ${status}`,
             ...(status === 'completed' && {
                 finalFare: additionalFields.final_fare,
+                paymentMethod: ride.payment_method || 'cash',
                 subscriptionDiscount: Number(ride.subscription_discount) || 0,
                 couponDiscount: Number(ride.coupon_discount) || 0,
                 isFreeRide: ride.is_free_ride || false

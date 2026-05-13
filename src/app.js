@@ -18,7 +18,7 @@ app.use(express.json({
     limit: '10kb',
     verify: (req, _res, buf) => { req.rawBody = buf; },
 }));
-
+app.set("trust proxy", 1);
 // CORS configuration
 app.use(cors({
     origin: ENV.CORS_ORIGIN === '*' ? true : ENV.CORS_ORIGIN.split(','),

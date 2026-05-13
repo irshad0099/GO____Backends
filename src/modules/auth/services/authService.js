@@ -21,7 +21,7 @@ export const signup = async ({ phone, email, fullName ,role}) => {
         if (email) {
             const existingEmail = await userRepo.findUserByEmailAndRole(email,role);
             if (existingEmail) {
-                throw new ConflictError('Email already registered wigth same role');
+                throw new ConflictError('Email already registered with same role');
             }
         }
 
@@ -137,7 +137,7 @@ export const signin = async (phone, email, role) => {
 
         // Generic response — don't reveal if phone/email is registered or not
         if (!user || !user.is_active) {
-            return { message: 'If this account exists, an OTP will be sent', expiryInMinutes: 5 };
+            throw new NotFoundError('User not found');
         }
 
         if (isEmail) {
@@ -151,7 +151,7 @@ export const signin = async (phone, email, role) => {
             return { message: 'OTP sent to your email', expiryInMinutes: 5, otp: result.otp };
         } else {
             const result = await otpService.sendOTP(phone, 'signin');
-            return { message: 'If this account exists, an OTP will be sent', expiryInMinutes: 5, otp: result.otp };
+            return { message: 'OTP sent to your phone', expiryInMinutes: 5, otp: result.otp };
         }
     } catch (error) {
         logger.error('Signin service error:', error);

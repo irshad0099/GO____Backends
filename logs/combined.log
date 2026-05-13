@@ -7611,3 +7611,112 @@ AuthError: Invalid token
 2026-05-10 23:32:58 [INFO]: ✅ PostgreSQL connected successfully
 2026-05-10 23:35:35 [INFO]: ✅ PostgreSQL connected successfully
 2026-05-10 23:41:33 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-13 14:45:58 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-13 14:45:58 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-05-13 14:45:58 [INFO]: 🔌 Initializing Fast2SMS Provider
+2026-05-13 14:45:58 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-05-13 14:45:58 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-13 14:45:58 [INFO]: ✅ Redis Cloud ready
+2026-05-13 14:46:00 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-13 14:46:01 [WARN]: Slow query:
+2026-05-13 14:46:02 [WARN]: Slow query:
+2026-05-13 14:46:02 [WARN]: Slow query:
+2026-05-13 14:46:02 [WARN]: Slow query:
+2026-05-13 14:46:02 [WARN]: Slow query:
+2026-05-13 14:46:02 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-13 14:46:02 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-13 14:46:02 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
+2026-05-13 14:46:02 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-13 14:46:02 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-13 14:47:49 [WARN]: Slow query:
+2026-05-13 14:47:49 [INFO]: 🔐 OTP send initiated
+2026-05-13 14:47:49 [DEBUG]: 💾 OTP saved to database
+2026-05-13 14:47:49 [DEBUG]: 📤 SMS sending initiated
+2026-05-13 14:47:50 [DEBUG]: 📨 Fast2SMS API Response Received
+2026-05-13 14:47:50 [ERROR]: ❌ Fast2SMS SMS failed
+2026-05-13 14:47:50 [ERROR]: ❌ SMS sending failed
+2026-05-13 14:47:50 [WARN]: ⚠️ SMS send failed, falling back to console mode
+2026-05-13 14:47:50 [INFO]: ✅ OTP sent successfully
+2026-05-13 14:48:29 [INFO]: PostgreSQL disconnected
+2026-05-13 14:48:32 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-13 14:48:32 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-05-13 14:48:32 [INFO]: 🔌 Initializing AuthKey SMS Provider
+2026-05-13 14:48:32 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-05-13 14:48:32 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-13 14:48:32 [INFO]: ✅ Redis Cloud ready
+2026-05-13 14:48:33 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-13 14:48:35 [WARN]: Slow query:
+2026-05-13 14:48:35 [WARN]: Slow query:
+2026-05-13 14:48:35 [WARN]: Slow query:
+2026-05-13 14:48:35 [WARN]: Slow query:
+2026-05-13 14:48:35 [WARN]: Slow query:
+2026-05-13 14:48:35 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-13 14:48:35 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-13 14:48:35 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
+2026-05-13 14:48:35 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-13 14:48:35 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-13 14:48:43 [INFO]: 🔐 OTP send initiated
+2026-05-13 14:48:43 [DEBUG]: 💾 OTP saved to database
+2026-05-13 14:48:43 [DEBUG]: 📤 SMS sending initiated
+2026-05-13 14:48:43 [DEBUG]: 📡 AuthKey API Request
+2026-05-13 14:48:44 [DEBUG]: 📨 AuthKey API Response Received
+2026-05-13 14:48:44 [INFO]: ✅ SMS sent successfully via AuthKey
+2026-05-13 14:48:44 [INFO]: ✅ OTP sent successfully
+2026-05-13 14:50:01 [WARN]: Slow query:
+2026-05-13 14:50:56 [WARN]: Slow query:
+2026-05-13 14:50:56 [INFO]: 🔐 OTP send initiated
+2026-05-13 14:50:57 [DEBUG]: 💾 OTP saved to database
+2026-05-13 14:50:57 [DEBUG]: 📤 SMS sending initiated
+2026-05-13 14:50:57 [DEBUG]: 📡 AuthKey API Request
+2026-05-13 14:50:57 [DEBUG]: 📨 AuthKey API Response Received
+2026-05-13 14:50:57 [INFO]: ✅ SMS sent successfully via AuthKey
+2026-05-13 14:50:57 [INFO]: ✅ OTP sent successfully
+2026-05-13 14:51:31 [WARN]: Slow query:
+2026-05-13 14:51:32 [INFO]: ✅ OTP verified via Redis for 9540594976
+2026-05-13 14:51:33 [INFO]: User signed in successfully:
+2026-05-13 14:52:02 [WARN]: Slow query:
+2026-05-13 14:54:01 [WARN]: Slow query:
+2026-05-13 14:56:01 [WARN]: Slow query:
+2026-05-13 14:58:02 [WARN]: Slow query:
+2026-05-13 15:00:02 [WARN]: Slow query:
+2026-05-13 15:00:11 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-13 15:00:11 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-05-13 15:00:11 [INFO]: 🔌 Initializing AuthKey SMS Provider
+2026-05-13 15:00:11 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-05-13 15:00:11 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-13 15:00:12 [INFO]: ✅ Redis Cloud ready
+2026-05-13 15:00:13 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-13 15:00:14 [WARN]: Slow query:
+2026-05-13 15:00:14 [WARN]: Slow query:
+2026-05-13 15:00:14 [WARN]: Slow query:
+2026-05-13 15:00:14 [WARN]: Slow query:
+2026-05-13 15:00:15 [WARN]: Slow query:
+2026-05-13 15:00:15 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-13 15:00:15 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-13 15:00:15 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
+2026-05-13 15:00:15 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-13 15:00:15 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-13 15:00:39 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-13 15:00:39 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-05-13 15:00:40 [INFO]: 🔌 Initializing AuthKey SMS Provider
+2026-05-13 15:00:40 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-05-13 15:00:40 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-13 15:00:40 [INFO]: ✅ Redis Cloud ready
+2026-05-13 15:00:41 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-13 15:00:41 [WARN]: ⚠️ Firebase credentials not found in environment variables - FCM notifications disabled
+2026-05-13 15:00:41 [INFO]: 🔌 Initializing AuthKey SMS Provider
+2026-05-13 15:00:41 [WARN]: [Email] SENDGRID_API_KEY not set — email disabled
+2026-05-13 15:00:41 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-13 15:00:41 [INFO]: ✅ Redis Cloud ready
+2026-05-13 15:00:42 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-13 15:00:44 [WARN]: Slow query:
+2026-05-13 15:00:44 [WARN]: Slow query:
+2026-05-13 15:00:44 [WARN]: Slow query:
+2026-05-13 15:00:44 [WARN]: Slow query:
+2026-05-13 15:00:44 [WARN]: Slow query:
+2026-05-13 15:00:44 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-13 15:00:44 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-13 15:00:44 [INFO]: ✅ BullMQ workers started: notification, ride-completion, payment, post-payment
+2026-05-13 15:00:44 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-13 15:00:44 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-13 15:02:01 [WARN]: Slow query:

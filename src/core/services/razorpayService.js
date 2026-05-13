@@ -15,6 +15,7 @@ if (!razorpay) logger.warn('[Razorpay] RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET no
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const createRazorpayOrder = async (amount, currency = 'INR', receipt, notes = {}) => {
+    if (!razorpay) throw new Error('Razorpay not configured — RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET missing in env');
     try {
         const options = {
             amount: amount * 100, // Razorpay uses paise

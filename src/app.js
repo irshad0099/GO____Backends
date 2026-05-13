@@ -9,6 +9,7 @@ import { globalErrorHandler, notFoundHandler } from './core/errors/globalErrorHa
 import { apiLoggerMiddleware } from './core/middleware/apiLogger.middleware.js';
 
 const app = express();
+app.set("trust proxy", 1);
 
 console.log('✅ App created');
 console.log(`API Prefix: "${ENV.API_PREFIX}"`);
@@ -18,7 +19,6 @@ app.use(express.json({
     limit: '10kb',
     verify: (req, _res, buf) => { req.rawBody = buf; },
 }));
-app.set("trust proxy", 1);
 // CORS configuration
 app.use(cors({
     origin: ENV.CORS_ORIGIN === '*' ? true : ENV.CORS_ORIGIN.split(','),

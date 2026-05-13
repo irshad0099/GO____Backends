@@ -4610,3 +4610,5 @@ AuthError: Invalid token
 2026-05-09 16:26:58 [ERROR]: [NotificationWorker] Worker error: getaddrinfo ENOTFOUND redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com
 2026-05-09 16:26:59 [ERROR]: ❌ Redis error:
 2026-05-09 16:32:38 [ERROR]: ❌ FCM error:
+2026-05-13 14:47:50 [ERROR]: ❌ Fast2SMS SMS failed
+2026-05-13 14:47:50 [ERROR]: ❌ SMS sending failed

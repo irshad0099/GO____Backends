@@ -6,6 +6,17 @@ import { authenticate, authorize } from '../../../core/middleware/auth.middlewar
 import { validate } from '../../../core/middleware/validation.middleware.js';
 import * as validator from '../validators/driver.validator.js';
 import { db } from '../../../infrastructure/database/postgres.js';
+import multer from 'multer';
+
+// memoryStorage — file.buffer S3 upload ke liye chahiye
+const profileUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (/jpeg|jpg|png|webp/.test(file.mimetype)) cb(null, true);
+        else cb(new Error('Only image files allowed (jpeg, jpg, png, webp)'));
+    },
+});
 
 // ─── New Feature Controllers ─────────────────────────────────────────────────
 import * as incentiveCtrl    from '../controllers/incentiveController.js';
@@ -43,6 +54,7 @@ router.post(
 
 router.get('/profile', controller.getProfile);
 router.put('/profile', controller.updateProfile);
+router.patch('/profile', profileUpload.single('profilePicture'), controller.updateProfile);
 
 // Location and availability
 router.put(

@@ -1,9 +1,32 @@
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import * as driverRepo from '../repositories/driver.repository.js';
 import * as rideRepo from '../../rides/repositories/ride.repository.js';
 import * as userService from "../../users/services/userService.js"
+import * as userRepo from '../../users/repositories/user.repository.js';
 import { NotFoundError, ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 import { saveDriverLocation, getDriverLocation } from '../../../core/services/redisService.js';
+import { ENV } from '../../../config/envConfig.js';
+
+const s3 = new S3Client({
+    region: ENV.AWS_REGION,
+    credentials: {
+        accessKeyId:     ENV.AWS_ACCESS_KEY_ID,
+        secretAccessKey: ENV.AWS_SECRET_ACCESS_KEY,
+    },
+});
+
+const uploadProfilePictureToS3 = async (userId, file) => {
+    const ext = file.mimetype.split('/')[1] || 'jpg';
+    const key = `drivers/${userId}/profile/${Date.now()}.${ext}`;
+    await s3.send(new PutObjectCommand({
+        Bucket:      ENV.AWS_BUCKET_NAME,
+        Key:         key,
+        Body:        file.buffer,
+        ContentType: file.mimetype,
+    }));
+    return `https://${ENV.AWS_BUCKET_NAME}.s3.${ENV.AWS_REGION}.amazonaws.com/${key}`;
+};
 
 export const registerDriver = async (userId, driverData) => {
     try {
@@ -107,42 +130,51 @@ export const getDriverProfile = async (userId) => {
     }
 };
 
-export const updateDriverProfile = async (userId, updates) => {
+export const updateDriverProfile = async (userId, updates, file) => {
     try {
         const driver = await driverRepo.findDriverByUserId(userId);
+        if (!driver) throw new NotFoundError('Driver profile');
 
-        if (!driver) {
-            throw new NotFoundError('Driver profile');
+        // users table — fullName, email, profilePicture
+        const userUpdates = {};
+        if (updates.fullName       !== undefined) userUpdates.full_name        = updates.fullName;
+        if (updates.email          !== undefined) userUpdates.email            = updates.email;
+        if (updates.profilePicture !== undefined) userUpdates.profile_picture  = updates.profilePicture;
+
+        // file aayi toh S3 pe upload karke URL save karo
+        if (file) {
+            userUpdates.profile_picture = await uploadProfilePictureToS3(userId, file);
         }
 
-        const allowedUpdates = ['vehicleModel', 'vehicleColor'];
-        const filteredUpdates = {};
+        // drivers table — city
+        const driverUpdates = {};
+        if (updates.city !== undefined) driverUpdates.city = updates.city;
 
-        Object.keys(updates).forEach(key => {
-            if (allowedUpdates.includes(key)) {
-                filteredUpdates[key] = updates[key];
-            }
-        });
+        // driver_vehicle table — vehicleModel, vehicleColor
+        const vehicleUpdates = {};
+        if (updates.vehicleModel !== undefined) vehicleUpdates.vehicle_model = updates.vehicleModel;
+        if (updates.vehicleColor !== undefined) vehicleUpdates.vehicle_color = updates.vehicleColor;
 
-        if (Object.keys(filteredUpdates).length === 0) {
-            return await getDriverProfile(userId);
+        const hasAny =
+            Object.keys(userUpdates).length > 0 ||
+            Object.keys(driverUpdates).length > 0 ||
+            Object.keys(vehicleUpdates).length > 0;
+
+        if (!hasAny) return await getDriverProfile(userId);
+
+        if (Object.keys(userUpdates).length > 0) {
+            await userRepo.updateUser(userId, userUpdates);
         }
 
-        const vehicleUpdates = {
-            vehicle_model: filteredUpdates.vehicleModel,
-            vehicle_color: filteredUpdates.vehicleColor
-        };
-
-        const updatedVehicle = await driverRepo.updateVehicleDetail(driver.id, vehicleUpdates);
-
-        if (!updatedVehicle) {
-            throw new NotFoundError('Vehicle details');
+        if (Object.keys(driverUpdates).length > 0) {
+            await driverRepo.updateDriver(driver.id, driverUpdates);
         }
 
-        return {
-            vehicleModel: updatedVehicle.vehicle_model,
-            vehicleColor: updatedVehicle.vehicle_color
-        };
+        if (Object.keys(vehicleUpdates).length > 0) {
+            await driverRepo.updateVehicleDetail(driver.id, vehicleUpdates);
+        }
+
+        return await getDriverProfile(userId);
     } catch (error) {
         logger.error('Update driver profile service error:', error);
         throw error;

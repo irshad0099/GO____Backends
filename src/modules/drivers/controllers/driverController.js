@@ -50,7 +50,7 @@ export const updateProfile = async (req, res, next) => {
         const userId = req.user.id;
         const updates = req.body;
 
-        const updatedProfile = await driverService.updateDriverProfile(userId, updates);
+        const updatedProfile = await driverService.updateDriverProfile(userId, updates, req.file);
 
         sendResponse(res, 200, 'Driver profile updated successfully', updatedProfile);
     } catch (error) {

@@ -2,6 +2,7 @@ import * as earningsRepo from '../repositories/earnings.repository.js';
 import * as driverRepo from '../repositories/driver.repository.js';
 import * as cashRepo from '../repositories/cashCollection.repository.js';
 import { creditWallet } from '../../wallet/repositories/wallet.repository.js';
+import { createCompanyEarning } from '../../payments/repositories/payment.Repository.js';
 import { pool } from '../../../infrastructure/database/postgres.js';
 import { NotFoundError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
@@ -202,10 +203,22 @@ export const creditDriverEarnings = async ({
             );
         }
 
+        // Company earnings track karo — har payment method pe
+        await createCompanyEarning(client, {
+            rideId,
+            driverId:      driver.id,
+            passengerId:   earningsTxn.rows[0]?.passenger_id || null,
+            paymentMethod,
+            grossFare:     netEarnings + platformFee,
+            platformFee,
+            gstOnFee:      0,
+            netToDriver:   netEarnings,
+        }).catch(e => logger.warn(`[Earnings] Company earning record failed ride=${rideId}: ${e.message}`));
+
         await client.query('COMMIT');
 
         logger.info(
-            `[Earnings] Driver credited | Driver: ${driver.id} | Ride: ${rideId} | Net: ₹${netEarnings} | Method: ${paymentMethod}`
+            `[Earnings] Driver credited | Driver: ${driver.id} | Ride: ${rideId} | Net: ₹${netEarnings} | Platform: ₹${platformFee} | Method: ${paymentMethod}`
         );
 
         return {

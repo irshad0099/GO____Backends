@@ -40,6 +40,7 @@ import {
 import { addRideCompletionJob, addNotificationJob } from '../../../infrastructure/queue/rideQueue.js';
 import { startRideTracking, getActualDistance, clearRideTracking } from '../../../infrastructure/websocket/rideTracking.js';
 import { sendNotification } from '../../../core/services/firebaseService.js';
+import { findCashBalance } from '../../drivers/repositories/cashCollection.repository.js';
 
 const safeEmit = (fn, label) => {
     try { fn(); } catch (err) { logger.warn(`Socket emit failed (${label}): ${err.message}`); }
@@ -847,9 +848,35 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             // SYNC: driver ko immediately off-duty karo — naya ride accept kar sake
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
 
-            // Ride complete — driver ab free hai, pending rides push karo
-            if (driver.current_latitude && driver.current_longitude && driver.vehicle_type) {
-                pushPendingRidesToDriver(driverUserId, driver.vehicle_type, driver.current_latitude, driver.current_longitude).catch(() => {});
+            // Cash limit check — ride complete ke baad limit exceed hui?
+            const cashBalance = await findCashBalance(driver.id).catch(() => null);
+            if (cashBalance?.is_limit_exceeded) {
+                // Driver ko offline karo — naya ride nahi milega
+                await driverRepo.updateDriver(driver.id, { is_available: false });
+
+                // Socket pe block notification bhejo
+                safeEmit(() => emitToDriver(driverUserId, 'driver:blocked', {
+                    reason: 'cash_limit_exceeded',
+                    message: `Cash Limit Exceed.First Deposit ₹${parseFloat(cashBalance.pending_amount).toFixed(0)} .`,
+                    pendingAmount: parseFloat(cashBalance.pending_amount),
+                }), 'driver:blocked');
+
+                // FCM bhi bhejo agar FCM token ho
+                if (driver.fcm_token) {
+                    sendNotification(
+                        driver.fcm_token,
+                        'Cash Limit Exceed!',
+                        `Cash Limit Exceed.First Deposit ₹${parseFloat(cashBalance.pending_amount).toFixed(0)} .`,
+                        { type: 'cash_limit_exceeded', pendingAmount: String(cashBalance.pending_amount) }
+                    ).catch(() => {});
+                }
+
+                logger.warn(`[RideService] Driver ${driver.id} blocked — cash limit exceeded ₹${cashBalance.pending_amount}`);
+            } else {
+                // Cash limit theek hai — pending rides push karo
+                if (driver.current_latitude && driver.current_longitude && driver.vehicle_type) {
+                    pushPendingRidesToDriver(driverUserId, driver.vehicle_type, driver.current_latitude, driver.current_longitude).catch(() => {});
+                }
             }
 
             // ASYNC: driver stats (total_rides) + coupon recording

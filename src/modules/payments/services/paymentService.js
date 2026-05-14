@@ -24,7 +24,12 @@ import {
     savepaymentMethod,
     deletePaymentMethod,
     setDefaultPaymentMethod,
+    createPayoutRequest,
+    updatePayoutRequest,
+    findPendingPayoutByDriver,
 } from '../repositories/payment.Repository.js';
+import { createPayout } from '../../../core/services/razorpayService.js';
+import { debitWallet, creditWallet, findWalletByUserId } from '../../wallet/repositories/wallet.repository.js';
 
 // ─── Wallet service integration ───────────────────────────────────────────────
 // Import your wallet service to credit/debit when payment settles
@@ -587,6 +592,89 @@ const processWalletPayment = async (userId, { order, purpose, ride_id, amount })
     } catch (error) {
         logger.error('[Payment] processWalletPayment error:', error);
         throw error;
+    }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  Driver Payout (Withdrawal)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const initiateDriverPayout = async (driverUserId, { amount, payoutMethod, upiId, bankAccountNumber, ifscCode }) => {
+    if (!amount || amount < 100) {
+        const err = new Error('Minimum withdrawal amount is ₹100'); err.statusCode = 400; throw err;
+    }
+    if (!payoutMethod || !['upi', 'bank'].includes(payoutMethod)) {
+        const err = new Error('payout_method must be upi or bank'); err.statusCode = 400; throw err;
+    }
+    if (payoutMethod === 'upi' && !upiId) {
+        const err = new Error('upi_id required for UPI payout'); err.statusCode = 400; throw err;
+    }
+    if (payoutMethod === 'bank' && (!bankAccountNumber || !ifscCode)) {
+        const err = new Error('bank_account_number and ifsc_code required'); err.statusCode = 400; throw err;
+    }
+
+    const existing = await findPendingPayoutByDriver(driverUserId);
+    if (existing) {
+        const err = new Error('You already have a pending withdrawal. Please wait for it to complete.');
+        err.statusCode = 409; throw err;
+    }
+
+    const wallet = await findWalletByUserId(driverUserId);
+    if (!wallet || parseFloat(wallet.balance) < amount) {
+        const err = new Error(`Insufficient balance. Available: ₹${wallet?.balance || 0}`);
+        err.statusCode = 400; throw err;
+    }
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        await debitWallet(client, driverUserId, amount);
+        const payoutRecord = await createPayoutRequest({ driverUserId, amount, bankAccountNumber, ifscCode, upiId, payoutMethod });
+        await client.query('COMMIT');
+
+        // Fire & forget — Razorpay payout async
+        _processRazorpayPayout(payoutRecord, { driverUserId, amount, payoutMethod, upiId, bankAccountNumber, ifscCode }).catch(() => {});
+
+        logger.info(`[Payment] Payout ₹${amount} initiated | Driver: ${driverUserId}`);
+        return { message: `Withdrawal of ₹${amount} initiated. Will be credited within 24 hours.`, payoutId: payoutRecord.id, amount };
+    } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+    } finally {
+        client.release();
+    }
+};
+
+const _processRazorpayPayout = async (payoutRecord, data) => {
+    try {
+        const payout = await createPayout({
+            amount: data.amount,
+            payoutMethod: data.payoutMethod,
+            upiId: data.upiId,
+            bankAccount: { account_number: data.bankAccountNumber, ifsc: data.ifscCode, name: 'Driver' },
+            referenceId: `PAYOUT-${payoutRecord.id}-${Date.now()}`,
+        });
+        await updatePayoutRequest(payoutRecord.id, {
+            status: payout.status === 'processed' ? 'success' : 'processing',
+            razorpayPayoutId: payout.id,
+            completedAt: payout.status === 'processed' ? new Date() : null,
+        });
+    } catch (err) {
+        logger.error(`[Payment] Razorpay payout failed for ${payoutRecord.id}:`, err.message);
+        await updatePayoutRequest(payoutRecord.id, { status: 'failed', failureReason: err.message });
+        // Refund wallet
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+            await creditWallet(client, data.driverUserId, data.amount);
+            await client.query('COMMIT');
+            logger.info(`[Payment] Payout failed — wallet refunded ₹${data.amount} driver ${data.driverUserId}`);
+        } catch (e) {
+            await client.query('ROLLBACK');
+            logger.error(`[Payment] CRITICAL: payout failed AND refund failed driver ${data.driverUserId}`);
+        } finally {
+            client.release();
+        }
     }
 };
 

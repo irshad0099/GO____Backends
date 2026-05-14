@@ -45,6 +45,35 @@ const safeEmit = (fn, label) => {
     try { fn(); } catch (err) { logger.warn(`Socket emit failed (${label}): ${err.message}`); }
 };
 
+// Driver available hua (online ya ride complete) — nearby pending rides push karo
+export const pushPendingRidesToDriver = async (driverUserId, vehicleType, latitude, longitude) => {
+    try {
+        if (!latitude || !longitude || !vehicleType) return;
+        const pendingRides = await rideRepo.findPendingRidesNearLocation(vehicleType, latitude, longitude);
+        if (!pendingRides.length) return;
+
+        pendingRides.forEach(ride => {
+            safeEmit(() => emitToDriver(driverUserId, 'ride:new_request', {
+                rideId: ride.id,
+                rideNumber: ride.ride_number,
+                passengerName: ride.passenger_name,
+                pickupLocation: { latitude: ride.pickup_latitude, longitude: ride.pickup_longitude, address: ride.pickup_address },
+                dropoffLocation: { latitude: ride.dropoff_latitude, longitude: ride.dropoff_longitude, address: ride.dropoff_address },
+                estimatedFare: ride.estimated_fare,
+                distanceKm: ride.distance_km,
+                durationMinutes: ride.duration_minutes,
+                vehicleType: ride.vehicle_type,
+                timestamp: ride.requested_at,
+                paymentMethod: ride.payment_method === 'upi' ? 'qr' : ride.payment_method
+            }), 'ride:new_request:catchup');
+        });
+
+        logger.info(`[pushPendingRides] driver=${driverUserId} got ${pendingRides.length} pending ride(s)`);
+    } catch (err) {
+        logger.warn(`[pushPendingRides] failed for driver=${driverUserId}: ${err.message}`);
+    }
+};
+
 // ─── Helper: gather REAL demand + weather signals ───────────────────────────
 
 //     const [rideRequests, requestVelocity, nearbyDrivers, weatherSignal] = await Promise.all([
@@ -74,7 +103,7 @@ const gatherDemandSignals = async (vehicleType, latitude, longitude) => {
         // ++ Yeh line change ki — Redis cache se fetch karo
         (async () => {
             const cached = await getCachedNearbyDrivers(vehicleType, latitude, longitude);
-            if (cached) return cached;
+            if (cached !== null && cached.length > 0) return cached;
             const drivers = await rideRepo.findNearbyDrivers(vehicleType, latitude, longitude, searchRadius);
             await setCachedNearbyDrivers(vehicleType, latitude, longitude, drivers);
             return drivers;
@@ -675,6 +704,11 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             additionalFields.cancellation_reason = cancellationReason || 'Driver cancelled';
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
 
+            // Driver ne cancel kiya — ab free hai, pending rides push karo
+            if (driver.current_latitude && driver.current_longitude && driver.vehicle_type) {
+                pushPendingRidesToDriver(driverUserId, driver.vehicle_type, driver.current_latitude, driver.current_longitude).catch(() => {});
+            }
+
             if (ride.passenger_fcm_token) {
                 await addNotificationJob('ride-cancelled', {
                     fcmToken: ride.passenger_fcm_token,
@@ -812,6 +846,11 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
 
             // SYNC: driver ko immediately off-duty karo — naya ride accept kar sake
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
+
+            // Ride complete — driver ab free hai, pending rides push karo
+            if (driver.current_latitude && driver.current_longitude && driver.vehicle_type) {
+                pushPendingRidesToDriver(driverUserId, driver.vehicle_type, driver.current_latitude, driver.current_longitude).catch(() => {});
+            }
 
             // ASYNC: driver stats (total_rides) + coupon recording
             // total_earnings is handled by earningsService (creditDriverEarnings) — not here

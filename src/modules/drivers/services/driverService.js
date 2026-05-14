@@ -6,6 +6,7 @@ import * as userRepo from '../../users/repositories/user.repository.js';
 import { NotFoundError, ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 import { saveDriverLocation, getDriverLocation } from '../../../core/services/redisService.js';
+import { pushPendingRidesToDriver } from '../../rides/services/rideService.js';
 import { ENV } from '../../../config/envConfig.js';
 
 const s3 = new S3Client({
@@ -241,6 +242,11 @@ export const toggleAvailability = async (userId, isAvailable, latitude, longitud
         }
 
         const updatedDriver = await driverRepo.updateDriver(driver.id, updateData);
+
+        // Driver online hua — miss hue pending rides push karo (fire & forget)
+        if (isAvailable && latitude && longitude && driver.vehicle_type) {
+            pushPendingRidesToDriver(driverUserId, driver.vehicle_type, latitude, longitude).catch(() => {});
+        }
 
         return {
             isAvailable: updatedDriver.is_available,

@@ -1,11 +1,10 @@
 import { db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 
-export const createSession = async ({ userId, accessToken, ipAddress, userAgent, deviceId, deviceType }) => {
+export const createSession = async ({ userId, accessToken, ipAddress, userAgent, deviceId, deviceType, role }) => {
     try {
-        // Calculate expiry (7 days from now)
         const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + 7);
+        expiresAt.setDate(expiresAt.getDate() + (role === 'driver' ? 7 : 30));
 
         const result = await db.query(
             `INSERT INTO sessions 

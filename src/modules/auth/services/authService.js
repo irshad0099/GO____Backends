@@ -84,6 +84,7 @@ export const verifySignup = async ({ phone, otp, email, fullName,role }) => {
             deviceType: null,
             ipAddress: null,
             userAgent: null,
+            role: user.role
         });
 
         logger.info('User signed up successfully:', { userId: user.id, phone });
@@ -180,8 +181,16 @@ export const verifySignin = async ({ phone, email, otp, ipAddress, userAgent, ro
 
         if (!user) throw new NotFoundError('User not found');
         if (!user.is_active) throw new AuthError('Account is deactivated.');
+        if (user.is_logged) {
+            const activeSessions = await sessionRepo.findSessionsByUserId(user.id);
+            if (activeSessions.length > 0) {
+                throw new ConflictError('Already logged in on another device. Please logout from that device first.');
+            }
+            // Token expired hai, is_logged stale hai — reset karke allow karo
+            await userRepo.updateUser(user.id, { is_logged: false });
+        }
 
-        await userRepo.updateUser(user.id, { last_login: new Date() });
+        await userRepo.updateUser(user.id, { last_login: new Date(), is_logged: true });
 
         const accessToken  = tokenService.generateAccessToken(user);
 
@@ -189,7 +198,8 @@ export const verifySignin = async ({ phone, email, otp, ipAddress, userAgent, ro
             userId: user.id,
             accessToken,
             ipAddress,
-            userAgent
+            userAgent,
+            role: user.role
         });
 
         logger.info('User signed in successfully:', { userId: user.id, identifier });
@@ -228,14 +238,22 @@ export const logout = async (accessToken) => {
         if (!accessToken) {
             throw new AuthError('No token provided for logout');
         }
-        
+
+        // Decode token to get userId before deleting session
+        const decoded = tokenService.decodeToken(accessToken);
+
         // DB session delete karo
         await sessionRepo.deleteSession(accessToken);
- 
-        // ── Access token blacklist mein dalo — reuse na ho sake ───────────────
+
+        // Set is_logged = false so user can login from another device
+        if (decoded?.id) {
+            await userRepo.updateUser(decoded.id, { is_logged: false });
+        }
+
+        // Access token blacklist mein dalo — reuse na ho sake
         await blacklistToken(accessToken, 86400); // 24 hours blacklist
         logger.info('Access token blacklisted successfully');
- 
+
         return { message: 'Logged out successfully' };
     } catch (error) {
         logger.error('Logout service error:', error);

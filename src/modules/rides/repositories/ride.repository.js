@@ -189,6 +189,40 @@ export const findNearbyDrivers = async (vehicleType, latitude, longitude, radius
     }
 };
 
+export const findPendingRidesNearLocation = async (vehicleType, latitude, longitude, radiusKm = 5, windowMinutes = 3) => {
+    try {
+        const latDelta = radiusKm / 111.0;
+        const lngDelta = radiusKm / (111.0 * Math.cos((latitude * Math.PI) / 180));
+
+        const result = await db.query(
+            `SELECT r.id, r.ride_number, r.passenger_id, r.vehicle_type,
+                    r.pickup_latitude, r.pickup_longitude, r.pickup_address,
+                    r.dropoff_latitude, r.dropoff_longitude, r.dropoff_address,
+                    r.estimated_fare, r.distance_km, r.duration_minutes,
+                    r.payment_method, r.requested_at,
+                    u.full_name AS passenger_name
+             FROM rides r
+             JOIN users u ON r.passenger_id = u.id
+             WHERE r.status = 'requested'
+               AND r.vehicle_type = $1
+               AND r.requested_at >= NOW() - ($6 || ' minutes')::INTERVAL
+               AND r.pickup_latitude  BETWEEN $4 AND $5
+               AND r.pickup_longitude BETWEEN $7 AND $8
+             ORDER BY r.requested_at ASC`,
+            [
+                vehicleType, latitude, longitude,
+                latitude - latDelta, latitude + latDelta,
+                windowMinutes,
+                longitude - lngDelta, longitude + lngDelta
+            ]
+        );
+        return result.rows;
+    } catch (error) {
+        logger.error('Find pending rides near location error:', error);
+        throw error;
+    }
+};
+
 export const assignDriverToRide = async (rideId, driverId, pickupDistanceKm = 0) => {
     const client = await db.getClient();
     try {

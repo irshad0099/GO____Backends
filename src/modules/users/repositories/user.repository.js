@@ -20,10 +20,10 @@ export const findUserByPhone = async (phone) => {
 export const findUserByPhoneAndRole = async (phone,role) => {
     try {
         const result = await db.query(
-            `SELECT id, phone_number, email, full_name, profile_picture, 
-                    role, is_verified, is_active, last_login, created_at, updated_at
-             FROM users 
-             WHERE phone_number = $1 AND role = $2`,
+            `SELECT id, phone_number, email, full_name, profile_picture,
+                    role, is_verified, is_active, is_logged, last_login, created_at, updated_at
+             FROM users
+             WHERE phone_number = $1 AND role = $2` ,
             [phone, role]
         );
         return result.rows[0];

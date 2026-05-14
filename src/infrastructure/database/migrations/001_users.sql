@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fcm_token VARCHAR(500),
+    is_logged BOOLEAN,
     is_payment_defaulter BOOLEAN DEFAULT FALSE,
     payment_locked_until TIMESTAMP,
     CONSTRAINT users_role_check CHECK (((role)::text = ANY ((ARRAY['passenger'::character varying, 'driver'::character varying, 'admin'::character varying, 'super_admin'::character varying])::text[]))),

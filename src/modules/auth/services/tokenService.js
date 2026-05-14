@@ -3,16 +3,17 @@ import { ENV } from '../../../config/envConfig.js';
 import { AuthError } from '../../../core/errors/ApiError.js';
 
 export const generateAccessToken = (user) => {
+    const expiresIn = user.role === 'driver' ? '7d' : '30d';
     return jwt.sign(
         {
-            userId: user.id,
+            id: user.id,
             phone: user.phone_number,
             role: user.role,
             type: 'access'
         },
         ENV.JWT_SECRET,
         {
-            expiresIn: ENV.JWT_ACCESS_EXPIRY,
+            expiresIn,
             algorithm: 'HS256'
         }
     );

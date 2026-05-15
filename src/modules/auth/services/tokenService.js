@@ -6,6 +6,7 @@ export const generateAccessToken = (user) => {
     const expiresIn = user.role === 'driver' ? '7d' : '30d';
     return jwt.sign(
         {
+            userId: user.id,
             id: user.id,
             phone: user.phone_number,
             role: user.role,

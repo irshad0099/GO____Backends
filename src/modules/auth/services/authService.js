@@ -246,8 +246,8 @@ export const logout = async (accessToken) => {
         await sessionRepo.deleteSession(accessToken);
 
         // Set is_logged = false so user can login from another device
-        if (decoded?.id) {
-            await userRepo.updateUser(decoded.id, { is_logged: false });
+        if (decoded?.userId) {
+            await userRepo.updateUser(decoded.userId, { is_logged: false });
         }
 
         // Access token blacklist mein dalo — reuse na ho sake

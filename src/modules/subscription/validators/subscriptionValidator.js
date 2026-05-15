@@ -6,16 +6,26 @@ export const purchaseSchema = Joi.object({
         .messages({ 'any.required': 'plan_id is required' }),
 
     payment_method: Joi.string()
-        .valid('cash', 'card', 'wallet', 'upi')
+        .valid('wallet', 'upi', 'card')
         .required()
         .messages({
-            'any.only':     'payment_method must be: cash, card, wallet, or upi',
+            'any.only':     'payment_method must be: wallet, upi, or card',
             'any.required': 'payment_method is required',
         }),
 
     payment_gateway: Joi.string().max(50).optional(),
     gateway_transaction_id: Joi.string().max(255).optional(),
     auto_renew: Joi.boolean().default(true),
+});
+
+// ─── Verify Razorpay Payment ──────────────────────────────────────────────────
+export const verifySchema = Joi.object({
+    plan_id:              Joi.number().integer().positive().required(),
+    payment_method:       Joi.string().valid('upi', 'card').required(),
+    razorpay_order_id:    Joi.string().required(),
+    razorpay_payment_id:  Joi.string().required(),
+    razorpay_signature:   Joi.string().required(),
+    auto_renew:           Joi.boolean().default(false),
 });
 
 // ─── Cancel Subscription ─────────────────────────────────────────────────────

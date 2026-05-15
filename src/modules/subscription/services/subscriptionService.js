@@ -1,6 +1,7 @@
 import { db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
-import { createSubscriptionPlan, cancelSubscription as cancelRazorpaySubscription, fetchSubscription as fetchRazorpaySubscription, createCustomer } from '../../../core/services/razorpayService.js';
+import { createSubscriptionPlan, cancelSubscription as cancelRazorpaySubscription, fetchSubscription as fetchRazorpaySubscription, createCustomer, createRazorpayOrder, verifyRazorpayPayment } from '../../../core/services/razorpayService.js';
+import { debitWallet, createTransaction, findWalletByUserId } from '../../wallet/repositories/wallet.repository.js';
 import redis, { redisSafe } from '../../../config/redis.config.js';
 import {
     getAllPlans,
@@ -172,138 +173,213 @@ export const fetchActiveSubscription = async (userId) => {
 //  4. Purchase / Subscribe to a plan
 // ─────────────────────────────────────────────────────────────────────────────
 
+const generateTxnNumber = () => {
+    const ts   = Date.now();
+    const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `TXN${ts}${rand}`;
+};
+
 export const purchaseSubscription = async (userId, {
     plan_id,
     payment_method,
     payment_gateway,
-    gateway_transaction_id,
     auto_renew,
     customer_details,
 }) => {
+    // Check plan exists
+    const plan = await getPlanById(plan_id);
+    if (!plan) {
+        const err = new Error('Subscription plan not found');
+        err.statusCode = 404;
+        throw err;
+    }
+
+    // Block if user already has any active subscription
+    const existing = await getActiveSubscription(userId);
+    if (existing) {
+        const err = new Error(
+            `You already have an active "${existing.plan_name}" subscription valid till ${new Date(existing.expires_at).toLocaleDateString('en-IN')}`
+        );
+        err.statusCode = 400;
+        throw err;
+    }
+
+    const price = parseFloat(plan.price);
+
+    // ── WALLET — deduct immediately, activate immediately ──
+    if (payment_method === 'wallet') {
+        const client = await db.getClient();
+        try {
+            await client.query('BEGIN');
+
+            // Balance check + deduct (row-level lock inside debitWallet)
+            const wallet = await findWalletByUserId(userId);
+            if (!wallet || parseFloat(wallet.balance) < price) {
+                const err = new Error(`Insufficient wallet balance. Required: ₹${price}, Available: ₹${parseFloat(wallet?.balance || 0).toFixed(2)}`);
+                err.statusCode = 400;
+                throw err;
+            }
+            await debitWallet(client, userId, price);
+
+            // Wallet transaction record
+            await createTransaction(client, {
+                transactionNumber: generateTxnNumber(),
+                userId,
+                walletId:          wallet.id,
+                amount:            price,
+                type:              'debit',
+                category:          'subscription_purchase',
+                paymentMethod:     'wallet',
+                status:            'success',
+                description:       `Subscription: ${plan.name}`,
+                metadata:          { plan_id: plan.id, plan_slug: plan.slug },
+            });
+
+            const startedAt        = new Date();
+            const expiresAt        = new Date();
+            expiresAt.setDate(expiresAt.getDate() + plan.duration_days);
+            const freeRidesResetAt = new Date();
+            freeRidesResetAt.setDate(freeRidesResetAt.getDate() + 30);
+
+            const subscription = await createSubscription(client, {
+                userId, planId: plan.id, status: 'active',
+                startedAt, expiresAt, autoRenew: auto_renew ?? false,
+                paymentMethod: 'wallet', freeRidesResetAt,
+            });
+
+            const payment = await createSubscriptionPayment(client, {
+                userId, subscriptionId: subscription.id, planId: plan.id,
+                amount: price, paymentMethod: 'wallet', paymentGateway: null,
+                gatewayTransactionId: null, status: 'success',
+                description: `Subscription to ${plan.name}`,
+                metadata: { plan_slug: plan.slug },
+            });
+
+            await client.query('COMMIT');
+            await invalidateSubscriptionCache(userId);
+
+            logger.info(`[Subscription] Wallet purchase | User: ${userId} | Plan: ${plan.name} | ₹${price}`);
+
+            return {
+                success: true,
+                message: `Successfully subscribed to ${plan.name}!`,
+                data: {
+                    subscription: formatSubscription({ ...subscription, plan_name: plan.name, slug: plan.slug, price: plan.price, ride_discount_percent: plan.ride_discount_percent, free_rides_per_month: plan.free_rides_per_month, priority_booking: plan.priority_booking, cancellation_waiver: plan.cancellation_waiver, surge_protection: plan.surge_protection }),
+                    payment: formatPayment(payment),
+                },
+            };
+        } catch (error) {
+            await client.query('ROLLBACK');
+            logger.error(`[Subscription] wallet purchase error | User: ${userId}:`, error);
+            throw error;
+        } finally {
+            client.release();
+        }
+    }
+
+    // ── UPI / CARD — Razorpay order create, frontend pay kare, /verify pe activate ──
+    const razorpayOrder = await createRazorpayOrder(price, 'INR', `sub_${Date.now()}`, {
+        userId: String(userId),
+        planId: String(plan.id),
+        purpose: 'subscription',
+    });
+
+    logger.info(`[Subscription] Razorpay order created | User: ${userId} | Plan: ${plan.name} | Order: ${razorpayOrder.data.id}`);
+
+    return {
+        success:         true,
+        message:         'Complete payment to activate subscription',
+        requiresPayment: true,
+        data: {
+            razorpayOrderId: razorpayOrder.data.id,
+            amount:          razorpayOrder.data.amount,
+            currency:        razorpayOrder.data.currency,
+            plan: {
+                planId:   plan.id,
+                name:     plan.name,
+                price,
+                durationDays: plan.duration_days,
+            },
+        },
+    };
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  4b. Verify UPI/Card payment and activate subscription
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const verifyAndActivateSubscription = async (userId, {
+    plan_id,
+    payment_method,
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+    auto_renew,
+}) => {
+    // Verify Razorpay signature
+    const verified = await verifyRazorpayPayment(razorpay_order_id, razorpay_payment_id, razorpay_signature);
+    if (!verified?.data?.id) {
+        const err = new Error('Payment verification failed');
+        err.statusCode = 400;
+        throw err;
+    }
+
+    // Check again — race condition se bacho
+    const existing = await getActiveSubscription(userId);
+    if (existing) {
+        const err = new Error(`Already have an active "${existing.plan_name}" subscription`);
+        err.statusCode = 400;
+        throw err;
+    }
+
+    const plan = await getPlanById(plan_id);
+    if (!plan) {
+        const err = new Error('Plan not found');
+        err.statusCode = 404;
+        throw err;
+    }
+
     const client = await db.getClient();
     try {
         await client.query('BEGIN');
 
-        // Check plan exists
-        const plan = await getPlanById(plan_id);
-        if (!plan) {
-            const err = new Error('Subscription plan not found');
-            err.statusCode = 404;
-            throw err;
-        }
-
-        // Check if user already has an active subscription for the SAME plan
-        const existing = await getActiveSubscription(userId);
-        if (existing && existing.plan_id === plan_id) {
-            const err = new Error(
-                `You already have an active "${existing.plan_name}" subscription valid till ${new Date(existing.expires_at).toLocaleDateString('en-IN')}`
-            );
-            err.statusCode = 400;
-            throw err;
-        }
-
-        // Calculate expiry
-        const startedAt  = new Date();
-        const expiresAt  = new Date();
+        const startedAt        = new Date();
+        const expiresAt        = new Date();
         expiresAt.setDate(expiresAt.getDate() + plan.duration_days);
-
-        // Free rides monthly reset date
         const freeRidesResetAt = new Date();
         freeRidesResetAt.setDate(freeRidesResetAt.getDate() + 30);
 
-        let razorpaySubscriptionId = null;
-        let gatewayTransactionId = null;
-
-        // For Razorpay recurring payments only
-        if (payment_method === 'card' && payment_gateway === 'razorpay' && auto_renew) {
-            try {
-                // Create Razorpay customer if not exists
-                const customer = await createCustomer(customer_details || {
-                    name: `User ${userId}`,
-                    email: `user${userId}@example.com`,
-                    phone: '9999999999',
-                });
-
-                // Create Razorpay subscription plan
-                const razorpayPlan = await createSubscriptionPlan({
-                    name: plan.name,
-                    description: plan.description || `${plan.name} subscription`,
-                    price: parseFloat(plan.price),
-                    period: 'monthly',
-                }, customer.data);
-
-                razorpaySubscriptionId = razorpayPlan.data.id;
-            } catch (razorpayError) {
-                logger.warn(`[Subscription] Razorpay subscription creation failed, continuing without auto-renew:`, razorpayError.message);
-                razorpaySubscriptionId = null;
-                auto_renew = false;
-            }
-        }
-
-        // Create subscription record
         const subscription = await createSubscription(client, {
-            userId,
-            planId:          plan.id,
-            status:          'active',
-            startedAt,
-            expiresAt,
-            autoRenew:       auto_renew ?? true,
-            paymentMethod:   payment_method,
-            freeRidesResetAt,
-            razorpaySubscriptionId,
+            userId, planId: plan.id, status: 'active',
+            startedAt, expiresAt, autoRenew: auto_renew ?? false,
+            paymentMethod: payment_method, freeRidesResetAt,
         });
 
-        // Record payment
         const payment = await createSubscriptionPayment(client, {
-            userId,
-            subscriptionId:      subscription.id,
-            planId:              plan.id,
-            amount:              plan.price,
-            paymentMethod:       payment_method,
-            paymentGateway:      payment_gateway      || null,
-            gatewayTransactionId: gateway_transaction_id || null,
-            status:              'success',
-            description:         `Subscription to ${plan.name}`,
-            metadata:            { plan_slug: plan.slug },
+            userId, subscriptionId: subscription.id, planId: plan.id,
+            amount: parseFloat(plan.price), paymentMethod: payment_method,
+            paymentGateway: 'razorpay', gatewayTransactionId: razorpay_payment_id,
+            status: 'success',
+            description: `Subscription to ${plan.name}`,
+            metadata: { plan_slug: plan.slug, razorpay_order_id },
         });
 
         await client.query('COMMIT');
-
-        // Invalidate cache after new subscription
         await invalidateSubscriptionCache(userId);
 
-        logger.info(
-            `[Subscription] New subscription | User: ${userId} | Plan: ${plan.name} | Razorpay: ${razorpaySubscriptionId} | Expires: ${expiresAt.toISOString()}`
-        );
+        logger.info(`[Subscription] Verified & activated | User: ${userId} | Plan: ${plan.name} | Payment: ${razorpay_payment_id}`);
 
         return {
             success: true,
             message: `Successfully subscribed to ${plan.name}!`,
             data: {
-                subscription: {
-                    subscriptionId: subscription.id,
-                    planName:       plan.name,
-                    price:          parseFloat(plan.price),
-                    startedAt:      subscription.started_at,
-                    expiresAt:      subscription.expires_at,
-                    autoRenew:      subscription.auto_renew,
-                    razorpaySubscriptionId: razorpaySubscriptionId,
-                    benefits: {
-                        rideDiscountPercent: parseFloat(plan.ride_discount_percent),
-                        freeRidesPerMonth:   plan.free_rides_per_month,
-                        priorityBooking:     plan.priority_booking,
-                        cancellationWaiver:  plan.cancellation_waiver,
-                        surgeProtection:     plan.surge_protection,
-                    },
-                },
+                subscription: formatSubscription({ ...subscription, plan_name: plan.name, slug: plan.slug, price: plan.price, ride_discount_percent: plan.ride_discount_percent, free_rides_per_month: plan.free_rides_per_month, priority_booking: plan.priority_booking, cancellation_waiver: plan.cancellation_waiver, surge_protection: plan.surge_protection }),
                 payment: formatPayment(payment),
-                requiresRazorpay: !!razorpaySubscriptionId,
-                razorpaySubscriptionId,
             },
         };
     } catch (error) {
         await client.query('ROLLBACK');
-        logger.error(`[Subscription] purchaseSubscription error | User: ${userId}:`, error);
+        logger.error(`[Subscription] verify & activate error | User: ${userId}:`, error);
         throw error;
     } finally {
         client.release();

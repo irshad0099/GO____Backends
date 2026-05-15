@@ -5,6 +5,7 @@ import {
     getPlan,
     getActiveSubscription,
     purchase,
+    verify,
     cancel,
     autoRenew,
     applyBenefits,
@@ -16,6 +17,7 @@ import {
 
 import {
     purchaseSchema,
+    verifySchema,
     cancelSchema,
     autoRenewSchema,
     rideBenefitsSchema,
@@ -62,6 +64,14 @@ router.post(
     authLimiter,
     validate(purchaseSchema),
     purchase
+);
+
+// POST /api/v1/subscriptions/verify
+// Verify Razorpay payment and activate subscription (UPI/Card)
+router.post(
+    '/verify',
+    validate(verifySchema),
+    verify
 );
 
 // POST /api/v1/subscriptions/cancel

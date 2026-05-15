@@ -3,6 +3,7 @@ import * as schedRepo from '../../modules/rides/repositories/scheduledRide.repos
 import { requestRide } from '../../modules/rides/services/rideService.js';
 import { db } from '../../infrastructure/database/postgres.js';
 import logger from '../../core/logger/logger.js';
+import { resetFreeRides } from '../../modules/subscription/repositories/subscriptionRepository.js';
 
 // Every 2 minutes: rides check karo jinka pickup_time 15 min ke andar hai
 export const startScheduledRideCron = () => {
@@ -49,6 +50,34 @@ export const startScheduledRideCron = () => {
     });
 
     logger.info('[ScheduledRideCron] Started — checking every 2 minutes');
+};
+
+// Daily at 2 AM: free rides reset karo jin subscriptions ka reset_at aa gaya
+export const startFreeRidesResetCron = () => {
+    cron.schedule('0 2 * * *', async () => {
+        try {
+            const result = await db.query(
+                `SELECT id FROM user_subscriptions
+                 WHERE status = 'active'
+                   AND free_rides_per_month > 0
+                   AND free_rides_reset_at <= CURRENT_TIMESTAMP`
+            );
+
+            if (!result.rows.length) return;
+
+            logger.info(`[FreeRidesCron] Resetting free rides for ${result.rows.length} subscriptions`);
+
+            for (const row of result.rows) {
+                await resetFreeRides(row.id);
+            }
+
+            logger.info(`[FreeRidesCron] Done — ${result.rows.length} subscriptions reset`);
+        } catch (err) {
+            logger.error(`[FreeRidesCron] Error: ${err.message}`);
+        }
+    });
+
+    logger.info('[FreeRidesCron] Started — runs daily at 2 AM');
 };
 
 // Daily at 3 AM: api_logs 30 din se purana data delete karo

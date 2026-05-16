@@ -65,3 +65,17 @@ export const verify = async (rideId, otpCode) => {
         throw error;
     }
 };
+
+// Store/Clear OTP in rides.ride_otp column for quick reference
+export const updateRideOtpColumn = async (rideId, otpCode) => {
+    try {
+        const { rows } = await db.query(
+            `UPDATE rides SET ride_otp = $1, updated_at = NOW() WHERE id = $2 RETURNING ride_otp`,
+            [otpCode, rideId]
+        );
+        return rows[0];
+    } catch (error) {
+        logger.error('Update ride OTP column repository error:', error);
+        throw error;
+    }
+};

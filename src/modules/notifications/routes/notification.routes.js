@@ -1,7 +1,7 @@
 import express from 'express';
 import * as controller from '../controllers/notification.controller.js';
 import { authenticate, authorize } from '../../../core/middleware/auth.middleware.js';
-import { triggerEngagementNotifications } from '../../../core/services/engagementNotificationService.js';
+import { sendEngagementNotifications } from '../../../core/services/engagementNotificationService.js';
 import logger from '../../../core/logger/logger.js';
 
 const router = express.Router();
@@ -24,7 +24,7 @@ router.patch('/read-all', controller.markAllAsRead);
 router.post('/admin/trigger-engagement', authorize(['admin']), async (req, res) => {
     try {
         logger.info('🧪 Manual engagement notification trigger requested by admin');
-        const result = await triggerEngagementNotifications();
+        const result = await sendEngagementNotifications();
 
         return res.status(200).json({
             success: true,

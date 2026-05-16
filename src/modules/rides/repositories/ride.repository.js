@@ -82,7 +82,7 @@ export const findRideById = async (rideId) => {
                     dv.vehicle_color,
                     du.full_name            AS driver_name,
                     du.phone_number         AS driver_phone,
-                    du.fcm_token            AS driver_fcm_token
+                    d.fcm_token            AS driver_fcm_token
              FROM rides r
              LEFT JOIN users u           ON r.passenger_id = u.id
              LEFT JOIN drivers d         ON r.driver_id    = d.id

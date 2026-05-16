@@ -301,24 +301,24 @@ export const requestRide = async (userId, rideData) => {
 
         // ── FCM 1: Nearby drivers ko ride request notification (queued) ──────
         // 100 FCM calls sync mein HTTP request block karte the — ab queue mein
-        // if (signals.nearbyDrivers.length > 0) {
-        //     const notifyDrivers = signals.nearbyDrivers.slice(0, 100).filter(d => d.fcm_token);
-        //     await Promise.allSettled(
-        //         notifyDrivers.map(d => addNotificationJob('new-ride-request', {
-        //             fcmToken: d.fcm_token,
-        //             title:    'New Ride Request!',
-        //             body:     `Pickup: ${rideData.pickupLocationName || rideData.pickupAddress} — Rs.${fare.estimatedFare}`,
-        //             data: {
-        //                 type:          'new_ride_request',
-        //                 rideId:        String(ride.id),
-        //                 rideNumber:    ride.ride_number,
-        //                 estimatedFare: String(fare.estimatedFare),
-        //                 pickupAddress: rideData.pickupAddress,
-        //                 vehicleType:   rideData.vehicleType,
-        //             },
-        //         }))
-        //     );
-        // }
+        if (signals.nearbyDrivers.length > 0) {
+            const notifyDrivers = signals.nearbyDrivers.slice(0, 100).filter(d => d.fcm_token);
+            await Promise.allSettled(
+                notifyDrivers.map(d => addNotificationJob('new-ride-request', {
+                    fcmToken: d.fcm_token,
+                    title:    'New Ride Request!',
+                    body:     `Pickup: ${rideData.pickupLocationName || rideData.pickupAddress} — Rs.${fare.estimatedFare}`,
+                    data: {
+                        type:          'new_ride_request',
+                        rideId:        String(ride.id),
+                        rideNumber:    ride.ride_number,
+                        estimatedFare: String(fare.estimatedFare),
+                        pickupAddress: rideData.pickupAddress,
+                        vehicleType:   rideData.vehicleType,
+                    },
+                }))
+            );
+        }
 
         // console.log(`Ride requested: ${rideNumber} for user ${userId} | Nearby drivers notified: ${signals.nearbyDrivers.length}`,signals.nearbyDrivers);
         // ── SOCKET: broadcast new ride request to nearby drivers ──────────────
@@ -1180,6 +1180,7 @@ export const rateRide = async (userId, rideId, rating, review) => {
 
         return { success: true, message: 'Ride rated successfully' };
     } catch (error) {
+        console.log(error)
         logger.error('Rate ride service error:', error);
         throw error;
     }

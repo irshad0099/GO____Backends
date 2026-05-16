@@ -38,6 +38,7 @@ export const sendNotification = async (fcmToken, title, body, data = {}) => {
         });
         logger.info(`✅ FCM sent: ${title}`);
     } catch (error) {
+        console.log(error)
         logger.error('❌ FCM error:', error.message);
     }
 };

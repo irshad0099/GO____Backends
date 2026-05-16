@@ -37,7 +37,7 @@ import {
     sendAssignmentToDriver,
     notifyDriverArrival
 } from '../../../infrastructure/websocket/assignment.handler.js';
-import { addRideCompletionJob, addNotificationJob } from '../../../infrastructure/queue/rideQueue.js';
+import { addRideCompletionJob } from '../../../infrastructure/queue/rideQueue.js';
 import { startRideTracking, getActualDistance, clearRideTracking } from '../../../infrastructure/websocket/rideTracking.js';
 import { sendNotification } from '../../../core/services/firebaseService.js';
 
@@ -563,13 +563,13 @@ export const acceptRide = async (driverUserId, rideId) => {
         if (!updatedRide) throw new ConflictError('Ride is no longer available or you are already on duty');
         await driverRepo.updateDriver(driver.id, { is_on_duty: true });
 
-        // ── FCM 2: Passenger ko notify — driver ne ride accept ki (queued) ───
+        // ── FCM 2: Passenger ko notify — driver ne ride accept ki (direct) ───
         if (ride.passenger_fcm_token) {
-            await addNotificationJob('ride-accepted', {
-                fcmToken: ride.passenger_fcm_token,
-                title: 'Driver Found!',
-                body: `${driver.full_name} is on the way — ${Math.ceil(pickupDistanceKm * 3)} mins away`,
-                data: {
+            await sendNotification(
+                ride.passenger_fcm_token,
+                'Driver Found!',
+                `${driver.full_name} is on the way — ${Math.ceil(pickupDistanceKm * 3)} mins away`,
+                {
                     type: 'ride_accepted',
                     rideId: String(rideId),
                     driverName: driver.full_name,
@@ -578,8 +578,8 @@ export const acceptRide = async (driverUserId, rideId) => {
                     vehicleModel: String(driver.vehicle_model || ''),
                     vehicleColor: String(driver.vehicle_color || ''),
                     eta: String(Math.ceil(pickupDistanceKm * 3)),
-                },
-            });
+                }
+            );
         }
 
 
@@ -711,16 +711,16 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             }
 
             if (ride.passenger_fcm_token) {
-                await addNotificationJob('ride-cancelled', {
-                    fcmToken: ride.passenger_fcm_token,
-                    title: 'Ride Cancelled',
-                    body: 'Your driver cancelled the ride. Please book again.',
-                    data: {
+                await sendNotification(
+                    ride.passenger_fcm_token,
+                    'Ride Cancelled',
+                    'Your driver cancelled the ride. Please book again.',
+                    {
                         type: 'ride_cancelled',
                         rideId: String(rideId),
                         reason: cancellationReason || 'Driver cancelled',
-                    },
-                });
+                    }
+                );
             }
 
             // Email notification
@@ -737,22 +737,22 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
 
 
 
-        // ── FCM 3b: Driver arrived (queued) ──────────────────────────────────
+        // ── FCM 3b: Driver arrived (direct) ──────────────────────────────────
         if (status === 'driver_arrived') {
             if (ride.passenger_fcm_token) {
-                await addNotificationJob('driver-arrived', {
-                    fcmToken: ride.passenger_fcm_token,
-                    title: 'Driver Arrived!',
-                    body: `${driver.full_name} is waiting at your pickup point`,
-                    data: {
+                await sendNotification(
+                    ride.passenger_fcm_token,
+                    'Driver Arrived!',
+                    `${driver.full_name} is waiting at your pickup point`,
+                    {
                         type: 'driver_arrived',
                         rideId: String(rideId),
-                    },
-                });
+                    }
+                );
             }
         }
 
-        // ── FCM 3c: Ride started (queued) ────────────────────────────────────
+        // ── FCM 3c: Ride started (direct) ────────────────────────────────────
         if (status === 'in_progress') {
             // GPS distance tracking shuru karo — driver ki current location se
             const driverLat = Number(driver.current_latitude);
@@ -762,15 +762,15 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             }
 
             if (ride.passenger_fcm_token) {
-                await addNotificationJob('ride-started', {
-                    fcmToken: ride.passenger_fcm_token,
-                    title: 'Ride Started!',
-                    body: `Your ride to ${ride.dropoff_location_name || ride.dropoff_address} has begun`,
-                    data: {
+                await sendNotification(
+                    ride.passenger_fcm_token,
+                    'Ride Started!',
+                    `Your ride to ${ride.dropoff_location_name || ride.dropoff_address} has begun`,
+                    {
                         type: 'ride_started',
                         rideId: String(rideId),
-                    },
-                });
+                    }
+                );
             }
         }
 
@@ -864,35 +864,35 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
                 finalFare:      finalResult.passenger.finalFare,
             });
 
-            // ASYNC: FCM — passenger ko complete notification
+            // ASYNC: FCM — passenger ko complete notification (direct)
             if (ride.passenger_fcm_token) {
-                await addNotificationJob('ride-completed-passenger', {
-                    fcmToken: ride.passenger_fcm_token,
-                    title: 'Ride Completed!',
-                    body: ride.is_free_ride
+                await sendNotification(
+                    ride.passenger_fcm_token,
+                    'Ride Completed!',
+                    ride.is_free_ride
                         ? 'Your free ride is complete! Rate your experience.'
                         : `Total fare: Rs.${passengerFinalFare}. Rate your experience!`,
-                    data: {
+                    {
                         type: 'ride_completed',
                         rideId: String(rideId),
                         finalFare: String(passengerFinalFare),
                         isFreeRide: String(ride.is_free_ride || false),
-                    },
-                });
+                    }
+                );
             }
 
-            // ASYNC: FCM — driver ko earnings notification
+            // ASYNC: FCM — driver ko earnings notification (direct)
             if (ride.driver_fcm_token) {
-                await addNotificationJob('ride-earnings-driver', {
-                    fcmToken: ride.driver_fcm_token,
-                    title: 'Ride Earnings',
-                    body: `Ride complete! You earned Rs.${finalResult.driver.netEarnings.toFixed(0)}`,
-                    data: {
+                await sendNotification(
+                    ride.driver_fcm_token,
+                    'Ride Earnings',
+                    `Ride complete! You earned Rs.${finalResult.driver.netEarnings.toFixed(0)}`,
+                    {
                         type: 'ride_earnings',
                         rideId: String(rideId),
                         netEarnings: String(finalResult.driver.netEarnings),
-                    },
-                });
+                    }
+                );
             }
 
             // Email receipt

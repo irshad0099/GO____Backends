@@ -299,24 +299,24 @@ export const requestRide = async (userId, rideData) => {
             gstOnFare: fare.gstOnFare
         });
 
-        // ── FCM 1: Nearby drivers ko ride request notification (queued) ──────
-        // 100 FCM calls sync mein HTTP request block karte the — ab queue mein
+        // ── FCM 1: Nearby drivers ko ride request notification (direct) ──────
+        // Direct send, queue nahi — faster notification delivery
         if (signals.nearbyDrivers.length > 0) {
             const notifyDrivers = signals.nearbyDrivers.slice(0, 100).filter(d => d.fcm_token);
             await Promise.allSettled(
-                notifyDrivers.map(d => addNotificationJob('new-ride-request', {
-                    fcmToken: d.fcm_token,
-                    title:    'New Ride Request!',
-                    body:     `Pickup: ${rideData.pickupLocationName || rideData.pickupAddress} — Rs.${fare.estimatedFare}`,
-                    data: {
+                notifyDrivers.map(d => sendNotification(
+                    d.fcm_token,
+                    'New Ride Request!',
+                    `Pickup: ${rideData.pickupLocationName || rideData.pickupAddress} — Rs.${fare.estimatedFare}`,
+                    {
                         type:          'new_ride_request',
                         rideId:        String(ride.id),
                         rideNumber:    ride.ride_number,
                         estimatedFare: String(fare.estimatedFare),
                         pickupAddress: rideData.pickupAddress,
                         vehicleType:   rideData.vehicleType,
-                    },
-                }))
+                    }
+                ))
             );
         }
 
@@ -513,6 +513,7 @@ export const findNearbyDrivers = async (vehicleType, latitude, longitude) => {
             vehicleColor: driver.vehicle_color,
             rating: parseFloat(driver.rating || 0).toFixed(1),
             distance: parseFloat(driver.distance).toFixed(1),
+            fcm_token: driver.fcm_token,
             location: {
                 latitude: driver.current_latitude,
                 longitude: driver.current_longitude

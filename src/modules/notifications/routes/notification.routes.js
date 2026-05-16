@@ -1,13 +1,13 @@
 import express from 'express';
 import * as controller from '../controllers/notification.controller.js';
-import { authenticateToken } from '../../../core/middleware/auth.middleware.js';
+import { authenticate } from '../../../core/middleware/auth.middleware.js';
 import { triggerEngagementNotifications } from '../../../core/services/engagementNotificationService.js';
 import { isAdmin } from '../../../core/middleware/roleMiddleware.js';
 import logger from '../../../core/logger/logger.js';
 
 const router = express.Router();
 
-router.use(authenticateToken);
+router.use(authenticate);
 
 // GET /api/v1/notifications?limit=20&offset=0 — grouped by Today/Yesterday
 router.get('/', controller.getNotifications);

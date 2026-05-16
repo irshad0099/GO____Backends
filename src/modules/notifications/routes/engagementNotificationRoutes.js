@@ -1,6 +1,6 @@
 import express from 'express';
 import { triggerEngagementNotifications } from '../../../core/services/engagementNotificationService.js';
-import { authenticateToken } from '../../../core/middleware/auth.middleware.js';
+import { authenticate } from '../../../core/middleware/auth.middleware.js';
 import { isAdmin } from '../../../core/middleware/roleMiddleware.js';
 import logger from '../../../core/logger/logger.js';
 
@@ -9,8 +9,8 @@ const router = express.Router();
 // ─── Admin only endpoint to manually trigger engagement notifications ─────────────
 router.post(
     '/trigger-engagement',
-    authenticateToken,
-    isAdmin,
+    authenticate,
+    requireRole(['admin']),
     async (req, res) => {
         try {
             logger.info('🧪 Manual engagement notification trigger requested by admin');
@@ -35,8 +35,8 @@ router.post(
 // ─── Get notification schedule info ──────────────────────────────────────────────
 router.get(
     '/schedule',
-    authenticateToken,
-    isAdmin,
+    authenticate,
+    requireRole(['admin']),
     async (req, res) => {
         try {
             const now = new Date();

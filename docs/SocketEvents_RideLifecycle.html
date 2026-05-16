@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoMobility — Socket Events: Ride Lifecycle</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1a1a2e; background: #f5f7fa; }
+  @media print {
+    body { background: #fff; font-size: 12px; }
+    .no-print { display: none !important; }
+    .page-break { page-break-before: always; }
+    .card { break-inside: avoid; }
+    pre { break-inside: avoid; }
+  }
+  .print-btn { position: fixed; bottom: 24px; right: 24px; background: #e94560; color: white; border: none; padding: 14px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 16px rgba(233,69,96,0.4); z-index: 999; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 36px 40px; }
+  .header h1 { font-size: 26px; font-weight: 700; letter-spacing: 1px; }
+  .header p { font-size: 13px; opacity: 0.75; margin-top: 6px; }
+  .header .badges { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+  .badge-red { background: #e94560; color: white; }
+  .badge-blue { background: #0f3460; color: #7ec8e3; border: 1px solid #7ec8e3; }
+  .container { max-width: 960px; margin: 0 auto; padding: 28px 20px; }
+  .section-title { font-size: 17px; font-weight: 700; color: #0f3460; border-left: 4px solid #e94560; padding-left: 12px; margin: 32px 0 14px; }
+  .event-card { background: white; border-radius: 10px; margin-bottom: 28px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden; }
+  .event-header { padding: 16px 20px; display: flex; align-items: center; gap: 14px; border-bottom: 2px solid #f0f0f0; }
+  .event-name { font-family: monospace; font-size: 18px; font-weight: 800; color: #0f3460; }
+  .event-icon { font-size: 24px; }
+  .direction-tag { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; }
+  .dir-both { background: #d4edda; color: #155724; }
+  .dir-passenger { background: #cce5ff; color: #004085; }
+  .dir-room { background: #fff3cd; color: #856404; }
+  .event-body { padding: 18px 20px; }
+  .desc { font-size: 13px; color: #444; margin-bottom: 14px; line-height: 1.6; }
+  .trigger-label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .trigger-value { font-size: 12px; background: #f8f9fa; border-left: 3px solid #e94560; padding: 8px 12px; border-radius: 4px; color: #333; margin-bottom: 14px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+  .payload-box { background: #1a1a2e; border-radius: 8px; padding: 16px; }
+  .payload-box .label { font-size: 10px; font-weight: 700; color: #e94560; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  pre { font-family: 'Courier New', monospace; font-size: 11px; color: #00d2ff; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+  pre .key { color: #7ec8e3; }
+  pre .string { color: #98fb98; }
+  pre .comment { color: #888; font-style: italic; }
+  .fields-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 12px; }
+  .fields-table th { background: #0f3460; color: white; padding: 8px 12px; text-align: left; font-weight: 600; font-size: 11px; }
+  .fields-table td { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; }
+  .fields-table tr:nth-child(even) td { background: #f8fafc; }
+  .type-tag { font-family: monospace; font-size: 10px; background: #e8f4f8; color: #0f3460; padding: 2px 6px; border-radius: 3px; }
+  .req-tag { font-size: 10px; font-weight: 700; color: #e94560; }
+  .opt-tag { font-size: 10px; font-weight: 700; color: #888; }
+  .flow-box { background: #f8fafc; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px 20px; margin-bottom: 28px; }
+  .flow-box h3 { font-size: 13px; font-weight: 700; color: #0f3460; margin-bottom: 12px; }
+  .flow-step { display: flex; align-items: flex-start; gap: 12px; padding: 6px 0; font-size: 12px; }
+  .step-num { min-width: 22px; height: 22px; border-radius: 50%; background: #0f3460; color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .step-arrow { color: #e94560; font-weight: 700; margin: 0 4px; }
+  .impl-box { background: #1a1a2e; border-radius: 8px; padding: 16px 20px; margin-top: 14px; }
+  .impl-box .impl-label { font-size: 10px; font-weight: 700; color: #e94560; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .impl-box pre { color: #cdd9e5; }
+  .impl-box pre .fn { color: #79c0ff; }
+  .impl-box pre .str { color: #a5d6ff; }
+  .impl-box pre .kw { color: #ff7b72; }
+  .summary-table { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden; margin-bottom: 28px; }
+  .summary-table table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .summary-table th { background: #0f3460; color: white; padding: 10px 14px; text-align: left; font-weight: 600; }
+  .summary-table td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; }
+  .summary-table tr:nth-child(even) td { background: #f8fafc; }
+  .mono { font-family: monospace; font-weight: 700; color: #0f3460; }
+  .footer { background: #1a1a2e; color: #888; text-align: center; padding: 20px; font-size: 11px; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨 Print / Save PDF</button>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>⚡ GoMobility — Socket Events</h1>
+  <p>Ride Lifecycle Real-Time Events · Socket.IO Reference</p>
+  <div class="badges">
+    <span class="badge badge-red">6 Events</span>
+    <span class="badge badge-blue">Socket.IO · Node.js</span>
+    <span class="badge badge-blue">Passenger App + Driver App</span>
+    <span class="badge badge-blue">May 2026</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- FLOW OVERVIEW -->
+<div class="section-title">Ride Flow — Event Timeline</div>
+<div class="flow-box">
+  <h3>Complete Ride Lifecycle (Socket Events)</h3>
+  <div class="flow-step"><div class="step-num">1</div><div>Passenger books ride <span class="step-arrow">→</span> Server emits <span class="mono">ride:new_request</span> to nearby drivers</div></div>
+  <div class="flow-step"><div class="step-num">2</div><div>Driver accepts <span class="step-arrow">→</span> Server emits <span class="mono" style="color:#e94560">rideAccepted</span> to passenger + driver</div></div>
+  <div class="flow-step"><div class="step-num">3</div><div>Driver moving to pickup <span class="step-arrow">→</span> Driver emits <code>driver:location_update</code> every 5s <span class="step-arrow">→</span> Server emits <span class="mono" style="color:#e94560">driverLocationUpdated</span> to ride room</div></div>
+  <div class="flow-step"><div class="step-num">4</div><div>Driver reaches pickup <span class="step-arrow">→</span> Server emits <span class="mono" style="color:#e94560">driverArrived</span> to passenger + driver (with OTP)</div></div>
+  <div class="flow-step"><div class="step-num">5</div><div>Passenger shares OTP → Driver verifies → Server emits <span class="mono" style="color:#e94560">rideStarted</span> to passenger + driver</div></div>
+  <div class="flow-step"><div class="step-num">6</div><div>Ride in progress <span class="step-arrow">→</span> Driver emits location every 5s <span class="step-arrow">→</span> Server emits <span class="mono" style="color:#e94560">driverLocationUpdated</span></div></div>
+  <div class="flow-step"><div class="step-num">7</div><div>Driver marks complete <span class="step-arrow">→</span> Server emits <span class="mono" style="color:#e94560">rideCompleted</span> to passenger + driver (with final fare)</div></div>
+  <div class="flow-step"><div class="step-num">✕</div><div>Cancelled at any point <span class="step-arrow">→</span> Server emits <span class="mono" style="color:#e94560">rideCancelled</span> to passenger + driver</div></div>
+</div>
+
+<!-- QUICK REFERENCE TABLE -->
+<div class="section-title">Quick Reference</div>
+<div class="summary-table">
+  <table>
+    <thead><tr><th>#</th><th>Event Name</th><th>Direction</th><th>Trigger (REST Call)</th><th>Who Receives</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="mono">rideAccepted</td><td>Server → Client</td><td>POST /rides/:id/accept</td><td>Passenger + Driver</td></tr>
+      <tr><td>2</td><td class="mono">driverArrived</td><td>Server → Client</td><td>PATCH /rides/:id/status (driver_arrived)</td><td>Passenger + Driver</td></tr>
+      <tr><td>3</td><td class="mono">rideStarted</td><td>Server → Client</td><td>PATCH /rides/:id/status (in_progress)</td><td>Passenger + Driver</td></tr>
+      <tr><td>4</td><td class="mono">rideCompleted</td><td>Server → Client</td><td>PATCH /rides/:id/status (completed)</td><td>Passenger + Driver</td></tr>
+      <tr><td>5</td><td class="mono">rideCancelled</td><td>Server → Client</td><td>POST /rides/:id/cancel</td><td>Passenger + Driver</td></tr>
+      <tr><td>6</td><td class="mono">driverLocationUpdated</td><td>Server → Client</td><td>Client emits driver:location_update</td><td>Ride Room (both)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════ EVENT 1 ═══════ -->
+<div class="section-title">Event Details</div>
+
+<div class="event-card">
+  <div class="event-header">
+    <span class="event-icon">✅</span>
+    <span class="event-name">rideAccepted</span>
+    <span class="direction-tag dir-both">→ Passenger + Driver</span>
+  </div>
+  <div class="event-body">
+    <p class="desc">Driver ne ride accept kiya. Passenger ko driver ki details milti hai (name, phone, vehicle, ETA, OTP). Driver ko confirmation milta hai ki ride assign ho gayi.</p>
+    <div class="trigger-label">Triggered by REST call</div>
+    <div class="trigger-value">POST /api/v1/rides/:rideId/accept</div>
+    <div class="grid-2">
+      <div>
+        <div class="payload-box">
+          <div class="label">Passenger ko milega</div>
+          <pre>{
+  "event": "rideAccepted",
+  "rideId": "uuid",
+  "rideNumber": "RIDE-001",
+  "driverId": "uuid",
+  "driverName": "Ramesh Kumar",
+  "driverPhone": "9876543210",
+  "driverRating": 4.5,
+  "vehicleNumber": "DL 01 AB 1234",
+  "vehicleType": "auto",
+  "vehicleColor": "Yellow",
+  "vehicleModel": "Bajaj RE",
+  "estimatedArrivalTime": 5,
+  "otp": "4821",
+  "assignedAt": "2026-05-15T10:30:00Z",
+  "timestamp": "2026-05-15T10:30:00Z"
+}</pre>
+        </div>
+      </div>
+      <div>
+        <div class="payload-box">
+          <div class="label">Driver ko milega</div>
+          <pre>{
+  "event": "rideAccepted",
+  "rideId": "uuid",
+  "rideNumber": "RIDE-001",
+  "passengerName": "Rahul Sharma",
+  "passengerPhone": "8708299860",
+  "pickupLocation": {
+    "latitude": 28.6139,
+    "longitude": 77.2090,
+    "address": "Connaught Place"
+  },
+  "dropoffLocation": {
+    "latitude": 28.7041,
+    "longitude": 77.1025,
+    "address": "Rohini Sector 3"
+  },
+  "estimatedFare": 120.50,
+  "otp": "4821",
+  "timestamp": "2026-05-15T10:30:00Z"
+}</pre>
+        </div>
+      </div>
+    </div>
+    <table class="fields-table" style="margin-top:14px;">
+      <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>rideId</code></td><td><span class="type-tag">string</span></td><td><span class="req-tag">Required</span></td><td>UUID of the ride</td></tr>
+        <tr><td><code>driverName</code></td><td><span class="type-tag">string</span></td><td><span class="req-tag">Required</span></td><td>Driver full name</td></tr>
+        <tr><td><code>vehicleNumber</code></td><td><span class="type-tag">string</span></td><td><span class="req-tag">Required</span></td><td>Vehicle registration number</td></tr>
+        <tr><td><code>estimatedArrivalTime</code></td><td><span class="type-tag">number</span></td><td><span class="req-tag">Required</span></td><td>ETA in minutes</td></tr>
+        <tr><td><code>otp</code></td><td><span class="type-tag">string</span></td><td><span class="req-tag">Required</span></td><td>4-6 digit OTP for ride start verification</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════ EVENT 2 ═══════ -->
+<div class="event-card">
+  <div class="event-header">
+    <span class="event-icon">📍</span>
+    <span class="event-name">driverArrived</span>
+    <span class="direction-tag dir-both">→ Passenger + Driver</span>
+  </div>
+  <div class="event-body">
+    <p class="desc">Driver pickup location pe aa gaya. Passenger ko notification milti hai ki driver aa gaya. OTP share karne ka prompt dikhao. Driver ko confirm milta hai ki arrival update ho gayi.</p>
+    <div class="trigger-label">Triggered by REST call</div>
+    <div class="trigger-value">PATCH /api/v1/rides/:rideId/status &nbsp;·&nbsp; body: { "status": "driver_arrived" }</div>
+    <div class="payload-box" style="margin-top:12px;">
+      <div class="label">Payload (passenger + driver dono ko same)</div>
+      <pre>{
+  "event": "driverArrived",
+  "rideId": "uuid",
+  "rideNumber": "RIDE-001",
+  "driverId": "uuid",
+  "location": {
+    "latitude": 28.6139,
+    "longitude": 77.2090
+  },
+  "otp": "4821",
+  "message": "Your driver has arrived!",
+  "timestamp": "2026-05-15T10:35:00Z"
+}</pre>
+    </div>
+    <table class="fields-table" style="margin-top:14px;">
+      <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>location</code></td><td><span class="type-tag">object</span></td><td><span class="req-tag">Required</span></td><td>Driver current coordinates</td></tr>
+        <tr><td><code>otp</code></td><td><span class="type-tag">string</span></td><td><span class="opt-tag">Optional</span></td><td>OTP reminder — show on passenger screen</td></tr>
+        <tr><td><code>message</code></td><td><span class="type-tag">string</span></td><td><span class="req-tag">Required</span></td><td>Human-readable message for notification</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════ EVENT 3 ═══════ -->
+<div class="event-card">
+  <div class="event-header">
+    <span class="event-icon">🚗</span>
+    <span class="event-name">rideStarted</span>
+    <span class="direction-tag dir-both">→ Passenger + Driver</span>
+  </div>
+  <div class="event-body">
+    <p class="desc">OTP verify hua, ride shuru ho gayi (status: in_progress). Passenger tracking screen dikhao. Driver navigation screen pe switch karo.</p>
+    <div class="trigger-label">Triggered by REST call</div>
+    <div class="trigger-value">PATCH /api/v1/rides/:rideId/status &nbsp;·&nbsp; body: { "status": "in_progress" }</div>
+    <div class="payload-box" style="margin-top:12px;">
+      <div class="label">Payload</div>
+      <pre>{
+  "event": "rideStarted",
+  "rideId": "uuid",
+  "rideNumber": "RIDE-001",
+  "driverId": "uuid",
+  "passengerId": "uuid",
+  "startedAt": "2026-05-15T10:38:00Z",
+  "estimatedFare": 120.50,
+  "estimatedDistance": 12.5,
+  "estimatedDuration": 35,
+  "dropoffLocation": {
+    "latitude": 28.7041,
+    "longitude": 77.1025,
+    "address": "Rohini Sector 3"
+  },
+  "timestamp": "2026-05-15T10:38:00Z"
+}</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ EVENT 4 ═══════ -->
+<div class="event-card">
+  <div class="event-header">
+    <span class="event-icon">🏁</span>
+    <span class="event-name">rideCompleted</span>
+    <span class="direction-tag dir-both">→ Passenger + Driver</span>
+  </div>
+  <div class="event-body">
+    <p class="desc">Ride complete ho gayi. Passenger ko fare summary dikhao + rating prompt. Driver ko earnings dikhao.</p>
+    <div class="trigger-label">Triggered by REST call</div>
+    <div class="trigger-value">PATCH /api/v1/rides/:rideId/status &nbsp;·&nbsp; body: { "status": "completed" }</div>
+    <div class="grid-2">
+      <div>
+        <div class="payload-box">
+          <div class="label">Passenger payload</div>
+          <pre>{
+  "event": "rideCompleted",
+  "rideId": "uuid",
+  "rideNumber": "RIDE-001",
+  "finalFare": 118.00,
+  "estimatedFare": 120.50,
+  "paymentMethod": "cash",
+  "distanceKm": 12.3,
+  "durationMinutes": 34,
+  "couponDiscount": 0,
+  "subscriptionDiscount": 2.50,
+  "isFreeRide": false,
+  "completedAt": "2026-05-15T11:15:00Z",
+  "timestamp": "2026-05-15T11:15:00Z"
+}</pre>
+        </div>
+      </div>
+      <div>
+        <div class="payload-box">
+          <div class="label">Driver payload</div>
+          <pre>{
+  "event": "rideCompleted",
+  "rideId": "uuid",
+  "rideNumber": "RIDE-001",
+  "finalFare": 118.00,
+  "paymentMethod": "cash",
+  "netEarnings": 98.50,
+  "platformFee": 19.50,
+  "distanceKm": 12.3,
+  "durationMinutes": 34,
+  "completedAt": "2026-05-15T11:15:00Z",
+  "timestamp": "2026-05-15T11:15:00Z"
+}</pre>
+        </div>
+      </div>
+    </div>
+    <table class="fields-table" style="margin-top:14px;">
+      <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>finalFare</code></td><td><span class="type-tag">number</span></td><td><span class="req-tag">Required</span></td><td>Actual fare charged (after discounts)</td></tr>
+        <tr><td><code>paymentMethod</code></td><td><span class="type-tag">string</span></td><td><span class="req-tag">Required</span></td><td>cash / upi / card / wallet</td></tr>
+        <tr><td><code>couponDiscount</code></td><td><span class="type-tag">number</span></td><td><span class="opt-tag">Optional</span></td><td>Coupon saving amount</td></tr>
+        <tr><td><code>subscriptionDiscount</code></td><td><span class="type-tag">number</span></td><td><span class="opt-tag">Optional</span></td><td>Subscription plan saving</td></tr>
+        <tr><td><code>isFreeRide</code></td><td><span class="type-tag">boolean</span></td><td><span class="opt-tag">Optional</span></td><td>True if subscription free ride used</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════ EVENT 5 ═══════ -->
+<div class="event-card">
+  <div class="event-header">
+    <span class="event-icon">❌</span>
+    <span class="event-name">rideCancelled</span>
+    <span class="direction-tag dir-both">→ Passenger + Driver</span>
+  </div>
+  <div class="event-body">
+    <p class="desc">Ride cancel ho gayi — passenger ya driver kisi ne bhi cancel kiya ho. Dono ko inform karo. Cancellation penalty apply ho sakti hai.</p>
+    <div class="trigger-label">Triggered by REST call</div>
+    <div class="trigger-value">POST /api/v1/rides/:rideId/cancel &nbsp;·&nbsp; body: { "reason": "..." }</div>
+    <div class="payload-box" style="margin-top:12px;">
+      <div class="label">Payload (passenger + driver dono ko same)</div>
+      <pre>{
+  "event": "rideCancelled",
+  "rideId": "uuid",
+  "rideNumber": "RIDE-001",
+  "cancelledBy": "passenger",       <span class="comment">// "passenger" | "driver" | "system"</span>
+  "reason": "Driver not moving",
+  "cancellationFee": 0,             <span class="comment">// penalty amount if applicable</span>
+  "refundAmount": 0,                <span class="comment">// if prepaid — amount to refund</span>
+  "cancelledAt": "2026-05-15T10:36:00Z",
+  "timestamp": "2026-05-15T10:36:00Z"
+}</pre>
+    </div>
+    <table class="fields-table" style="margin-top:14px;">
+      <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>cancelledBy</code></td><td><span class="type-tag">string</span></td><td><span class="req-tag">Required</span></td><td>"passenger" | "driver" | "system"</td></tr>
+        <tr><td><code>reason</code></td><td><span class="type-tag">string</span></td><td><span class="opt-tag">Optional</span></td><td>Cancellation reason text</td></tr>
+        <tr><td><code>cancellationFee</code></td><td><span class="type-tag">number</span></td><td><span class="opt-tag">Optional</span></td><td>Penalty deducted from passenger</td></tr>
+        <tr><td><code>refundAmount</code></td><td><span class="type-tag">number</span></td><td><span class="opt-tag">Optional</span></td><td>Amount refunded if prepaid</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════ EVENT 6 ═══════ -->
+<div class="event-card">
+  <div class="event-header">
+    <span class="event-icon">📡</span>
+    <span class="event-name">driverLocationUpdated</span>
+    <span class="direction-tag dir-room">→ Ride Room (Passenger + Driver)</span>
+  </div>
+  <div class="event-body">
+    <p class="desc">Driver ka real-time location update. Driver client har 5 second mein <code>driver:location_update</code> emit karta hai — server ise ride room mein <code>driverLocationUpdated</code> ke naam se broadcast karta hai. Map pe smooth animation ke liye use karo.</p>
+    <div class="trigger-label">Triggered by client emit (Driver App)</div>
+    <div class="trigger-value">socket.emit("driver:location_update", &#123; latitude, longitude, rideId, accuracy, speed &#125;)</div>
+    <div class="grid-2">
+      <div>
+        <div class="payload-box">
+          <div class="label">Driver Client → Server</div>
+          <pre>{
+  "latitude": 28.6250,
+  "longitude": 77.2100,
+  "rideId": "uuid",
+  "accuracy": 10,      <span class="comment">// meters</span>
+  "speed": 25          <span class="comment">// km/h</span>
+}</pre>
+        </div>
+      </div>
+      <div>
+        <div class="payload-box">
+          <div class="label">Server → Ride Room</div>
+          <pre>{
+  "event": "driverLocationUpdated",
+  "rideId": "uuid",
+  "driverId": "uuid",
+  "location": {
+    "latitude": 28.6250,
+    "longitude": 77.2100
+  },
+  "accuracy": 10,
+  "speed": 25,
+  "timestamp": "2026-05-15T10:40:05Z"
+}</pre>
+        </div>
+      </div>
+    </div>
+    <div style="background:#fff8e1; border-left:3px solid #ff9800; padding:10px 14px; border-radius:6px; margin-top:14px; font-size:12px;">
+      <strong>⚠️ Important:</strong> Driver aur Passenger dono ko <code>socket.emit("ride:join", &#123; rideId &#125;)</code> karna zaroori hai tabhi ride room join hoga aur yeh event milega.
+    </div>
+    <table class="fields-table" style="margin-top:14px;">
+      <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>location.latitude</code></td><td><span class="type-tag">number</span></td><td><span class="req-tag">Required</span></td><td>Driver latitude</td></tr>
+        <tr><td><code>location.longitude</code></td><td><span class="type-tag">number</span></td><td><span class="req-tag">Required</span></td><td>Driver longitude</td></tr>
+        <tr><td><code>accuracy</code></td><td><span class="type-tag">number</span></td><td><span class="opt-tag">Optional</span></td><td>GPS accuracy in meters</td></tr>
+        <tr><td><code>speed</code></td><td><span class="type-tag">number</span></td><td><span class="opt-tag">Optional</span></td><td>Speed in km/h</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════ IMPLEMENTATION ═══════ -->
+<div class="section-title page-break">Implementation Code</div>
+
+<div class="event-card">
+  <div class="event-header">
+    <span class="event-icon">💻</span>
+    <span class="event-name">socket.events.js — 6 emit functions</span>
+  </div>
+  <div class="event-body">
+    <div class="impl-box">
+      <div class="impl-label">Add in src/infrastructure/websocket/socket.events.js</div>
+      <pre><span class="fn">export const</span> emitRideAccepted = (passengerId, driverUserId, payload) => {
+    <span class="kw">const</span> data = { event: <span class="str">'rideAccepted'</span>, timestamp: <span class="kw">new</span> Date().toISOString(), ...payload };
+    emitToPassenger(passengerId, <span class="str">'rideAccepted'</span>, data);
+    emitToDriver(driverUserId, <span class="str">'rideAccepted'</span>, data);
+};
+
+<span class="fn">export const</span> emitDriverArrived = (passengerId, driverUserId, payload) => {
+    <span class="kw">const</span> data = { event: <span class="str">'driverArrived'</span>, timestamp: <span class="kw">new</span> Date().toISOString(), ...payload };
+    emitToPassenger(passengerId, <span class="str">'driverArrived'</span>, data);
+    emitToDriver(driverUserId, <span class="str">'driverArrived'</span>, data);
+};
+
+<span class="fn">export const</span> emitRideStarted = (passengerId, driverUserId, payload) => {
+    <span class="kw">const</span> data = { event: <span class="str">'rideStarted'</span>, timestamp: <span class="kw">new</span> Date().toISOString(), ...payload };
+    emitToPassenger(passengerId, <span class="str">'rideStarted'</span>, data);
+    emitToDriver(driverUserId, <span class="str">'rideStarted'</span>, data);
+};
+
+<span class="fn">export const</span> emitRideCompleted = (passengerId, driverUserId, payload) => {
+    <span class="kw">const</span> data = { event: <span class="str">'rideCompleted'</span>, timestamp: <span class="kw">new</span> Date().toISOString(), ...payload };
+    emitToPassenger(passengerId, <span class="str">'rideCompleted'</span>, data);
+    emitToDriver(driverUserId, <span class="str">'rideCompleted'</span>, data);
+};
+
+<span class="fn">export const</span> emitRideCancelled = (passengerId, driverUserId, payload) => {
+    <span class="kw">const</span> data = { event: <span class="str">'rideCancelled'</span>, timestamp: <span class="kw">new</span> Date().toISOString(), ...payload };
+    emitToPassenger(passengerId, <span class="str">'rideCancelled'</span>, data);
+    <span class="kw">if</span> (driverUserId) emitToDriver(driverUserId, <span class="str">'rideCancelled'</span>, data);
+};
+
+<span class="fn">export const</span> emitDriverLocationUpdated = (rideId, passengerId, driverUserId, location) => {
+    <span class="kw">const</span> io = getIO();
+    <span class="kw">const</span> data = {
+        event: <span class="str">'driverLocationUpdated'</span>,
+        rideId, driverId: driverUserId, location,
+        timestamp: <span class="kw">new</span> Date().toISOString()
+    };
+    io.to(<span class="str">`ride:${rideId}`</span>).emit(<span class="str">'driverLocationUpdated'</span>, data);
+};</pre>
+    </div>
+  </div>
+</div>
+
+<div class="event-card">
+  <div class="event-header">
+    <span class="event-icon">📱</span>
+    <span class="event-name">Flutter / React Native — Listen kaise karo</span>
+  </div>
+  <div class="event-body">
+    <div class="impl-box">
+      <div class="impl-label">Flutter (socket_io_client) — All 6 events</div>
+      <pre><span class="comment">// Ride join karo pehle</span>
+socket.emit(<span class="str">'ride:join'</span>, {<span class="str">'rideId'</span>: rideId});
+
+<span class="comment">// 1. Driver ne accept kiya</span>
+socket.on(<span class="str">'rideAccepted'</span>, (data) {
+  <span class="comment">// show driver info card, start tracking</span>
+});
+
+<span class="comment">// 2. Driver arrive ho gaya</span>
+socket.on(<span class="str">'driverArrived'</span>, (data) {
+  <span class="comment">// show OTP prompt to passenger</span>
+});
+
+<span class="comment">// 3. Ride shuru</span>
+socket.on(<span class="str">'rideStarted'</span>, (data) {
+  <span class="comment">// switch to in-ride tracking screen</span>
+});
+
+<span class="comment">// 4. Ride complete</span>
+socket.on(<span class="str">'rideCompleted'</span>, (data) {
+  <span class="comment">// show fare summary + rating screen</span>
+});
+
+<span class="comment">// 5. Cancel ho gaya</span>
+socket.on(<span class="str">'rideCancelled'</span>, (data) {
+  <span class="comment">// show cancellation screen</span>
+});
+
+<span class="comment">// 6. Driver location update</span>
+socket.on(<span class="str">'driverLocationUpdated'</span>, (data) {
+  <span class="comment">// update map marker — data.location.latitude/longitude</span>
+});</pre>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p><strong>GoMobility Backend — Socket Events Reference</strong></p>
+  <p style="margin-top:6px;">Branch: Irshad__GoBackend &nbsp;|&nbsp; May 2026 &nbsp;|&nbsp; Internal Use Only</p>
+</div>
+
+</body>
+</html>

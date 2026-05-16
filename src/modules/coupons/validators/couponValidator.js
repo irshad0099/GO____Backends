@@ -1,9 +1,10 @@
 import Joi from 'joi';
+import { VEHICLE_TYPES } from '../../../core/utils/vehicleTypes.js';
 
 export const applyCouponSchema = Joi.object({
     code: Joi.string().trim().uppercase().min(3).max(30).required(),
     ride_amount: Joi.number().positive().min(1).required(),
-    vehicle_type: Joi.string().valid('bike', 'auto', 'car').optional(),
+    vehicle_type: Joi.string().valid(...VEHICLE_TYPES).optional(),
 });
 
 import { sendValidationError } from '../../../core/utils/response.js';

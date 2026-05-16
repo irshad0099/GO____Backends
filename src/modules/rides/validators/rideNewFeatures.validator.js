@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { sendValidationError } from '../../../core/utils/response.js';
+import { VEHICLE_TYPES } from '../../../core/utils/vehicleTypes.js';
 
 // ─── Ride Cancellation (Passenger) ──────────────────────────────────────────
 export const cancelRideSchema = Joi.object({
@@ -28,7 +29,7 @@ export const scheduleRideSchema = Joi.object({
     dropoff_longitude: Joi.number().min(-180).max(180).required(),
     dropoff_address: Joi.string().trim().min(5).max(500).required(),
     dropoff_location_name: Joi.string().trim().max(255).optional(),
-    vehicle_type: Joi.string().valid('bike', 'auto', 'car').required(),
+    vehicle_type: Joi.string().valid(...VEHICLE_TYPES).required(),
     payment_method: Joi.string().valid('cash', 'card', 'wallet', 'upi').default('cash'),
     pickup_time: Joi.date().iso().required()
         .messages({ 'any.required': 'pickup_time is required' }),

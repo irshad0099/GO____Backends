@@ -1,10 +1,11 @@
 import { body, param, query } from 'express-validator';
+import { VEHICLE_TYPES, VEHICLE_TYPES_STRING } from '../../../core/utils/vehicleTypes.js';
 
 // ==================== QUERY VALIDATORS (for GET /nearby-drivers) ====================
 export const validateVehicleTypeQuery = () => {
     return query('vehicleType')
         .notEmpty().withMessage('Vehicle type is required')
-        .isIn(['bike', 'auto', 'car', 'xl', 'premium', 'luxury']).withMessage('Vehicle type must be bike, auto, or car');
+        .isIn(VEHICLE_TYPES).withMessage(`Vehicle type must be one of: ${VEHICLE_TYPES_STRING}`);
 };
 
 export const validateLatitudeQuery = (field = 'latitude') => {
@@ -36,7 +37,7 @@ export const validateLongitude = (field) => {
 export const validateVehicleType = () => {
     return body('vehicleType')
         .notEmpty().withMessage('Vehicle type is required')
-        .isIn(['bike', 'auto', 'car', 'xl', 'premium', 'luxury']).withMessage('Vehicle type must be bike, auto, or car');
+        .isIn(VEHICLE_TYPES).withMessage(`Vehicle type must be one of: ${VEHICLE_TYPES_STRING}`);
 };
 
 // ==================== ADDRESS VALIDATOR ====================

@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { sendValidationError } from '../../../core/utils/response.js';
+import { VEHICLE_TYPES } from '../../../core/utils/vehicleTypes.js';
 
 // ─── Common list filters ──────────────────────────────────────────────────────
 const paginationSchema = {
@@ -26,7 +27,7 @@ export const driverFilterSchema = Joi.object({
 export const rideFilterSchema = Joi.object({
     ...paginationSchema,
     status:       Joi.string().valid('requested','accepted','ongoing','completed','cancelled').optional(),
-    vehicle_type: Joi.string().valid('bike', 'auto', 'cab').optional(),
+    vehicle_type: Joi.string().valid(...VEHICLE_TYPES).optional(),
     start_date:   Joi.date().iso().optional(),
     end_date:     Joi.date().iso().optional(),
 });

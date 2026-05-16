@@ -1,8 +1,7 @@
 import express from 'express';
 import * as controller from '../controllers/notification.controller.js';
-import { authenticate } from '../../../core/middleware/auth.middleware.js';
+import { authenticate, authorize } from '../../../core/middleware/auth.middleware.js';
 import { triggerEngagementNotifications } from '../../../core/services/engagementNotificationService.js';
-import { isAdmin } from '../../../core/middleware/roleMiddleware.js';
 import logger from '../../../core/logger/logger.js';
 
 const router = express.Router();
@@ -22,7 +21,7 @@ router.patch('/:id/read', controller.markAsRead);
 router.patch('/read-all', controller.markAllAsRead);
 
 // ─── Admin only: Trigger engagement notifications manually ──────────────────────
-router.post('/admin/trigger-engagement', isAdmin, async (req, res) => {
+router.post('/admin/trigger-engagement', authorize(['admin']), async (req, res) => {
     try {
         logger.info('🧪 Manual engagement notification trigger requested by admin');
         const result = await triggerEngagementNotifications();
@@ -43,7 +42,7 @@ router.post('/admin/trigger-engagement', isAdmin, async (req, res) => {
 });
 
 // ─── Admin only: Get notification schedule ──────────────────────────────────────
-router.get('/admin/schedule', isAdmin, async (req, res) => {
+router.get('/admin/schedule', authorize(['admin']), async (req, res) => {
     try {
         const now = new Date();
         const hour = now.getHours();

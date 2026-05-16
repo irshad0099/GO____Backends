@@ -463,6 +463,7 @@ const calculateCompletionFare = async (ride) => {
 
     const pickupDistanceKm = Number(ride.driver_pickup_distance_km) || 0;
     const driverDailyRideCount = await rideRepo.getDriverDailyRideCount(ride.driver_id);
+    logger.info(`[Fare] Driver ${ride.driver_id} daily ride count: ${driverDailyRideCount} (vehicle: ${ride.vehicle_type})`);
 
     return rideCalculator.calculateFinalRideFare({
         vehicleType: ride.vehicle_type,
@@ -837,6 +838,8 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             additionalFields.waiting_charges = finalResult.driver.waitingEarnings ?? 0;
             additionalFields.traffic_compensation = finalResult.driver.trafficDelayCompensation ?? 0;
             additionalFields.platform_share = finalResult.driver.platformFee ?? 0;
+
+            logger.info(`[Fare Breakdown] Ride: ${rideId} | Passenger: ₹${additionalFields.passenger_total} | Driver Net: ₹${finalResult.driver.netEarnings} | Platform Fee: ₹${additionalFields.platform_share}`);
 
             // GPS-tracked actual distance save karo (null hoga agar tracking fail hua)
             const trackedKmFinal = await getActualDistance(rideId);
@@ -1232,6 +1235,8 @@ const formatRideResponse = (ride) => ({
     estimatedFare: ride.estimated_fare,
     actualFare: ride.actual_fare,
     finalFare: ride.final_fare,
+    passengerTotal: parseFloat(ride.passenger_total || 0),
+    platformShare: parseFloat(ride.platform_share || 0),
     status: ride.status,
     paymentStatus: ride.payment_status,
     paymentMethod: ride.payment_method,
@@ -1272,6 +1277,8 @@ const formatRideListResponse = (ride) => ({
     estimatedFare: ride.estimated_fare,
     actualFare: ride.actual_fare,
     finalFare: ride.final_fare,
+    passengerTotal: parseFloat(ride.passenger_total || 0),
+    platformShare: parseFloat(ride.platform_share || 0),
     status: ride.status,
     paymentStatus: ride.payment_status,
     requestedAt: ride.requested_at,

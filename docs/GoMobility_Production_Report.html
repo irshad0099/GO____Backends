@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoMobility — Production Report 2026</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1a1a2e; background: #f5f7fa; }
+  @media print {
+    body { background: #fff; }
+    .no-print { display: none; }
+    .page-break { page-break-before: always; }
+    .card { break-inside: avoid; }
+  }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 40px; text-align: center; }
+  .header h1 { font-size: 32px; font-weight: 700; letter-spacing: 2px; }
+  .header p { font-size: 14px; opacity: 0.8; margin-top: 8px; }
+  .header .badge { display: inline-block; background: #e94560; color: white; padding: 4px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-top: 12px; letter-spacing: 1px; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  .section-title { font-size: 18px; font-weight: 700; color: #0f3460; border-left: 4px solid #e94560; padding-left: 12px; margin: 32px 0 16px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+  .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .card h3 { font-size: 14px; font-weight: 700; color: #0f3460; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .status-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .status-live { background: #d4edda; color: #155724; }
+  .status-pending { background: #fff3cd; color: #856404; }
+  .status-blocked { background: #f8d7da; color: #721c24; }
+  .status-partial { background: #cce5ff; color: #004085; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: #0f3460; color: white; padding: 10px 12px; text-align: left; font-weight: 600; }
+  td { padding: 9px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  tr:hover td { background: #eef2ff; }
+  .cost-total { background: #0f3460; color: white; font-weight: 700; }
+  .cost-total td { border-bottom: none; }
+  .highlight { background: #fff8e1; border-left: 3px solid #ff9800; padding: 12px 16px; border-radius: 6px; font-size: 12px; margin: 12px 0; }
+  .action-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+  .action-item:last-child { border-bottom: none; }
+  .priority-high { width: 8px; height: 8px; border-radius: 50%; background: #e94560; flex-shrink: 0; margin-top: 4px; }
+  .priority-med { width: 8px; height: 8px; border-radius: 50%; background: #ff9800; flex-shrink: 0; margin-top: 4px; }
+  .priority-low { width: 8px; height: 8px; border-radius: 50%; background: #28a745; flex-shrink: 0; margin-top: 4px; }
+  .meta-row { display: flex; justify-content: space-between; font-size: 11px; color: #666; padding: 4px 0; border-bottom: 1px solid #f5f5f5; }
+  .meta-row:last-child { border-bottom: none; }
+  .meta-label { font-weight: 600; color: #444; }
+  .env-var { font-family: monospace; font-size: 11px; background: #f4f4f4; padding: 2px 6px; border-radius: 3px; color: #c7254e; }
+  .summary-box { background: linear-gradient(135deg, #0f3460, #16213e); color: white; border-radius: 10px; padding: 24px; }
+  .summary-box h3 { color: #e94560; margin-bottom: 16px; font-size: 16px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 24px 0; }
+  .stat-box { background: white; border-radius: 10px; padding: 16px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .stat-box .num { font-size: 28px; font-weight: 800; color: #0f3460; }
+  .stat-box .num.red { color: #e94560; }
+  .stat-box .num.green { color: #28a745; }
+  .stat-box .num.orange { color: #ff9800; }
+  .stat-box .lbl { font-size: 11px; color: #666; margin-top: 4px; }
+  .print-btn { position: fixed; bottom: 24px; right: 24px; background: #e94560; color: white; border: none; padding: 14px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 16px rgba(233,69,96,0.4); z-index: 999; }
+  .print-btn:hover { background: #c0392b; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; margin: 2px; }
+  .tag-blue { background: #cce5ff; color: #004085; }
+  .tag-green { background: #d4edda; color: #155724; }
+  .tag-red { background: #f8d7da; color: #721c24; }
+  .tag-yellow { background: #fff3cd; color: #856404; }
+  .progress-bar { background: #e9ecef; border-radius: 10px; height: 8px; margin-top: 6px; }
+  .progress-fill { height: 8px; border-radius: 10px; background: linear-gradient(90deg, #0f3460, #e94560); }
+  .checklist li { list-style: none; padding: 6px 0; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+  .checklist li::before { content: '✅'; font-size: 12px; }
+  .checklist li.pending::before { content: '⏳'; }
+  .checklist li.blocked::before { content: '🔴'; }
+  .footer { background: #1a1a2e; color: #aaa; text-align: center; padding: 24px; margin-top: 40px; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨 Print / Save PDF</button>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>🚗 GoMobility</h1>
+  <p>Production Infrastructure & Cost Report — Ride-Hailing Backend</p>
+  <div class="badge">CONFIDENTIAL · May 2026</div>
+  <p style="margin-top:12px; font-size:12px; opacity:0.7;">Production URL: https://api.gomobility.co.in &nbsp;|&nbsp; Platform: Railway &nbsp;|&nbsp; Scale: 1,000 Users + 200 Drivers</p>
+</div>
+
+<div class="container">
+
+<!-- STAT SUMMARY -->
+<div class="stat-grid">
+  <div class="stat-box">
+    <div class="num green">14</div>
+    <div class="lbl">Third-Party APIs</div>
+  </div>
+  <div class="stat-box">
+    <div class="num green">7</div>
+    <div class="lbl">APIs Live</div>
+  </div>
+  <div class="stat-box">
+    <div class="num orange">5</div>
+    <div class="lbl">APIs Pending</div>
+  </div>
+  <div class="stat-box">
+    <div class="num red">₹55,500</div>
+    <div class="lbl">Max Monthly Cost</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section-title">1. Third-Party API Status</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>Purpose</th>
+      <th>Status</th>
+      <th>Current Plan / Key</th>
+      <th>Cost @ 1K Users</th>
+      <th>Pending Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Razorpay (Payment)</strong></td>
+      <td>Ride payments — UPI, Card, Wallet</td>
+      <td><span class="status-badge status-live">LIVE</span></td>
+      <td>rzp_live_ShlQoiamYzxyxJ</td>
+      <td>2% per txn (~₹3,000–₹8,000)</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>RazorpayX (Payouts)</strong></td>
+      <td>Driver salary / earnings transfer</td>
+      <td><span class="status-badge status-blocked">BLOCKED</span></td>
+      <td>Account not activated</td>
+      <td>₹3–₹5 per payout</td>
+      <td>Contact Razorpay support via dashboard chat</td>
+    </tr>
+    <tr>
+      <td><strong>Firebase FCM</strong></td>
+      <td>Push notifications (rides, OTP, alerts)</td>
+      <td><span class="status-badge status-live">LIVE</span></td>
+      <td>go-mobility-75405</td>
+      <td>FREE (up to 5M msgs/day)</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>Google Maps Routes API v2</strong></td>
+      <td>Route distance, ETA, fare calc</td>
+      <td><span class="status-badge status-live">LIVE</span></td>
+      <td>Billing enabled</td>
+      <td>$5/1000 requests (~₹1,200–₹4,000)</td>
+      <td>Redis cache active (reduces calls ~70%)</td>
+    </tr>
+    <tr>
+      <td><strong>AuthKey SMS</strong></td>
+      <td>OTP delivery (current active)</td>
+      <td><span class="status-badge status-live">LIVE</span></td>
+      <td>ENV: AUTHKEY_API_KEY</td>
+      <td>~₹0.15–₹0.25/SMS (~₹3,000–₹5,000)</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>MSG91</strong></td>
+      <td>OTP SMS (DLT compliant — future)</td>
+      <td><span class="status-badge status-pending">PENDING</span></td>
+      <td>Auth key configured</td>
+      <td>~₹0.18/SMS</td>
+      <td>DLT registration: Pay ₹5,900 on Jio DLT (Ref: 96215657), register Sender ID "GOMOB"</td>
+    </tr>
+    <tr>
+      <td><strong>Fast2SMS</strong></td>
+      <td>OTP SMS (backup)</td>
+      <td><span class="status-badge status-blocked">BLOCKED</span></td>
+      <td>API key present</td>
+      <td>~₹0.10/SMS</td>
+      <td>Complete website verification on Fast2SMS dashboard</td>
+    </tr>
+    <tr>
+      <td><strong>AWS S3</strong></td>
+      <td>KYC document storage (aadhar, PAN, RC)</td>
+      <td><span class="status-badge status-live">LIVE</span></td>
+      <td>go-mobility-documents (eu-north-1)</td>
+      <td>~₹200–₹500/month</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>AWS Textract</strong></td>
+      <td>KYC OCR — read document text</td>
+      <td><span class="status-badge status-partial">PARTIAL</span></td>
+      <td>Integrated in code</td>
+      <td>$1.50/1000 pages (~₹500–₹1,500)</td>
+      <td>Test end-to-end KYC flow with real docs</td>
+    </tr>
+    <tr>
+      <td><strong>Cashfree</strong></td>
+      <td>Face match + Name match (KYC verification)</td>
+      <td><span class="status-badge status-partial">PARTIAL</span></td>
+      <td>Integrated in code</td>
+      <td>₹2–₹5 per verification (~₹1,000–₹3,000)</td>
+      <td>Activate production credentials</td>
+    </tr>
+    <tr>
+      <td><strong>OpenWeather API</strong></td>
+      <td>Weather-based surge pricing</td>
+      <td><span class="status-badge status-live">LIVE</span></td>
+      <td>Free tier (1,000 calls/day)</td>
+      <td>FREE (within limit)</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>Redis (Upstash)</strong></td>
+      <td>OTP cache, session, rate limiting, nearby drivers</td>
+      <td><span class="status-badge status-live">LIVE</span></td>
+      <td>Upstash (embedded in env)</td>
+      <td>FREE–₹1,600/month (Pro)</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>SendGrid / Email</strong></td>
+      <td>Email notifications (receipts, admin)</td>
+      <td><span class="status-badge status-pending">PENDING</span></td>
+      <td>Not configured</td>
+      <td>FREE–₹1,000/month</td>
+      <td>Add SENDGRID_API_KEY in Railway variables</td>
+    </tr>
+    <tr>
+      <td><strong>Railway (Hosting)</strong></td>
+      <td>Node.js backend hosting</td>
+      <td><span class="status-badge status-live">LIVE</span></td>
+      <td>Hobby/Pro plan</td>
+      <td>₹800–₹3,200/month</td>
+      <td>Switch to AWS EC2 for production scale</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section-title page-break">2. Cost Estimation — 1,000 Users + 200 Drivers/Month</div>
+
+<div class="grid-2">
+
+<div class="card">
+  <h3>💳 Current Setup (Railway)</h3>
+  <table>
+    <tr><th>Service</th><th>Cost/Month</th></tr>
+    <tr><td>Railway Hosting (Node.js)</td><td>₹800–₹2,400</td></tr>
+    <tr><td>PostgreSQL (Railway managed)</td><td>₹500–₹1,600</td></tr>
+    <tr><td>Redis (Upstash)</td><td>₹0–₹1,600</td></tr>
+    <tr><td>Google Maps Routes API</td><td>₹1,200–₹4,000</td></tr>
+    <tr><td>Razorpay (2% of GMV)</td><td>₹3,000–₹8,000</td></tr>
+    <tr><td>AuthKey SMS (OTP)</td><td>₹3,000–₹5,000</td></tr>
+    <tr><td>Firebase FCM</td><td>₹0</td></tr>
+    <tr><td>AWS S3 (KYC docs)</td><td>₹200–₹500</td></tr>
+    <tr><td>AWS Textract (KYC OCR)</td><td>₹500–₹1,500</td></tr>
+    <tr><td>OpenWeather API</td><td>₹0</td></tr>
+    <tr><td>Cashfree (face match)</td><td>₹1,000–₹3,000</td></tr>
+    <tr><td>Domain + SSL</td><td>₹100–₹200</td></tr>
+    <tr class="cost-total"><td><strong>TOTAL RANGE</strong></td><td><strong>₹10,300–₹27,800</strong></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>☁️ AWS Production Setup (Recommended)</h3>
+  <table>
+    <tr><th>Service</th><th>Cost/Month</th></tr>
+    <tr><td>EC2 t3.medium (Node.js x2)</td><td>₹5,500</td></tr>
+    <tr><td>RDS PostgreSQL db.t3.small</td><td>₹2,080</td></tr>
+    <tr><td>ElastiCache Redis t3.micro</td><td>₹1,250</td></tr>
+    <tr><td>Application Load Balancer</td><td>₹1,400</td></tr>
+    <tr><td>CloudFront CDN</td><td>₹400–₹800</td></tr>
+    <tr><td>S3 (docs + static)</td><td>₹300–₹600</td></tr>
+    <tr><td>Route 53 (DNS)</td><td>₹40</td></tr>
+    <tr><td>Textract (KYC)</td><td>₹500–₹1,500</td></tr>
+    <tr><td>Google Maps API</td><td>₹1,200–₹4,000</td></tr>
+    <tr><td>Razorpay (2% GMV)</td><td>₹3,000–₹8,000</td></tr>
+    <tr><td>SMS (AuthKey/MSG91)</td><td>₹3,000–₹5,000</td></tr>
+    <tr><td>Cashfree, Firebase, OWM</td><td>₹1,000–₹3,000</td></tr>
+    <tr class="cost-total"><td><strong>TOTAL RANGE</strong></td><td><strong>₹19,670–₹33,170</strong></td></tr>
+  </table>
+</div>
+
+</div>
+
+<div class="highlight">
+  <strong>💡 Cost Recommendation:</strong> Current Railway setup is fine up to ~500 users. For 1,000+ users with SLA guarantees, migrate to AWS. Save ~30% on compute by using reserved instances. Google Maps cost can be reduced 70% using existing Redis cache for routes.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section-title">3. AWS Infrastructure Plan (Production Migration)</div>
+
+<div class="card">
+  <h3>🏗 Recommended AWS Architecture</h3>
+  <div style="font-family: monospace; font-size: 11px; background: #1a1a2e; color: #00ff88; padding: 20px; border-radius: 8px; line-height: 1.8;">
+    Internet → Route 53 (api.gomobility.co.in)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;→ CloudFront (CDN + SSL termination)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;→ ALB (Application Load Balancer)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ EC2 t3.medium [Node.js #1] (AZ-a)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ EC2 t3.medium [Node.js #2] (AZ-b) [Scale-out]<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ RDS PostgreSQL db.t3.small (Multi-AZ optional)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ ElastiCache Redis t3.micro (cluster mode)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ S3: go-mobility-documents (KYC uploads)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ S3: go-mobility-static (profile photos)<br>
+    VPC → Private Subnet (DB + Cache) | Public Subnet (EC2 + ALB)<br>
+    Security Groups → EC2 allows only ALB traffic; RDS allows only EC2
+  </div>
+</div>
+
+<div class="grid-3" style="margin-top:16px;">
+  <div class="card">
+    <h3>🖥 EC2 Setup</h3>
+    <ul class="checklist">
+      <li>Ubuntu 22.04 LTS</li>
+      <li>Node.js 20.x LTS</li>
+      <li>PM2 cluster mode (4 workers)</li>
+      <li>Nginx reverse proxy</li>
+      <li class="pending">Docker + docker-compose</li>
+      <li class="pending">Auto Scaling Group</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>🗄 RDS PostgreSQL</h3>
+    <ul class="checklist">
+      <li>PostgreSQL 15</li>
+      <li>db.t3.small (2 vCPU, 2GB RAM)</li>
+      <li>Automated backups (7 days)</li>
+      <li class="pending">Read replica for reports</li>
+      <li class="pending">Multi-AZ failover</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>⚡ ElastiCache Redis</h3>
+    <ul class="checklist">
+      <li>Redis 7.x</li>
+      <li>cache.t3.micro</li>
+      <li>OTP + session storage</li>
+      <li>Driver location cache (120s)</li>
+      <li>Nearby drivers cache (30s)</li>
+      <li class="pending">Cluster mode (scaling)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section-title page-break">4. Backend Features — Completed vs Pending</div>
+
+<div class="grid-2">
+
+<div class="card">
+  <h3 style="color: #155724;">✅ Completed Features (Production Ready)</h3>
+  <ul class="checklist" style="column-count: 2; column-gap: 16px;">
+    <li>OTP Auth (send + verify)</li>
+    <li>JWT Access + Refresh tokens</li>
+    <li>Role-based auth (passenger, driver, admin)</li>
+    <li>Token blacklist (logout)</li>
+    <li>User profile CRUD</li>
+    <li>Driver registration + profile</li>
+    <li>Driver is_on_duty toggle</li>
+    <li>Ride request (passenger)</li>
+    <li>Nearby driver search (geo)</li>
+    <li>Driver ride accept/reject</li>
+    <li>Ride status flow (all states)</li>
+    <li>Socket.IO real-time tracking</li>
+    <li>Driver location ping (map)</li>
+    <li>Fare calculator engine</li>
+    <li>Surge pricing (demand signals)</li>
+    <li>Weather-based surge</li>
+    <li>Peak hour pricing</li>
+    <li>Cash payment flow</li>
+    <li>Razorpay UPI/Card orders</li>
+    <li>Payment verification (HMAC)</li>
+    <li>Razorpay Webhook (captured)</li>
+    <li>Wallet system (credit/debit)</li>
+    <li>Coupon/discount engine</li>
+    <li>Subscription plans</li>
+    <li>Ride ratings + reviews</li>
+    <li>SOS emergency alerts</li>
+    <li>Support tickets</li>
+    <li>KYC document upload (S3)</li>
+    <li>KYC OCR (Textract)</li>
+    <li>Face match (Cashfree)</li>
+    <li>Admin panel routes</li>
+    <li>Rate limiting (Redis)</li>
+    <li>Caching (nearby, surge, profile)</li>
+    <li>Ride queue (background jobs)</li>
+    <li>FCM push notifications</li>
+    <li>Reconnection handler (Socket)</li>
+    <li>Driver earnings summary</li>
+    <li>Trip history (paginated)</li>
+  </ul>
+  <div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div>
+  <p style="font-size:11px; color:#666; margin-top:6px;">~78% Complete</p>
+</div>
+
+<div class="card">
+  <h3 style="color: #856404;">⏳ Pending Features</h3>
+  <ul class="checklist">
+    <li class="pending">RazorpayX driver payouts (blocked — awaiting activation)</li>
+    <li class="pending">DLT-compliant SMS (MSG91 — pending ₹5,900 DLT fee)</li>
+    <li class="pending">Fast2SMS verification (website verification pending)</li>
+    <li class="pending">KYC admin approval flow (UI + backend admin review)</li>
+    <li class="pending">Driver earnings auto-settlement (weekly/daily)</li>
+    <li class="pending">Admin analytics dashboard (rides, revenue, users)</li>
+    <li class="pending">Cancellation penalty enforcement</li>
+    <li class="pending">Referral program backend</li>
+    <li class="pending">Multi-city / zone management</li>
+    <li class="pending">Scheduled rides (book ahead)</li>
+    <li class="pending">Ride sharing / carpooling</li>
+    <li class="pending">In-app chat (driver ↔ passenger)</li>
+    <li class="pending">Driver performance score</li>
+    <li class="pending">Email notifications (SendGrid)</li>
+    <li class="pending">Automated testing suite (jest)</li>
+    <li class="pending">AWS migration (from Railway)</li>
+    <li class="pending">Docker containerization</li>
+    <li class="pending">CI/CD pipeline (GitHub Actions)</li>
+    <li class="pending">Load testing (k6 / Artillery)</li>
+    <li class="pending">APM monitoring (Datadog / NewRelic)</li>
+  </ul>
+  <div class="progress-bar"><div class="progress-fill" style="width:22%; background: linear-gradient(90deg, #ff9800, #e94560)"></div></div>
+  <p style="font-size:11px; color:#666; margin-top:6px;">20 items remaining</p>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section-title">5. Immediate Action Items (Priority)</div>
+
+<div class="card">
+  <div class="action-item">
+    <div class="priority-high"></div>
+    <div>
+      <strong>RazorpayX Activation</strong> — Contact Razorpay support via <em>dashboard → Support → Chat</em>. Driver payouts completely blocked without this. Email: <code>support@razorpay.com</code> (non-monitored — use dashboard chat only).
+    </div>
+  </div>
+  <div class="action-item">
+    <div class="priority-high"></div>
+    <div>
+      <strong>DLT Registration (MSG91)</strong> — Pay ₹5,900 on Jio DLT platform (Ref: 96215657). Register Sender ID <strong>"GOMOB"</strong>. Without DLT, SMS OTP will be blocked by TRAI regulations.
+    </div>
+  </div>
+  <div class="action-item">
+    <div class="priority-high"></div>
+    <div>
+      <strong>Update Railway Environment Variables</strong> — Set: <span class="env-var">RAZORPAY_KEY_ID</span>, <span class="env-var">RAZORPAY_KEY_SECRET</span>, <span class="env-var">RAZORPAY_WEBHOOK_SECRET=gomobility_webhook_secret_2026</span>, <span class="env-var">COMPANY_USER_ID=96a0a1d8-03c3-4f01-a55e-6954ffd6e330</span>, <span class="env-var">OTP_EXPIRY_MINUTES=10</span>
+    </div>
+  </div>
+  <div class="action-item">
+    <div class="priority-high"></div>
+    <div>
+      <strong>Create Admin Wallet</strong> — Run in production DB: <code>INSERT INTO wallets (user_id, balance) VALUES ('96a0a1d8-03c3-4f01-a55e-6954ffd6e330', 0) ON CONFLICT DO NOTHING;</code>
+    </div>
+  </div>
+  <div class="action-item">
+    <div class="priority-med"></div>
+    <div>
+      <strong>Fast2SMS Website Verification</strong> — Login to Fast2SMS dashboard → Complete website/app verification to unlock OTP route. Currently blocked with error code 996.
+    </div>
+  </div>
+  <div class="action-item">
+    <div class="priority-med"></div>
+    <div>
+      <strong>Cashfree Production Credentials</strong> — Activate production API keys for face match and name match KYC. Update <span class="env-var">CASHFREE_APP_ID</span> and <span class="env-var">CASHFREE_SECRET_KEY</span> in Railway.
+    </div>
+  </div>
+  <div class="action-item">
+    <div class="priority-med"></div>
+    <div>
+      <strong>Push redisService.js to Production</strong> — OTP TTL fix (uses <span class="env-var">OTP_EXPIRY_MINUTES</span> from env). Run: <code>git add src/core/services/redisService.js && git commit -m "fix: OTP TTL uses env variable" && git push</code>
+    </div>
+  </div>
+  <div class="action-item">
+    <div class="priority-low"></div>
+    <div>
+      <strong>Delete RIDE-TEST01</strong> from production DB: <code>DELETE FROM rides WHERE ride_number = 'RIDE-TEST01';</code>
+    </div>
+  </div>
+  <div class="action-item">
+    <div class="priority-low"></div>
+    <div>
+      <strong>AWS Migration Planning</strong> — Set up EC2 + RDS + ElastiCache on AWS for production scale. Configure Nginx + PM2 + Docker. Estimated setup time: 2–3 days.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section-title page-break">6. Environment Variables Reference</div>
+
+<div class="card">
+<table>
+  <thead>
+    <tr><th>Variable</th><th>Service</th><th>Status</th><th>Current Value / Note</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="env-var">DATABASE_URL</span></td><td>PostgreSQL</td><td><span class="status-badge status-live">SET</span></td><td>Railway PostgreSQL connection string</td></tr>
+    <tr><td><span class="env-var">REDIS_URL</span></td><td>Upstash Redis</td><td><span class="status-badge status-live">SET</span></td><td>Upstash Redis TLS URL</td></tr>
+    <tr><td><span class="env-var">JWT_SECRET</span></td><td>Auth</td><td><span class="status-badge status-live">SET</span></td><td>Strong random secret</td></tr>
+    <tr><td><span class="env-var">JWT_REFRESH_SECRET</span></td><td>Auth</td><td><span class="status-badge status-live">SET</span></td><td>Strong random secret</td></tr>
+    <tr><td><span class="env-var">OTP_EXPIRY_MINUTES</span></td><td>Auth/SMS</td><td><span class="status-badge status-pending">NEEDS UPDATE</span></td><td>Set to 10 in Railway</td></tr>
+    <tr><td><span class="env-var">SMS_PROVIDER</span></td><td>SMS</td><td><span class="status-badge status-live">SET</span></td><td>authkey (current active)</td></tr>
+    <tr><td><span class="env-var">AUTHKEY_API_KEY</span></td><td>AuthKey SMS</td><td><span class="status-badge status-live">SET</span></td><td>Active</td></tr>
+    <tr><td><span class="env-var">AUTHKEY_SID</span></td><td>AuthKey SMS</td><td><span class="status-badge status-live">SET</span></td><td>Active</td></tr>
+    <tr><td><span class="env-var">MSG91_AUTH_KEY</span></td><td>MSG91</td><td><span class="status-badge status-partial">PARTIAL</span></td><td>Key present; DLT pending</td></tr>
+    <tr><td><span class="env-var">FAST2SMS_API_KEY</span></td><td>Fast2SMS</td><td><span class="status-badge status-blocked">BLOCKED</span></td><td>Website verification pending</td></tr>
+    <tr><td><span class="env-var">RAZORPAY_KEY_ID</span></td><td>Razorpay</td><td><span class="status-badge status-live">SET</span></td><td>rzp_live_ShlQoiamYzxyxJ</td></tr>
+    <tr><td><span class="env-var">RAZORPAY_KEY_SECRET</span></td><td>Razorpay</td><td><span class="status-badge status-live">SET</span></td><td>Live secret (confidential)</td></tr>
+    <tr><td><span class="env-var">RAZORPAY_WEBHOOK_SECRET</span></td><td>Razorpay</td><td><span class="status-badge status-pending">NEEDS UPDATE</span></td><td>gomobility_webhook_secret_2026</td></tr>
+    <tr><td><span class="env-var">RAZORPAY_ACCOUNT_NUMBER</span></td><td>RazorpayX</td><td><span class="status-badge status-blocked">BLOCKED</span></td><td>Awaiting RazorpayX activation</td></tr>
+    <tr><td><span class="env-var">COMPANY_USER_ID</span></td><td>Wallet/Admin</td><td><span class="status-badge status-pending">NEEDS UPDATE</span></td><td>96a0a1d8-03c3-4f01-a55e-6954ffd6e330</td></tr>
+    <tr><td><span class="env-var">GOOGLE_MAPS_API_KEY</span></td><td>Google Maps</td><td><span class="status-badge status-live">SET</span></td><td>Active — Routes API v2</td></tr>
+    <tr><td><span class="env-var">FIREBASE_PROJECT_ID</span></td><td>Firebase FCM</td><td><span class="status-badge status-live">SET</span></td><td>go-mobility-75405</td></tr>
+    <tr><td><span class="env-var">AWS_ACCESS_KEY_ID</span></td><td>AWS S3 + Textract</td><td><span class="status-badge status-live">SET</span></td><td>eu-north-1 region</td></tr>
+    <tr><td><span class="env-var">AWS_SECRET_ACCESS_KEY</span></td><td>AWS S3 + Textract</td><td><span class="status-badge status-live">SET</span></td><td>Active</td></tr>
+    <tr><td><span class="env-var">CASHFREE_APP_ID</span></td><td>Cashfree KYC</td><td><span class="status-badge status-pending">PENDING</span></td><td>Production credentials needed</td></tr>
+    <tr><td><span class="env-var">CASHFREE_SECRET_KEY</span></td><td>Cashfree KYC</td><td><span class="status-badge status-pending">PENDING</span></td><td>Production credentials needed</td></tr>
+    <tr><td><span class="env-var">OPENWEATHER_API_KEY</span></td><td>OpenWeather</td><td><span class="status-badge status-live">SET</span></td><td>Free tier (1K calls/day)</td></tr>
+    <tr><td><span class="env-var">SENDGRID_API_KEY</span></td><td>Email</td><td><span class="status-badge status-blocked">NOT SET</span></td><td>Not configured yet</td></tr>
+    <tr><td><span class="env-var">NODE_ENV</span></td><td>App</td><td><span class="status-badge status-live">SET</span></td><td>production</td></tr>
+    <tr><td><span class="env-var">PORT</span></td><td>App</td><td><span class="status-badge status-live">SET</span></td><td>3000 (Railway auto-assigns)</td></tr>
+    <tr><td><span class="env-var">API_PREFIX</span></td><td>App</td><td><span class="status-badge status-live">SET</span></td><td>/api/v1</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section-title">7. Production Checklist</div>
+
+<div class="grid-2">
+<div class="card">
+  <h3>🔒 Security</h3>
+  <ul class="checklist">
+    <li>JWT secrets set (non-default)</li>
+    <li>Razorpay HMAC webhook verify</li>
+    <li>Rate limiting (Redis-backed)</li>
+    <li>Token blacklist on logout</li>
+    <li>Role-based access control</li>
+    <li>SQL injection prevented (parameterized)</li>
+    <li>S3 bucket — private ACL</li>
+    <li class="pending">HTTPS enforced (Railway/Nginx)</li>
+    <li class="pending">Helmet.js headers</li>
+    <li class="pending">CORS whitelist (frontend domains only)</li>
+    <li class="pending">API key rotation plan</li>
+    <li class="pending">Secrets in Vault / AWS Secrets Manager</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>📊 Monitoring & Reliability</h3>
+  <ul class="checklist">
+    <li>Winston logging (daily-rotate)</li>
+    <li>Railway deployment logs</li>
+    <li>Graceful shutdown (SIGTERM)</li>
+    <li>Redis down = graceful fallback</li>
+    <li class="pending">Uptime monitoring (UptimeRobot / Pingdom)</li>
+    <li class="pending">Error alerting (Sentry)</li>
+    <li class="pending">APM (Datadog / NewRelic)</li>
+    <li class="pending">DB connection pool monitoring</li>
+    <li class="pending">Automated backups (RDS)</li>
+    <li class="pending">Load testing before launch</li>
+    <li class="pending">Health check endpoint /health</li>
+    <li class="pending">On-call runbook</li>
+  </ul>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section-title">8. Key Production Details</div>
+
+<div class="grid-3">
+<div class="card">
+  <h3>🌐 Production Endpoints</h3>
+  <div class="meta-row"><span class="meta-label">Base URL</span><span>api.gomobility.co.in</span></div>
+  <div class="meta-row"><span class="meta-label">API Prefix</span><span>/api/v1</span></div>
+  <div class="meta-row"><span class="meta-label">Auth</span><span>/api/v1/auth</span></div>
+  <div class="meta-row"><span class="meta-label">Rides</span><span>/api/v1/rides</span></div>
+  <div class="meta-row"><span class="meta-label">Payments</span><span>/api/v1/payments</span></div>
+  <div class="meta-row"><span class="meta-label">Webhook</span><span>/api/v1/payments/webhook</span></div>
+  <div class="meta-row"><span class="meta-label">Socket.IO</span><span>wss://api.gomobility.co.in</span></div>
+  <div class="meta-row"><span class="meta-label">Branch</span><span>Irshad__GoBackend</span></div>
+</div>
+<div class="card">
+  <h3>👤 Key User IDs</h3>
+  <div class="meta-row"><span class="meta-label">Admin UUID</span><span style="font-size:10px">96a0a1d8-03c3-4f01-a55e-6954ffd6e330</span></div>
+  <div class="meta-row"><span class="meta-label">Admin Phone</span><span>9999999999</span></div>
+  <div class="meta-row"><span class="meta-label">Test Passenger</span><span>Rahul Sharma</span></div>
+  <div class="meta-row"><span class="meta-label">Passenger UUID</span><span style="font-size:10px">d66ae9f9-773d-412a-a04c-a67f5f62b791</span></div>
+  <div class="meta-row"><span class="meta-label">Passenger Phone</span><span>8708299860</span></div>
+</div>
+<div class="card">
+  <h3>💰 Razorpay Config</h3>
+  <div class="meta-row"><span class="meta-label">Mode</span><span><span class="status-badge status-live">LIVE</span></span></div>
+  <div class="meta-row"><span class="meta-label">Key ID</span><span style="font-size:10px">rzp_live_ShlQoiamYzxyxJ</span></div>
+  <div class="meta-row"><span class="meta-label">Webhook Event</span><span>payment.captured</span></div>
+  <div class="meta-row"><span class="meta-label">Webhook URL</span><span style="font-size:10px">api.gomobility.co.in/api/v1/payments/webhook</span></div>
+  <div class="meta-row"><span class="meta-label">Payout (X)</span><span><span class="status-badge status-blocked">BLOCKED</span></span></div>
+</div>
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p><strong>GoMobility Backend — Production Report</strong></p>
+  <p style="margin-top:6px;">Generated: May 2026 &nbsp;|&nbsp; Confidential — Internal Use Only &nbsp;|&nbsp; Branch: Irshad__GoBackend</p>
+  <p style="margin-top:6px;">⚠️ This document contains sensitive API keys and infrastructure details. Do not share externally.</p>
+</div>
+
+</body>
+</html>

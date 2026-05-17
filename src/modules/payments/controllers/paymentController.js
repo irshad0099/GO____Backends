@@ -1,4 +1,5 @@
 import logger from '../../../core/logger/logger.js';
+import crypto from 'crypto';
 import {
     createOrder,
     verifyAndConfirmPayment,
@@ -9,8 +10,10 @@ import {
     addSavedMethod,
     removeSavedMethod,
     makeDefaultMethod,
+    initiateDriverPayout,
 } from '../services/paymentService.js';
 import { sendResponse, sendError } from '../../../core/utils/response.js';
+import { ENV } from '../../../config/envConfig.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  POST /api/v1/payments/orders
@@ -146,5 +149,61 @@ export const setDefault = async (req, res) => {
     } catch (error) {
         logger.error(`[PaymentController] ${error.message}`);
         return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
+    }
+};
+
+// POST /api/v1/payments/payout  (driver only)
+export const requestPayout = async (req, res) => {
+    try {
+        const { amount, payout_method, upi_id, bank_account_number, ifsc_code } = req.body;
+        const result = await initiateDriverPayout(req.user.id, {
+            amount: Number(amount),
+            payoutMethod: payout_method,
+            upiId: upi_id,
+            bankAccountNumber: bank_account_number,
+            ifscCode: ifsc_code,
+        });
+        return sendResponse(res, 200, result.message, result);
+    } catch (error) {
+        logger.error(`[PaymentController] requestPayout: ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message);
+    }
+};
+
+// POST /api/v1/payments/webhook  (Razorpay server → our server, no auth)
+export const handleWebhook = async (req, res) => {
+    try {
+        const signature = req.headers['x-razorpay-signature'];
+        const rawBody   = req.rawBody; // Buffer set by express.json verify callback in app.js
+
+        if (!signature) return res.status(400).json({ error: 'Missing signature' });
+
+        // Verify webhook signature
+        const expected = crypto
+            .createHmac('sha256', ENV.RAZORPAY_WEBHOOK_SECRET)
+            .update(rawBody)
+            .digest('hex');
+
+        if (expected !== signature) {
+            logger.warn('[Webhook] Invalid signature');
+            return res.status(400).json({ error: 'Invalid signature' });
+        }
+
+        const event = JSON.parse(rawBody.toString());
+        logger.info(`[Webhook] Event: ${event.event}`);
+
+        if (event.event === 'payment.captured') {
+            const payment = event.payload.payment.entity;
+            await verifyAndConfirmPayment({
+                gateway_order_id:   payment.order_id,
+                gateway_payment_id: payment.id,
+                gateway_signature:  signature, // webhook signature as proof
+            }).catch(err => logger.warn(`[Webhook] confirm failed: ${err.message}`));
+        }
+
+        return res.json({ received: true });
+    } catch (error) {
+        logger.error(`[Webhook] Error: ${error.message}`);
+        return res.status(400).json({ error: error.message });
     }
 };

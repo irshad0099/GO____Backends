@@ -7,6 +7,7 @@ import { ENV } from './config/envConfig.js';
 import routes from './routes/index.js';
 import { globalErrorHandler, notFoundHandler } from './core/errors/globalErrorHandler.js';
 import { apiLoggerMiddleware } from './core/middleware/apiLogger.middleware.js';
+import { handleWebhook } from './modules/payments/controllers/paymentController.js';
 
 const app = express();
 app.set("trust proxy", 1);
@@ -50,6 +51,10 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // DB me har request/response log karo
 app.use(apiLoggerMiddleware);
+
+// Razorpay webhook — BEFORE express.json() already processes body via verify callback
+// rawBody is available via req.rawBody (set in express.json verify above)
+app.post(`${ENV.API_PREFIX}/payments/webhook`, handleWebhook);
 
 // Mount routes
 console.log('🔄 Mounting routes...');

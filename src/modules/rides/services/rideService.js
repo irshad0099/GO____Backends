@@ -1060,15 +1060,19 @@ export const getRideDetails = async (userId, rideId, userRole) => {
             }
         }
 
-        const response = formatRideResponse(ride);
+        let response = formatRideResponse(ride);
 
-        // Passenger ko OTP dikhao jab driver assigned ho aur ride start na hui ho
-        if (userRole === 'passenger' && ['driver_assigned', 'driver_arrived'].includes(ride.status)) {
-            const otpRow = await rideOtpRepo.findLatest(rideId);
-            response.otp = otpRow ? otpRow.otp_code : null;
-        }
+  // Remove OTP by default
+  const { rideOtp, ...cleanResponse } = response;
 
-        return response;
+  // Add back conditionally
+  if (userRole === 'passenger' && ['driver_assigned', 'driver_arrived'].includes(ride.status)) {
+      cleanResponse.otp = rideOtp;
+  }
+
+  return cleanResponse;
+
+        return cleanResponse;
     } catch (error) {
         logger.error('Get ride details service error:', error);
         throw error;
@@ -1254,6 +1258,7 @@ const updateDriverRating = async (driverId) => {
 const formatRideResponse = (ride) => ({
     id: ride.id,
     rideNumber: ride.ride_number,
+    rideOtp:ride.ride_otp,
     vehicleType: ride.vehicle_type,
     pickupAddress: ride.pickup_address,
     pickupLocation: { latitude: ride.pickup_latitude, longitude: ride.pickup_longitude },

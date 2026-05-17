@@ -839,9 +839,9 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             additionalFields.pickup_compensation = finalResult.driver.pickupDistanceCompensation ?? 0;
             additionalFields.waiting_charges = finalResult.driver.waitingEarnings ?? 0;
             additionalFields.traffic_compensation = finalResult.driver.trafficDelayCompensation ?? 0;
-            additionalFields.platform_share = finalResult.driver.platformFee ?? 0;
+            additionalFields.platform_share = (finalResult.driver.platformFee ?? 0) + (finalResult.passenger.convenienceFee ?? 0);
 
-            logger.info(`[Fare Breakdown] Ride: ${rideId} | Passenger: ₹${additionalFields.passenger_total} | Driver Net: ₹${finalResult.driver.netEarnings} | Platform Fee: ₹${additionalFields.platform_share}`);
+            logger.info(`[Fare Breakdown] Ride: ${rideId} | Passenger: ₹${additionalFields.passenger_total} | Driver Net: ₹${finalResult.driver.netEarnings} | Platform Share: ₹${additionalFields.platform_share} (platformFee: ₹${finalResult.driver.platformFee ?? 0} + convenienceFee: ₹${finalResult.passenger.convenienceFee ?? 0})`);
 
             // GPS-tracked actual distance save karo (null hoga agar tracking fail hua)
             const trackedKmFinal = await getActualDistance(rideId);

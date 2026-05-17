@@ -196,21 +196,19 @@ export const handleWebhook = async (req, res) => {
         logger.info(`[Webhook] Event: ${event.event}`);
 
         if (event.event === 'payment.captured' || event.event === 'qr_code.credited') {
-            const payment = event.event === 'qr_code.credited'
-                ? event.payload.payment.entity
-                : event.payload.payment.entity;
+            const payment = event.payload.payment.entity;
 
             const order = await getPaymentOrderByGatewayOrderId(payment.order_id);
             if (order && order.status !== 'success') {
                 const client = await pool.connect();
                 try {
                     await client.query('BEGIN');
-                    await updatePaymentOrderStatus(client, order.id, 'success', {
+                    const updatedOrder = await updatePaymentOrderStatus(client, order.id, 'success', {
                         gatewayPaymentId: payment.id,
                         paidAt: new Date(),
                     });
                     await client.query('COMMIT');
-                    await addPaymentPostActionJob(order);
+                    await addPaymentPostActionJob(updatedOrder || order);
                     logger.info(`[Webhook] Payment confirmed | Order: ${order.order_number} | Payment: ${payment.id}`);
                 } catch (err) {
                     await client.query('ROLLBACK');

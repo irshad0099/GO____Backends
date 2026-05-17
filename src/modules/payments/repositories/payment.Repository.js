@@ -224,20 +224,22 @@ export const updatePaymentOrderStatus = async (client, orderId, status, extra = 
         gatewayPaymentId, gatewaySignature, failureReason, paidAt,
     } = extra;
 
+    const resolvedPaidAt = status === 'success' ? (paidAt || new Date()) : null;
+
     const result = await client.query(
         `UPDATE payment_orders
          SET status             = $1,
              gateway_payment_id = COALESCE($3, gateway_payment_id),
              gateway_signature  = COALESCE($4, gateway_signature),
              failure_reason     = COALESCE($5, failure_reason),
-             paid_at            = CASE WHEN $1 = 'success' THEN COALESCE($6, CURRENT_TIMESTAMP) ELSE paid_at END,
+             paid_at            = COALESCE($6, paid_at),
              updated_at         = CURRENT_TIMESTAMP
          WHERE id = $2
          RETURNING *`,
         [
             status, orderId,
             gatewayPaymentId || null, gatewaySignature || null,
-            failureReason    || null, paidAt           || null,
+            failureReason    || null, resolvedPaidAt   || null,
         ]
     );
     return result.rows[0] || null;

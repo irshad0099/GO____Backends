@@ -15,21 +15,17 @@ export const getWeeklyEarnings = async (userId, { limit = 10, offset = 0 }) => {
         const weeks = await earningsRepo.findWeeklyEarnings(driver.id, { limit, offset });
 
         return weeks.map(w => ({
-            weekStart: w.week_start,
-            weekEnd: w.week_end,
-            totalRides: w.total_rides,
-            completedRides: w.completed_rides,
-            cancelledRides: w.cancelled_rides,
-            rideEarnings: parseFloat(w.ride_earnings),
-            tipEarnings: parseFloat(w.tip_earnings),
-            incentiveEarnings: parseFloat(w.incentive_earnings),
-            grossEarnings: parseFloat(w.gross_earnings),
-            totalDeductions: parseFloat(w.total_deductions),
-            netEarnings: parseFloat(w.net_earnings),
-            cashCollected: parseFloat(w.cash_collected),
-            onlineEarnings: parseFloat(w.online_earnings),
-            totalOnlineHours: parseFloat(w.total_online_hours),
-            avgEarningPerRide: parseFloat(w.avg_earning_per_ride)
+            weekStart:          w.week_start,
+            weekEnd:            w.week_end,
+            completedRides:     parseInt(w.completed_rides),
+            rideEarnings:       parseFloat(w.ride_earnings),
+            tipEarnings:        parseFloat(w.tip_earnings),
+            incentiveEarnings:  parseFloat(w.incentive_earnings),
+            referralEarnings:   parseFloat(w.referral_earnings),
+            cashCollected:      parseFloat(w.cash_collected),
+            totalDeductions:    parseFloat(w.total_deductions),
+            netEarnings:        parseFloat(w.net_earnings),
+            totalOnlineHours:   parseInt(w.total_online_hours || 0),
         }));
     } catch (error) {
         logger.error('Get weekly earnings service error:', error);
@@ -46,20 +42,17 @@ export const getMonthlyEarnings = async (userId, { limit = 12, offset = 0 }) => 
         const months = await earningsRepo.findMonthlyEarnings(driver.id, { limit, offset });
 
         return months.map(m => ({
-            month: m.month,
-            year: m.year,
-            totalRides: m.total_rides,
-            completedRides: m.completed_rides,
-            rideEarnings: parseFloat(m.ride_earnings),
-            tipEarnings: parseFloat(m.tip_earnings),
-            incentiveEarnings: parseFloat(m.incentive_earnings),
-            grossEarnings: parseFloat(m.gross_earnings),
-            totalDeductions: parseFloat(m.total_deductions),
-            netEarnings: parseFloat(m.net_earnings),
-            cashCollected: parseFloat(m.cash_collected),
-            totalWithdrawals: parseFloat(m.total_withdrawals),
-            avgRating: parseFloat(m.avg_rating),
-            acceptanceRate: parseFloat(m.acceptance_rate)
+            month:              parseInt(m.month),
+            year:               parseInt(m.year),
+            completedRides:     parseInt(m.completed_rides),
+            rideEarnings:       parseFloat(m.ride_earnings),
+            tipEarnings:        parseFloat(m.tip_earnings),
+            incentiveEarnings:  parseFloat(m.incentive_earnings),
+            referralEarnings:   parseFloat(m.referral_earnings),
+            cashCollected:      parseFloat(m.cash_collected),
+            totalDeductions:    parseFloat(m.total_deductions),
+            netEarnings:        parseFloat(m.net_earnings),
+            totalOnlineHours:   parseInt(m.total_online_hours || 0),
         }));
     } catch (error) {
         logger.error('Get monthly earnings service error:', error);
@@ -73,7 +66,18 @@ export const getCurrentWeekEarnings = async (userId) => {
         const driver = await driverRepo.findDriverByUserId(userId);
         if (!driver) throw new NotFoundError('Driver profile');
 
-        return await earningsRepo.findCurrentWeekEarnings(driver.id);
+        const w = await earningsRepo.findCurrentWeekEarnings(driver.id);
+        return {
+            weekStart:          w.week_start,
+            weekEnd:            w.week_end,
+            completedRides:     parseInt(w.completed_rides),
+            rideEarnings:       parseFloat(w.ride_earnings),
+            tipEarnings:        parseFloat(w.tip_earnings),
+            incentiveEarnings:  parseFloat(w.incentive_earnings),
+            totalDeductions:    parseFloat(w.total_deductions),
+            netEarnings:        parseFloat(w.net_earnings),
+            totalOnlineHours:   parseInt(w.total_online_hours || 0),
+        };
     } catch (error) {
         logger.error('Get current week earnings service error:', error);
         throw error;
@@ -93,15 +97,39 @@ export const getEarningsStatement = async (userId, fromDate, toDate) => {
     }
 };
 
+// ─── Transaction history (ledger entries) ────────────────────────────────────
+export const getLedgerHistory = async (userId, { limit = 20, offset = 0 }) => {
+    try {
+        const driver = await driverRepo.findDriverByUserId(userId);
+        if (!driver) throw new NotFoundError('Driver profile');
+
+        const entries = await earningsRepo.findLedgerHistory(driver.id, { limit, offset });
+        return entries.map(e => ({
+            id:            e.id,
+            type:          e.type,
+            amount:        parseFloat(e.amount),
+            rideId:        e.ride_id,
+            referenceId:   e.reference_id,
+            paymentMethod: e.payment_method,
+            note:          e.note,
+            createdAt:     e.created_at,
+        }));
+    } catch (error) {
+        logger.error('Get ledger history service error:', error);
+        throw error;
+    }
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 //  Credit driver earnings after ride payment (wallet/card/upi/cash/corporate)
 //  Idempotent — safe to call multiple times for same ride
 // ─────────────────────────────────────────────────────────────────────────────
-
 export const creditDriverEarnings = async ({
     driverUserId,
     rideId,
     netEarnings,
+    tipAmount = 0,
+    durationMinutes = 0,
     platformFee,
     paymentMethod,
     collectionMethodActual = null,
@@ -110,14 +138,12 @@ export const creditDriverEarnings = async ({
     try {
         await client.query('BEGIN');
 
-        // Find driver
         const driver = await driverRepo.findDriverByUserId(driverUserId);
         if (!driver) throw new NotFoundError('Driver profile');
 
         // Idempotency check — already credited for this ride?
         const existingCredit = await client.query(
-            `SELECT * FROM driver_earnings_transactions
-             WHERE driver_id = $1 AND ride_id = $2 AND type = 'ride_earnings'`,
+            `SELECT * FROM driver_ledger WHERE driver_id = $1 AND ride_id = $2 AND type = 'ride_earning'`,
             [driver.id, rideId]
         );
         if (existingCredit.rows.length > 0) {
@@ -132,8 +158,6 @@ export const creditDriverEarnings = async ({
         }
 
         // ── Auto-deduction: pending cash dues hain toh online earning se kat lo ──
-        // Rapido model: cash ride ka platform fee jo driver ne deposit nahi kiya,
-        // wo online earning se automatically kat jaata hai
         let autoDeductedAmount = 0;
         const cashBalance = await cashRepo.findCashBalance(driver.id);
         const pendingCashDues = parseFloat(cashBalance?.pending_amount ?? 0);
@@ -143,10 +167,8 @@ export const creditDriverEarnings = async ({
             autoDeductedAmount = Math.min(pendingCashDues, netEarnings);
             netEarnings = netEarnings - autoDeductedAmount;
 
-            // Cash dues settle karo
             await cashRepo.deductFromPending(client, driver.id, autoDeductedAmount);
 
-            // Auto-deduct deposit record banao
             await cashRepo.insertDeposit({
                 driver_id:        driver.id,
                 amount:           autoDeductedAmount,
@@ -155,33 +177,65 @@ export const creditDriverEarnings = async ({
                 deposit_proof:    null,
             });
 
-            // Pending net earnings from cash rides wallet mein release karo
+            // Ledger: auto-deduction entry
+            await earningsRepo.insertLedgerEntry(client, {
+                driver_id:       driver.id,
+                type:            'auto_deduct',
+                amount:          -autoDeductedAmount,
+                duration_minutes: durationMinutes,
+                ride_id:         rideId,
+                payment_method:  paymentMethod,
+                note:            `Auto-deducted cash dues for ride #${rideId}`,
+            });
+
+            // Mark previous held cash ride earnings as 'completed' (due settled)
+            await client.query(
+                `UPDATE driver_ledger
+                 SET status = 'completed'
+                 WHERE driver_id = $1 AND type = 'ride_earning' AND status = 'held'
+                 AND created_at >= CURRENT_TIMESTAMP - INTERVAL '30 days'`,
+                [driver.id]
+            );
+
+            // Pending net earnings from cash rides — release to wallet
             if (heldNetEarnings > 0) {
                 await cashRepo.releaseNetEarnings(client, driver.id);
                 await creditWallet(client, driverUserId, heldNetEarnings);
-                // total_earnings stat update karo — cash ride ka paisa ab actually mila
                 await driverRepo.incrementTotalEarnings(client, driver.id, heldNetEarnings);
+
                 logger.info(`[Earnings] Cash held earnings released | Driver: ${driver.id} | Amount: ₹${heldNetEarnings}`);
             }
 
-            logger.info(`[Earnings] Auto-deducted cash dues | Driver: ${driver.id} | Deducted: ₹${autoDeductedAmount} | Remaining dues: ₹${pendingCashDues - autoDeductedAmount}`);
+            logger.info(`[Earnings] Auto-deducted cash dues | Driver: ${driver.id} | Deducted: ₹${autoDeductedAmount}`);
         }
 
-        // Credit driver wallet with net earnings (auto-deduction ke baad jo bacha)
+        // Credit driver wallet
         const updatedWallet = await creditWallet(client, driverUserId, netEarnings);
 
-        // Record the earnings transaction
-        const earningsTxn = await client.query(
-            `INSERT INTO driver_earnings_transactions (
-                driver_id, ride_id, type, amount, platform_fee,
-                payment_method, collection_method_actual, status,
-                created_at, updated_at
-            ) VALUES ($1, $2, 'ride_earnings', $3, $4, $5, $6, 'success', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-            RETURNING *`,
-            [driver.id, rideId, netEarnings, platformFee, paymentMethod, collectionMethodActual]
-        );
+        // Ledger: main ride earning
+        const ledgerEntry = await earningsRepo.insertLedgerEntry(client, {
+            driver_id:       driver.id,
+            type:            'ride_earning',
+            amount:          netEarnings,
+            duration_minutes: durationMinutes,
+            ride_id:         rideId,
+            payment_method:  paymentMethod,
+            note:            collectionMethodActual ? `Collection: ${collectionMethodActual}` : null,
+        });
 
-        // For cash collection — add platform fee to driver's cash_balance (driver owes platform)
+        // Ledger: tip (if any)
+        if (tipAmount > 0) {
+            await earningsRepo.insertLedgerEntry(client, {
+                driver_id:       driver.id,
+                type:            'tip',
+                amount:          tipAmount,
+                duration_minutes: durationMinutes,
+                ride_id:         rideId,
+                payment_method:  paymentMethod,
+            });
+        }
+
+        // For cash rides — add platform fee to driver's cash_balance (driver owes platform)
         if (paymentMethod === 'cash') {
             await client.query(
                 `UPDATE drivers
@@ -192,7 +246,6 @@ export const creditDriverEarnings = async ({
                 [platformFee, netEarnings, driver.id]
             );
         } else {
-            // Online methods — just update total earnings
             await client.query(
                 `UPDATE drivers
                  SET total_earnings = COALESCE(total_earnings, 0) + $1,
@@ -204,22 +257,21 @@ export const creditDriverEarnings = async ({
 
         await client.query('COMMIT');
 
-        logger.info(
-            `[Earnings] Driver credited | Driver: ${driver.id} | Ride: ${rideId} | Net: ₹${netEarnings} | Method: ${paymentMethod}`
-        );
+        logger.info(`[Earnings] Driver credited | Driver: ${driver.id} | Ride: ${rideId} | Net: ₹${netEarnings} | Method: ${paymentMethod}`);
 
         return {
             success: true,
             message: 'Driver earnings credited successfully',
             data: {
-                earningsTransaction:  earningsTxn.rows[0],
-                walletBalance:        parseFloat(updatedWallet.balance),
+                ledgerEntry,
+                walletBalance:  parseFloat(updatedWallet.balance),
                 netEarnings,
+                tipAmount,
                 platformFee,
                 paymentMethod,
                 ...(autoDeductedAmount > 0 && {
-                    autoDeducted:      autoDeductedAmount,
-                    cashHeldReleased:  heldNetEarnings,
+                    autoDeducted:     autoDeductedAmount,
+                    cashHeldReleased: heldNetEarnings,
                 }),
             },
         };

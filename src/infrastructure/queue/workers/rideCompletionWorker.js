@@ -2,6 +2,7 @@ import { Worker } from 'bullmq';
 import { getRedisConnectionOptions } from '../queue.config.js';
 import * as driverRepo from '../../../modules/drivers/repositories/driver.repository.js';
 import * as couponService from '../../../modules/coupons/services/couponService.js';
+import { creditPendingIncentives } from '../../../modules/drivers/services/incentiveService.js';
 import logger from '../../../core/logger/logger.js';
 
 const connection = getRedisConnectionOptions();
@@ -45,6 +46,16 @@ const rideCompletionWorker = new Worker('ride-completion', async (job) => {
     if (couponId) {
         await couponService.recordUsage(couponId, passengerId, rideId, Number(couponDiscount), finalFare);
         logger.info(`[RideCompletionWorker] Coupon ${couponId} usage recorded | rideId: ${rideId}`);
+    }
+
+    // 3. Credit any completed incentive bonuses
+    try {
+        const incentiveResult = await creditPendingIncentives(driverId);
+        if (incentiveResult.count > 0) {
+            logger.info(`[RideCompletionWorker] Incentives credited | Driver: ${driverId} | Count: ${incentiveResult.count} | Total: ₹${incentiveResult.credited}`);
+        }
+    } catch (err) {
+        logger.error(`[RideCompletionWorker] Incentive credit failed (non-fatal) | Driver: ${driverId} | ${err.message}`);
     }
 
     logger.info(`[RideCompletionWorker] Done | rideId: ${rideId} | driver ${driverId} earnings updated`);

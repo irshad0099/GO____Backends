@@ -39,3 +39,13 @@ export const getEarningsStatement = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getLedgerHistory = async (req, res, next) => {
+    try {
+        const { limit = 20, offset = 0 } = req.query;
+        const data = await earningsService.getLedgerHistory(req.user.id, { limit: parseInt(limit), offset: parseInt(offset) });
+        sendResponse(res, 200, '', data);
+    } catch (error) {
+        next(error);
+    }
+};

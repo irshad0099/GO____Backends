@@ -738,45 +738,29 @@ async function seed() {
     ];
     for (let i = 0; i < dIds.length; i++) {
         const w = weeklyEarnings[i];
-        await db.query(
-            `INSERT INTO driver_earnings_weekly
-               (driver_id, week_start, week_end, total_rides, completed_rides, cancelled_rides,
-                ride_earnings, tip_earnings, incentive_earnings, referral_earnings,
-                platform_fee_total, penalty_deductions, cancellation_deductions,
-                gross_earnings, total_deductions, net_earnings,
-                cash_collected, online_earnings, total_online_hours, avg_earning_per_ride)
-             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,0,$10,0,0,$11,$12,$13,$14,$15,$16,$17)
-             ON CONFLICT (driver_id, week_start) DO UPDATE SET
-               completed_rides=$5, net_earnings=$13, cash_collected=$14, online_earnings=$15, avg_earning_per_ride=$17`,
-            [dIds[i], weekStartStr, weekEndStr, w.rides, w.completed, w.cancelled,
-             w.ride_earn, w.tip, w.incentive, w.platform,
-             w.gross, w.deduct, w.net, w.cash, w.online, w.hours,
-             parseFloat((w.net / w.completed).toFixed(2))]
-        );
-
-        const month = today.getMonth() + 1;
-        const year  = today.getFullYear();
-        const mEarn = w.ride_earn * 4;
-        const mNet  = w.net * 4;
-        await db.query(
-            `INSERT INTO driver_earnings_monthly
-               (driver_id, month, year, total_rides, completed_rides, cancelled_rides,
-                ride_earnings, tip_earnings, incentive_earnings, referral_earnings,
-                platform_fee_total, penalty_deductions, cancellation_deductions,
-                gross_earnings, total_deductions, net_earnings,
-                cash_collected, online_earnings, total_online_hours,
-                avg_earning_per_ride, avg_rating, acceptance_rate)
-             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,0,$10,0,0,$11,$12,$13,$14,$15,$16,$17,$18,$19)
-             ON CONFLICT (driver_id, year, month) DO UPDATE SET
-               net_earnings=$13, avg_rating=$18, acceptance_rate=$19`,
-            [dIds[i], month, year, w.rides*4, w.completed*4, w.cancelled*4,
-             mEarn, w.tip*4, w.incentive*4, w.platform*4,
-             mEarn*1.1, w.deduct*4, mNet, w.cash*4, w.online*4, w.hours*4,
-             parseFloat((mNet / (w.completed*4)).toFixed(2)),
-             parseFloat(dAvgRatings[i].toFixed(2)), scoreData[i].acc]
-        );
+        // Seed sample ledger entries for this week
+        const ledgerEntries = [
+            { type: 'ride_earning', amount: w.ride_earn, note: 'Seed: weekly ride earnings' },
+            { type: 'tip',          amount: w.tip,       note: 'Seed: weekly tips' },
+            { type: 'incentive',    amount: w.incentive, note: 'Seed: weekly incentive bonus' },
+        ];
+        for (const entry of ledgerEntries) {
+            if (entry.amount <= 0) continue;
+            await db.query(
+                `INSERT INTO driver_ledger (driver_id, type, amount, payment_method, note, created_at)
+                 VALUES ($1, $2, $3, 'wallet', $4, $5)`,
+                [dIds[i], entry.type, entry.amount, entry.note, weekStartStr]
+            );
+        }
+        if (w.cash > 0) {
+            await db.query(
+                `INSERT INTO driver_ledger (driver_id, type, amount, payment_method, note, created_at)
+                 VALUES ($1, 'cash_deposit', $2, 'cash', 'Seed: weekly cash deposit', $3)`,
+                [dIds[i], w.cash, weekStartStr]
+            );
+        }
     }
-    console.log('  ✅ Driver earnings (weekly + monthly) created');
+    console.log('  ✅ Driver earnings ledger entries created');
 
     // ── 18. Driver cash balance & penalty ──────────────────────────────────
     console.log('\n🏦 Creating driver cash balance & penalty summary…');

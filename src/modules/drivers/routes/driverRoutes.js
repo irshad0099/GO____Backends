@@ -174,6 +174,7 @@ router.post(
 router.get('/acceptance-rate', authorize('driver'), penaltyCtrl.getAcceptanceRate);
 
 
+// lost
 // ─── Earnings Reports (weekly/monthly/statement) ────────────────────────────
 // GET /api/v1/drivers/earnings/weekly — past weekly summaries
 router.get('/earnings/weekly', authorize('driver'), earningsCtrl.getWeeklyEarnings);
@@ -191,6 +192,9 @@ router.get(
     joiValidate(earningsStatementSchema, 'query'),
     earningsCtrl.getEarningsStatement
 );
+
+// GET /api/v1/drivers/earnings/history — paginated ledger entries (transaction list)
+router.get('/earnings/history', authorize('driver'), earningsCtrl.getLedgerHistory);
 
 
 // ─── Cash Collection & Settlement ────────────────────────────────────────────

@@ -368,8 +368,10 @@ export const getDriverEarnings = async (userId, period = 'weekly') => {
         return {
             totalEarnings:     earnings.total,
             ridesCompleted:    earnings.rides,
-            timeOnlineMinutes: earnings.timeOnlineMinutes,
-            platformFeesPaid:  earnings.platformFeesPaid,
+            rideEarnings:      earnings.rideEarnings,
+            tipEarnings:       earnings.tipEarnings,
+            incentiveEarnings: earnings.incentiveEarnings,
+            totalDeductions:   earnings.totalDeductions,
             averagePerRide:    earnings.rides > 0 ? Math.round(earnings.total / earnings.rides) : 0,
             avgRidesPerDay:    Math.round(earnings.rides / daysDiff),
             period,

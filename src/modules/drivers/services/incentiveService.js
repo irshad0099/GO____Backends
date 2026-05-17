@@ -1,5 +1,8 @@
 import * as incentiveRepo from '../repositories/incentive.repository.js';
 import * as driverRepo from '../repositories/driver.repository.js';
+import * as earningsRepo from '../repositories/earnings.repository.js';
+import { creditWallet } from '../../wallet/repositories/wallet.repository.js';
+import { pool } from '../../../infrastructure/database/postgres.js';
 import { NotFoundError, ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 
@@ -52,6 +55,57 @@ export const getActiveIncentives = async (userId) => {
     } catch (error) {
         logger.error('Get active incentives service error:', error);
         throw error;
+    }
+};
+
+// ─── Credit pending incentive bonuses (called after each ride completion) ────
+export const creditPendingIncentives = async (driverId) => {
+    const client = await pool.connect();
+    try {
+        // Find completed but uncredited incentives for this driver
+        const { rows: pending } = await client.query(
+            `SELECT dip.id, dip.incentive_plan_id, ip.bonus_amount, ip.title, d.user_id
+             FROM driver_incentive_progress dip
+             JOIN incentive_plans ip ON dip.incentive_plan_id = ip.id
+             JOIN drivers d ON dip.driver_id = d.id
+             WHERE dip.driver_id = $1
+               AND dip.is_completed = TRUE
+               AND dip.is_bonus_credited = FALSE`,
+            [driverId]
+        );
+
+        if (pending.length === 0) return { credited: 0 };
+
+        await client.query('BEGIN');
+
+        let totalCredited = 0;
+        for (const incentive of pending) {
+            const bonusAmount = parseFloat(incentive.bonus_amount);
+
+            await creditWallet(client, incentive.user_id, bonusAmount);
+
+            await earningsRepo.insertLedgerEntry(client, {
+                driver_id:   driverId,
+                type:        'incentive',
+                amount:      bonusAmount,
+                reference_id: String(incentive.incentive_plan_id),
+                note:        incentive.title,
+            });
+
+            await incentiveRepo.markBonusCredited(incentive.id);
+
+            totalCredited += bonusAmount;
+            logger.info(`[Incentive] Bonus credited | Driver: ${driverId} | Plan: ${incentive.incentive_plan_id} | Amount: ₹${bonusAmount}`);
+        }
+
+        await client.query('COMMIT');
+        return { credited: totalCredited, count: pending.length };
+    } catch (error) {
+        await client.query('ROLLBACK');
+        logger.error(`[Incentive] creditPendingIncentives error | Driver: ${driverId}:`, error);
+        throw error;
+    } finally {
+        client.release();
     }
 };
 

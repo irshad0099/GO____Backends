@@ -47,7 +47,7 @@ export const processOnlinePaymentSuccess = async (data) => {
 
         // 2. Get ride details for commission calculation
         const rideResult = await client.query(
-            `SELECT final_fare, actual_fare, commission_rate, driver_id, passenger_id
+            `SELECT final_fare, actual_fare, commission_rate, driver_id, passenger_id, duration_minutes, tip_amount
              FROM rides WHERE id = $1`,
             [rideId]
         );
@@ -82,11 +82,13 @@ export const processOnlinePaymentSuccess = async (data) => {
         let driverCreditResult = null;
         try {
             driverCreditResult = await creditDriverEarnings({
-                driverUserId: driverUserId || ride.driver_id,
+                driverUserId:    driverUserId || ride.driver_id,
                 rideId,
                 netEarnings,
+                tipAmount:       ride.tip_amount || 0,
+                durationMinutes: ride.duration_minutes || 0,
                 platformFee,
-                paymentMethod: 'online',
+                paymentMethod:   'online',
             });
         } catch (earningsErr) {
             logger.error(
@@ -151,6 +153,13 @@ export const processCorporateBilling = async (data) => {
             return { success: true, alreadyProcessed: true };
         }
 
+        // Get ride details for duration + tip
+        const rideDetailsResult = await client.query(
+            `SELECT duration_minutes, tip_amount FROM rides WHERE id = $1`,
+            [rideId]
+        );
+        const rideDetails = rideDetailsResult.rows[0] || {};
+
         // Calculate splits
         const commissionRate = parseFloat(process.env.DEFAULT_COMMISSION_RATE || 0.20);
         const platformFee = Math.round(amount * commissionRate * 100) / 100;
@@ -172,8 +181,10 @@ export const processCorporateBilling = async (data) => {
             driverUserId,
             rideId,
             netEarnings,
+            tipAmount:       rideDetails.tip_amount || 0,
+            durationMinutes: rideDetails.duration_minutes || 0,
             platformFee,
-            paymentMethod: 'corporate',
+            paymentMethod:   'corporate',
         });
 
         await client.query('COMMIT');

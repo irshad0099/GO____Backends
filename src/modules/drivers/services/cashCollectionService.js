@@ -1,5 +1,6 @@
 import * as cashRepo from '../repositories/cashCollection.repository.js';
 import * as driverRepo from '../repositories/driver.repository.js';
+import * as earningsRepo from '../repositories/earnings.repository.js';
 import { creditWallet } from '../../wallet/repositories/wallet.repository.js';
 import { pool } from '../../../infrastructure/database/postgres.js';
 import { NotFoundError, ApiError } from '../../../core/errors/ApiError.js';
@@ -61,6 +62,16 @@ export const submitDeposit = async (userId, depositData) => {
         // Pending dues kam karo
         await cashRepo.deductFromPending(client, driver.id, depositData.amount);
 
+        // Ledger: cash deposit entry
+        await earningsRepo.insertLedgerEntry(client, {
+            driver_id:      driver.id,
+            type:           'cash_deposit',
+            amount:         depositData.amount,
+            reference_id:   String(deposit.id),
+            payment_method: depositData.deposit_method,
+            note:           `Cash deposit ref: ${depositData.reference_number || deposit.id}`,
+        });
+
         // Held net earnings release karo → driver wallet mein
         // (Rapido model: deposit submit hote hi earnings credit hoti hain, admin baad mein verify karta hai)
         const heldEarnings = await cashRepo.releaseNetEarnings(client, driver.id);
@@ -68,8 +79,17 @@ export const submitDeposit = async (userId, depositData) => {
         if (heldEarnings > 0) {
             const updatedWallet = await creditWallet(client, driver.user_id, heldEarnings);
             walletBalance = parseFloat(updatedWallet.balance);
-            // total_earnings stat update karo — cash ride ka paisa ab actually mila
             await driverRepo.incrementTotalEarnings(client, driver.id, heldEarnings);
+
+            // Update ledger entries: mark held cash ride earnings as 'released'
+            await client.query(
+                `UPDATE driver_ledger
+                 SET status = 'released', updated_at = CURRENT_TIMESTAMP
+                 WHERE driver_id = $1 AND type = 'ride_earning' AND status = 'held'
+                 AND created_at >= CURRENT_TIMESTAMP - INTERVAL '30 days'`,
+                [driver.id]
+            );
+
             logger.info(`[Deposit] Released held earnings | Driver: ${driver.id} | Amount: ₹${heldEarnings}`);
         }
 

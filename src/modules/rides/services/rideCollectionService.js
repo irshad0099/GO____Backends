@@ -30,6 +30,7 @@ import { ApiError, NotFoundError } from '../../../core/errors/ApiError.js';
 import * as rideRepo   from '../repositories/ride.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as cashRepo   from '../../drivers/repositories/cashCollection.repository.js';
+import * as earningsRepo from '../../drivers/repositories/earnings.repository.js';
 import {
     getActivePaymentOrderByRideId,
     updatePaymentOrderStatus,
@@ -169,7 +170,22 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
             [method, platformFee, rideId]
         );
 
-        // ── 5. Track cash dues + hold driver's net earnings (NO wallet credit yet) ──
+        // ── 5. Ledger entry — cash ride earnings (held status, released on deposit) ────
+        // Earnings recorded but marked as 'held' — released when:
+        //   a) Driver submits deposit + cash dues paid off
+        //   b) Auto-deduct from next online earning if driver takes another ride
+        await earningsRepo.insertLedgerEntry(client, {
+            driver_id:       driver.id,
+            type:            'ride_earning',
+            amount:          netEarnings,
+            duration_minutes: ride.duration_minutes || 0,
+            status:          'held',
+            ride_id:         rideId,
+            payment_method:  method,
+            note:            `Cash ride — held until deposit or auto-deduct. Platform fee: ₹${platformFee}`,
+        });
+
+        // ── 6. Track cash dues + hold driver's net earnings (NO wallet credit yet) ──
         // Rapido model: wallet credit tab hoga jab platform fee deposit ho ya online earning se auto-deduct ho
         await driverRepo.incrementDriverCashBalance(client, driver.id, platformFee, finalFare, netEarnings);
 

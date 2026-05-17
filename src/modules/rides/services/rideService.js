@@ -807,11 +807,13 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
                     // Passenger wallet debit hua — ab driver ko credit karo
                     try {
                         await creditDriverEarnings({
-                            driverUserId:  driver.user_id,
+                            driverUserId:    driver.user_id,
                             rideId,
-                            netEarnings:   finalResult.driver.netEarnings,
-                            platformFee:   finalResult.driver.platformFee,
-                            paymentMethod: 'wallet',
+                            netEarnings:     finalResult.driver.netEarnings,
+                            tipAmount:       ride.tip_amount || 0,
+                            durationMinutes: ride.duration_minutes || 0,
+                            platformFee:     finalResult.driver.platformFee,
+                            paymentMethod:   'wallet',
                         });
 
                         // Driver ko payment:received event emit karo

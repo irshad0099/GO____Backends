@@ -6,26 +6,6 @@ export function initSocketLogger(pool) {
     _pool = pool;
 }
 
-function extractMeta(meta) {
-    if (!meta || typeof meta !== 'object') return { socket_id: null, user_id: null, ride_id: null, event: null };
-    return {
-        socket_id: meta.socketId || null,
-        user_id: meta.userId ? Number(meta.userId) : null,
-        ride_id: meta.rideId ? Number(meta.rideId) : null,
-        event: meta.event || null,
-    };
-}
-
-function dbLog(level, message, meta, direction = null) {
-    if (!_pool) return;
-    const { socket_id, user_id, ride_id, event } = extractMeta(meta);
-    _pool.query(
-        `INSERT INTO socket_logs (level, event, direction, message, socket_id, user_id, ride_id, metadata)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [level, event, direction, message, socket_id, user_id, ride_id, meta ? JSON.stringify(meta) : null]
-    ).catch(() => {});
-}
-
 // Safeify karta hai data ko — tokens/passwords hata do, size limit lagao
 function sanitize(data) {
     if (!data || typeof data !== 'object') return data;
@@ -36,38 +16,65 @@ function sanitize(data) {
             clean[key] = '[REDACTED]';
         }
     }
-    const str = JSON.stringify(clean);
-    // 10KB se bada payload truncate karo
-    return str.length > 10240 ? { _truncated: true, preview: str.slice(0, 200) } : clean;
+    return clean;
 }
 
 /**
- * Har socket event (in/out) ke liye direct DB insert — onAny/onAnyOutgoing se call hota hai.
+ * Log socket event (request or response) — har emit/listener ke liye call hota hai
+ * @param {string} eventName - Proper event name (e.g., 'driver:location_update', 'ride:eta_update')
+ * @param {string} direction - 'in' (client→server) or 'out' (server→client)
+ * @param {string} socketId - Socket connection ID
+ * @param {string} userId - User ID (UUID)
+ * @param {number} driverId - Driver ID (for driver events)
+ * @param {number} rideId - Ride ID (if applicable)
+ * @param {object} payload - Request or response payload
+ * @param {string} status - 'success', 'error', 'pending'
+ * @param {string} errorMessage - Error message if status is 'error'
  */
-export function logSocketEvent({ direction, event, socketId, userId, rideId, data }) {
+export function logSocketEvent({ eventName, direction, socketId, userId, driverId, rideId, payload, status, errorMessage }) {
     if (!_pool) return;
-    logger.debug(`[socket:${direction}] ${event}`, { socketId, userId, event });
+
+    const sanitizedPayload = payload ? sanitize(payload) : null;
+
+    // Log to console first
+    logger.info(`[socket:${direction}] ${eventName}`, {
+        socketId,
+        userId,
+        driverId,
+        rideId,
+        status,
+        payload: sanitizedPayload,
+        error: errorMessage
+    });
+
+    // Insert into database
     _pool.query(
-        `INSERT INTO socket_logs (level, event, direction, message, socket_id, user_id, ride_id, metadata)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        `INSERT INTO socket_logs (event_name, direction, socket_id, user_id, driver_id, ride_id, request_payload, response_payload, status, error_message, created_at)
+         VALUES (
+             $1, $2, $3, $4, $5, $6,
+             CASE WHEN $2 = 'in' THEN $7 ELSE NULL END,
+             CASE WHEN $2 = 'out' THEN $7 ELSE NULL END,
+             $8, $9, NOW()
+         )`,
         [
-            'event',
-            event,
+            eventName,
             direction,
-            `[${direction}] ${event}`,
-            socketId || null,
-            userId ? Number(userId) : null,
-            rideId ? Number(rideId) : null,
-            data !== undefined ? JSON.stringify(sanitize(data)) : null,
+            socketId,
+            userId || null,
+            driverId || null,
+            rideId || null,
+            sanitizedPayload ? JSON.stringify(sanitizedPayload) : null,
+            status,
+            errorMessage || null
         ]
-    ).catch(() => {});
+    ).catch(err => logger.error('Socket log insert failed:', { error: err.message, eventName, socketId }));
 }
 
 const socketLogger = {
-    info(message, meta) { logger.info(message, meta); dbLog('info', message, meta); },
-    error(message, meta) { logger.error(message, meta); dbLog('error', message, meta); },
-    warn(message, meta) { logger.warn(message, meta); dbLog('warn', message, meta); },
-    debug(message, meta) { logger.debug(message, meta); dbLog('debug', message, meta); },
+    info(message, meta) { logger.info(message, meta); },
+    error(message, meta) { logger.error(message, meta); },
+    warn(message, meta) { logger.warn(message, meta); },
+    debug(message, meta) { logger.debug(message, meta); },
 };
 
 export default socketLogger;

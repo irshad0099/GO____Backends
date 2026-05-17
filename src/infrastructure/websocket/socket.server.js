@@ -81,12 +81,14 @@ export const setupSocketHandlers = () => {
         socket.onAny((event, ...args) => {
             const user = getSocketUser(socket.id);
             logSocketEvent({
+                eventName: event,
                 direction: 'in',
-                event,
                 socketId: socket.id,
                 userId: user?.userId,
+                driverId: user?.driverId,
                 rideId: args[0]?.rideId,
-                data: args[0],
+                payload: args[0],
+                status: 'received'
             });
         });
 
@@ -94,12 +96,14 @@ export const setupSocketHandlers = () => {
         socket.onAnyOutgoing((event, ...args) => {
             const user = getSocketUser(socket.id);
             logSocketEvent({
+                eventName: event,
                 direction: 'out',
-                event,
                 socketId: socket.id,
                 userId: user?.userId,
+                driverId: user?.driverId,
                 rideId: args[0]?.rideId,
-                data: args[0],
+                payload: args[0],
+                status: 'sent'
             });
         });
 

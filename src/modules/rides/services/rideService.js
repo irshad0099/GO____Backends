@@ -1255,7 +1255,7 @@ const updateDriverRating = async (driverId) => {
     }
 };
 
-const formatRideResponse = (ride) => ({
+export const formatRideResponse = (ride) => ({
     id: ride.id,
     rideNumber: ride.ride_number,
     rideOtp:ride.ride_otp,

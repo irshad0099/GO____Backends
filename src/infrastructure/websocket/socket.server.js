@@ -14,7 +14,9 @@ import {
     emitToDriver
 } from './socket.events.js';
 import { calculateDistance, calculateDuration } from '../../core/utils/rideCalculator.js';
-import { findRideById } from '../../modules/rides/repositories/ride.repository.js';
+import { findRideById, findActiveRideByDriver } from '../../modules/rides/repositories/ride.repository.js';
+import { pushPendingRidesToDriver } from '../../modules/rides/services/rideService.js';
+import * as driverRepo from '../../modules/drivers/repositories/driver.repository.js';
 import {
     storeSessionInRedis,
     getSessionFromRedis,
@@ -25,6 +27,8 @@ import {
 } from './reconnection.handler.js';
 import { addTrackingPoint, getActualDistance, startRideTracking } from './rideTracking.js';
 import { pool } from '../../infrastructure/database/postgres.js';
+import { formatRideResponse } from '../../modules/rides/services/rideService.js';
+import { getDriverLocation } from '../../core/services/redisService.js';
 
 // Debounce map — driver ke last location ka timer track karo
 const idleLocationDbTimers = new Map();
@@ -137,6 +141,26 @@ export const setupSocketHandlers = () => {
                     message: 'Authenticated successfully'
                 });
 
+                // Driver socket connect pe — agar online ho aur active ride na ho toh pending rides push karo (2 sec delay)
+                if (userType === 'driver') {
+                    setTimeout(async () => {
+                        try {
+                            const driver = await driverRepo.findDriverByUserId(userId);
+                            if (!driver) return;
+
+                            // Online hai aur active ride nahi hai toh pending rides push karo
+                            if (driver.is_available && driver.current_latitude && driver.current_longitude) {
+                                const activeRide = await findActiveRideByDriver(driver.id);
+                                if (!activeRide && driver.vehicle_type) {
+                                    await pushPendingRidesToDriver(userId, driver.vehicle_type, driver.current_latitude, driver.current_longitude);
+                                }
+                            }
+                        } catch (err) {
+                            logger.warn(`[Socket Connect] Failed to push pending rides for ${userId}:`, err.message);
+                        }
+                    }, 2000);
+                }
+
                 logger.info('✅ User authenticated via socket', { socketId: socket.id, userId, userType });
             } catch (error) {
                 logger.error('❌ Auth error', { socketId: socket.id, error: error.message });
@@ -163,6 +187,26 @@ export const setupSocketHandlers = () => {
 
                 // Recover previous state from Redis
                 const recoveryData = await handleSocketReconnection(socket, userId, userType);
+
+                // Driver socket reconnect pe — agar online ho aur active ride na ho toh pending rides push karo (2 sec delay)
+                if (userType === 'driver') {
+                    setTimeout(async () => {
+                        try {
+                            const driver = await driverRepo.findDriverByUserId(userId);
+                            if (!driver) return;
+
+                            // Online hai aur active ride nahi hai toh pending rides push karo
+                            if (driver.is_available && driver.current_latitude && driver.current_longitude) {
+                                const activeRide = await findActiveRideByDriver(driver.id);
+                                if (!activeRide && driver.vehicle_type) {
+                                    await pushPendingRidesToDriver(userId, driver.vehicle_type, driver.current_latitude, driver.current_longitude);
+                                }
+                            }
+                        } catch (err) {
+                            logger.warn(`[Socket Reconnect] Failed to push pending rides for ${userId}:`, err.message);
+                        }
+                    }, 2000);
+                }
 
                 logger.info('✅ User reconnected', {
                     socketId: socket.id,
@@ -356,9 +400,21 @@ socket.on('driver:location_update', async (data) => {
                 etaType   = 'dropoff';
             }
 
+            console.log(`\n[ETA-REALTIME] START`);
+            console.log(`  Ride ID: ${rideId}`);
+            console.log(`  Ride Status: ${ride.status}`);
+            console.log(`  ETA Type: ${etaType}`);
+            console.log(`  Target Coords: (${targetLat}, ${targetLng})`);
+            console.log(`  Driver Coords: (${latitude}, ${longitude})`);
+            console.log(`  Vehicle Type: ${ride.vehicle_type}`);
+
             if (targetLat && targetLng) {
                 const distKm     = calculateDistance(latitude, longitude, targetLat, targetLng);
+                console.log(`  Distance Calculated: ${distKm} km`);
+
                 const etaMinutes = calculateDuration(distKm, ride.vehicle_type);
+                console.log(`  ETA Minutes: ${etaMinutes} min`);
+                console.log(`[ETA-REALTIME] END - Sending: ${etaMinutes} min for ${etaType}\n`);
 
                 io.to(`ride:${rideId}`).emit('ride:eta_update', {
                     rideId,
@@ -370,8 +426,11 @@ socket.on('driver:location_update', async (data) => {
                         : `Reaching destination in ${etaMinutes} min`,
                     timestamp: new Date().toISOString()
                 });
+            } else {
+                console.log(`[ETA-REALTIME] MISSING COORDS - targetLat: ${targetLat}, targetLng: ${targetLng}\n`);
             }
         } catch (etaErr) {
+            console.error('[ETA ERROR]:', etaErr);
             logger.warn('ETA calculation failed:', etaErr.message);
         }
 
@@ -540,13 +599,49 @@ socket.on('driver:location_update', async (data) => {
 
                 // Ride se passenger_id nikalo, phir directly emit karo
                 const ride = await findRideById(rideId);
+                const rideDetails = await formatRideResponse(ride)
                 if (ride && ride.passenger_id) {
-                    emitToPassenger(ride.passenger_id, 'ride:accepted', {
-                        rideId,
-                        driverId: user.userId,
-                        timestamp: new Date().toISOString()
-                    });
+                    emitToPassenger(ride.passenger_id, 'ride:accepted', rideDetails);
+
+                    // ── ETA Calculate on accept (first ETA to passenger) ──────────
+                    try {
+                        console.log(`\n[ETA-ACCEPT] START - Ride ${rideId}`);
+                        const driver = await driverRepo.findDriverByUserId(user.userId);
+
+                        console.log(`  Driver Found: ${!!driver}`);
+                        if (driver) {
+                            console.log(`  Driver Coords: (${driver.current_latitude}, ${driver.current_longitude})`);
+                            console.log(`  Pickup Coords: (${ride.pickup_latitude}, ${ride.pickup_longitude})`);
+                        }
+
+                        if (driver && driver.current_latitude && driver.current_longitude && ride.pickup_latitude && ride.pickup_longitude) {
+                            const distKm = calculateDistance(
+                                driver.current_latitude, driver.current_longitude,
+                                ride.pickup_latitude, ride.pickup_longitude
+                            );
+                            console.log(`  Distance Calculated: ${distKm} km`);
+
+                            const etaMinutes = calculateDuration(distKm, ride.vehicle_type);
+                            console.log(`  Vehicle Type: ${ride.vehicle_type}`);
+                            console.log(`  ETA Minutes: ${etaMinutes} min`);
+                            console.log(`[ETA-ACCEPT] END - Sending ${etaMinutes} min to passenger\n`);
+
+                            emitToPassenger(ride.passenger_id, 'ride:eta_update', {
+                                rideId,
+                                etaMinutes,
+                                distanceKm: distKm,
+                                etaType: 'pickup',
+                                message: `Driver arriving in ${etaMinutes} min`,
+                                timestamp: new Date().toISOString()
+                            });
+                        } else {
+                            console.log(`[ETA-ACCEPT] MISSING DATA - Driver: ${!!driver}, Coords valid: ${driver && driver.current_latitude && driver.current_longitude}, Pickup: ${ride.pickup_latitude && ride.pickup_longitude}\n`);
+                        }
+                    } catch (etaErr) {
+                        console.log(`[ETA-ACCEPT] ERROR: ${etaErr.message}\n`);
+                    }
                 }
+
                 // Driver ko bhi acknowledge karo
                 socket.emit('ride:accepted', {
                     rideId,

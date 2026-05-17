@@ -254,7 +254,7 @@ export const toggleAvailability = async (userId, isAvailable, latitude, longitud
 
         // Driver online hua — miss hue pending rides push karo (fire & forget)
         if (isAvailable && latitude && longitude && driver.vehicle_type) {
-            pushPendingRidesToDriver(driverUserId, driver.vehicle_type, latitude, longitude).catch(() => {});
+            pushPendingRidesToDriver(driver.id, driver.vehicle_type, latitude, longitude).catch(() => {});
         }
 
         return {

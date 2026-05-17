@@ -12,6 +12,9 @@ import {
     makeDefaultMethod,
     initiateDriverPayout,
 } from '../services/paymentService.js';
+import { getPaymentOrderByGatewayOrderId, updatePaymentOrderStatus } from '../repositories/payment.Repository.js';
+import { addPaymentPostActionJob } from '../../../infrastructure/queue/payment.queue.js';
+import { pool } from '../../../infrastructure/database/postgres.js';
 import { sendResponse, sendError } from '../../../core/utils/response.js';
 import { ENV } from '../../../config/envConfig.js';
 
@@ -192,13 +195,28 @@ export const handleWebhook = async (req, res) => {
         const event = JSON.parse(rawBody.toString());
         logger.info(`[Webhook] Event: ${event.event}`);
 
-        if (event.event === 'payment.captured') {
+        if (event.event === 'payment.captured' || event.event === 'qr_code.credited') {
             const payment = event.payload.payment.entity;
-            await verifyAndConfirmPayment({
-                gateway_order_id:   payment.order_id,
-                gateway_payment_id: payment.id,
-                gateway_signature:  signature, // webhook signature as proof
-            }).catch(err => logger.warn(`[Webhook] confirm failed: ${err.message}`));
+
+            const order = await getPaymentOrderByGatewayOrderId(payment.order_id);
+            if (order && order.status !== 'success') {
+                const client = await pool.connect();
+                try {
+                    await client.query('BEGIN');
+                    const updatedOrder = await updatePaymentOrderStatus(client, order.id, 'success', {
+                        gatewayPaymentId: payment.id,
+                        paidAt: new Date(),
+                    });
+                    await client.query('COMMIT');
+                    await addPaymentPostActionJob(updatedOrder || order);
+                    logger.info(`[Webhook] Payment confirmed | Order: ${order.order_number} | Payment: ${payment.id}`);
+                } catch (err) {
+                    await client.query('ROLLBACK');
+                    logger.error(`[Webhook] DB update failed: ${err.message}`);
+                } finally {
+                    client.release();
+                }
+            }
         }
 
         return res.json({ received: true });

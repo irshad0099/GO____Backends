@@ -1,6 +1,8 @@
 import { Worker } from 'bullmq';
 import { getRedisConnectionOptions } from '../queue.config.js';
 import { rechargeWallet } from '../../../modules/wallet/services/walletService.js';
+import { creditDriverEarnings } from '../../../modules/drivers/services/earningsService.js';
+import { pool } from '../../database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 
 const connection = getRedisConnectionOptions();
@@ -10,17 +12,7 @@ const connection = getRedisConnectionOptions();
  *
  * Handles:
  *  - wallet_recharge: user wallet mein amount credit karo
- *  - (future) subscription: activate karo
- *  - (future) tip: driver ko credit karo
- *
- * Expected job.data shape:
- * {
- *   order: {
- *     id, order_number, user_id, amount,
- *     purpose, payment_method, payment_gateway,
- *     gateway_payment_id, ...
- *   }
- * }
+ *  - ride_payment: driver earnings, company earnings, transactions credit karo
  *
  * jobId = `payment-${order_number}` — duplicate processing automatically rukta hai
  */
@@ -39,7 +31,37 @@ const paymentWorker = new Worker('payment-actions', async (job) => {
         });
         logger.info(`[PaymentWorker] Wallet recharged ₹${order.amount} | user: ${order.user_id} | order: ${order.order_number}`);
     }
-    // Aur purposes add karo jab subscription, tip etc. implement hoon
+
+    if (order.purpose === 'ride_payment' && order.ride_id) {
+        const rideRow = await pool.query(
+            `SELECT r.driver_id, r.duration_minutes, r.final_fare, r.platform_share, r.payment_method,
+                    d.user_id AS driver_user_id
+             FROM rides r
+             JOIN drivers d ON d.id = r.driver_id
+             WHERE r.id = $1`,
+            [order.ride_id]
+        );
+
+        const ride = rideRow.rows[0];
+        if (!ride) {
+            logger.warn(`[PaymentWorker] Ride not found | ride_id: ${order.ride_id} | order: ${order.order_number}`);
+        } else {
+            const finalFare    = parseFloat(ride.final_fare  || order.amount);
+            const platformFee  = parseFloat(ride.platform_share || 0);
+            const netEarnings  = parseFloat((finalFare - platformFee).toFixed(2));
+
+            await creditDriverEarnings({
+                driverUserId:    ride.driver_user_id,
+                rideId:          order.ride_id,
+                netEarnings,
+                platformFee,
+                paymentMethod:   order.payment_method,
+                durationMinutes: ride.duration_minutes || 0,
+            });
+
+            logger.info(`[PaymentWorker] Driver earnings credited ₹${netEarnings} | ride: ${order.ride_id} | order: ${order.order_number}`);
+        }
+    }
 
     logger.info(`[PaymentWorker] Done | order: ${order.order_number}`);
     return { success: true };

@@ -114,6 +114,7 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
+        console.log(`[Collect] START | Ride: ${rideId} | Driver: ${driver.id} | Method: ${method} | Amount: ₹${finalFare}`);
 
         if (pendingOrder) {
             await updatePaymentOrderStatus(client, pendingOrder.id, 'failed', {
@@ -132,6 +133,7 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
         // ── 3. Idempotent insert into cash_collections ─────────────────────────
         const existingCash = await cashRepo.getCashCollectionByRideId(client, rideId);
         if (existingCash) {
+            console.log(`[Collect] ALREADY EXISTS | Ride: ${rideId}`);
             await client.query('COMMIT');
             return {
                 success: true,
@@ -147,6 +149,7 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
             };
         }
 
+        console.log(`[Collect] Creating cash_collection | Ride: ${rideId}`);
         await cashRepo.createCashCollection(client, {
             rideId,
             driverId: driver.id,
@@ -157,8 +160,10 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
             method,                 // 'cash' | 'personal_upi'
             status: 'confirmed',  // default status
         });
+        console.log(`[Collect] cash_collection created ✅`);
 
         // ── 4. Update rides row ─────────────────────────────────────────────────
+        console.log(`[Collect] Updating rides table | Status: collected_by_driver`);
         await client.query(
             `UPDATE rides
                 SET payment_status = 'collected_by_driver',
@@ -169,11 +174,13 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
               WHERE id = $3`,
             [method, platformFee, rideId]
         );
+        console.log(`[Collect] rides table updated ✅`);
 
         // ── 5. Ledger entry — cash ride earnings (held status, released on deposit) ────
         // Earnings recorded but marked as 'held' — released when:
         //   a) Driver submits deposit + cash dues paid off
         //   b) Auto-deduct from next online earning if driver takes another ride
+        console.log(`[Collect] Creating ledger entry | Amount: ₹${netEarnings} | Status: held`);
         await earningsRepo.insertLedgerEntry(client, {
             driver_id:       driver.id,
             type:            'ride_earning',
@@ -184,12 +191,16 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
             payment_method:  method,
             note:            `Cash ride — held until deposit or auto-deduct. Platform fee: ₹${platformFee}`,
         });
+        console.log(`[Collect] ledger entry created ✅`);
 
         // ── 6. Track cash dues + hold driver's net earnings (NO wallet credit yet) ──
         // Rapido model: wallet credit tab hoga jab platform fee deposit ho ya online earning se auto-deduct ho
+        console.log(`[Collect] Incrementing cash balance | Driver: ${driver.id}`);
         await driverRepo.incrementDriverCashBalance(client, driver.id, platformFee, finalFare, netEarnings);
+        console.log(`[Collect] cash balance incremented ✅`);
 
         await client.query('COMMIT');
+        console.log(`[Collect] TRANSACTION COMMITTED ✅`);
 
         // ── 6. Async side effects (non-blocking) ───────────────────────────────
         safeEmit(() => emitToPassenger(ride.passenger_id, 'ride:payment_settled', {
@@ -236,11 +247,14 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
             },
         };
     } catch (error) {
+        console.error(`[Collect] ERROR OCCURRED:`, error.message);
+        console.error(`[Collect] Stack:`, error.stack);
         await client.query('ROLLBACK').catch(() => {});
         logger.error(`[Collect] confirmManualCollection error | Ride: ${rideId}:`, error);
         throw error;
     } finally {
         client.release();
+        console.log(`[Collect] Connection released`);
     }
 };
 

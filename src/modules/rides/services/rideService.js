@@ -27,7 +27,6 @@ import {
     setCachedSurge,        // ++ ADD
 } from '../../../core/services/redisService.js';
 import {
-    emitRideRequest,
     emitRideStatusUpdate,
     emitToPassenger,
     emitToDriver

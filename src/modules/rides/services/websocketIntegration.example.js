@@ -7,7 +7,6 @@
 
 import {
     emitRideStatusUpdate,
-    emitRideRequest,
     emitDriverLocation,
     emitToDriver,
     emitToPassenger,
@@ -33,14 +32,8 @@ export class RideServiceWithWebSocket {
 
             logger.info('🚗 New ride created', { rideId: ride.id });
 
-            // Broadcast to all drivers in real-time
-            emitRideRequest(
-                ride.id,
-                ride.passengerId,
-                ride.pickupLocation,
-                ride.dropoffLocation,
-                ride.estimatedFare
-            );
+            // NOTE: Broadcast to drivers is handled by rideService.js
+            // which uses emitToDriver for specific drivers instead of io.emit
 
             return ride;
         } catch (error) {

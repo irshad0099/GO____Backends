@@ -11,7 +11,6 @@ export {
     broadcastEvent,
     emitRideStatusUpdate,
     emitDriverLocation,
-    emitRideRequest,
     emitChatMessage,
     setupRideRoom,
     leaveRideRoom,

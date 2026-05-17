@@ -176,24 +176,6 @@ export const emitDriverLocation = (rideId, driverId, passengerId, location) => {
 };
 
 /**
- * Emit new ride request to available drivers
- */
-export const emitRideRequest = (rideId, passengerId, pickupLocation, dropoffLocation, estimatedFare) => {
-    const io = getIO();
-
-    io.emit('ride:new_request', {
-        rideId,
-        passengerId,
-        pickupLocation,
-        dropoffLocation,
-        estimatedFare,
-        timestamp: new Date().toISOString()
-    });
-
-    logger.info('📤 Ride request broadcasted to all drivers', { rideId });
-};
-
-/**
  * Emit chat message
  */
 export const emitChatMessage = (rideId, senderId, senderType, message) => {
@@ -264,7 +246,6 @@ export default {
     broadcastEvent,
     emitRideStatusUpdate,
     emitDriverLocation,
-    emitRideRequest,
     emitChatMessage,
     setupRideRoom,
     leaveRideRoom,

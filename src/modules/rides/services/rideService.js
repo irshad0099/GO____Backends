@@ -37,7 +37,7 @@ import {
     sendAssignmentToDriver,
     notifyDriverArrival
 } from '../../../infrastructure/websocket/assignment.handler.js';
-import { addRideCompletionJob, addNotificationJob } from '../../../infrastructure/queue/rideQueue.js';
+import { addRideCompletionJob } from '../../../infrastructure/queue/rideQueue.js';
 import { startRideTracking, getActualDistance, clearRideTracking } from '../../../infrastructure/websocket/rideTracking.js';
 import { sendNotification } from '../../../core/services/firebaseService.js';
 import { findCashBalance } from '../../drivers/repositories/cashCollection.repository.js';
@@ -300,26 +300,26 @@ export const requestRide = async (userId, rideData) => {
             gstOnFare: fare.gstOnFare
         });
 
-        // ── FCM 1: Nearby drivers ko ride request notification (queued) ──────
-        // 100 FCM calls sync mein HTTP request block karte the — ab queue mein
-        // if (signals.nearbyDrivers.length > 0) {
-        //     const notifyDrivers = signals.nearbyDrivers.slice(0, 100).filter(d => d.fcm_token);
-        //     await Promise.allSettled(
-        //         notifyDrivers.map(d => addNotificationJob('new-ride-request', {
-        //             fcmToken: d.fcm_token,
-        //             title:    'New Ride Request!',
-        //             body:     `Pickup: ${rideData.pickupLocationName || rideData.pickupAddress} — Rs.${fare.estimatedFare}`,
-        //             data: {
-        //                 type:          'new_ride_request',
-        //                 rideId:        String(ride.id),
-        //                 rideNumber:    ride.ride_number,
-        //                 estimatedFare: String(fare.estimatedFare),
-        //                 pickupAddress: rideData.pickupAddress,
-        //                 vehicleType:   rideData.vehicleType,
-        //             },
-        //         }))
-        //     );
-        // }
+        // ── FCM 1: Nearby drivers ko ride request notification (direct) ──────
+        // Direct send, queue nahi — faster notification delivery
+        if (signals.nearbyDrivers.length > 0) {
+            const notifyDrivers = signals.nearbyDrivers.slice(0, 100).filter(d => d.fcm_token);
+            await Promise.allSettled(
+                notifyDrivers.map(d => sendNotification(
+                    d.fcm_token,
+                    'New Ride Request!',
+                    `Pickup: ${rideData.pickupLocationName || rideData.pickupAddress} — Rs.${fare.estimatedFare}`,
+                    {
+                        type:          'new_ride_request',
+                        rideId:        String(ride.id),
+                        rideNumber:    ride.ride_number,
+                        estimatedFare: String(fare.estimatedFare),
+                        pickupAddress: rideData.pickupAddress,
+                        vehicleType:   rideData.vehicleType,
+                    }
+                ))
+            );
+        }
 
         // console.log(`Ride requested: ${rideNumber} for user ${userId} | Nearby drivers notified: ${signals.nearbyDrivers.length}`,signals.nearbyDrivers);
         // ── SOCKET: broadcast new ride request to nearby drivers ──────────────
@@ -464,6 +464,7 @@ const calculateCompletionFare = async (ride) => {
 
     const pickupDistanceKm = Number(ride.driver_pickup_distance_km) || 0;
     const driverDailyRideCount = await rideRepo.getDriverDailyRideCount(ride.driver_id);
+    logger.info(`[Fare] Driver ${ride.driver_id} daily ride count: ${driverDailyRideCount} (vehicle: ${ride.vehicle_type})`);
 
     return rideCalculator.calculateFinalRideFare({
         vehicleType: ride.vehicle_type,
@@ -514,6 +515,7 @@ export const findNearbyDrivers = async (vehicleType, latitude, longitude) => {
             vehicleColor: driver.vehicle_color,
             rating: parseFloat(driver.rating || 0).toFixed(1),
             distance: parseFloat(driver.distance).toFixed(1),
+            fcm_token: driver.fcm_token,
             location: {
                 latitude: driver.current_latitude,
                 longitude: driver.current_longitude
@@ -563,13 +565,13 @@ export const acceptRide = async (driverUserId, rideId) => {
         if (!updatedRide) throw new ConflictError('Ride is no longer available or you are already on duty');
         await driverRepo.updateDriver(driver.id, { is_on_duty: true });
 
-        // ── FCM 2: Passenger ko notify — driver ne ride accept ki (queued) ───
+        // ── FCM 2: Passenger ko notify — driver ne ride accept ki (direct) ───
         if (ride.passenger_fcm_token) {
-            await addNotificationJob('ride-accepted', {
-                fcmToken: ride.passenger_fcm_token,
-                title: 'Driver Found!',
-                body: `${driver.full_name} is on the way — ${Math.ceil(pickupDistanceKm * 3)} mins away`,
-                data: {
+            await sendNotification(
+                ride.passenger_fcm_token,
+                'Driver Found!',
+                `${driver.full_name} is on the way — ${Math.ceil(pickupDistanceKm * 3)} mins away`,
+                {
                     type: 'ride_accepted',
                     rideId: String(rideId),
                     driverName: driver.full_name,
@@ -578,8 +580,8 @@ export const acceptRide = async (driverUserId, rideId) => {
                     vehicleModel: String(driver.vehicle_model || ''),
                     vehicleColor: String(driver.vehicle_color || ''),
                     eta: String(Math.ceil(pickupDistanceKm * 3)),
-                },
-            });
+                }
+            );
         }
 
 
@@ -711,16 +713,16 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             }
 
             if (ride.passenger_fcm_token) {
-                await addNotificationJob('ride-cancelled', {
-                    fcmToken: ride.passenger_fcm_token,
-                    title: 'Ride Cancelled',
-                    body: 'Your driver cancelled the ride. Please book again.',
-                    data: {
+                await sendNotification(
+                    ride.passenger_fcm_token,
+                    'Ride Cancelled',
+                    'Your driver cancelled the ride. Please book again.',
+                    {
                         type: 'ride_cancelled',
                         rideId: String(rideId),
                         reason: cancellationReason || 'Driver cancelled',
-                    },
-                });
+                    }
+                );
             }
 
             // Email notification
@@ -737,22 +739,22 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
 
 
 
-        // ── FCM 3b: Driver arrived (queued) ──────────────────────────────────
+        // ── FCM 3b: Driver arrived (direct) ──────────────────────────────────
         if (status === 'driver_arrived') {
             if (ride.passenger_fcm_token) {
-                await addNotificationJob('driver-arrived', {
-                    fcmToken: ride.passenger_fcm_token,
-                    title: 'Driver Arrived!',
-                    body: `${driver.full_name} is waiting at your pickup point`,
-                    data: {
+                await sendNotification(
+                    ride.passenger_fcm_token,
+                    'Driver Arrived!',
+                    `${driver.full_name} is waiting at your pickup point`,
+                    {
                         type: 'driver_arrived',
                         rideId: String(rideId),
-                    },
-                });
+                    }
+                );
             }
         }
 
-        // ── FCM 3c: Ride started (queued) ────────────────────────────────────
+        // ── FCM 3c: Ride started (direct) ────────────────────────────────────
         if (status === 'in_progress') {
             // GPS distance tracking shuru karo — driver ki current location se
             const driverLat = Number(driver.current_latitude);
@@ -762,15 +764,15 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             }
 
             if (ride.passenger_fcm_token) {
-                await addNotificationJob('ride-started', {
-                    fcmToken: ride.passenger_fcm_token,
-                    title: 'Ride Started!',
-                    body: `Your ride to ${ride.dropoff_location_name || ride.dropoff_address} has begun`,
-                    data: {
+                await sendNotification(
+                    ride.passenger_fcm_token,
+                    'Ride Started!',
+                    `Your ride to ${ride.dropoff_location_name || ride.dropoff_address} has begun`,
+                    {
                         type: 'ride_started',
                         rideId: String(rideId),
-                    },
-                });
+                    }
+                );
             }
         }
 
@@ -838,6 +840,8 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             additionalFields.traffic_compensation = finalResult.driver.trafficDelayCompensation ?? 0;
             additionalFields.platform_share = finalResult.driver.platformFee ?? 0;
 
+            logger.info(`[Fare Breakdown] Ride: ${rideId} | Passenger: ₹${additionalFields.passenger_total} | Driver Net: ₹${finalResult.driver.netEarnings} | Platform Fee: ₹${additionalFields.platform_share}`);
+
             // GPS-tracked actual distance save karo (null hoga agar tracking fail hua)
             const trackedKmFinal = await getActualDistance(rideId);
             if (trackedKmFinal !== null) {
@@ -890,35 +894,35 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
                 finalFare:      finalResult.passenger.finalFare,
             });
 
-            // ASYNC: FCM — passenger ko complete notification
+            // ASYNC: FCM — passenger ko complete notification (direct)
             if (ride.passenger_fcm_token) {
-                await addNotificationJob('ride-completed-passenger', {
-                    fcmToken: ride.passenger_fcm_token,
-                    title: 'Ride Completed!',
-                    body: ride.is_free_ride
+                await sendNotification(
+                    ride.passenger_fcm_token,
+                    'Ride Completed!',
+                    ride.is_free_ride
                         ? 'Your free ride is complete! Rate your experience.'
                         : `Total fare: Rs.${passengerFinalFare}. Rate your experience!`,
-                    data: {
+                    {
                         type: 'ride_completed',
                         rideId: String(rideId),
                         finalFare: String(passengerFinalFare),
                         isFreeRide: String(ride.is_free_ride || false),
-                    },
-                });
+                    }
+                );
             }
 
-            // ASYNC: FCM — driver ko earnings notification
+            // ASYNC: FCM — driver ko earnings notification (direct)
             if (ride.driver_fcm_token) {
-                await addNotificationJob('ride-earnings-driver', {
-                    fcmToken: ride.driver_fcm_token,
-                    title: 'Ride Earnings',
-                    body: `Ride complete! You earned Rs.${finalResult.driver.netEarnings.toFixed(0)}`,
-                    data: {
+                await sendNotification(
+                    ride.driver_fcm_token,
+                    'Ride Earnings',
+                    `Ride complete! You earned Rs.${finalResult.driver.netEarnings.toFixed(0)}`,
+                    {
                         type: 'ride_earnings',
                         rideId: String(rideId),
                         netEarnings: String(finalResult.driver.netEarnings),
-                    },
-                });
+                    }
+                );
             }
 
             // Email receipt
@@ -1207,6 +1211,7 @@ export const rateRide = async (userId, rideId, rating, review) => {
 
         return { success: true, message: 'Ride rated successfully' };
     } catch (error) {
+        console.log(error)
         logger.error('Rate ride service error:', error);
         throw error;
     }
@@ -1257,6 +1262,8 @@ const formatRideResponse = (ride) => ({
     estimatedFare: ride.estimated_fare,
     actualFare: ride.actual_fare,
     finalFare: ride.final_fare,
+    passengerTotal: parseFloat(ride.passenger_total || 0),
+    platformShare: parseFloat(ride.platform_share || 0),
     status: ride.status,
     paymentStatus: ride.payment_status,
     paymentMethod: ride.payment_method,
@@ -1297,6 +1304,8 @@ const formatRideListResponse = (ride) => ({
     estimatedFare: ride.estimated_fare,
     actualFare: ride.actual_fare,
     finalFare: ride.final_fare,
+    passengerTotal: parseFloat(ride.passenger_total || 0),
+    platformShare: parseFloat(ride.platform_share || 0),
     status: ride.status,
     paymentStatus: ride.payment_status,
     requestedAt: ride.requested_at,

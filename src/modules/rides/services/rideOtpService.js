@@ -22,6 +22,9 @@ export const generateRideOTP = async (rideId, passengerPhone = null) => {
 
         const otp = await otpRepo.insert(rideId, otpCode, expiresAt);
 
+        // Also store in rides.ride_otp for quick reference
+        await otpRepo.updateRideOtpColumn(rideId, otpCode);
+
         // Send OTP via SMS if passenger phone is provided
         if (passengerPhone) {
             try {
@@ -85,6 +88,9 @@ export const verifyRideOTP = async (rideId, otpCode) => {
                 message: messages[result.reason] || 'OTP verification failed'
             };
         }
+
+        // Clear OTP from rides table after successful verification
+        await otpRepo.updateRideOtpColumn(rideId, null);
 
         return {
             verified: true,

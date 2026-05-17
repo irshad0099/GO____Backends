@@ -19,17 +19,28 @@ const connection = getRedisConnectionOptions();
  * concurrency: 10 — ek saath 10 notifications process kar sakta hai
  */
 const notificationWorker = new Worker('notifications', async (job) => {
-    const { fcmToken, title, body, data } = job.data;
+    try {
+        const { fcmToken, title, body, data } = job.data;
 
-    if (!fcmToken) {
-        // FCM token nahi hai — silently skip, retry ka koi fayda nahi
-        logger.warn(`[NotificationWorker] FCM token missing | job: ${job.id} (${job.name}) — skipping`);
-        return { skipped: true, reason: 'no_fcm_token' };
+        // ── Validation ─────────────────────────────────────────────────────────
+        if (!fcmToken) {
+            logger.warn(`[NotificationWorker] FCM token missing | job: ${job.id} (${job.name}) — skipping`);
+            return { skipped: true, reason: 'no_fcm_token' };
+        }
+
+        if (!title || !body) {
+            logger.warn(`[NotificationWorker] Title/Body missing | job: ${job.id} (${job.name}) — skipping`);
+            return { skipped: true, reason: 'missing_content' };
+        }
+
+        // ── Send notification ──────────────────────────────────────────────────
+        await sendNotification(fcmToken, title, body, data);
+        logger.info(`[NotificationWorker] ✅ Sent: ${job.name} | jobId: ${job.id} | type: ${data?.type || 'unknown'}`);
+        return { sent: true, jobName: job.name, type: data?.type };
+    } catch (error) {
+        logger.error(`[NotificationWorker] ❌ Job failed | jobId: ${job.id} | name: ${job.name} | error: ${error.message}`);
+        throw error; // BullMQ will retry based on job config
     }
-
-    await sendNotification(fcmToken, title, body, data);
-    logger.info(`[NotificationWorker] Sent: ${job.name} | job: ${job.id}`);
-    return { sent: true };
 }, {
     connection,
     concurrency: 10,

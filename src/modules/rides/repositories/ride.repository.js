@@ -82,7 +82,7 @@ export const findRideById = async (rideId) => {
                     dv.vehicle_color,
                     du.full_name            AS driver_name,
                     du.phone_number         AS driver_phone,
-                    du.fcm_token            AS driver_fcm_token
+                    d.fcm_token            AS driver_fcm_token
              FROM rides r
              LEFT JOIN users u           ON r.passenger_id = u.id
              LEFT JOIN drivers d         ON r.driver_id    = d.id
@@ -156,9 +156,9 @@ export const findNearbyDrivers = async (vehicleType, latitude, longitude, radius
         const lngDelta = radiusKm / (111.0 * Math.cos((latitude * Math.PI) / 180));
 
         const result = await db.query(
-            `SELECT d.*,
+            `SELECT d.fcm_token, d.*,
                     dv.vehicle_type, dv.vehicle_number, dv.vehicle_model, dv.vehicle_color,
-                    u.full_name, u.phone_number, u.fcm_token,
+                    u.full_name, u.phone_number,
                     (6371 * acos(LEAST(1.0, cos(radians($1)) * cos(radians(d.current_latitude)) *
                     cos(radians(d.current_longitude) - radians($2)) +
                     sin(radians($1)) * sin(radians(d.current_latitude))))) AS distance

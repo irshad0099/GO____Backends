@@ -36,7 +36,7 @@ import {
 } from '../../payments/repositories/payment.Repository.js';
 import { closeDynamicQR } from '../../../infrastructure/external/payment.gateway.js';
 import { emitToPassenger, emitToDriver } from '../../../infrastructure/websocket/socket.events.js';
-import { addNotificationJob } from '../../../infrastructure/queue/rideQueue.js';
+import { sendNotification } from '../../../core/services/firebaseService.js';
 
 const ALLOWED_METHODS = new Set(['cash', 'personal_upi']);
 
@@ -190,13 +190,20 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
             message: `Deposit ₹${platformFee} to receive your ₹${netEarnings.toFixed(0)} earnings`,
         }), 'driver');
 
-        await addNotificationJob('send-collection-receipt', {
-            rideId,
-            passengerId: ride.passenger_id,
-            driverId: driver.id,
-            finalFare,
-            method,
-        });
+        // ── Notify passenger of cash collection (direct) ──────────────────────
+        if (ride.passenger_fcm_token) {
+            await sendNotification(
+                ride.passenger_fcm_token,
+                'Payment Confirmed',
+                `Driver confirmed ${method} payment of Rs.${finalFare}. Receipt sent.`,
+                {
+                    type: 'payment_confirmed',
+                    rideId: String(rideId),
+                    method,
+                    finalFare: String(finalFare),
+                }
+            );
+        }
 
         logger.info(`[Collect] Cash collected | Ride: ${rideId} | Driver: ${driver.id} | Method: ${method} | Fare: ₹${finalFare} | PlatformDue: ₹${platformFee} | NetHeld: ₹${netEarnings}`);
 

@@ -1,9 +1,10 @@
 import { body } from 'express-validator';
+import { VEHICLE_TYPES, VEHICLE_TYPES_STRING } from '../../../core/utils/vehicleTypes.js';
 
 export const validateVehicleType = () => {
     return body('vehicleType')
         .notEmpty().withMessage('Vehicle type is required')
-        .isIn(['bike', 'auto', 'car']).withMessage('Vehicle type must be bike, auto, or car');
+        .isIn(VEHICLE_TYPES).withMessage(`Vehicle type must be one of: ${VEHICLE_TYPES_STRING}`);
 };
 
 export const validateVehicleNumber = () => {
@@ -195,8 +196,8 @@ export const vehicleUploadValidator = [
   body("vehicle_type")
     .notEmpty()
     .withMessage("Vehicle type is required")
-    .isIn(["bike", "auto", "car"])
-    .withMessage("Vehicle type must be bike, auto, or car"),
+    .isIn(VEHICLE_TYPES)
+    .withMessage(`Vehicle type must be one of: ${VEHICLE_TYPES_STRING}`),
 
   body("vehicle_number")
     .notEmpty()

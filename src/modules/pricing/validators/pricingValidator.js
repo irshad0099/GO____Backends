@@ -1,11 +1,10 @@
 import Joi from 'joi';
-
-const vehicleTypes = ['bike', 'auto', 'cab'];
+import { VEHICLE_TYPES } from '../../../core/utils/vehicleTypes.js';
 
 // ─── Fare Estimate (before booking) ──────────────────────────────────────────
 export const fareEstimateSchema = Joi.object({
-    vehicle_type:       Joi.string().valid(...vehicleTypes).required()
-        .messages({ 'any.required': 'vehicle_type is required', 'any.only': 'vehicle_type must be bike, auto, or cab' }),
+    vehicle_type:       Joi.string().valid(...VEHICLE_TYPES).required()
+        .messages({ 'any.required': 'vehicle_type is required', 'any.only': `vehicle_type must be one of: ${VEHICLE_TYPES.join(', ')}` }),
     distance_km:        Joi.number().positive().max(200).required()
         .messages({ 'any.required': 'distance_km is required' }),
     estimated_minutes:  Joi.number().positive().max(300).required()
@@ -24,7 +23,7 @@ export const allEstimatesSchema = Joi.object({
 
 // ─── Final Fare (after ride) ──────────────────────────────────────────────────
 export const finalFareSchema = Joi.object({
-    vehicle_type:         Joi.string().valid(...vehicleTypes).required(),
+    vehicle_type:         Joi.string().valid(...VEHICLE_TYPES).required(),
     actual_distance_km:   Joi.number().positive().max(200).required(),
     estimated_minutes:    Joi.number().positive().max(300).required(),
     actual_minutes:       Joi.number().positive().max(300).required(),

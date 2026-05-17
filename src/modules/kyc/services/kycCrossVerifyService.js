@@ -2,6 +2,7 @@ import * as repo from '../repositories/kycDocuments.repository.js';
 import * as kycNotify from './kycNotificationService.js';
 import { db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
+import { mapRcVehicleType } from '../../../core/utils/vehicleTypes.js';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -19,21 +20,6 @@ const nameSimilarity = (a = '', b = '') => {
 const dobMatch = (a, b) => {
     if (!a || !b) return null; // data nahi — skip
     return String(a).slice(0, 10) === String(b).slice(0, 10);
-};
-
-// RC vehicle_type (Cashfree raw string) → driver_vehicle type (bike/auto/car)
-const RC_TYPE_MAP = {
-    bike:  ['M-CYCLE', 'MOTORCYCLE', 'SCOOTER', 'MOPED', 'E-BIKE', 'ELECTRIC CYCLE'],
-    auto:  ['AUTO', 'E-RICKSHAW', 'E-CART', 'THREE WHEELER', '3-WHEELER'],
-    car:   ['MOTOR CAR', 'CAR', 'TAXI', 'MAXI CAB', 'LIGHT MOTOR VEHICLE', 'LMV', 'SUV', 'MPV'],
-};
-
-const mapRcVehicleType = (rcType = '') => {
-    const upper = rcType.toUpperCase();
-    for (const [mapped, keywords] of Object.entries(RC_TYPE_MAP)) {
-        if (keywords.some(k => upper.includes(k))) return mapped;
-    }
-    return null;
 };
 
 const isExpired = (dateStr) => {

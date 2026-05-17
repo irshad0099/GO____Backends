@@ -210,7 +210,7 @@ export const findPendingRidesNearLocation = async (vehicleType, latitude, longit
                AND r.pickup_longitude BETWEEN $7 AND $8
              ORDER BY r.requested_at ASC`,
             [
-                vehicleType, latitude, longitude,
+                vehicleType,
                 latitude - latDelta, latitude + latDelta,
                 windowMinutes,
                 longitude - lngDelta, longitude + lngDelta

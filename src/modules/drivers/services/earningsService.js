@@ -257,10 +257,14 @@ export const creditDriverEarnings = async ({
         }
 
         // Company earnings track karo — har payment method pe
+        const rideData = await client.query(
+            `SELECT passenger_id FROM rides WHERE id = $1`,
+            [rideId]
+        );
         await createCompanyEarning(client, {
             rideId,
             driverId:      driver.id,
-            passengerId:   earningsTxn.rows[0]?.passenger_id || null,
+            passengerId:   rideData.rows[0]?.passenger_id || null,
             paymentMethod,
             grossFare:     netEarnings + platformFee,
             platformFee,

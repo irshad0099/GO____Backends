@@ -67,7 +67,17 @@ export function logSocketEvent({ eventName, direction, socketId, userId, driverI
             status,
             errorMessage || null
         ]
-    ).catch(err => logger.error('Socket log insert failed:', { error: err.message, eventName, socketId }));
+    ).catch(err => {
+        console.error('[SOCKET_LOG_ERROR]', err);
+        logger.error('Socket log insert failed:', {
+            error: err.message,
+            code: err.code,
+            detail: err.detail,
+            eventName,
+            socketId,
+            stack: err.stack
+        });
+    });
 }
 
 const socketLogger = {

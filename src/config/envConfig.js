@@ -64,6 +64,10 @@ REDIS_USERNAME: process.env.REDIS_USERNAME || 'default',
     RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
     RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
     RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET,
+    RAZORPAY_ACCOUNT_NUMBER: process.env.RAZORPAY_ACCOUNT_NUMBER, // RazorpayX account for payouts
+
+    // Company
+    COMPANY_USER_ID: process.env.COMPANY_USER_ID, // seeded admin user whose wallet = company earnings
     
     // Subscription
     DEFAULT_SUBSCRIPTION_CURRENCY: process.env.DEFAULT_SUBSCRIPTION_CURRENCY || 'INR',

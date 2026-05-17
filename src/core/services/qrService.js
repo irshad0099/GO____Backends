@@ -54,9 +54,9 @@ export const generateRidePaymentQR = async (options) => {
             amount,
             orderNumber,
             orderId,
-            qrCode: qrCodeDataUrl,
+            qrCode: razorpayQR?.imageUrl || qrCodeDataUrl,
             upiUrl,
-            expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
+            expiresAt: new Date(Date.now() + 15 * 60 * 1000),
             razorpayQR: razorpayQR
         };
         

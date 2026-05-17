@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoMobility — Full Financial Analysis</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1a1a2e; background: #f5f7fa; }
+  @media print {
+    body { background: #fff; font-size: 11px; }
+    .no-print { display: none !important; }
+    .page-break { page-break-before: always; }
+    .card { break-inside: avoid; }
+    table { break-inside: avoid; }
+  }
+  .print-btn { position: fixed; bottom: 24px; right: 24px; background: #e94560; color: white; border: none; padding: 14px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 16px rgba(233,69,96,0.4); z-index: 999; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 40px; }
+  .header h1 { font-size: 30px; font-weight: 800; letter-spacing: 1px; }
+  .header .sub { font-size: 14px; opacity: 0.8; margin-top: 8px; }
+  .header .badges { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .badge { display: inline-block; padding: 5px 16px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .badge-red { background: #e94560; color: white; }
+  .badge-blue { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); }
+  .badge-green { background: #00c853; color: white; }
+  .container { max-width: 1050px; margin: 0 auto; padding: 28px 20px; }
+  .section-title { font-size: 17px; font-weight: 700; color: #0f3460; border-left: 4px solid #e94560; padding-left: 12px; margin: 36px 0 16px; }
+  .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); margin-bottom: 16px; }
+  .card h3 { font-size: 14px; font-weight: 700; color: #0f3460; margin-bottom: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: #0f3460; color: white; padding: 10px 13px; text-align: left; font-weight: 600; font-size: 11px; }
+  td { padding: 9px 13px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .row-total td { background: #e3f2fd !important; font-weight: 700; color: #0f3460; }
+  .row-grand td { background: #0f3460 !important; color: white !important; font-weight: 800; font-size: 13px; }
+  .row-profit td { background: #e8f5e9 !important; font-weight: 700; color: #1b5e20; font-size: 13px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin: 24px 0; }
+  .stat-box { background: white; border-radius: 10px; padding: 16px 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .stat-box .num { font-size: 22px; font-weight: 800; }
+  .stat-box .num.blue { color: #0f3460; }
+  .stat-box .num.green { color: #00c853; }
+  .stat-box .num.red { color: #e94560; }
+  .stat-box .num.orange { color: #ff9800; }
+  .stat-box .num.purple { color: #7c4dff; }
+  .stat-box .lbl { font-size: 10px; color: #666; margin-top: 5px; line-height: 1.4; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .highlight { background: #e8f5e9; border-left: 4px solid #00c853; padding: 12px 16px; border-radius: 6px; font-size: 12px; margin: 10px 0; }
+  .warning { background: #fff8e1; border-left: 4px solid #ff9800; padding: 12px 16px; border-radius: 6px; font-size: 12px; margin: 10px 0; }
+  .info { background: #e3f2fd; border-left: 4px solid #0f3460; padding: 12px 16px; border-radius: 6px; font-size: 12px; margin: 10px 0; }
+  .profit-hero { background: linear-gradient(135deg, #00c853, #00897b); color: white; border-radius: 12px; padding: 28px; margin: 20px 0; }
+  .profit-hero h2 { font-size: 20px; margin-bottom: 20px; }
+  .profit-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2); font-size: 13px; }
+  .profit-row:last-child { border-bottom: none; padding-top: 14px; margin-top: 6px; font-size: 16px; font-weight: 800; }
+  .scale-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr; gap: 0; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+  .tag-green { background: #e8f5e9; color: #2e7d32; }
+  .tag-orange { background: #fff3e0; color: #e65100; }
+  .tag-red { background: #fce4ec; color: #c62828; }
+  .tag-blue { background: #e3f2fd; color: #0d47a1; }
+  .formula { background: #1a1a2e; color: #00d2ff; font-family: monospace; font-size: 11px; padding: 14px 18px; border-radius: 8px; line-height: 1.9; margin: 12px 0; }
+  .phase-box { border: 2px solid; border-radius: 10px; padding: 18px; }
+  .phase-box.railway { border-color: #7c4dff; }
+  .phase-box.aws { border-color: #ff9800; }
+  .phase-box.scale { border-color: #e94560; }
+  .phase-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+  .footer { background: #1a1a2e; color: #888; text-align: center; padding: 24px; font-size: 11px; margin-top: 40px; }
+  .crore { color: #e94560; font-weight: 800; }
+  .lakh { color: #00c853; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨 Print / Save PDF</button>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>GO MOBILITY — Full Financial Analysis</h1>
+  <div class="sub">Third-Party API Costs · Revenue · Profit · Scale Projections · May 2026</div>
+  <div class="badges">
+    <span class="badge badge-red">10,000 Users</span>
+    <span class="badge badge-red">3,000 Drivers</span>
+    <span class="badge badge-blue">Delhi NCR Launch</span>
+    <span class="badge badge-blue">Railway → AWS Migration</span>
+    <span class="badge badge-green">Rapido Cash Model</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- KEY ASSUMPTIONS -->
+<div class="section-title">0. Key Assumptions & Base Numbers</div>
+<div class="card">
+  <div class="grid-2">
+    <div>
+      <table>
+        <thead><tr><th>Parameter</th><th>Value</th><th>Basis</th></tr></thead>
+        <tbody>
+          <tr><td>Total registered users</td><td><strong>10,000</strong></td><td>Target scale</td></tr>
+          <tr><td>Total registered drivers</td><td><strong>3,000</strong></td><td>Target scale</td></tr>
+          <tr><td>Daily active users (30%)</td><td><strong>3,000</strong></td><td>India app avg</td></tr>
+          <tr><td>Daily active drivers (40%)</td><td><strong>1,200</strong></td><td>Shift coverage</td></tr>
+          <tr><td>Rides per active user/day</td><td><strong>1.5 avg</strong></td><td>Rapido benchmark</td></tr>
+          <tr><td>Total rides per day</td><td><strong>4,000–4,500</strong></td><td>3000 × 1.5</td></tr>
+          <tr><td>Monthly rides</td><td><strong>1,30,000</strong></td><td>4,333 × 30</td></tr>
+          <tr><td>Average fare per ride</td><td><strong>₹120</strong></td><td>Delhi NCR auto/bike</td></tr>
+          <tr><td>Platform fee (company cut)</td><td><strong>20% = ₹24</strong></td><td>Rapido model</td></tr>
+          <tr><td>Online payment share</td><td><strong>40%</strong></td><td>India UPI adoption</td></tr>
+          <tr><td>Cash payment share</td><td><strong>60%</strong></td><td>India cash preference</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="formula">
+Monthly Rides = 3,000 active users × 1.5 rides/day × 30 days
+             = 1,35,000 rides/month (using 1,30,000 conservative)
+
+Monthly Gross Revenue = 1,30,000 × ₹120 = ₹1,56,00,000
+Company Income (20%) = 1,30,000 × ₹24  = ₹31,20,000/month
+
+Online rides (40%)   = 52,000 rides → Razorpay charges apply
+Cash rides (60%)     = 78,000 rides → No payment gateway fee
+
+Peak concurrent rides = 4,333/day ÷ 16hr = ~270 rides/hour
+Peak bookings/min     = ~5-8 (matches AWS PDF)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOP LINE STATS -->
+<div class="stat-grid">
+  <div class="stat-box">
+    <div class="num blue">₹1.56 Cr</div>
+    <div class="lbl">Monthly Gross Revenue<br>(all fares collected)</div>
+  </div>
+  <div class="stat-box">
+    <div class="num green">₹31.2 L</div>
+    <div class="lbl">Company Platform Fee<br>(20% of all fares)</div>
+  </div>
+  <div class="stat-box">
+    <div class="num orange">₹6.8 L</div>
+    <div class="lbl">Total Monthly Expenses<br>(AWS + all APIs)</div>
+  </div>
+  <div class="stat-box">
+    <div class="num green">₹24.4 L</div>
+    <div class="lbl">Net Monthly Profit<br>(after all expenses)</div>
+  </div>
+  <div class="stat-box">
+    <div class="num purple">78%</div>
+    <div class="lbl">Profit Margin<br>(industry avg: 15-25%)</div>
+  </div>
+</div>
+
+<!-- THIRD PARTY API COST TABLE -->
+<div class="section-title">1. Third-Party API Cost — 10,000 Users + 3,000 Drivers</div>
+
+<div class="card">
+<table>
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>What It Does</th>
+      <th>Usage/Month</th>
+      <th>Rate</th>
+      <th>Daily Cost</th>
+      <th>Monthly Cost</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Google Maps -->
+    <tr>
+      <td><strong>Google Maps<br>Routes API v2</strong></td>
+      <td>Distance, ETA, fare calculation</td>
+      <td>3,64,000 API calls<br><small>(1,30,000 rides × 2.8 hits)</small></td>
+      <td>$0.005/call<br>After $200 credit</td>
+      <td>₹4,940</td>
+      <td><strong>₹1,48,200</strong><br><small>After credit: ₹1,31,400</small></td>
+      <td><span class="tag tag-green">LIVE</span></td>
+    </tr>
+    <!-- Razorpay -->
+    <tr>
+      <td><strong>Razorpay<br>(Payment GW)</strong></td>
+      <td>UPI/Card payment processing</td>
+      <td>52,000 online rides<br><small>₹120 avg × 40% rides</small></td>
+      <td>2% per txn</td>
+      <td>₹4,160</td>
+      <td><strong>₹1,24,800</strong><br><small>2% of ₹62.4L online GMV</small></td>
+      <td><span class="tag tag-green">LIVE</span></td>
+    </tr>
+    <!-- RazorpayX -->
+    <tr>
+      <td><strong>RazorpayX<br>(Driver Payouts)</strong></td>
+      <td>Driver earnings bank transfer</td>
+      <td>3,000 drivers/month<br><small>Weekly settlement</small></td>
+      <td>₹3–₹5/payout</td>
+      <td>₹400</td>
+      <td><strong>₹12,000</strong><br><small>4 payouts/driver/month</small></td>
+      <td><span class="tag tag-orange">BLOCKED</span></td>
+    </tr>
+    <!-- Firebase FCM -->
+    <tr>
+      <td><strong>Firebase FCM</strong></td>
+      <td>Push notifications</td>
+      <td>~6,50,000 notifications<br><small>5 per ride × 1,30,000</small></td>
+      <td>FREE</td>
+      <td>₹0</td>
+      <td><strong>₹0</strong><br><small>Free tier: 5M/day</small></td>
+      <td><span class="tag tag-green">LIVE</span></td>
+    </tr>
+    <!-- AuthKey SMS -->
+    <tr>
+      <td><strong>AuthKey SMS<br>(OTP)</strong></td>
+      <td>Login/signup OTP delivery</td>
+      <td>~25,000 OTPs/month<br><small>Users + drivers login</small></td>
+      <td>₹0.20/SMS</td>
+      <td>₹167</td>
+      <td><strong>₹5,000</strong></td>
+      <td><span class="tag tag-green">LIVE</span></td>
+    </tr>
+    <!-- MSG91 -->
+    <tr>
+      <td><strong>MSG91<br>(DLT OTP)</strong></td>
+      <td>TRAI compliant OTP SMS</td>
+      <td>Same as above</td>
+      <td>₹0.18/SMS</td>
+      <td>₹150</td>
+      <td><strong>₹4,500</strong><br><small>DLT registration: ₹5,900 one-time</small></td>
+      <td><span class="tag tag-orange">PENDING DLT</span></td>
+    </tr>
+    <!-- AWS S3 -->
+    <tr>
+      <td><strong>AWS S3</strong></td>
+      <td>KYC docs, profile photos</td>
+      <td>~150 GB storage<br><small>3K drivers × 3 docs avg</small></td>
+      <td>$0.023/GB</td>
+      <td>₹115</td>
+      <td><strong>₹3,450</strong></td>
+      <td><span class="tag tag-green">LIVE</span></td>
+    </tr>
+    <!-- Textract -->
+    <tr>
+      <td><strong>AWS Textract</strong></td>
+      <td>KYC document OCR</td>
+      <td>~3,000 docs (onboarding)<br><small>One-time + new drivers</small></td>
+      <td>$1.50/1000 pages</td>
+      <td>₹150</td>
+      <td><strong>₹4,500</strong><br><small>Month 1 spike: ₹37,800</small></td>
+      <td><span class="tag tag-green">LIVE</span></td>
+    </tr>
+    <!-- Cashfree -->
+    <tr>
+      <td><strong>Cashfree KYC</strong></td>
+      <td>Face match + name match</td>
+      <td>~3,000 verifications<br><small>New driver onboarding</small></td>
+      <td>₹15/verification</td>
+      <td>₹1,500</td>
+      <td><strong>₹45,000</strong> (Month 1)<br><small>Month 2+: ₹1,500 (new only)</small></td>
+      <td><span class="tag tag-blue">PARTIAL</span></td>
+    </tr>
+    <!-- SendGrid -->
+    <tr>
+      <td><strong>SendGrid Email</strong></td>
+      <td>Ride receipts, notifications</td>
+      <td>~1,30,000 emails/month<br><small>1 receipt per ride</small></td>
+      <td>$19.95/month<br><small>Essentials 100K</small></td>
+      <td>₹56</td>
+      <td><strong>₹1,676</strong></td>
+      <td><span class="tag tag-orange">NEED UPGRADE</span></td>
+    </tr>
+    <!-- OpenWeather -->
+    <tr>
+      <td><strong>OpenWeather API</strong></td>
+      <td>Weather surge pricing</td>
+      <td>~1,30,000 calls<br><small>1 per ride, 15min cache</small></td>
+      <td>$40/month<br><small>Startup plan</small></td>
+      <td>₹107</td>
+      <td><strong>₹3,200</strong></td>
+      <td><span class="tag tag-green">LIVE</span></td>
+    </tr>
+    <!-- Redis -->
+    <tr>
+      <td><strong>Redis (Upstash/AWS)</strong></td>
+      <td>Cache, sessions, rate limiting</td>
+      <td>High read/write<br><small>Location + OTP + cache</small></td>
+      <td>Upstash Pro / AWS</td>
+      <td>₹133</td>
+      <td><strong>₹4,000</strong></td>
+      <td><span class="tag tag-green">LIVE</span></td>
+    </tr>
+    <!-- Total -->
+    <tr class="row-total">
+      <td colspan="4"><strong>TOTAL THIRD-PARTY (Month 2+, steady state)</strong></td>
+      <td><strong>₹11,728/day</strong></td>
+      <td><strong>₹3,38,526/month</strong></td>
+      <td></td>
+    </tr>
+    <tr class="row-total">
+      <td colspan="4"><strong>TOTAL THIRD-PARTY (Month 1, includes KYC spike)</strong></td>
+      <td>—</td>
+      <td><strong>₹3,82,026/month</strong></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- AWS INFRA COST -->
+<div class="section-title">2. AWS Infrastructure Cost — 10,000 Users Scale</div>
+<div class="card">
+<table>
+  <thead>
+    <tr><th>AWS Service</th><th>Specification</th><th>Why Needed</th><th>Monthly Cost</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>EC2 App Servers (x3)</td><td>t3.large (2vCPU, 8GB) × 3</td><td>API + WebSocket + BullMQ workers</td><td>₹11,700</td></tr>
+    <tr><td>RDS PostgreSQL</td><td>db.t3.medium, 200GB SSD, Multi-AZ</td><td>Primary DB with failover</td><td>₹13,000</td></tr>
+    <tr><td>ElastiCache Redis</td><td>cache.t3.small cluster</td><td>Location cache, sessions, queues</td><td>₹5,500</td></tr>
+    <tr><td>Application Load Balancer</td><td>1 ALB + target groups</td><td>HTTP/WebSocket traffic routing</td><td>₹1,800</td></tr>
+    <tr><td>CloudFront CDN</td><td>~200GB/month transfer</td><td>Static assets + API edge caching</td><td>₹1,400</td></tr>
+    <tr><td>Route 53</td><td>DNS + health checks</td><td>gomobility.co.in routing</td><td>₹200</td></tr>
+    <tr><td>S3 Storage</td><td>~150GB + bandwidth</td><td>KYC docs, profile photos</td><td>₹1,200</td></tr>
+    <tr><td>ECR</td><td>Docker image registry</td><td>CI/CD pipeline</td><td>₹300</td></tr>
+    <tr><td>CloudWatch</td><td>Logs + metrics + alarms</td><td>Monitoring & alerting</td><td>₹800</td></tr>
+    <tr><td>VPC + NAT Gateway</td><td>Private subnets</td><td>Security isolation</td><td>₹1,500</td></tr>
+    <tr><td>Data Transfer</td><td>~300GB outbound</td><td>API responses + WS + CDN</td><td>₹2,100</td></tr>
+    <tr><td>Elastic IPs (3)</td><td>Static IPs for EC2</td><td>Fixed IP for services</td><td>₹450</td></tr>
+    <tr class="row-total"><td colspan="3"><strong>AWS TOTAL</strong></td><td><strong>₹39,950/month</strong></td></tr>
+  </tbody>
+</table>
+<div class="info" style="margin-top:12px;">
+  <strong>Current (Railway):</strong> ₹22,000/month (from your PDF) — Railway → AWS migrate karne pe +₹18,000 cost lekin better reliability, auto-scaling, and SLA milega.
+</div>
+</div>
+
+<!-- COMPLETE EXPENSE BREAKDOWN -->
+<div class="section-title page-break">3. Complete Monthly Expense Breakdown</div>
+<div class="card">
+<table>
+  <thead>
+    <tr><th>Category</th><th>Service</th><th>Month 1</th><th>Month 2+ (Steady)</th><th>% of Total Expense</th></tr>
+  </thead>
+  <tbody>
+    <tr><td rowspan="2"><strong>Infrastructure</strong></td><td>AWS (all services)</td><td>₹39,950</td><td>₹39,950</td><td>58%</td></tr>
+    <tr><td>Domain + SSL (annual/12)</td><td>₹200</td><td>₹200</td><td>0.3%</td></tr>
+    <tr><td rowspan="2"><strong>Payment</strong></td><td>Razorpay (2% online txn)</td><td>₹1,24,800</td><td>₹1,24,800</td><td>18%</td></tr>
+    <tr><td>RazorpayX Driver Payouts</td><td>₹12,000</td><td>₹12,000</td><td>1.7%</td></tr>
+    <tr><td rowspan="2"><strong>Maps & Location</strong></td><td>Google Maps Routes API</td><td>₹1,31,400</td><td>₹1,31,400</td><td>19%</td></tr>
+    <tr><td>OpenWeather API</td><td>₹3,200</td><td>₹3,200</td><td>0.5%</td></tr>
+    <tr><td rowspan="2"><strong>Communication</strong></td><td>SMS OTP (AuthKey/MSG91)</td><td>₹5,000</td><td>₹5,000</td><td>0.7%</td></tr>
+    <tr><td>SendGrid Email</td><td>₹1,676</td><td>₹1,676</td><td>0.2%</td></tr>
+    <tr><td rowspan="3"><strong>KYC & Storage</strong></td><td>Cashfree (face + name match)</td><td>₹45,000</td><td>₹1,500</td><td>0.2%</td></tr>
+    <tr><td>AWS Textract (OCR)</td><td>₹37,800</td><td>₹4,500</td><td>0.7%</td></tr>
+    <tr><td>AWS S3</td><td>₹3,450</td><td>₹3,450</td><td>0.5%</td></tr>
+    <tr><td><strong>Cache</strong></td><td>Redis (Upstash/AWS ElastiCache)</td><td>₹4,000</td><td>₹4,000</td><td>0.6%</td></tr>
+    <tr><td><strong>Firebase</strong></td><td>FCM Push Notifications</td><td>₹0</td><td>₹0</td><td>0%</td></tr>
+    <tr class="row-total"><td colspan="2"><strong>TOTAL EXPENSES</strong></td><td><strong>₹4,08,476</strong></td><td><strong>₹3,31,676</strong></td><td><strong>100%</strong></td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- REVENUE & PROFIT -->
+<div class="section-title">4. Revenue & Profit — Full Calculation</div>
+
+<div class="profit-hero">
+  <h2>💰 Monthly P&L — 10,000 Users + 3,000 Drivers</h2>
+  <div class="profit-row"><span>Total Rides/Month</span><span>1,30,000 rides</span></div>
+  <div class="profit-row"><span>Gross Fare Collected (all rides)</span><span>₹1,56,00,000 (₹1.56 Crore)</span></div>
+  <div class="profit-row"><span>Driver Earnings (80%)</span><span>₹1,24,80,000 (₹1.25 Crore)</span></div>
+  <div class="profit-row"><span>Company Platform Fee (20%)</span><span>₹31,20,000 (₹31.2 Lakh)</span></div>
+  <div class="profit-row" style="margin-top:8px; border-top: 2px solid rgba(255,255,255,0.4);">
+    <span>Total Monthly Expenses (Month 2+)</span><span>₹3,31,676</span>
+  </div>
+  <div class="profit-row">
+    <span>🏆 NET PROFIT (Month 2+)</span>
+    <span>₹27,88,324 (~₹27.9 Lakh/month)</span>
+  </div>
+</div>
+
+<div class="grid-3">
+  <div class="card">
+    <h3>📅 Per Day Numbers</h3>
+    <table>
+      <tr><td>Rides per day</td><td><strong>4,333</strong></td></tr>
+      <tr><td>Gross revenue/day</td><td><strong>₹5,20,000</strong></td></tr>
+      <tr><td>Company income/day</td><td><strong>₹1,04,000</strong></td></tr>
+      <tr><td>Google Maps cost/day</td><td><strong>₹4,380</strong></td></tr>
+      <tr><td>Razorpay cost/day</td><td><strong>₹4,160</strong></td></tr>
+      <tr><td>Total expense/day</td><td><strong>₹11,056</strong></td></tr>
+      <tr><td>Net profit/day</td><td><strong>₹92,944</strong></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>🚗 Per Ride Economics</h3>
+    <table>
+      <tr><td>Average fare</td><td><strong>₹120</strong></td></tr>
+      <tr><td>Driver gets (80%)</td><td><strong>₹96</strong></td></tr>
+      <tr><td>Company gets (20%)</td><td><strong>₹24</strong></td></tr>
+      <tr><td>Google Maps cost</td><td><strong>₹1.01</strong></td></tr>
+      <tr><td>Razorpay cost (online)</td><td><strong>₹2.40</strong></td></tr>
+      <tr><td>SMS + other APIs</td><td><strong>₹0.08</strong></td></tr>
+      <tr><td>AWS infra per ride</td><td><strong>₹0.31</strong></td></tr>
+      <tr><td>Net profit per ride</td><td><strong>₹20.20</strong></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>👤 Per Driver Economics</h3>
+    <table>
+      <tr><td>Rides per driver/day</td><td><strong>~3.6</strong></td></tr>
+      <tr><td>Gross earned/day</td><td><strong>₹432</strong></td></tr>
+      <tr><td>Platform fee paid/day</td><td><strong>₹86.4</strong></td></tr>
+      <tr><td>Net take-home/day</td><td><strong>₹345.6</strong></td></tr>
+      <tr><td>Monthly gross (26 days)</td><td><strong>₹11,232</strong></td></tr>
+      <tr><td>Monthly net (26 days)</td><td><strong>₹8,986</strong></td></tr>
+      <tr><td>Company from 1 driver</td><td><strong>₹2,246/month</strong></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- SCALE PROJECTIONS -->
+<div class="section-title page-break">5. Scale Projections — Revenue vs Cost</div>
+
+<div class="card">
+<table>
+  <thead>
+    <tr>
+      <th>Users</th>
+      <th>Drivers</th>
+      <th>Rides/Month</th>
+      <th>Company Income</th>
+      <th>Total Expenses</th>
+      <th>Net Profit</th>
+      <th>Profit Margin</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>500</td><td>100</td><td>6,500</td>
+      <td>₹1,56,000</td><td>₹75,000</td>
+      <td><strong>₹81,000</strong></td>
+      <td><span class="tag tag-green">52%</span></td>
+    </tr>
+    <tr>
+      <td>1,000</td><td>200</td><td>15,000</td>
+      <td>₹3,60,000</td><td>₹1,20,000</td>
+      <td><strong>₹2,40,000</strong></td>
+      <td><span class="tag tag-green">67%</span></td>
+    </tr>
+    <tr>
+      <td>2,000</td><td>500</td><td>30,000</td>
+      <td>₹7,20,000</td><td>₹1,80,000</td>
+      <td><strong>₹5,40,000</strong></td>
+      <td><span class="tag tag-green">75%</span></td>
+    </tr>
+    <tr>
+      <td>5,000</td><td>1,500</td><td>75,000</td>
+      <td>₹18,00,000</td><td>₹2,80,000</td>
+      <td><strong>₹15,20,000</strong></td>
+      <td><span class="tag tag-green">84%</span></td>
+    </tr>
+    <tr class="row-profit">
+      <td><strong>10,000</strong></td><td><strong>3,000</strong></td><td><strong>1,30,000</strong></td>
+      <td><strong>₹31,20,000</strong></td><td><strong>₹3,31,676</strong></td>
+      <td><strong>₹27,88,324</strong></td>
+      <td><strong>89%</strong></td>
+    </tr>
+    <tr>
+      <td>20,000</td><td>5,000</td><td>2,60,000</td>
+      <td>₹62,40,000</td><td>₹7,00,000</td>
+      <td><strong>₹55,40,000</strong></td>
+      <td><span class="tag tag-green">89%</span></td>
+    </tr>
+    <tr>
+      <td>50,000</td><td>10,000</td><td>6,50,000</td>
+      <td>₹1,56,00,000</td><td>₹18,00,000</td>
+      <td><strong>₹1,38,00,000</strong></td>
+      <td><span class="tag tag-green">88%</span></td>
+    </tr>
+  </tbody>
+</table>
+<div class="highlight" style="margin-top:12px;">
+  <strong>📈 Business Break-Even:</strong> ~200 active rides/day = ~₹1,44,000 GMV/month → Company income ₹28,800 > Fixed infra cost ₹22,000. Break-even at roughly <strong>300 registered users + 60 drivers.</strong>
+</div>
+</div>
+
+<!-- API HITS PER DAY -->
+<div class="section-title">6. API Hits Per Day — Detailed Breakdown</div>
+
+<div class="card">
+<table>
+  <thead>
+    <tr><th>API / Service</th><th>Hits per Ride</th><th>Hits/Day<br>(4,333 rides)</th><th>Hits/Month</th><th>Cache<br>Savings</th><th>Actual Billed<br>Hits/Month</th><th>Cost/Month</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Google Maps Routes</strong></td>
+      <td>5 raw hits</td>
+      <td>21,665</td>
+      <td>6,50,000</td>
+      <td>70% cached</td>
+      <td><strong>1,95,000</strong></td>
+      <td>₹82,000<br><small>After $200 credit</small></td>
+    </tr>
+    <tr>
+      <td><strong>Razorpay API</strong></td>
+      <td>2 calls (create + verify)</td>
+      <td>3,466 (online only)</td>
+      <td>1,04,000</td>
+      <td>No cache</td>
+      <td><strong>1,04,000</strong></td>
+      <td>₹1,24,800<br><small>2% fee on GMV</small></td>
+    </tr>
+    <tr>
+      <td><strong>Firebase FCM</strong></td>
+      <td>5 notifications</td>
+      <td>21,665</td>
+      <td>6,50,000</td>
+      <td>No cache</td>
+      <td><strong>6,50,000</strong></td>
+      <td>₹0 FREE</td>
+    </tr>
+    <tr>
+      <td><strong>OpenWeather API</strong></td>
+      <td>1 (15min cache)</td>
+      <td>64 (15min intervals)</td>
+      <td>1,920</td>
+      <td>15min cache</td>
+      <td><strong>1,920</strong></td>
+      <td>₹3,200/mo (plan)</td>
+    </tr>
+    <tr>
+      <td><strong>AuthKey SMS OTP</strong></td>
+      <td>0.2 (login events)</td>
+      <td>833</td>
+      <td>25,000</td>
+      <td>Redis OTP cache</td>
+      <td><strong>25,000</strong></td>
+      <td>₹5,000</td>
+    </tr>
+    <tr>
+      <td><strong>SendGrid Email</strong></td>
+      <td>1 (ride complete)</td>
+      <td>4,333</td>
+      <td>1,30,000</td>
+      <td>No cache</td>
+      <td><strong>1,30,000</strong></td>
+      <td>₹1,676</td>
+    </tr>
+    <tr>
+      <td><strong>AWS S3 (read/write)</strong></td>
+      <td>0 per ride<br><small>(KYC only)</small></td>
+      <td>~100 (KYC uploads)</td>
+      <td>3,000</td>
+      <td>N/A</td>
+      <td><strong>3,000</strong></td>
+      <td>₹3,450</td>
+    </tr>
+    <tr>
+      <td><strong>Cashfree KYC</strong></td>
+      <td>0 per ride<br><small>(onboarding only)</small></td>
+      <td>~100 new drivers</td>
+      <td>3,000</td>
+      <td>N/A</td>
+      <td><strong>3,000</strong></td>
+      <td>₹45,000 (Month 1)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- DEPLOYMENT PHASES -->
+<div class="section-title">7. Deployment Phases — Railway vs AWS</div>
+
+<div class="grid-3" style="margin-bottom:16px;">
+  <div class="phase-box railway">
+    <div class="phase-title" style="color:#7c4dff;">Phase 1 — Railway (Now)</div>
+    <table>
+      <tr><td>Scale</td><td>0–1,000 users</td></tr>
+      <tr><td>Hosting</td><td>Railway (Node.js)</td></tr>
+      <tr><td>DB</td><td>Railway PostgreSQL</td></tr>
+      <tr><td>Redis</td><td>Upstash</td></tr>
+      <tr><td>Infra cost</td><td>₹22,000/month</td></tr>
+      <tr><td>Setup time</td><td>Already done ✅</td></tr>
+      <tr><td>Limitation</td><td>No auto-scale, no SLA</td></tr>
+    </table>
+  </div>
+  <div class="phase-box aws">
+    <div class="phase-title" style="color:#ff9800;">Phase 2 — AWS (1K–10K users)</div>
+    <table>
+      <tr><td>Scale</td><td>1,000–10,000 users</td></tr>
+      <tr><td>Hosting</td><td>EC2 t3.large × 3</td></tr>
+      <tr><td>DB</td><td>RDS PostgreSQL Multi-AZ</td></tr>
+      <tr><td>Redis</td><td>ElastiCache cluster</td></tr>
+      <tr><td>Infra cost</td><td>₹39,950/month</td></tr>
+      <tr><td>Setup time</td><td>2–3 days</td></tr>
+      <tr><td>Benefit</td><td>99.9% uptime, auto-failover</td></tr>
+    </table>
+  </div>
+  <div class="phase-box scale">
+    <div class="phase-title" style="color:#e94560;">Phase 3 — Scale (10K+ users)</div>
+    <table>
+      <tr><td>Scale</td><td>10,000+ users</td></tr>
+      <tr><td>Hosting</td><td>EC2 Auto Scaling Group</td></tr>
+      <tr><td>DB</td><td>RDS Multi-AZ + Read Replica</td></tr>
+      <tr><td>Redis</td><td>ElastiCache cluster mode</td></tr>
+      <tr><td>Infra cost</td><td>₹70,000+/month</td></tr>
+      <tr><td>Trigger</td><td>50+ rides/min</td></tr>
+      <tr><td>Benefit</td><td>Unlimited scale</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- BOTTOM LINE -->
+<div class="section-title">8. Founder Bottom Line</div>
+
+<div class="card" style="background: linear-gradient(135deg, #e8f5e9, #f1f8e9); border: 2px solid #00c853;">
+<table>
+  <thead><tr><th>Milestone</th><th>Users</th><th>Company Income</th><th>Total Cost</th><th>Net Profit</th><th>Break-even?</th></tr></thead>
+  <tbody>
+    <tr><td>Launch Day</td><td>300 users, 60 drivers</td><td>₹28,800</td><td>₹28,000</td><td>₹800</td><td>✅ Break-even</td></tr>
+    <tr><td>Month 3</td><td>1,000 users, 200 drivers</td><td>₹3,60,000</td><td>₹1,20,000</td><td>₹2,40,000</td><td>✅ Profitable</td></tr>
+    <tr><td>Month 6</td><td>3,000 users, 800 drivers</td><td>₹10,80,000</td><td>₹1,80,000</td><td>₹9,00,000</td><td>✅ Growing</td></tr>
+    <tr><td>Year 1</td><td>10,000 users, 3,000 drivers</td><td>₹31,20,000</td><td>₹3,32,000</td><td>₹27,88,000</td><td>✅ ₹27.9L/month</td></tr>
+    <tr style="background: #c8e6c9;"><td><strong>Annual (Year 1 end)</strong></td><td><strong>10,000 users</strong></td><td><strong>₹3,74,40,000</strong></td><td><strong>₹39,84,000</strong></td><td><strong>₹3,34,56,000</strong></td><td><strong>₹3.35 Crore/year</strong></td></tr>
+  </tbody>
+</table>
+<div class="highlight" style="margin-top:14px;">
+  <strong>🚀 Key Insight:</strong> Google Maps sirf <strong>₹1.01 per ride</strong> cost karta hai. Razorpay <strong>₹2.40 per ride</strong> (online only). Total API cost per ride = <strong>₹3.80</strong> — company ₹24 kamaati hai per ride. <strong>84% gross margin per ride.</strong>
+</div>
+<div class="warning" style="margin-top:8px;">
+  <strong>⚠️ Biggest Cost:</strong> Razorpay (₹1.25L/month at 10K scale) aur Google Maps (₹82K/month) — yeh dono milake total expense ka <strong>63%</strong> hain. Cash rides badhao = Razorpay cost kam hoga.
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+  <p><strong>GoMobility Tech Pvt Ltd — Financial Analysis Report</strong></p>
+  <p style="margin-top:6px;">May 2026 · Confidential · Internal Use Only · Exchange Rate: $1 = ₹84</p>
+  <p style="margin-top:6px;">GO Mobility Tech Private Limited · mailatgomobility@gmail.com · gomobility.co.in</p>
+</div>
+
+</body>
+</html>

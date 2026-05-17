@@ -7,6 +7,7 @@ import { NotFoundError, ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 import { saveDriverLocation, getDriverLocation } from '../../../core/services/redisService.js';
 import { pushPendingRidesToDriver } from '../../rides/services/rideService.js';
+import { findCashBalance } from '../repositories/cashCollection.repository.js';
 import { ENV } from '../../../config/envConfig.js';
 
 const s3 = new S3Client({
@@ -229,6 +230,14 @@ export const toggleAvailability = async (userId, isAvailable, latitude, longitud
             const activeRide = await rideRepo.findActiveRideByDriver(driver.id);
             if (activeRide) {
                 throw new ApiError(400, 'Cannot change availability while on a ride');
+            }
+        }
+
+        // Cash limit check — online hone se pehle
+        if (isAvailable) {
+            const cashBalance = await findCashBalance(driver.id);
+            if (cashBalance?.is_limit_exceeded) {
+                throw new ApiError(403, `Cash limit exceed. First deposit ₹${parseFloat(cashBalance.pending_amount).toFixed(0)}.`);
             }
         }
 

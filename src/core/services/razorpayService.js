@@ -291,16 +291,72 @@ export const generateRazorpayOrderId = () => {
     return `order_${timestamp}_${random}`;
 };
 
-export const verifyWebhookSignature = (webhookBody, webhookSignature) => {
+// rawBody must be the raw Buffer/string from express — NOT parsed JSON
+export const verifyWebhookSignature = (rawBody, webhookSignature) => {
     try {
         const expectedSignature = crypto
-            .createHmac('sha256', ENV.RAZORPAY_KEY_SECRET)
-            .update(JSON.stringify(webhookBody))
+            .createHmac('sha256', ENV.RAZORPAY_WEBHOOK_SECRET)
+            .update(rawBody)
             .digest('hex');
-
         return expectedSignature === webhookSignature;
     } catch (error) {
         logger.error('[Razorpay] Webhook signature verification error:', error);
         return false;
+    }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  Razorpay Payout — driver withdrawal to bank / UPI
+//  Requires RazorpayX current account (RAZORPAY_ACCOUNT_NUMBER in env)
+// ─────────────────────────────────────────────────────────────────────────────
+export const createPayout = async ({ amount, payoutMethod, bankAccount, upiId, driverName, referenceId }) => {
+    if (!razorpay) throw new Error('Razorpay not configured');
+    if (!ENV.RAZORPAY_ACCOUNT_NUMBER) throw new Error('RAZORPAY_ACCOUNT_NUMBER not set in env');
+
+    try {
+        // Step 1: Create fund account
+        const fundAccountPayload = payoutMethod === 'upi'
+            ? { account_type: 'vpa', vpa: { address: upiId } }
+            : { account_type: 'bank_account', bank_account: bankAccount };
+
+        const fundAccount = await fetch('https://api.razorpay.com/v1/fund_accounts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Basic ${Buffer.from(`${ENV.RAZORPAY_KEY_ID}:${ENV.RAZORPAY_KEY_SECRET}`).toString('base64')}`,
+            },
+            body: JSON.stringify({
+                contact_id: referenceId,
+                account_type: fundAccountPayload.account_type,
+                ...fundAccountPayload,
+            }),
+        }).then(r => r.json());
+
+        // Step 2: Create payout
+        const payout = await fetch('https://api.razorpay.com/v1/payouts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Payout-Idempotency': referenceId,
+                Authorization: `Basic ${Buffer.from(`${ENV.RAZORPAY_KEY_ID}:${ENV.RAZORPAY_KEY_SECRET}`).toString('base64')}`,
+            },
+            body: JSON.stringify({
+                account_number: ENV.RAZORPAY_ACCOUNT_NUMBER,
+                fund_account_id: fundAccount.id,
+                amount: Math.round(amount * 100),
+                currency: 'INR',
+                mode: payoutMethod === 'upi' ? 'UPI' : 'IMPS',
+                purpose: 'payout',
+                queue_if_low_balance: true,
+                reference_id: referenceId,
+                narration: `GoMobility Driver Earnings`,
+            }),
+        }).then(r => r.json());
+
+        logger.info(`[Razorpay] Payout initiated | ID: ${payout.id} | Amount: ₹${amount}`);
+        return payout;
+    } catch (error) {
+        logger.error('[Razorpay] createPayout error:', error);
+        throw new Error(`Payout failed: ${error.message}`);
     }
 };

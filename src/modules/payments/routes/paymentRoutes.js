@@ -10,6 +10,8 @@ import {
     saveMethod,
     removeMethod,
     setDefault,
+    requestPayout,
+    handleWebhook,
 } from '../controllers/paymentController.js';
 
 import {
@@ -129,4 +131,23 @@ router.patch(
     setDefault
 );
 
+// ─────────────────────────────────────────────────────────────────────────────
+//  DRIVER PAYOUT (Withdrawal)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// POST /api/v1/payments/payout
+router.post(
+    '/payout',
+    requireRole(['driver']),
+    requestPayout
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  RAZORPAY WEBHOOK — no auth, raw body required
+//  Register BEFORE express.json() parses the body
+// ─────────────────────────────────────────────────────────────────────────────
+
 export default router;
+
+// Webhook exported separately so app.js can mount it with express.raw()
+export { handleWebhook };

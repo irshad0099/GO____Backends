@@ -2,6 +2,118 @@ import { pool } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
+//  COMPANY EARNINGS
+// ─────────────────────────────────────────────────────────────────────────────
+
+// client can be a pool or a transaction client
+export const createCompanyEarning = async (client, data) => {
+    try {
+        const { rideId, driverId, passengerId, paymentMethod, grossFare, platformFee, gstOnFee = 0, netToDriver } = data;
+        const status = paymentMethod === 'cash' ? 'held' : 'earned';
+
+        const result = await client.query(
+            `INSERT INTO company_earnings
+                (ride_id, driver_id, passenger_id, payment_method,
+                 gross_fare, platform_fee, gst_on_fee, net_to_driver, status)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+             ON CONFLICT (ride_id) DO NOTHING
+             RETURNING *`,
+            [rideId, driverId, passengerId, paymentMethod, grossFare, platformFee, gstOnFee, netToDriver, status]
+        );
+        return result.rows[0];
+    } catch (error) {
+        logger.error('createCompanyEarning error:', error);
+        throw error;
+    }
+};
+
+export const getCompanyEarningsSummary = async ({ fromDate, toDate } = {}) => {
+    try {
+        let where = '';
+        const params = [];
+        if (fromDate) { params.push(fromDate); where += ` AND created_at >= $${params.length}`; }
+        if (toDate)   { params.push(toDate);   where += ` AND created_at <= $${params.length}`; }
+
+        const result = await pool.query(
+            `SELECT
+                 payment_method,
+                 status,
+                 COUNT(*)           AS total_rides,
+                 SUM(gross_fare)    AS total_gross,
+                 SUM(platform_fee)  AS total_platform_fee,
+                 SUM(gst_on_fee)    AS total_gst,
+                 SUM(net_to_driver) AS total_driver_net
+             FROM company_earnings
+             WHERE 1=1 ${where}
+             GROUP BY payment_method, status
+             ORDER BY payment_method`,
+            params
+        );
+        return result.rows;
+    } catch (error) {
+        logger.error('getCompanyEarningsSummary error:', error);
+        throw error;
+    }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  PAYOUT REQUESTS
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const createPayoutRequest = async (data) => {
+    try {
+        const { driverUserId, amount, bankAccountNumber, ifscCode, upiId, payoutMethod } = data;
+        const result = await pool.query(
+            `INSERT INTO payout_requests
+                (driver_user_id, amount, bank_account_number, ifsc_code, upi_id, payout_method)
+             VALUES ($1,$2,$3,$4,$5,$6)
+             RETURNING *`,
+            [driverUserId, amount, bankAccountNumber || null, ifscCode || null, upiId || null, payoutMethod]
+        );
+        return result.rows[0];
+    } catch (error) {
+        logger.error('createPayoutRequest error:', error);
+        throw error;
+    }
+};
+
+export const updatePayoutRequest = async (id, updates) => {
+    try {
+        const { status, razorpayPayoutId, failureReason, completedAt } = updates;
+        const result = await pool.query(
+            `UPDATE payout_requests
+             SET status             = $1,
+                 razorpay_payout_id = COALESCE($2, razorpay_payout_id),
+                 failure_reason     = COALESCE($3, failure_reason),
+                 completed_at       = COALESCE($4, completed_at),
+                 updated_at         = NOW()
+             WHERE id = $5
+             RETURNING *`,
+            [status, razorpayPayoutId || null, failureReason || null, completedAt || null, id]
+        );
+        return result.rows[0];
+    } catch (error) {
+        logger.error('updatePayoutRequest error:', error);
+        throw error;
+    }
+};
+
+export const findPendingPayoutByDriver = async (driverUserId) => {
+    try {
+        const result = await pool.query(
+            `SELECT * FROM payout_requests
+             WHERE driver_user_id = $1 AND status IN ('pending','processing')
+             LIMIT 1`,
+            [driverUserId]
+        );
+        return result.rows[0] || null;
+    } catch (error) {
+        logger.error('findPendingPayoutByDriver error:', error);
+        throw error;
+    }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 //  PAYMENT ORDERS
 // ─────────────────────────────────────────────────────────────────────────────
 

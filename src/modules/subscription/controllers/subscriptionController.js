@@ -4,6 +4,7 @@ import {
     fetchPlanById,
     fetchActiveSubscription,
     purchaseSubscription,
+    verifyAndActivateSubscription,
     cancelSubscription,
     toggleAutoRenew,
     applyRideBenefits,
@@ -64,6 +65,18 @@ export const purchase = async (req, res) => {
     try {
         const result = await purchaseSubscription(req.user.id, req.body);
         return sendResponse(res, 201, result.message || '', result.data ?? result);
+    } catch (error) {
+        logger.error(`[SubscriptionController] ${error.message}`);
+        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
+    }
+};
+
+// POST /api/v1/subscriptions/verify
+// Verify Razorpay payment and activate subscription (UPI/Card)
+export const verify = async (req, res) => {
+    try {
+        const result = await verifyAndActivateSubscription(req.user.id, req.body);
+        return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
         logger.error(`[SubscriptionController] ${error.message}`);
         return sendError(res, error.statusCode || 500, error.message || 'Internal server error');

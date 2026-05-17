@@ -52,8 +52,8 @@ export function logSocketEvent({ eventName, direction, socketId, userId, driverI
         `INSERT INTO socket_logs (event_name, direction, socket_id, user_id, driver_id, ride_id, request_payload, response_payload, status, error_message, created_at)
          VALUES (
              $1, $2, $3, $4, $5, $6,
-             CASE WHEN $2 = 'in' THEN $7 ELSE NULL END,
-             CASE WHEN $2 = 'out' THEN $7 ELSE NULL END,
+             CASE WHEN $2::text = 'in' THEN $7::jsonb ELSE NULL::jsonb END,
+             CASE WHEN $2::text = 'out' THEN $7::jsonb ELSE NULL::jsonb END,
              $8, $9, NOW()
          )`,
         [

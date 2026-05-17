@@ -35,6 +35,7 @@ export function logSocketEvent({ eventName, direction, socketId, userId, driverI
     if (!_pool) return;
 
     const sanitizedPayload = payload ? sanitize(payload) : null;
+    const payloadJson = sanitizedPayload ? JSON.stringify(sanitizedPayload) : null;
 
     // Log to console first
     logger.info(`[socket:${direction}] ${eventName}`, {
@@ -47,15 +48,14 @@ export function logSocketEvent({ eventName, direction, socketId, userId, driverI
         error: errorMessage
     });
 
+    // Determine request vs response based on direction
+    const requestPayload = direction === 'in' ? payloadJson : null;
+    const responsePayload = direction === 'out' ? payloadJson : null;
+
     // Insert into database
     _pool.query(
         `INSERT INTO socket_logs (event_name, direction, socket_id, user_id, driver_id, ride_id, request_payload, response_payload, status, error_message, created_at)
-         VALUES (
-             $1, $2, $3, $4, $5, $6,
-             CASE WHEN $2::text = 'in' THEN $7::jsonb ELSE NULL::jsonb END,
-             CASE WHEN $2::text = 'out' THEN $7::jsonb ELSE NULL::jsonb END,
-             $8, $9, NOW()
-         )`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())`,
         [
             eventName,
             direction,
@@ -63,7 +63,8 @@ export function logSocketEvent({ eventName, direction, socketId, userId, driverI
             userId || null,
             driverId || null,
             rideId || null,
-            sanitizedPayload ? JSON.stringify(sanitizedPayload) : null,
+            requestPayload,
+            responsePayload,
             status,
             errorMessage || null
         ]

@@ -1,4 +1,4 @@
-import { confirmCashCollection } from '../services/ridePaymentService.js';
+import { confirmManualCollection } from '../services/rideCollectionService.js';
 import { getRideDetails } from '../services/rideService.js';
 import logger from '../../../core/logger/logger.js';
 import { ApiError } from '../../../core/errors/ApiError.js';
@@ -10,8 +10,8 @@ import { ApiError } from '../../../core/errors/ApiError.js';
  */
 export const confirmCashPayment = async (req, res, next) => {
     try {
-        const userId = req.user.id; // Driver ID
-        const { ride_id } = req.body;
+        const userId = req.user.id; // Driver user ID
+        const { ride_id, method = 'cash' } = req.body;
 
         // Get ride details to verify
         const ride = await getRideDetails(userId, ride_id, 'driver');
@@ -24,24 +24,13 @@ export const confirmCashPayment = async (req, res, next) => {
             throw new ApiError(400, 'Ride must be completed before confirming cash payment');
         }
 
-        // Check if payment status is cash_collected
-        if (ride?.paymentMethod !== 'cash' && ride?.paymentStatus !== 'pending')  {
-            throw new ApiError(400, 'Cash payment not recorded for this ride');
-        }
-
-        // Confirm cash collection
-        const updatedRide = await confirmCashCollection(ride_id, userId);
+        // Confirm cash collection with ledger entry creation
+        const result = await confirmManualCollection(userId, ride_id, { method });
 
         res.status(200).json({
             success: true,
-            message: 'Cash payment confirmed successfully',
-            data: {
-                ride: updatedRide,
-                payment_method: 'cash',
-                amount: ride.finalFare || ride.estimatedFare,
-                status: 'cash_confirmed',
-                confirmed_at: new Date()
-            }
+            message: result.message,
+            data: result.data
         });
 
     } catch (error) {

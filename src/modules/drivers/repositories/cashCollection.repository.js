@@ -59,7 +59,7 @@ export const addToPending = async (client, driverId, platformShare, cashCollecte
         const { rows } = await (client || db).query(
             `UPDATE driver_cash_balance
              SET pending_amount        = pending_amount + $2,
-                 pending_net_earnings  = pending_net_earnings + $5,
+                 pending_net_earnings  = pending_net_earnings + $4,
                  total_cash_collected  = total_cash_collected + $3,
                  total_platform_share  = total_platform_share + $2,
                  is_limit_exceeded     = CASE
@@ -69,7 +69,7 @@ export const addToPending = async (client, driverId, platformShare, cashCollecte
                  updated_at = NOW()
              WHERE driver_id = $1
              RETURNING *`,
-            [driverId, platformShare, cashCollected, 0, netEarnings]
+            [driverId, platformShare, cashCollected, netEarnings]
         );
         return rows[0];
     } catch (error) {

@@ -76,8 +76,8 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
         throw new ApiError(409, 'Corporate rides are billed directly to the company — no manual collection');
     }
 
-    // ── Idempotency: already collected_by_driver with same method → no-op ────
-    if (ride.payment_status === 'collected_by_driver' && ride.collection_confirmed_at) {
+    // ── Idempotency: already cash_collected with same method → no-op ────
+    if (ride.payment_status === 'cash_collected' && ride.collection_confirmed_at) {
         return {
             success: true,
             message: 'Collection already confirmed',
@@ -163,10 +163,10 @@ export const confirmManualCollection = async (driverUserId, rideId, { method }) 
         console.log(`[Collect] cash_collection created ✅`);
 
         // ── 4. Update rides row ─────────────────────────────────────────────────
-        console.log(`[Collect] Updating rides table | Status: collected_by_driver`);
+        console.log(`[Collect] Updating rides table | Status: cash_collected`);
         await client.query(
             `UPDATE rides
-                SET payment_status = 'collected_by_driver',
+                SET payment_status = 'cash_collected',
                     collection_method_actual = $1,
                     platform_share = $2,
                     collection_confirmed_at = NOW(),
@@ -285,7 +285,7 @@ export const getCollectionStatus = async (userId, rideId, role) => {
 
         const isCollectable = ride.status === 'completed' &&
                               ride.payment_method === 'cash' &&
-                              ride.payment_status === 'pending';
+                              (ride.payment_status === 'pending' || !ride.collection_confirmed_at);
 
         return {
             success: true,

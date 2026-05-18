@@ -14,6 +14,14 @@ export const getIncentiveProgress = async (req, res, next) => {
     try {
         const progress = await incentiveService.getIncentiveProgress(req.user.id);
 
+        // Handle case when no incentives exist
+        if (!progress || progress.length === 0) {
+            return sendResponse(res, 200, 'No incentives available', {
+                currentBonus: null,
+                message: 'No active incentive plans available for your vehicle type'
+            });
+        }
+
         // Get current active bonus (first incomplete one)
         const currentBonus = progress.find(p => !p.isCompleted) || progress[0];
 

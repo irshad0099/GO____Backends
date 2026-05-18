@@ -252,6 +252,9 @@ export const toggleAvailability = async (userId, isAvailable, latitude, longitud
 
         const updatedDriver = await driverRepo.updateDriver(driver.id, updateData);
 
+        // ── Daily metrics update (online/offline tracking) ──────────────────────
+        await driverRepo.updateDailyMetrics(driver.id, isAvailable);
+
         // Driver online hua — miss hue pending rides push karo (fire & forget)
         if (isAvailable && latitude && longitude && driver.vehicle_type) {
             pushPendingRidesToDriver(driver.id, driver.vehicle_type, latitude, longitude).catch(() => {});
@@ -377,6 +380,9 @@ export const getDriverEarnings = async (userId, period = 'weekly') => {
         return {
             totalEarnings:     earnings.total,
             ridesCompleted:    earnings.rides,
+            totalRides:        earnings.totalRides,
+            totalTimeOnline:   earnings.totalTimeOnline,
+            platformFeePaid:   earnings.platformFeePaid,
             rideEarnings:      earnings.rideEarnings,
             tipEarnings:       earnings.tipEarnings,
             incentiveEarnings: earnings.incentiveEarnings,

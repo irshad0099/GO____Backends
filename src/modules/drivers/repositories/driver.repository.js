@@ -229,30 +229,40 @@ export const getDriverEarnings = async (driverId, startDate, endDate) => {
     try {
         const { rows } = await db.query(
             `SELECT
-                COALESCE(SUM(amount) FILTER (WHERE type IN ('ride_earning', 'tip', 'incentive', 'referral') AND status IN ('completed','released')), 0) AS total_earnings,
-                COUNT(DISTINCT ride_id) FILTER (WHERE type = 'ride_earning' AND status IN ('completed','released')) AS rides_completed,
-                COALESCE(SUM(amount) FILTER (WHERE type = 'ride_earning' AND status IN ('completed','released')), 0) AS ride_earnings,
-                COALESCE(SUM(amount) FILTER (WHERE type = 'tip' AND status IN ('completed','released')), 0) AS tip_earnings,
-                COALESCE(SUM(amount) FILTER (WHERE type = 'incentive' AND status IN ('completed','released')), 0) AS incentive_earnings,
-                COALESCE(ABS(SUM(amount) FILTER (WHERE amount < 0 AND status IN ('completed','released'))), 0) AS total_deductions,
+                d.total_rides,
+                COALESCE(SUM(dmd.total_online_hours), 0) AS total_time_online,
+                COALESCE(SUM(dl.amount) FILTER (WHERE dl.type IN ('ride_earning', 'tip', 'incentive', 'referral') AND dl.status IN ('completed','released')), 0) AS total_earnings,
+                COUNT(DISTINCT dl.ride_id) FILTER (WHERE dl.type = 'ride_earning' AND dl.status IN ('completed','released')) AS rides_completed,
+                COALESCE(SUM(dl.amount) FILTER (WHERE dl.type = 'ride_earning' AND dl.status IN ('completed','released')), 0) AS ride_earnings,
+                COALESCE(SUM(dl.amount) FILTER (WHERE dl.type = 'tip' AND dl.status IN ('completed','released')), 0) AS tip_earnings,
+                COALESCE(SUM(dl.amount) FILTER (WHERE dl.type = 'incentive' AND dl.status IN ('completed','released')), 0) AS incentive_earnings,
+                COALESCE(ABS(SUM(dl.amount) FILTER (WHERE dl.amount < 0 AND dl.status IN ('completed','released'))), 0) AS total_deductions,
+                COALESCE(ABS(SUM(dl.amount) FILTER (WHERE dl.type = 'platform_fee' AND dl.status IN ('completed','released'))), 0) AS platform_fee_paid,
                 json_agg(
                     json_build_object(
-                        'date', DATE(created_at),
-                        'type', type,
-                        'amount', amount,
-                        'rideId', ride_id
-                    ) ORDER BY created_at DESC
-                ) FILTER (WHERE status IN ('completed','released')) AS breakdown
-             FROM driver_ledger
-             WHERE driver_id = $1
-               AND created_at >= $2
-               AND created_at <= $3`,
+                        'date', DATE(dl.created_at),
+                        'type', dl.type,
+                        'amount', dl.amount,
+                        'rideId', dl.ride_id
+                    ) ORDER BY dl.created_at DESC
+                ) FILTER (WHERE dl.status IN ('completed','released')) AS breakdown
+             FROM driver_ledger dl
+             JOIN drivers d ON dl.driver_id = d.id
+             LEFT JOIN driver_metrics_daily dmd ON d.id = dmd.driver_id
+               AND dmd.date >= DATE($2) AND dmd.date <= DATE($3)
+             WHERE dl.driver_id = $1
+               AND dl.created_at >= $2
+               AND dl.created_at <= $3
+             GROUP BY d.id`,
             [driverId, startDate, endDate]
         );
         const row = rows[0];
         return {
             total:             parseFloat(row.total_earnings),
             rides:             parseInt(row.rides_completed),
+            totalRides:        parseInt(row.total_rides),
+            totalTimeOnline:   parseFloat(row.total_time_online),
+            platformFeePaid:   parseFloat(row.platform_fee_paid),
             rideEarnings:      parseFloat(row.ride_earnings),
             tipEarnings:       parseFloat(row.tip_earnings),
             incentiveEarnings: parseFloat(row.incentive_earnings),
@@ -283,4 +293,84 @@ export const incrementTotalEarnings = async (client, driverId, amount) => {
         [amount, driverId]
     );
     return rows[0];
+};
+
+// ─── Update/Create daily metrics jab driver online/offline hota hai ────────────
+export const updateDailyMetrics = async (driverId, isOnline) => {
+    try {
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+
+        if (isOnline) {
+            // Driver online ho raha hai — online_from set karo
+            const { rows } = await db.query(
+                `INSERT INTO driver_metrics_daily (driver_id, date, online_from, updated_at)
+                 VALUES ($1, $2, NOW(), NOW())
+                 ON CONFLICT (driver_id, date) DO UPDATE SET
+                    online_from = COALESCE(driver_metrics_daily.online_from, NOW()),
+                    updated_at = NOW()
+                 RETURNING *`,
+                [driverId, today]
+            );
+            return rows[0];
+        } else {
+            // Driver offline ho raha hai — online_until set karo aur total_online_hours calculate karo
+            const { rows } = await db.query(
+                `UPDATE driver_metrics_daily
+                 SET online_until = NOW(),
+                     total_online_hours = COALESCE(
+                        EXTRACT(EPOCH FROM (NOW() - online_from)) / 3600, 0
+                     ),
+                     updated_at = NOW()
+                 WHERE driver_id = $1 AND date = $2 AND online_from IS NOT NULL
+                 RETURNING *`,
+                [driverId, today]
+            );
+            return rows[0];
+        }
+    } catch (error) {
+        logger.error('Update daily metrics repository error:', error);
+        throw error;
+    }
+};
+
+// ─── Get today's metrics for driver ────────────────────────────────────────────
+export const getTodayMetrics = async (driverId) => {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const { rows } = await db.query(
+            `SELECT * FROM driver_metrics_daily
+             WHERE driver_id = $1 AND date = $2`,
+            [driverId, today]
+        );
+        return rows[0] || null;
+    } catch (error) {
+        logger.error('Get today metrics repository error:', error);
+        throw error;
+    }
+};
+
+// ─── Update metrics on ride completion ─────────────────────────────────────────
+export const updateMetricsOnRideCompletion = async (driverId, rideData) => {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const { netEarnings = 0, platformFee = 0, tipAmount = 0 } = rideData;
+
+        const { rows } = await db.query(
+            `INSERT INTO driver_metrics_daily
+             (driver_id, date, rides_completed, total_earnings, tips_earned, platform_fee_paid, updated_at)
+             VALUES ($1, $2, 1, $3, $4, $5, NOW())
+             ON CONFLICT (driver_id, date) DO UPDATE SET
+                rides_completed = driver_metrics_daily.rides_completed + 1,
+                total_earnings = COALESCE(driver_metrics_daily.total_earnings, 0) + $3,
+                tips_earned = COALESCE(driver_metrics_daily.tips_earned, 0) + $4,
+                platform_fee_paid = COALESCE(driver_metrics_daily.platform_fee_paid, 0) + $5,
+                updated_at = NOW()
+             RETURNING *`,
+            [driverId, today, netEarnings, tipAmount, platformFee]
+        );
+        return rows[0];
+    } catch (error) {
+        logger.error('Update metrics on ride completion error:', error);
+        throw error;
+    }
 };

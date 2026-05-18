@@ -853,6 +853,13 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             // SYNC: driver ko immediately off-duty karo — naya ride accept kar sake
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
 
+            // ── Update daily metrics on ride completion ────────────────────────────
+            await driverRepo.updateMetricsOnRideCompletion(driver.id, {
+                netEarnings: finalResult.driver.netEarnings,
+                platformFee: finalResult.driver.platformFee,
+                tipAmount: ride.tip_amount || 0,
+            });
+
             // Cash limit check — ride complete ke baad limit exceed hui?
             const cashBalance = await findCashBalance(driver.id).catch(() => null);
             if (cashBalance?.is_limit_exceeded) {

@@ -138,3 +138,93 @@ export const getIncentiveProgress = async (userId) => {
         throw error;
     }
 };
+
+// ─── Update incentive progress on ride completion ────────────────────────────
+export const updateIncentiveProgressOnRideCompletion = async (driverId, vehicleType, rideData) => {
+    try {
+        // Get active plans for driver's vehicle type only
+        const activePlans = await incentiveRepo.findActiveIncentives(vehicleType);
+
+        if (activePlans.length === 0) return { updated: 0 };
+
+        const today = new Date();
+        let updatedCount = 0;
+
+        for (const plan of activePlans) {
+            let incrementValue = 0;
+            const periodStart = getPeriodStart(plan.duration_type, today);
+            const periodEnd = getPeriodEnd(plan.duration_type, today);
+
+            // Plan type ke hisaab se increment
+            if (plan.type === 'ride_count') {
+                incrementValue = 1; // 1 ride ka credit
+            } else if (plan.type === 'earning_target') {
+                incrementValue = rideData.netEarnings || 0; // Earnings add karo
+            } else if (plan.type === 'peak_rides') {
+                const rideHour = today.getHours();
+                if (rideHour >= plan.peak_start_hour && rideHour <= plan.peak_end_hour) {
+                    incrementValue = 1; // Peak hour ride
+                } else {
+                    continue; // Skip if not peak hour
+                }
+            } else if (plan.type === 'acceptance_rate') {
+                continue; // Acceptance rate is tracked separately
+            }
+
+            if (incrementValue <= 0) continue;
+
+            // Upsert progress
+            const progress = await incentiveRepo.upsertProgress(
+                driverId,
+                plan.id,
+                periodStart,
+                periodEnd,
+                incrementValue
+            );
+
+            // Check if completed
+            if (parseFloat(progress.current_value) >= parseFloat(plan.target_value)) {
+                await incentiveRepo.markCompleted(progress.id);
+                updatedCount++;
+
+                logger.info(`[Incentive] Completed | Driver: ${driverId} | Plan: ${plan.id} (${plan.title}) | Progress: ${progress.current_value}/${plan.target_value}`);
+            }
+        }
+
+        return { updated: updatedCount };
+    } catch (error) {
+        logger.error('Update incentive progress on ride completion error:', error);
+        throw error;
+    }
+};
+
+// Helper: Get period start date based on duration type
+const getPeriodStart = (durationType, date) => {
+    const d = new Date(date);
+    if (durationType === 'daily') {
+        d.setHours(0, 0, 0, 0);
+    } else if (durationType === 'weekly') {
+        d.setDate(d.getDate() - d.getDay());
+        d.setHours(0, 0, 0, 0);
+    } else if (durationType === 'monthly') {
+        d.setDate(1);
+        d.setHours(0, 0, 0, 0);
+    }
+    return d;
+};
+
+// Helper: Get period end date based on duration type
+const getPeriodEnd = (durationType, date) => {
+    const d = new Date(date);
+    if (durationType === 'daily') {
+        d.setHours(23, 59, 59, 999);
+    } else if (durationType === 'weekly') {
+        d.setDate(d.getDate() + (6 - d.getDay()));
+        d.setHours(23, 59, 59, 999);
+    } else if (durationType === 'monthly') {
+        d.setMonth(d.getMonth() + 1);
+        d.setDate(0);
+        d.setHours(23, 59, 59, 999);
+    }
+    return d;
+};

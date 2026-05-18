@@ -4,6 +4,7 @@ import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as walletRepo from '../../wallet/repositories/wallet.repository.js';
 import { payForRide } from '../../wallet/services/walletService.js';
 import { creditDriverEarnings } from '../../drivers/services/earningsService.js';
+import * as incentiveService from '../../drivers/services/incentiveService.js';
 import * as rideOtpService from './rideOtpService.js';
 import * as rideOtpRepo from '../repositories/rideOtp.repository.js';
 import * as rideCalculator from '../../../core/utils/rideCalculator.js';
@@ -859,6 +860,12 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
                 platformFee: finalResult.driver.platformFee,
                 tipAmount: ride.tip_amount || 0,
             });
+
+            // ── Update incentive progress on ride completion ──────────────────────
+            await incentiveService.updateIncentiveProgressOnRideCompletion(driver.id, driver.vehicle_type, {
+                netEarnings: finalResult.driver.netEarnings,
+                rideData: ride,
+            }).catch(err => logger.warn(`[Incentive Update] Failed for ride ${rideId}:`, err.message));
 
             // Cash limit check — ride complete ke baad limit exceed hui?
             const cashBalance = await findCashBalance(driver.id).catch(() => null);

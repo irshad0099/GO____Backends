@@ -97,17 +97,22 @@ export const verifySignup = async ({ phone, otp, email, fullName,role }) => {
                 email: user.email,
                 fullName: user.full_name,
                 role: user.role,
-                isVerified: user.is_verified
+                isVerified: user.is_verified,
+                isKycVerified: false  // Default false
             }
         };
 
         // For driver role, include KYC status
         if (role === 'driver') {
             try {
-                response.kyc = await kycService.getKycStatusForLogin(user.id);
+                const kycStatus = await kycService.getKycStatusForLogin(user.id);
+                response.kyc = kycStatus;
+                // Set isKycVerified flag
+                response.user.isKycVerified = kycStatus.overallStatus === 'verified';
             } catch (kycError) {
                 logger.warn('Failed to fetch KYC status during signup:', { userId: user.id, error: kycError.message });
                 response.kyc = { overallStatus: 'not_started', submittedDocs: 0, verifiedDocs: 0, canGoOnline: false, verifiedAt: null };
+                response.user.isKycVerified = false;
             }
         }
 
@@ -213,16 +218,21 @@ export const verifySignin = async ({ phone, email, otp, ipAddress, userAgent, ro
                 fullName:  user.full_name,
                 role:      user.role,
                 isVerified: user.is_verified,
-                isActive:  user.is_active
+                isActive:  user.is_active,
+                isKycVerified: false  // Default false
             }
         };
 
         if (role === 'driver') {
             try {
-                response.kyc = await kycService.getKycStatusForLogin(user.id);
+                const kycStatus = await kycService.getKycStatusForLogin(user.id);
+                response.kyc = kycStatus;
+                // Set isKycVerified flag
+                response.user.isKycVerified = kycStatus.overallStatus === 'verified';
             } catch (kycError) {
                 logger.warn('Failed to fetch KYC status during signin:', { userId: user.id, error: kycError.message });
                 response.kyc = { overallStatus: 'not_started', submittedDocs: 0, verifiedDocs: 0, canGoOnline: false, verifiedAt: null, nextScreen: 'KYC_INTRO' };
+                response.user.isKycVerified = false;
             }
         }
 

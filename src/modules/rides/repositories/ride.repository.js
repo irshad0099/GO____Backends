@@ -206,14 +206,14 @@ export const findPendingRidesNearLocation = async (vehicleType, latitude, longit
              JOIN users u ON r.passenger_id = u.id
              WHERE r.status = 'requested'
                AND r.vehicle_type = $1
-               AND r.requested_at >= NOW() - ($6 || ' minutes')::INTERVAL
-               AND r.pickup_latitude  BETWEEN $4 AND $5
-               AND r.pickup_longitude BETWEEN $7 AND $8
+               AND r.requested_at >= NOW() - ($2 || ' minutes')::INTERVAL
+               AND r.pickup_latitude  BETWEEN $3 AND $4
+               AND r.pickup_longitude BETWEEN $5 AND $6
              ORDER BY r.requested_at ASC`,
             [
                 vehicleType,
-                latitude - latDelta, latitude + latDelta,
                 windowMinutes,
+                latitude - latDelta, latitude + latDelta,
                 longitude - lngDelta, longitude + lngDelta
             ]
         );

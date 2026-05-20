@@ -49,6 +49,22 @@ router.use('/notifications', notificationRoutes);
 router.use('/admin',         adminRoutes);
 router.use('/admin/pricing', pricingAdminRoutes);
 
+// ─── Legal Docs — JSON API ────────────────────────────────────────────────────
+const BASE_URL = 'https://api.gomobility.co.in/legal';
+
+router.get('/legal/passenger/terms', (req, res) => {
+    res.json({ success: true, data: { title: 'Terms & Conditions', url: `${BASE_URL}/passenger_terms_conditions.html` } });
+});
+router.get('/legal/passenger/privacy', (req, res) => {
+    res.json({ success: true, data: { title: 'Privacy Policy', url: `${BASE_URL}/passenger_privacy_policy.html` } });
+});
+router.get('/legal/driver/terms', (req, res) => {
+    res.json({ success: true, data: { title: 'Terms & Conditions', url: `${BASE_URL}/driver_terms_conditions.html` } });
+});
+router.get('/legal/driver/privacy', (req, res) => {
+    res.json({ success: true, data: { title: 'Privacy Policy', url: `${BASE_URL}/driver_privacy_policy.html` } });
+});
+
 // ─── Health Check ─────────────────────────────────────────────────────────────
 router.get('/health', (req, res) => {
     res.status(200).json({

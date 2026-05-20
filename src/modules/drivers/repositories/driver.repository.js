@@ -374,3 +374,33 @@ export const updateMetricsOnRideCompletion = async (driverId, rideData) => {
         throw error;
     }
 };
+
+export const softDeleteDriver = async (userId) => {
+    try {
+        // users table me phone/email mangle karo aur is_active false karo
+        await db.query(
+            `UPDATE users
+             SET is_active    = false,
+                 phone_number = phone_number || '-deleted-' || id,
+                 email        = CASE WHEN email IS NOT NULL THEN email || '-deleted-' || id ELSE NULL END,
+                 updated_at   = NOW()
+             WHERE id = $1`,
+            [userId]
+        );
+
+        // drivers table me is_on_duty false aur is_available false karo
+        const result = await db.query(
+            `UPDATE drivers
+             SET is_on_duty    = false,
+                 is_available  = false,
+                 updated_at    = NOW()
+             WHERE user_id = $1
+             RETURNING id`,
+            [userId]
+        );
+        return result.rows[0];
+    } catch (error) {
+        logger.error('Soft delete driver repository error:', error);
+        throw error;
+    }
+};

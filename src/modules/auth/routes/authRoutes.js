@@ -55,4 +55,8 @@ router.get(
 );
 
 router.post('/fcm-token', authenticate, controller.updateFcmToken);
+
+// DELETE /api/v1/auth/account — passenger aur driver dono ke liye
+router.delete('/account', authenticate, controller.deleteAccount);
+
 export default router;

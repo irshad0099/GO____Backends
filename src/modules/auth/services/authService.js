@@ -1,5 +1,6 @@
 import * as userRepo from '../../users/repositories/user.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
+import * as rideRepo from '../../rides/repositories/ride.repository.js';
 import * as kycService from '../../kyc/services/kycService.js';
 import * as otpService from './otpService.js';
 import * as tokenService from './tokenService.js';
@@ -267,6 +268,33 @@ export const logout = async (accessToken) => {
         return { message: 'Logged out successfully' };
     } catch (error) {
         logger.error('Logout service error:', error);
+        throw error;
+    }
+};
+
+export const deleteAccount = async (userId, role, accessToken) => {
+    try {
+        if (role === 'driver') {
+            const driver = await driverRepo.findDriverByUserId(userId);
+            if (!driver) throw new NotFoundError('Driver profile');
+
+            const activeRide = await rideRepo.findActiveRideByDriver(driver.id);
+            if (activeRide) throw new ApiError(400, 'Cannot delete account during an active ride');
+
+            await driverRepo.softDeleteDriver(userId);
+        } else {
+            const activeRide = await rideRepo.findActiveRideByPassenger(userId);
+            if (activeRide) throw new ApiError(400, 'Cannot delete account during an active ride');
+
+            await userRepo.softDeleteUser(userId);
+        }
+
+        // Token blacklist karo taaki reuse na ho sake
+        if (accessToken) await blacklistToken(accessToken, 86400);
+
+        return { message: 'Account deleted successfully' };
+    } catch (error) {
+        logger.error('Delete account service error:', error);
         throw error;
     }
 };

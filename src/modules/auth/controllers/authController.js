@@ -170,3 +170,19 @@ export const updateFcmToken = async (req, res, next) => {
         next(error);
     }
 };
+
+export const deleteAccount = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const role = req.user.role;
+        const authHeader = req.headers.authorization || '';
+        const accessToken = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+
+        await authService.deleteAccount(userId, role, accessToken);
+
+        res.status(200).json({ success: true, message: 'Account deleted successfully' });
+    } catch (error) {
+        logger.error('Delete account error:', error);
+        next(error);
+    }
+};

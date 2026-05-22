@@ -1,4 +1,4 @@
-import * as rideRepo from '../repositories/ride.repository.js';
+﻿import * as rideRepo from '../repositories/ride.repository.js';
 import { emitPaymentReceived } from '../../../core/services/paymentSocketService.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import * as walletRepo from '../../wallet/repositories/wallet.repository.js';
@@ -37,7 +37,7 @@ import {
     sendAssignmentToDriver,
     notifyDriverArrival
 } from '../../../infrastructure/websocket/assignment.handler.js';
-import { addRideCompletionJob } from '../../../infrastructure/queue/rideQueue.js';
+import { addRideCompletionJob, addRideExpiryJob } from '../../../infrastructure/queue/rideQueue.js';
 import { startRideTracking, getActualDistance, clearRideTracking } from '../../../infrastructure/websocket/rideTracking.js';
 import { sendNotification } from '../../../core/services/firebaseService.js';
 import { findCashBalance } from '../../drivers/repositories/cashCollection.repository.js';
@@ -299,6 +299,9 @@ export const requestRide = async (userId, rideData) => {
             fareBeforeGst: fare.fareBeforeGst,
             gstOnFare: fare.gstOnFare
         });
+
+        // 15 min mein koi driver accept na kare toh ride auto-expire ho jaye
+        await addRideExpiryJob(ride.id);
 
         // ── FCM 1: Nearby drivers ko ride request notification (direct) ──────
         // Direct send, queue nahi — faster notification delivery

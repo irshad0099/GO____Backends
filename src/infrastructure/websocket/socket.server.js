@@ -710,6 +710,36 @@ socket.on('driver:location_update', async (data) => {
                 }
 
                 const { rideId, rideData = {} } = data;
+
+                // ── Ownership check — sirf passenger ya assigned driver join kar sakta hai ──
+                const ride = await findRideById(rideId);
+                if (!ride) {
+                    socket.emit('error', { message: 'Ride not found' });
+                    return;
+                }
+
+                if (user.userType === 'passenger') {
+                    if (ride.passenger_id !== user.userId) {
+                        socket.emit('error', { message: 'Unauthorized: not your ride' });
+                        logger.warn('🚫 Unauthorized ride:join attempt (passenger)', {
+                            userId: user.userId, rideId, ridePassengerId: ride.passenger_id
+                        });
+                        return;
+                    }
+                } else if (user.userType === 'driver') {
+                    const driver = await driverRepo.findDriverByUserId(user.userId);
+                    if (!driver || ride.driver_id !== driver.id) {
+                        socket.emit('error', { message: 'Unauthorized: not your ride' });
+                        logger.warn('🚫 Unauthorized ride:join attempt (driver)', {
+                            userId: user.userId, rideId, rideDriverId: ride.driver_id, driverId: driver?.id
+                        });
+                        return;
+                    }
+                } else {
+                    socket.emit('error', { message: 'Unauthorized' });
+                    return;
+                }
+
                 setupRideRoom(socket, rideId, user.userId, user.userType);
 
                 // Store active ride session in Redis

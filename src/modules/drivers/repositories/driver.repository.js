@@ -257,16 +257,23 @@ export const getDriverEarnings = async (driverId, startDate, endDate) => {
             [driverId, startDate, endDate]
         );
         const row = rows[0];
+        if (!row) {
+            return {
+                total: 0, rides: 0, totalRides: 0, totalTimeOnline: 0,
+                platformFeePaid: 0, rideEarnings: 0, tipEarnings: 0,
+                incentiveEarnings: 0, totalDeductions: 0, breakdown: [],
+            };
+        }
         return {
-            total:             parseFloat(row.total_earnings),
-            rides:             parseInt(row.rides_completed),
-            totalRides:        parseInt(row.total_rides),
-            totalTimeOnline:   parseFloat(row.total_time_online),
-            platformFeePaid:   parseFloat(row.platform_fee_paid),
-            rideEarnings:      parseFloat(row.ride_earnings),
-            tipEarnings:       parseFloat(row.tip_earnings),
-            incentiveEarnings: parseFloat(row.incentive_earnings),
-            totalDeductions:   parseFloat(row.total_deductions),
+            total:             parseFloat(row.total_earnings)      || 0,
+            rides:             parseInt(row.rides_completed)        || 0,
+            totalRides:        parseInt(row.total_rides)            || 0,
+            totalTimeOnline:   parseFloat(row.total_time_online)    || 0,
+            platformFeePaid:   parseFloat(row.platform_fee_paid)    || 0,
+            rideEarnings:      parseFloat(row.ride_earnings)        || 0,
+            tipEarnings:       parseFloat(row.tip_earnings)         || 0,
+            incentiveEarnings: parseFloat(row.incentive_earnings)   || 0,
+            totalDeductions:   parseFloat(row.total_deductions)     || 0,
             breakdown:         row.breakdown || [],
         };
     } catch (error) {

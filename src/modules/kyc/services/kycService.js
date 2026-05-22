@@ -3,6 +3,7 @@ import * as cf from './cashfreeService.js';
 import * as repo from '../repositories/kycDocuments.repository.js';
 import * as scoring from './kycScoringService.js';
 import * as kycNotify from './kycNotificationService.js';
+import * as userRepo from '../../users/repositories/user.repository.js';
 import { ENV } from '../../../config/envConfig.js';
 import logger from '../../../core/logger/logger.js';
 import { ConflictError, ValidationError, NotFoundError } from '../../../core/errors/ApiError.js';
@@ -614,6 +615,7 @@ export const submitBankAccount = async (userId, accountNumber, ifsc, name) => {
     }
 
     const extractedData = {
+        account_number:     String(accountNumber),      // Full number for payout
         account_masked:     maskAccount(accountNumber),
         ifsc:               ifsc.toUpperCase(),
         holder_name:        cfResp.name_at_bank || name,
@@ -778,6 +780,12 @@ export const submitFaceMatch = async (userId, { fileBuffer, mimeType }) => {
         afterState:  { status, similarity: similarityPct } });
 
     const aggregate = await repo.recomputeAggregate(userId);
+
+    // Update profile picture when selfie is verified
+    if (status === 'auto_verified') {
+        await userRepo.updateUser(userId, { profile_picture: selfieUrl });
+        logger.info(`[KYC] Profile picture updated for user=${userId} with selfie`);
+    }
 
     const selfieAttemptsLeft = status === 'rejected' ? Math.max(0, 3 - updatedDoc.attempt_count) : 0;
     kycNotify.notifyDocSubmitted(userId, 'SELFIE', status, selfieAttemptsLeft,
@@ -967,6 +975,13 @@ export const approveDocument = async (docId, adminId, notes) => {
         beforeState: { status: doc.status }, afterState: { status: 'approved', notes } });
 
     const aggregate = await repo.recomputeAggregate(doc.user_id);
+
+    // Update profile picture when SELFIE is approved by admin
+    if (doc.document_type === 'SELFIE' && doc.file_url) {
+        await userRepo.updateUser(doc.user_id, { profile_picture: doc.file_url });
+        logger.info(`[KYC] Profile picture updated for user=${doc.user_id} with admin-approved selfie`);
+    }
+
     kycNotify.notifyAdminApproved(doc.user_id, doc.document_type).catch(() => {});
     if (aggregate?.overall_status === 'verified') {
         kycNotify.notifyKycComplete(doc.user_id).catch(() => {});

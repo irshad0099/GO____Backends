@@ -68,17 +68,18 @@ export const findDriverAllProgress = async (driverId) => {
 };
 
 // ─── Upsert progress (ride complete hone pe increment) ──────────────────────
-export const upsertProgress = async (driverId, incentivePlanId, periodStart, periodEnd, incrementValue) => {
+// IDEMPOTENT: Same ride+plan won't double-increment due to unique constraint
+export const upsertProgress = async (driverId, incentivePlanId, periodStart, periodEnd, incrementValue, rideId = null) => {
     try {
         const { rows } = await db.query(
             `INSERT INTO driver_incentive_progress
-             (driver_id, incentive_plan_id, current_value, period_start, period_end)
-             VALUES ($1, $2, $3, $4, $5)
-             ON CONFLICT (driver_id, incentive_plan_id, period_start) DO UPDATE SET
+             (driver_id, incentive_plan_id, current_value, period_start, period_end, ride_id)
+             VALUES ($1, $2, $3, $4, $5, $6)
+             ON CONFLICT (driver_id, incentive_plan_id, ride_id, period_start) DO UPDATE SET
                 current_value = driver_incentive_progress.current_value + $3,
                 updated_at = NOW()
              RETURNING *`,
-            [driverId, incentivePlanId, incrementValue, periodStart, periodEnd]
+            [driverId, incentivePlanId, incrementValue, periodStart, periodEnd, rideId]
         );
         return rows[0];
     } catch (error) {

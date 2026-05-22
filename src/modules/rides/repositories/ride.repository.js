@@ -151,6 +151,9 @@ export const findActiveRideByDriver = async (driverId) => {
 
 export const findNearbyDrivers = async (vehicleType, latitude, longitude, radiusKm = 5) => {
     try {
+        latitude = Number(latitude);
+        longitude = Number(longitude);
+
         // Bounding box pre-filter — index use karta hai, full table scan nahi
         // 1 degree lat ≈ 111 km, 1 degree lng ≈ 111*cos(lat) km
         const latDelta = radiusKm / 111.0;
@@ -192,6 +195,9 @@ export const findNearbyDrivers = async (vehicleType, latitude, longitude, radius
 
 export const findPendingRidesNearLocation = async (vehicleType, latitude, longitude, radiusKm = 5, windowMinutes = 3) => {
     try {
+        latitude = Number(latitude);
+        longitude = Number(longitude);
+
         const latDelta = radiusKm / 111.0;
         const lngDelta = radiusKm / (111.0 * Math.cos((latitude * Math.PI) / 180));
 
@@ -206,7 +212,7 @@ export const findPendingRidesNearLocation = async (vehicleType, latitude, longit
              JOIN users u ON r.passenger_id = u.id
              WHERE r.status = 'requested'
                AND r.vehicle_type = $1
-               AND r.requested_at >= NOW() - ($2 || ' minutes')::INTERVAL
+               AND r.requested_at >= NOW() - INTERVAL '1 minute' * $2
                AND r.pickup_latitude  BETWEEN $3 AND $4
                AND r.pickup_longitude BETWEEN $5 AND $6
              ORDER BY r.requested_at ASC`,

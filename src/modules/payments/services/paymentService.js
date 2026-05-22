@@ -30,6 +30,7 @@ import {
 } from '../repositories/payment.Repository.js';
 import { createPayout } from '../../../core/services/razorpayService.js';
 import { debitWallet, creditWallet, findWalletByUserId } from '../../wallet/repositories/wallet.repository.js';
+import * as kycRepo from '../../kyc/repositories/kycDocuments.repository.js';
 
 // ─── Wallet service integration ───────────────────────────────────────────────
 // Import your wallet service to credit/debit when payment settles
@@ -606,11 +607,38 @@ export const initiateDriverPayout = async (driverUserId, { amount, payoutMethod,
     if (!payoutMethod || !['upi', 'bank'].includes(payoutMethod)) {
         const err = new Error('payout_method must be upi or bank'); err.statusCode = 400; throw err;
     }
+
+    let finalUpiId = upiId;
+    let finalBankAccountNumber = bankAccountNumber;
+    let finalIfscCode = ifscCode;
+
+    // ─── Fetch from KYC if not provided ───────────────────────────────────────
+
+    // If UPI not provided, try to fetch from KYC BANK_ACCOUNT (some banks return UPI)
     if (payoutMethod === 'upi' && !upiId) {
-        const err = new Error('upi_id required for UPI payout'); err.statusCode = 400; throw err;
+        const bankDoc = await kycRepo.getDocByUserAndType(driverUserId, 'BANK_ACCOUNT');
+        if (bankDoc && ['auto_verified', 'approved'].includes(bankDoc.status)) {
+            const extracted = JSON.parse(bankDoc.extracted_data || '{}');
+            if (extracted.upi_id) {
+                finalUpiId = extracted.upi_id;
+            }
+        }
+        if (!finalUpiId) {
+            const err = new Error('UPI ID required. Please provide UPI ID or verify bank account for fallback.');
+            err.statusCode = 400; throw err;
+        }
     }
+
+    // If bank details not provided, fetch from verified KYC BANK_ACCOUNT
     if (payoutMethod === 'bank' && (!bankAccountNumber || !ifscCode)) {
-        const err = new Error('bank_account_number and ifsc_code required'); err.statusCode = 400; throw err;
+        const bankDoc = await kycRepo.getDocByUserAndType(driverUserId, 'BANK_ACCOUNT');
+        if (!bankDoc || !['auto_verified', 'approved'].includes(bankDoc.status)) {
+            const err = new Error('No verified bank account found. Please verify your bank account in KYC first.');
+            err.statusCode = 400; throw err;
+        }
+        const extracted = JSON.parse(bankDoc.extracted_data || '{}');
+        finalBankAccountNumber = extracted.account_number;
+        finalIfscCode = extracted.ifsc;
     }
 
     const existing = await findPendingPayoutByDriver(driverUserId);
@@ -629,13 +657,53 @@ export const initiateDriverPayout = async (driverUserId, { amount, payoutMethod,
     try {
         await client.query('BEGIN');
         await debitWallet(client, driverUserId, amount);
-        const payoutRecord = await createPayoutRequest({ driverUserId, amount, bankAccountNumber, ifscCode, upiId, payoutMethod });
+
+        // ── Transaction table entry (user-facing withdrawal) ────────────────────
+        try {
+            await client.query(
+                `INSERT INTO transactions (
+                    transaction_number, user_id, wallet_id,
+                    amount, type, category,
+                    payment_method, status, description,
+                    created_at, updated_at
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+                [
+                    `WITHDRAWAL-${Date.now()}`,
+                    driverUserId,
+                    wallet.id,
+                    amount,
+                    'debit',
+                    'withdrawal',
+                    payoutMethod,
+                    'pending',
+                    `Withdrawal request via ${payoutMethod}`
+                ]
+            );
+        } catch (txnErr) {
+            logger.warn(`[Payment] Withdrawal transaction entry failed (non-fatal): ${txnErr.message}`);
+        }
+
+        const payoutRecord = await createPayoutRequest({
+            driverUserId,
+            amount,
+            bankAccountNumber: finalBankAccountNumber,
+            ifscCode: finalIfscCode,
+            upiId: finalUpiId,
+            payoutMethod
+        });
         await client.query('COMMIT');
 
         // Fire & forget — Razorpay payout async
-        _processRazorpayPayout(payoutRecord, { driverUserId, amount, payoutMethod, upiId, bankAccountNumber, ifscCode }).catch(() => {});
+        _processRazorpayPayout(payoutRecord, {
+            driverUserId,
+            amount,
+            payoutMethod,
+            upiId: finalUpiId,
+            bankAccountNumber: finalBankAccountNumber,
+            ifscCode: finalIfscCode
+        }).catch(() => {});
 
-        logger.info(`[Payment] Payout ₹${amount} initiated | Driver: ${driverUserId}`);
+        logger.info(`[Payment] Payout ₹${amount} initiated | Driver: ${driverUserId} | Method: ${payoutMethod}`);
         return { message: `Withdrawal of ₹${amount} initiated. Will be credited within 24 hours.`, payoutId: payoutRecord.id, amount };
     } catch (err) {
         await client.query('ROLLBACK');
@@ -647,13 +715,23 @@ export const initiateDriverPayout = async (driverUserId, { amount, payoutMethod,
 
 const _processRazorpayPayout = async (payoutRecord, data) => {
     try {
-        const payout = await createPayout({
+        const payoutPayload = {
             amount: data.amount,
             payoutMethod: data.payoutMethod,
-            upiId: data.upiId,
-            bankAccount: { account_number: data.bankAccountNumber, ifsc: data.ifscCode, name: 'Driver' },
             referenceId: `PAYOUT-${payoutRecord.id}-${Date.now()}`,
-        });
+        };
+
+        if (data.payoutMethod === 'upi') {
+            payoutPayload.upiId = data.upiId;
+        } else if (data.payoutMethod === 'bank') {
+            payoutPayload.bankAccount = {
+                account_number: data.bankAccountNumber,
+                ifsc: data.ifscCode,
+                name: 'Driver'
+            };
+        }
+
+        const payout = await createPayout(payoutPayload);
         await updatePayoutRequest(payoutRecord.id, {
             status: payout.status === 'processed' ? 'success' : 'processing',
             razorpayPayoutId: payout.id,

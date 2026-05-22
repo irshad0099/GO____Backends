@@ -58,13 +58,13 @@ export const getActiveIncentives = async (userId) => {
     }
 };
 
-// ─── Credit pending incentive bonuses (called after each ride completion) ────
+// ─── Credit pending incentive bonuses (IDEMPOTENT - safe to call multiple times) ────
 export const creditPendingIncentives = async (driverId) => {
     const client = await pool.connect();
     try {
         // Find completed but uncredited incentives for this driver
         const { rows: pending } = await client.query(
-            `SELECT dip.id, dip.incentive_plan_id, ip.bonus_amount, ip.title, d.user_id
+            `SELECT dip.id, dip.ride_id, dip.incentive_plan_id, ip.bonus_amount, ip.title, d.user_id
              FROM driver_incentive_progress dip
              JOIN incentive_plans ip ON dip.incentive_plan_id = ip.id
              JOIN drivers d ON dip.driver_id = d.id
@@ -79,27 +79,80 @@ export const creditPendingIncentives = async (driverId) => {
         await client.query('BEGIN');
 
         let totalCredited = 0;
+        let creditedCount = 0;
+
         for (const incentive of pending) {
             const bonusAmount = parseFloat(incentive.bonus_amount);
 
+            // IDEMPOTENCY CHECK: Already credited for this (driver, plan, ride)?
+            const alreadyCredited = await client.query(
+                `SELECT id FROM driver_ledger
+                 WHERE driver_id = $1 AND type = 'incentive'
+                   AND reference_id = $2 AND ride_id = $3`,
+                [driverId, String(incentive.incentive_plan_id), incentive.ride_id]
+            );
+
+            if (alreadyCredited.rows.length > 0) {
+                // Already credited - just mark as credited and skip
+                await incentiveRepo.markBonusCredited(incentive.id);
+                logger.warn(`[Incentive] Already credited (skipped duplicate) | Driver: ${driverId} | Plan: ${incentive.incentive_plan_id} | Ride: ${incentive.ride_id}`);
+                continue;
+            }
+
+            // Credit wallet
             await creditWallet(client, incentive.user_id, bonusAmount);
 
+            // Insert ledger entry
             await earningsRepo.insertLedgerEntry(client, {
                 driver_id:   driverId,
                 type:        'incentive',
                 amount:      bonusAmount,
                 reference_id: String(incentive.incentive_plan_id),
+                ride_id:     incentive.ride_id,
                 note:        incentive.title,
             });
 
+            // ── Transaction table entry (user-facing) ────────────────────────────
+            try {
+                const walletRecord = await client.query(
+                    `SELECT id FROM wallets WHERE user_id = $1`,
+                    [incentive.user_id]
+                );
+                const walletId = walletRecord.rows[0]?.id;
+
+                await client.query(
+                    `INSERT INTO transactions (
+                        transaction_number, user_id, wallet_id, ride_id,
+                        amount, type, category,
+                        status, description,
+                        created_at, updated_at
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+                    [
+                        `INCENTIVE-${incentive.incentive_plan_id}-${Date.now()}`,
+                        incentive.user_id,
+                        walletId,
+                        incentive.ride_id || null,
+                        bonusAmount,
+                        'credit',
+                        'incentive_bonus',
+                        'success',
+                        `${incentive.title} bonus`
+                    ]
+                );
+            } catch (txnErr) {
+                logger.warn(`[Incentive] Transaction entry failed (non-fatal) | Driver: ${driverId} | Plan: ${incentive.incentive_plan_id}: ${txnErr.message}`);
+            }
+
+            // Mark as credited
             await incentiveRepo.markBonusCredited(incentive.id);
 
             totalCredited += bonusAmount;
-            logger.info(`[Incentive] Bonus credited | Driver: ${driverId} | Plan: ${incentive.incentive_plan_id} | Amount: ₹${bonusAmount}`);
+            creditedCount++;
+            logger.info(`[Incentive] Bonus credited | Driver: ${driverId} | Plan: ${incentive.incentive_plan_id} | Ride: ${incentive.ride_id} | Amount: ₹${bonusAmount}`);
         }
 
         await client.query('COMMIT');
-        return { credited: totalCredited, count: pending.length };
+        return { credited: totalCredited, count: creditedCount };
     } catch (error) {
         await client.query('ROLLBACK');
         logger.error(`[Incentive] creditPendingIncentives error | Driver: ${driverId}:`, error);
@@ -148,6 +201,7 @@ export const updateIncentiveProgressOnRideCompletion = async (driverId, vehicleT
         if (activePlans.length === 0) return { updated: 0 };
 
         const today = new Date();
+        const rideId = rideData.id || rideData.rideId; // Extract ride ID
         let updatedCount = 0;
 
         for (const plan of activePlans) {
@@ -173,13 +227,14 @@ export const updateIncentiveProgressOnRideCompletion = async (driverId, vehicleT
 
             if (incrementValue <= 0) continue;
 
-            // Upsert progress
+            // Upsert progress with rideId for idempotency
             const progress = await incentiveRepo.upsertProgress(
                 driverId,
                 plan.id,
                 periodStart,
                 periodEnd,
-                incrementValue
+                incrementValue,
+                rideId
             );
 
             // Check if completed

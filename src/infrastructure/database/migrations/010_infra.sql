@@ -45,22 +45,30 @@ CREATE INDEX IF NOT EXISTS idx_api_logs_user_id ON public.api_logs USING btree (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS socket_logs (
     id BIGSERIAL NOT NULL,
-    level VARCHAR(10) NOT NULL,
-    event VARCHAR(100),
-    message TEXT NOT NULL,
-    socket_id VARCHAR(100),
-    user_id INTEGER,
+    event_name VARCHAR(100) NOT NULL,
+    direction VARCHAR(3) NOT NULL,
+    socket_id VARCHAR(100) NOT NULL,
+    user_id UUID,
+    driver_id INTEGER,
     ride_id INTEGER,
-    metadata JSONB,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    direction VARCHAR(3),
+    request_payload JSONB,
+    response_payload JSONB,
+    status VARCHAR(20),
+    error_message TEXT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT socket_logs_pkey PRIMARY KEY (id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_socket_logs_created_at ON public.socket_logs USING btree (created_at DESC);
 
-CREATE INDEX IF NOT EXISTS idx_socket_logs_level ON public.socket_logs USING btree (level);
+CREATE INDEX IF NOT EXISTS idx_socket_logs_event_name ON public.socket_logs USING btree (event_name);
+
+CREATE INDEX IF NOT EXISTS idx_socket_logs_direction ON public.socket_logs USING btree (direction);
+
+CREATE INDEX IF NOT EXISTS idx_socket_logs_socket_id ON public.socket_logs USING btree (socket_id);
+
+CREATE INDEX IF NOT EXISTS idx_socket_logs_user_id ON public.socket_logs USING btree (user_id);
 
 CREATE INDEX IF NOT EXISTS idx_socket_logs_ride_id ON public.socket_logs USING btree (ride_id);
 
-CREATE INDEX IF NOT EXISTS idx_socket_logs_user_id ON public.socket_logs USING btree (user_id);
+CREATE INDEX IF NOT EXISTS idx_socket_logs_driver_id ON public.socket_logs USING btree (driver_id);

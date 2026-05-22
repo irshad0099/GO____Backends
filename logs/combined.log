@@ -7864,3 +7864,13 @@ Error: Connection terminated due to connection timeout
 2026-05-17 01:43:32 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
 2026-05-17 01:43:32 [INFO]: ⏰ Initializing engagement notification cron jobs...
 2026-05-17 01:43:32 [INFO]: ✅ Engagement notification crons initialized successfully
+2026-05-18 23:06:11 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-22 18:24:52 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-22 18:24:56 [ERROR]: Database query error:
+2026-05-22 18:24:59 [WARN]: Slow query:
+2026-05-22 18:25:01 [ERROR]: Database query error:
+2026-05-22 18:25:03 [WARN]: Slow query:
+2026-05-22 18:25:04 [INFO]: PostgreSQL disconnected
+2026-05-22 18:26:09 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-22 18:26:12 [WARN]: Slow query:
+2026-05-22 18:26:21 [INFO]: PostgreSQL disconnected

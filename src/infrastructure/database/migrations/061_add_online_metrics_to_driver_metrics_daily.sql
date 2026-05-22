@@ -1,0 +1,14 @@
+-- 061_add_online_metrics_to_driver_metrics_daily.sql
+-- Add online tracking and metrics fields to driver_metrics_daily
+
+ALTER TABLE driver_metrics_daily
+ADD COLUMN IF NOT EXISTS online_from TIMESTAMP,
+ADD COLUMN IF NOT EXISTS online_until TIMESTAMP,
+ADD COLUMN IF NOT EXISTS total_online_hours DECIMAL(5,2) DEFAULT 0,
+ADD COLUMN IF NOT EXISTS avg_earning_per_ride DECIMAL(10,2) DEFAULT 0,
+ADD COLUMN IF NOT EXISTS avg_rating DECIMAL(3,2) DEFAULT 0,
+ADD COLUMN IF NOT EXISTS total_earnings DECIMAL(10,2) DEFAULT 0,
+ADD COLUMN IF NOT EXISTS tips_earned DECIMAL(10,2) DEFAULT 0,
+ADD COLUMN IF NOT EXISTS platform_fee_paid DECIMAL(10,2) DEFAULT 0,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;

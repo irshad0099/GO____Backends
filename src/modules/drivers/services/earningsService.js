@@ -224,6 +224,39 @@ export const creditDriverEarnings = async ({
             note:            collectionMethodActual ? `Collection: ${collectionMethodActual}` : null,
         });
 
+        // ── Transaction table entry (user-facing) ────────────────────────────────
+        const transactionNumber = `RIDE-${rideId}-${Date.now()}`;
+        try {
+            const walletRecord = await client.query(
+                `SELECT id FROM wallets WHERE user_id = $1`,
+                [driverUserId]
+            );
+            const walletId = walletRecord.rows[0]?.id;
+
+            await client.query(
+                `INSERT INTO transactions (
+                    transaction_number, user_id, wallet_id, ride_id,
+                    amount, type, category,
+                    payment_method, status, description,
+                    created_at, updated_at
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+                [
+                    transactionNumber,
+                    driverUserId,
+                    walletId,
+                    rideId,
+                    netEarnings,
+                    'credit',
+                    'ride_earning',
+                    paymentMethod || 'wallet',
+                    'success',
+                    `Ride earnings for ride #${rideId}`
+                ]
+            );
+        } catch (txnErr) {
+            logger.warn(`[Earnings] Transaction table entry failed (non-fatal) | Ride: ${rideId}: ${txnErr.message}`);
+        }
+
         // Ledger: tip (if any)
         if (tipAmount > 0) {
             await earningsRepo.insertLedgerEntry(client, {
@@ -234,6 +267,38 @@ export const creditDriverEarnings = async ({
                 ride_id:         rideId,
                 payment_method:  paymentMethod,
             });
+
+            // Transaction entry for tip
+            try {
+                const walletRecord = await client.query(
+                    `SELECT id FROM wallets WHERE user_id = $1`,
+                    [driverUserId]
+                );
+                const walletId = walletRecord.rows[0]?.id;
+
+                await client.query(
+                    `INSERT INTO transactions (
+                        transaction_number, user_id, wallet_id, ride_id,
+                        amount, type, category,
+                        payment_method, status, description,
+                        created_at, updated_at
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+                    [
+                        `TIP-${rideId}-${Date.now()}`,
+                        driverUserId,
+                        walletId,
+                        rideId,
+                        tipAmount,
+                        'credit',
+                        'tip',
+                        paymentMethod || 'wallet',
+                        'success',
+                        `Tip for ride #${rideId}`
+                    ]
+                );
+            } catch (txnErr) {
+                logger.warn(`[Earnings] Tip transaction entry failed (non-fatal) | Ride: ${rideId}: ${txnErr.message}`);
+            }
         }
 
         // For cash rides — add platform fee to driver's cash_balance (driver owes platform)

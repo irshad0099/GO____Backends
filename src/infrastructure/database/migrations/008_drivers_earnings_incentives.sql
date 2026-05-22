@@ -91,13 +91,28 @@ CREATE TABLE IF NOT EXISTS driver_incentive_progress (
     CONSTRAINT driver_incentive_progress_incentive_plan_id_fkey FOREIGN KEY (incentive_plan_id) REFERENCES incentive_plans(id) ON DELETE CASCADE
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS driver_incentive_progress_driver_id_incentive_plan_id_perio_key ON public.driver_incentive_progress USING btree (driver_id, incentive_plan_id, period_start);
+-- Add ride_id column if it doesn't exist (for idempotency)
+ALTER TABLE driver_incentive_progress
+ADD COLUMN IF NOT EXISTS ride_id INTEGER REFERENCES rides(id) ON DELETE SET NULL;
+
+-- Drop old constraint if exists
+ALTER TABLE driver_incentive_progress
+DROP CONSTRAINT IF EXISTS driver_incentive_progress_driver_id_incentive_plan_id_ride_key CASCADE;
+
+-- Add new constraint with ride_id for idempotency
+ALTER TABLE driver_incentive_progress
+ADD CONSTRAINT driver_incentive_progress_driver_id_incentive_plan_id_ride_key
+UNIQUE (driver_id, incentive_plan_id, ride_id, period_start);
+
+CREATE UNIQUE INDEX IF NOT EXISTS driver_incentive_progress_driver_id_incentive_plan_id_ride_key ON public.driver_incentive_progress USING btree (driver_id, incentive_plan_id, ride_id, period_start);
 
 CREATE INDEX IF NOT EXISTS idx_driver_incentive_driver ON public.driver_incentive_progress USING btree (driver_id);
 
 CREATE INDEX IF NOT EXISTS idx_driver_incentive_pending ON public.driver_incentive_progress USING btree (is_completed, is_bonus_credited) WHERE ((is_completed = true) AND (is_bonus_credited = false));
 
 CREATE INDEX IF NOT EXISTS idx_driver_incentive_period ON public.driver_incentive_progress USING btree (driver_id, period_start, period_end);
+
+CREATE INDEX IF NOT EXISTS idx_driver_incentive_ride ON public.driver_incentive_progress USING btree (ride_id) WHERE ride_id IS NOT NULL;
 
 -- ============================================================
 -- Table: incentive_plans

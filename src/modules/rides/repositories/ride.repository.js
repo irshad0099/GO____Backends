@@ -304,6 +304,22 @@ export const updateRideStatus = async (rideId, status, additionalFields = {}) =>
     }
 };
 
+export const expireRide = async (rideId) => {
+    try {
+        const { rows } = await db.query(
+            `UPDATE rides
+             SET status = 'expired', cancelled_at = NOW(), updated_at = NOW()
+             WHERE id = $1 AND status = 'requested'
+             RETURNING *`,
+            [rideId]
+        );
+        return rows[0] || null;
+    } catch (error) {
+        logger.error('Expire ride repository error:', error);
+        throw error;
+    }
+};
+
 export const updateRideField = async (rideId, field, value) => {
     try {
         const { rows } = await db.query(

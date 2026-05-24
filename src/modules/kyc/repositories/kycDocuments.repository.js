@@ -308,7 +308,8 @@ export const suspendDriver = async (userId, reason) => {
 
 // ─── Aggregate recomputation ──────────────────────────────────────────────────
 
-export const recomputeAggregate = async (userId) => {
+export const recomputeAggregate = async (userId, opts = {}) => {
+    const { skipCrossVerify = false } = opts;
     const docs = await getDocsByUser(userId);
 
     const submittedCount = docs.length;
@@ -346,11 +347,13 @@ export const recomputeAggregate = async (userId) => {
     });
 
     // Jab saare 6 docs submit ho jayein → cross-verify run karo (background, non-blocking)
+    // skipCrossVerify: TRUE jab ye call cross-verify ke recursion se aaya ho (infinite loop avoid)
     const allSubmitted = ALL_DOC_TYPES.every(t => docs.find(d => d.document_type === t));
-    if (allSubmitted && overallStatus !== 'verified') {
+    if (!skipCrossVerify && allSubmitted && overallStatus !== 'verified') {
         getCrossVerify()
             .then(fn => fn(userId))
-            .then(() => recomputeAggregate(userId)) // cross-verify ke baad status recompute
+            // skipCrossVerify:true → recursion break karta hai, varna SELFIE manual_review me hoga to loop chalta rahega
+            .then(() => recomputeAggregate(userId, { skipCrossVerify: true }))
             .catch(err => logger.error(`[KYC] Cross-verify trigger failed user=${userId}:`, err));
     }
 

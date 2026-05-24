@@ -5,13 +5,14 @@ import * as userRepo from '../../users/repositories/user.repository.js';
 
 export const signup = async (req, res, next) => {
     try {
-        const { phone, email, fullName, role = "passenger" } = req.body;
+        const { phone, email, fullName, role = "passenger", terms_and_conditions } = req.body;
 
         const result = await authService.signup({
             phone,
             email,
             fullName,
-            role
+            role,
+            terms_and_conditions
         });
 
         sendResponse(res, 200, 'OTP sent successfully', result);

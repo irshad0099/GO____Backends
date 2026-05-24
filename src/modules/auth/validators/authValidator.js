@@ -28,7 +28,10 @@ export const signupValidators = [
     body('role')
         .notEmpty().withMessage('Role is required')
         .isIn(['passenger', 'driver', 'admin'])
-        .withMessage('Role must be passenger, driver or admin')
+        .withMessage('Role must be passenger, driver or admin'),
+    body('terms_and_conditions')
+        .notEmpty().withMessage('Terms and conditions must be accepted')
+        .isBoolean().withMessage('Terms and conditions must be boolean')
 
 ];
 

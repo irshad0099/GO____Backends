@@ -56,61 +56,99 @@ export const getCompanyEarningsSummary = async ({ fromDate, toDate } = {}) => {
     }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  PAYOUT REQUESTS
-// ─────────────────────────────────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+//  PAYOUT REQUESTS (Cashfree)
+// ═════════════════════════════════════════════════════════════════════════════
 
-export const createPayoutRequest = async (data) => {
-    try {
-        const { driverUserId, amount, bankAccountNumber, ifscCode, upiId, payoutMethod } = data;
-        const result = await pool.query(
-            `INSERT INTO payout_requests
-                (driver_user_id, amount, bank_account_number, ifsc_code, upi_id, payout_method)
-             VALUES ($1,$2,$3,$4,$5,$6)
-             RETURNING *`,
-            [driverUserId, amount, bankAccountNumber || null, ifscCode || null, upiId || null, payoutMethod]
-        );
-        return result.rows[0];
-    } catch (error) {
-        logger.error('createPayoutRequest error:', error);
-        throw error;
-    }
+export const createPayoutRequest = async (client, data) => {
+    const { driverUserId, amount, bankAccountNumber, ifscCode } = data;
+    const result = await client.query(
+        `INSERT INTO payout_requests
+            (driver_user_id, amount, bank_account_number, ifsc_code, payout_method, status)
+         VALUES ($1, $2, $3, $4, 'bank', 'pending')
+         RETURNING *`,
+        [driverUserId, amount, bankAccountNumber, ifscCode]
+    );
+    return result.rows[0];
 };
 
 export const updatePayoutRequest = async (id, updates) => {
-    try {
-        const { status, razorpayPayoutId, failureReason, completedAt } = updates;
-        const result = await pool.query(
-            `UPDATE payout_requests
-             SET status             = $1,
-                 razorpay_payout_id = COALESCE($2, razorpay_payout_id),
-                 failure_reason     = COALESCE($3, failure_reason),
-                 completed_at       = COALESCE($4, completed_at),
-                 updated_at         = NOW()
-             WHERE id = $5
-             RETURNING *`,
-            [status, razorpayPayoutId || null, failureReason || null, completedAt || null, id]
-        );
-        return result.rows[0];
-    } catch (error) {
-        logger.error('updatePayoutRequest error:', error);
-        throw error;
-    }
+    const {
+        status,
+        transferId,
+        cfTransferId,
+        beneficiaryId,
+        failureReason,
+        completedAt,
+    } = updates;
+
+    const result = await pool.query(
+        `UPDATE payout_requests
+         SET status         = COALESCE($1, status),
+             transfer_id    = COALESCE($2, transfer_id),
+             cf_transfer_id = COALESCE($3, cf_transfer_id),
+             beneficiary_id = COALESCE($4, beneficiary_id),
+             failure_reason = COALESCE($5, failure_reason),
+             completed_at   = COALESCE($6, completed_at),
+             updated_at     = NOW()
+         WHERE id = $7
+         RETURNING *`,
+        [
+            status         || null,
+            transferId     || null,
+            cfTransferId   || null,
+            beneficiaryId  || null,
+            failureReason  || null,
+            completedAt    || null,
+            id,
+        ]
+    );
+    return result.rows[0];
 };
 
 export const findPendingPayoutByDriver = async (driverUserId) => {
-    try {
-        const result = await pool.query(
-            `SELECT * FROM payout_requests
-             WHERE driver_user_id = $1 AND status IN ('pending','processing')
-             LIMIT 1`,
-            [driverUserId]
-        );
-        return result.rows[0] || null;
-    } catch (error) {
-        logger.error('findPendingPayoutByDriver error:', error);
-        throw error;
-    }
+    const result = await pool.query(
+        `SELECT * FROM payout_requests
+         WHERE driver_user_id = $1 AND status IN ('pending','processing')
+         LIMIT 1`,
+        [driverUserId]
+    );
+    return result.rows[0] || null;
+};
+
+export const findPayoutByTransferId = async (transferId) => {
+    const result = await pool.query(
+        `SELECT * FROM payout_requests WHERE transfer_id = $1 LIMIT 1`,
+        [transferId]
+    );
+    return result.rows[0] || null;
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  PAYOUT BENEFICIARIES (Cashfree)
+// ═════════════════════════════════════════════════════════════════════════════
+
+export const findBeneficiaryByBank = async (driverUserId, accountNumber, ifsc) => {
+    const result = await pool.query(
+        `SELECT * FROM payout_beneficiaries
+         WHERE driver_user_id = $1
+           AND bank_account_number = $2
+           AND bank_ifsc = $3
+         LIMIT 1`,
+        [driverUserId, accountNumber, ifsc]
+    );
+    return result.rows[0] || null;
+};
+
+export const insertBeneficiary = async ({ driverUserId, beneficiaryId, beneficiaryName, accountNumber, ifsc }) => {
+    const result = await pool.query(
+        `INSERT INTO payout_beneficiaries
+            (driver_user_id, beneficiary_id, beneficiary_name, bank_account_number, bank_ifsc)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING *`,
+        [driverUserId, beneficiaryId, beneficiaryName, accountNumber, ifsc]
+    );
+    return result.rows[0];
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

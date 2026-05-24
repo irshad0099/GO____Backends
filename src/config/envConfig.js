@@ -187,6 +187,9 @@ EMAIL_REPLY_TO:  process.env.EMAIL_REPLY_TO  || 'support@gomobility.co.in',
     CASHFREE_FACE_MATCH_THRESHOLD:    parseFloat(process.env.CASHFREE_FACE_MATCH_THRESHOLD) || 75,
     CASHFREE_NAME_MATCH_THRESHOLD:    parseFloat(process.env.CASHFREE_NAME_MATCH_THRESHOLD) || 70,
 
+    // Cashfree Payouts (Driver Withdrawal)
+    CASHFREE_FUNDSOURCE_ID:           process.env.CASHFREE_FUNDSOURCE_ID || null,
+
     // KYC v2 scoring thresholds (tune without redeploy)
     KYC_AUTO_THRESHOLD:             parseFloat(process.env.KYC_AUTO_THRESHOLD)             || 85,
     KYC_REVIEW_THRESHOLD:           parseFloat(process.env.KYC_REVIEW_THRESHOLD)           || 60,

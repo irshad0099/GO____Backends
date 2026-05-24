@@ -11,7 +11,7 @@ import { ApiError, ConflictError, NotFoundError, AuthError } from '../../../core
 import logger from '../../../core/logger/logger.js';
 import { sendOtpEmail } from '../../../core/services/emailService.js';
 
-export const signup = async ({ phone, email, fullName ,role}) => {
+export const signup = async ({ phone, email, fullName, role, terms_and_conditions }) => {
     try {
         // Check if user exists
         const existingUser = await userRepo.findUserByPhoneAndRole(phone,role);
@@ -35,19 +35,19 @@ export const signup = async ({ phone, email, fullName ,role}) => {
     }
 };
 
-export const verifySignup = async ({ phone, otp, email, fullName,role }) => {
+export const verifySignup = async ({ phone, otp, email, fullName, role }) => {
     try {
         // Verify OTP
         await otpService.verifyOTP(phone, otp, 'signup');
 
         // Check if user already exists (might have been created in another request)
         let user = await userRepo.findUserByPhoneAndRole(phone,role);
-        
+
         if (user) {
             if (user.is_verified) {
                 throw new ConflictError('User already exists and verified');
             }
-            
+
             // Update existing unverified user
             user = await userRepo.updateUser(user.id, {
                 email: email || user.email,

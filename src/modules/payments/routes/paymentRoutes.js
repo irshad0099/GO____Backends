@@ -136,11 +136,14 @@ router.patch(
 // ─────────────────────────────────────────────────────────────────────────────
 
 // POST /api/v1/payments/payout
+// Body: { amount } — bank details KYC se auto-fetch
 router.post(
     '/payout',
     requireRole(['driver']),
     requestPayout
 );
+
+// NOTE: /payout/webhook mounted in app.js directly (no auth, signature-verified)
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  RAZORPAY WEBHOOK — no auth, raw body required

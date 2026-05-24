@@ -10,6 +10,7 @@ import routes from './routes/index.js';
 import { globalErrorHandler, notFoundHandler } from './core/errors/globalErrorHandler.js';
 import { apiLoggerMiddleware } from './core/middleware/apiLogger.middleware.js';
 import { handleWebhook } from './modules/payments/controllers/paymentController.js';
+import { handlePayoutWebhook } from './modules/payments/controllers/payoutWebhookController.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -59,6 +60,9 @@ app.use(apiLoggerMiddleware);
 // Razorpay webhook — BEFORE express.json() already processes body via verify callback
 // rawBody is available via req.rawBody (set in express.json verify above)
 app.post(`${ENV.API_PREFIX}/payments/webhook`, handleWebhook);
+
+// Cashfree Payout webhook — same pattern, no auth (signature-verified)
+app.post(`${ENV.API_PREFIX}/payments/payout/webhook`, handlePayoutWebhook);
 
 // Legal docs — static HTML files (no auth required)
 app.use('/legal', express.static(join(__dirname, '../docs'), { index: false }));

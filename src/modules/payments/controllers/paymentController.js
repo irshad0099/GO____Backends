@@ -17,6 +17,7 @@ import { addPaymentPostActionJob } from '../../../infrastructure/queue/payment.q
 import { pool } from '../../../infrastructure/database/postgres.js';
 import { sendResponse, sendError } from '../../../core/utils/response.js';
 import { ENV } from '../../../config/envConfig.js';
+import { getDocByUserAndType } from '../../kyc/repositories/kycDocuments.repository.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  POST /api/v1/payments/orders
@@ -155,18 +156,46 @@ export const setDefault = async (req, res) => {
     }
 };
 
-// POST /api/v1/payments/payout  (driver only)
+// ─────────────────────────────────────────────────────────────────────────────
+//  POST /api/v1/payments/payout  (driver only)
+//  Request: { amount }
+//  Bank account comes from verified KYC — driver only sends amount
+// ─────────────────────────────────────────────────────────────────────────────
 export const requestPayout = async (req, res) => {
     try {
-        const { amount, payout_method, upi_id, bank_account_number, ifsc_code } = req.body;
-        const result = await initiateDriverPayout(req.user.id, {
-            amount: Number(amount),
-            payoutMethod: payout_method,
-            upiId: upi_id,
-            bankAccountNumber: bank_account_number,
-            ifscCode: ifsc_code,
+        const { amount } = req.body;
+        const driverId   = req.user.id;
+
+        if (!amount || Number(amount) < 100) {
+            return sendError(res, 400, 'Minimum withdrawal amount is ₹100');
+        }
+        if (!req.user.phone_number) {
+            return sendError(res, 400, 'Phone number required for payout. Please update your profile.');
+        }
+
+        // Verified bank account from KYC (penny-drop verified)
+        const bankDoc = await getDocByUserAndType(driverId, 'BANK_ACCOUNT');
+        if (!bankDoc || !['auto_verified', 'approved'].includes(bankDoc.status)) {
+            return sendError(res, 400, 'Please verify your bank account in KYC first');
+        }
+
+        const extracted = JSON.parse(bankDoc.extracted_data || '{}');
+        if (!extracted.account_number || !extracted.ifsc || !extracted.holder_name) {
+            return sendError(res, 400, 'Bank account details incomplete in KYC. Please re-submit.');
+        }
+
+        const result = await initiateDriverPayout(driverId, {
+            amount:            Number(amount),
+            bankAccountNumber: extracted.account_number,
+            ifscCode:          extracted.ifsc,
+            holderName:        extracted.holder_name,       // Cashfree-verified bank holder name
+            driverPhone:       req.user.phone_number,
         });
-        return sendResponse(res, 200, result.message, result);
+
+        return sendResponse(res, 200, result.message, {
+            payoutId: result.payoutId,
+            amount:   result.amount,
+        });
     } catch (error) {
         logger.error(`[PaymentController] requestPayout: ${error.message}`);
         return sendError(res, error.statusCode || 500, error.message);

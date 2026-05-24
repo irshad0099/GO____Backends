@@ -140,57 +140,111 @@ export const verifyVehicleRC = async (rcNumber, dob = null) => {
     }
 };
 
-// ─── Payouts (Driver Withdrawal) ──────────────────────────────────────────────
-export const createPayout = async ({ amount, payoutMethod, upiId, bankAccount, referenceId }) => {
+// ═════════════════════════════════════════════════════════════════════════════
+//  CASHFREE PAYOUTS — Driver Withdrawal
+//  Docs: https://docs.cashfree.com/reference/payouts-api-overview
+// ═════════════════════════════════════════════════════════════════════════════
+
+const CF_PAYOUT_BASE = ENV.CASHFREE_ENV === 'production'
+    ? 'https://api.cashfree.com/payout'
+    : 'https://sandbox.cashfree.com/payout';
+
+const cfPayoutHeaders = () => ({
+    'x-client-id':     ENV.CASHFREE_CLIENT_ID,
+    'x-client-secret': ENV.CASHFREE_CLIENT_SECRET,
+    'x-api-version':   '2024-01-01',
+    'Content-Type':    'application/json',
+});
+
+/**
+ * Step 1 — Register beneficiary (driver ka bank account) on Cashfree
+ * Beneficiary ID humara hai (unique per registration), Cashfree wahi store karta hai
+ */
+export const addPayoutBeneficiary = async ({ driverUserId, holderName, phone, accountNumber, ifsc }) => {
+    const beneficiaryId = `DRIVER_${driverUserId}_${Date.now()}`;
+
+    const payload = {
+        beneficiary_id:   beneficiaryId,
+        beneficiary_name: holderName,
+        beneficiary_instrument_details: {
+            bank_account_number: accountNumber,
+            bank_ifsc:           ifsc,
+        },
+        beneficiary_contact_details: {
+            beneficiary_phone:        phone,
+            beneficiary_country_code: '+91',
+        },
+    };
+
     try {
-        const CF_PAYOUT_BASE = ENV.CASHFREE_ENV === 'production'
-            ? 'https://api.cashfree.com/payouts'
-            : 'https://sandbox.cashfree.com/payouts';
-
-        const payload = {
-            transfer_id: referenceId,
-            amount: amount.toString(),
-            currency: 'INR',
-        };
-
-        if (payoutMethod === 'upi') {
-            payload.transfers = [{
-                transfer_id: referenceId,
-                recipient: {
-                    contact_type: 'VPA',
-                    vpa: upiId
-                },
-                amount: amount.toString()
-            }];
-        } else if (payoutMethod === 'bank') {
-            payload.transfers = [{
-                transfer_id: referenceId,
-                recipient: {
-                    contact_type: 'BANK_ACCOUNT',
-                    bank_account: {
-                        ifsc: bankAccount.ifsc,
-                        account_number: bankAccount.account_number,
-                        name: bankAccount.name || 'Driver'
-                    }
-                },
-                amount: amount.toString()
-            }];
-        }
-
         const res = await axios.post(
-            `${CF_PAYOUT_BASE}/transfers`,
+            `${CF_PAYOUT_BASE}/beneficiary`,
             payload,
-            { headers: cfHeaders() }
+            { headers: cfPayoutHeaders() }
         );
 
         return {
-            id: res.data.transfer_id || referenceId,
-            status: res.data.status === 'SUCCESS' ? 'processed' : 'processing',
+            beneficiaryId:     res.data.beneficiary_id     || beneficiaryId,
+            beneficiaryStatus: res.data.beneficiary_status || 'VERIFIED',
+        };
+    } catch (err) {
+        logCfError('addPayoutBeneficiary', err);
+        throw err;
+    }
+};
+
+/**
+ * Step 2 — Initiate transfer to beneficiary
+ * NOTE: Response status "RECEIVED" is NOT final.
+ * Final SUCCESS/FAILED status aata hai webhook se.
+ */
+export const createPayout = async ({ amount, beneficiaryId, transferId }) => {
+    const payload = {
+        transfer_id:     transferId,
+        transfer_amount: amount,
+        beneficiary_details: {
+            beneficiary_id: beneficiaryId,
+        },
+        ...(ENV.CASHFREE_FUNDSOURCE_ID && {
+            fundsource_id: ENV.CASHFREE_FUNDSOURCE_ID,
+        }),
+    };
+
+    try {
+        const res = await axios.post(
+            `${CF_PAYOUT_BASE}/transfers`,
+            payload,
+            { headers: cfPayoutHeaders() }
+        );
+
+        return {
+            transferId:   res.data.transfer_id    || transferId,
+            cfTransferId: res.data.cf_transfer_id || null,
+            status:       res.data.status         || 'RECEIVED',
             amount,
-            payoutMethod
         };
     } catch (err) {
         logCfError('createPayout', err);
         throw err;
+    }
+};
+
+/**
+ * Verify Cashfree payout webhook signature
+ * Cashfree sends: x-webhook-signature = base64(HMAC-SHA256(timestamp + rawBody, clientSecret))
+ * Reference: https://docs.cashfree.com/docs/payout-webhooks#webhook-signature-verification
+ */
+export const verifyPayoutWebhookSignature = ({ signature, timestamp, rawBody }) => {
+    if (!signature || !timestamp || !rawBody) return false;
+    try {
+        const data     = timestamp + rawBody;
+        const expected = crypto
+            .createHmac('sha256', ENV.CASHFREE_CLIENT_SECRET)
+            .update(data)
+            .digest('base64');
+        return expected === signature;
+    } catch (err) {
+        logger.error(`[Cashfree:verifyPayoutWebhookSignature] ${err.message}`);
+        return false;
     }
 };

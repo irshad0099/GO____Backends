@@ -27,8 +27,10 @@ import {
     createPayoutRequest,
     updatePayoutRequest,
     findPendingPayoutByDriver,
+    findBeneficiaryByBank,
+    insertBeneficiary,
 } from '../repositories/payment.Repository.js';
-import { createPayout } from '../../kyc/services/cashfreeService.js';
+import { addPayoutBeneficiary, createPayout } from '../../kyc/services/cashfreeService.js';
 import { debitWallet, creditWallet, findWalletByUserId } from '../../wallet/repositories/wallet.repository.js';
 import * as kycRepo from '../../kyc/repositories/kycDocuments.repository.js';
 
@@ -596,69 +598,59 @@ const processWalletPayment = async (userId, { order, purpose, ride_id, amount })
     }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Driver Payout (Withdrawal)
-// ─────────────────────────────────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+//  DRIVER PAYOUT (Cashfree)
+//
+//  Flow:
+//    1. Validate amount + check no pending payout + wallet balance
+//    2. TXN: debit wallet → log transaction → create payout_request (pending)
+//    3. Async: get/create beneficiary on Cashfree → initiate transfer
+//    4. On success: payout_request → 'processing' (webhook updates final state)
+//    5. On error: refund wallet + payout_request → 'failed'
+// ═════════════════════════════════════════════════════════════════════════════
 
-export const initiateDriverPayout = async (driverUserId, { amount, payoutMethod, upiId, bankAccountNumber, ifscCode }) => {
-    if (!amount || amount < 100) {
-        const err = new Error('Minimum withdrawal amount is ₹100'); err.statusCode = 400; throw err;
+const MIN_PAYOUT_AMOUNT = 100;
+
+export const initiateDriverPayout = async (driverUserId, {
+    amount,
+    bankAccountNumber,
+    ifscCode,
+    holderName,
+    driverPhone,
+}) => {
+    // ─── Validation ──────────────────────────────────────────────────────────
+    if (!amount || amount < MIN_PAYOUT_AMOUNT) {
+        const err = new Error(`Minimum withdrawal amount is ₹${MIN_PAYOUT_AMOUNT}`);
+        err.statusCode = 400; throw err;
     }
-    if (!payoutMethod || !['upi', 'bank'].includes(payoutMethod)) {
-        const err = new Error('payout_method must be upi or bank'); err.statusCode = 400; throw err;
-    }
-
-    let finalUpiId = upiId;
-    let finalBankAccountNumber = bankAccountNumber;
-    let finalIfscCode = ifscCode;
-
-    // ─── Fetch from KYC if not provided ───────────────────────────────────────
-
-    // If UPI not provided, try to fetch from KYC BANK_ACCOUNT (some banks return UPI)
-    if (payoutMethod === 'upi' && !upiId) {
-        const bankDoc = await kycRepo.getDocByUserAndType(driverUserId, 'BANK_ACCOUNT');
-        if (bankDoc && ['auto_verified', 'approved'].includes(bankDoc.status)) {
-            const extracted = JSON.parse(bankDoc.extracted_data || '{}');
-            if (extracted.upi_id) {
-                finalUpiId = extracted.upi_id;
-            }
-        }
-        if (!finalUpiId) {
-            const err = new Error('UPI ID required. Please provide UPI ID or verify bank account for fallback.');
-            err.statusCode = 400; throw err;
-        }
+    if (!bankAccountNumber || !ifscCode || !holderName || !driverPhone) {
+        const err = new Error('Bank account, IFSC, holder name & phone are required (from KYC + profile)');
+        err.statusCode = 400; throw err;
     }
 
-    // If bank details not provided, fetch from verified KYC BANK_ACCOUNT
-    if (payoutMethod === 'bank' && (!bankAccountNumber || !ifscCode)) {
-        const bankDoc = await kycRepo.getDocByUserAndType(driverUserId, 'BANK_ACCOUNT');
-        if (!bankDoc || !['auto_verified', 'approved'].includes(bankDoc.status)) {
-            const err = new Error('No verified bank account found. Please verify your bank account in KYC first.');
-            err.statusCode = 400; throw err;
-        }
-        const extracted = JSON.parse(bankDoc.extracted_data || '{}');
-        finalBankAccountNumber = extracted.account_number;
-        finalIfscCode = extracted.ifsc;
-    }
-
+    // ─── Double-payout guard ────────────────────────────────────────────────
     const existing = await findPendingPayoutByDriver(driverUserId);
     if (existing) {
         const err = new Error('You already have a pending withdrawal. Please wait for it to complete.');
         err.statusCode = 409; throw err;
     }
 
+    // ─── Wallet balance check ───────────────────────────────────────────────
     const wallet = await findWalletByUserId(driverUserId);
     if (!wallet || parseFloat(wallet.balance) < amount) {
         const err = new Error(`Insufficient balance. Available: ₹${wallet?.balance || 0}`);
         err.statusCode = 400; throw err;
     }
 
+    // ─── Debit + create payout_request atomically ───────────────────────────
     const client = await pool.connect();
+    let payoutRecord;
     try {
         await client.query('BEGIN');
+
         await debitWallet(client, driverUserId, amount);
 
-        // ── Transaction table entry (user-facing withdrawal) ────────────────────
+        // Audit transaction entry (non-fatal if it fails)
         try {
             await client.query(
                 `INSERT INTO transactions (
@@ -674,82 +666,123 @@ export const initiateDriverPayout = async (driverUserId, { amount, payoutMethod,
                     amount,
                     'debit',
                     'withdrawal',
-                    payoutMethod,
+                    'bank',
                     'pending',
-                    `Withdrawal request via ${payoutMethod}`
+                    'Withdrawal request via bank transfer',
                 ]
             );
         } catch (txnErr) {
-            logger.warn(`[Payment] Withdrawal transaction entry failed (non-fatal): ${txnErr.message}`);
+            logger.warn(`[Payout] transactions insert failed (non-fatal): ${txnErr.message}`);
         }
 
-        const payoutRecord = await createPayoutRequest({
+        payoutRecord = await createPayoutRequest(client, {
             driverUserId,
             amount,
-            bankAccountNumber: finalBankAccountNumber,
-            ifscCode: finalIfscCode,
-            upiId: finalUpiId,
-            payoutMethod
+            bankAccountNumber,
+            ifscCode,
         });
+
         await client.query('COMMIT');
-
-        // Fire & forget — Cashfree payout async
-        _processCashfreePayout(payoutRecord, {
-            driverUserId,
-            amount,
-            payoutMethod,
-            upiId: finalUpiId,
-            bankAccountNumber: finalBankAccountNumber,
-            ifscCode: finalIfscCode
-        }).catch(() => {});
-
-        logger.info(`[Payment] Payout ₹${amount} initiated | Driver: ${driverUserId} | Method: ${payoutMethod}`);
-        return { message: `Withdrawal of ₹${amount} initiated. Will be credited within 24 hours.`, payoutId: payoutRecord.id, amount };
     } catch (err) {
         await client.query('ROLLBACK');
         throw err;
     } finally {
         client.release();
     }
+
+    // ─── Fire-and-forget Cashfree call ──────────────────────────────────────
+    _processCashfreePayout(payoutRecord, {
+        driverUserId,
+        amount,
+        bankAccountNumber,
+        ifscCode,
+        holderName,
+        driverPhone,
+    }).catch(() => { /* errors handled inside */ });
+
+    logger.info(`[Payout] ₹${amount} initiated | Driver: ${driverUserId} | ID: ${payoutRecord.id}`);
+
+    return {
+        message:   `Withdrawal of ₹${amount} initiated. Will be credited within 24 hours.`,
+        payoutId:  payoutRecord.id,
+        amount,
+    };
 };
 
-const _processCashfreePayout = async (payoutRecord, data) => {
-    try {
-        const payoutPayload = {
-            amount: data.amount,
-            payoutMethod: data.payoutMethod,
-            referenceId: `PAYOUT-${payoutRecord.id}-${Date.now()}`,
-        };
+// ─── Internal: Async Cashfree processing ──────────────────────────────────────
 
-        if (data.payoutMethod === 'upi') {
-            payoutPayload.upiId = data.upiId;
-        } else if (data.payoutMethod === 'bank') {
-            payoutPayload.bankAccount = {
-                account_number: data.bankAccountNumber,
-                ifsc: data.ifscCode,
-                name: 'Driver'
-            };
+const _processCashfreePayout = async (payoutRecord, data) => {
+    const transferId = `PAYOUT_${payoutRecord.id}_${Date.now()}`;
+
+    try {
+        // ── Step 1: Get or create beneficiary for THIS bank account ─────────
+        let beneficiaryId;
+        const existingBene = await findBeneficiaryByBank(
+            data.driverUserId,
+            data.bankAccountNumber,
+            data.ifscCode
+        );
+
+        if (existingBene) {
+            beneficiaryId = existingBene.beneficiary_id;
+            logger.info(`[Payout] Reusing beneficiary ${beneficiaryId} | Driver: ${data.driverUserId}`);
+        } else {
+            const bene = await addPayoutBeneficiary({
+                driverUserId:  data.driverUserId,
+                holderName:    data.holderName,
+                phone:         data.driverPhone,
+                accountNumber: data.bankAccountNumber,
+                ifsc:          data.ifscCode,
+            });
+            beneficiaryId = bene.beneficiaryId;
+
+            await insertBeneficiary({
+                driverUserId:    data.driverUserId,
+                beneficiaryId,
+                beneficiaryName: data.holderName,
+                accountNumber:   data.bankAccountNumber,
+                ifsc:            data.ifscCode,
+            });
+
+            logger.info(`[Payout] New beneficiary ${beneficiaryId} | Driver: ${data.driverUserId}`);
         }
 
-        const payout = await createPayout(payoutPayload);
-        await updatePayoutRequest(payoutRecord.id, {
-            status: payout.status === 'processed' ? 'success' : 'processing',
-            razorpayPayoutId: payout.id,
-            completedAt: payout.status === 'processed' ? new Date() : null,
+        // ── Step 2: Initiate transfer ───────────────────────────────────────
+        const payout = await createPayout({
+            amount:     data.amount,
+            beneficiaryId,
+            transferId,
         });
+
+        await updatePayoutRequest(payoutRecord.id, {
+            status:        'processing',
+            transferId,
+            cfTransferId:  payout.cfTransferId,
+            beneficiaryId,
+        });
+
+        logger.info(`[Payout] Transfer initiated | Driver: ${data.driverUserId} | TxnID: ${transferId} | CF: ${payout.cfTransferId}`);
+
     } catch (err) {
-        logger.error(`[Payment] Cashfree payout failed for ${payoutRecord.id}:`, err.message);
-        await updatePayoutRequest(payoutRecord.id, { status: 'failed', failureReason: err.message });
-        // Refund wallet
+        const reason = err.response?.data?.message || err.message || 'Cashfree payout failed';
+        logger.error(`[Payout] FAILED for payout ${payoutRecord.id}: ${reason}`);
+
+        await updatePayoutRequest(payoutRecord.id, {
+            status:        'failed',
+            failureReason: reason,
+            completedAt:   new Date(),
+        });
+
+        // Refund wallet — wallet pehle debit ho chuka tha
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
             await creditWallet(client, data.driverUserId, data.amount);
             await client.query('COMMIT');
-            logger.info(`[Payment] Payout failed — wallet refunded ₹${data.amount} driver ${data.driverUserId}`);
+            logger.info(`[Payout] Wallet refunded ₹${data.amount} | Driver: ${data.driverUserId}`);
         } catch (e) {
             await client.query('ROLLBACK');
-            logger.error(`[Payment] CRITICAL: payout failed AND refund failed driver ${data.driverUserId}`);
+            logger.error(`[Payout] CRITICAL: refund failed | Driver: ${data.driverUserId} | ${e.message}`);
         } finally {
             client.release();
         }

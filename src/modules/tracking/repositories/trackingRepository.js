@@ -1,4 +1,4 @@
-import db from '../../../config/database.js';
+import { pool as db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 import crypto from 'crypto';
 

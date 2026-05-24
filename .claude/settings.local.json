@@ -35,7 +35,12 @@
       "Bash(node --check src/modules/users/controllers/recentPlacesController.js)",
       "Bash(node --check src/modules/users/repositories/recentPlaces.repository.js)",
       "Bash(Get-ChildItem -Path . -Directory)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Bash(node --check src/modules/payments/services/paymentService.js)",
+      "Bash(node --check src/modules/payments/controllers/paymentController.js)",
+      "Bash(node --check src/modules/payments/controllers/payoutWebhookController.js)",
+      "Bash(node --check src/modules/payments/repositories/payment.Repository.js)",
+      "Bash(node --check src/modules/kyc/services/cashfreeService.js)"
     ]
   }
 }

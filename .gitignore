@@ -113,4 +113,4 @@ cypress/screenshots/
 # Docker
 *.docker-compose.override.yml
 .docker/data/
-.docker/volumes/
+.docker/volumes/scripts/seed-test-driver.js

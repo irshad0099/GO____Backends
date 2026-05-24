@@ -23,20 +23,33 @@ export const handlePayoutWebhook = async (req, res) => {
     const ack = () => res.status(200).json({ success: true });
 
     try {
-        // ─── 1. Signature verification ──────────────────────────────────────
-        // app.js me express.json({verify}) raw body ko req.rawBody (Buffer) me save karta hai
         const signature = req.headers['x-webhook-signature'];
         const timestamp = req.headers['x-webhook-timestamp'];
         const rawBody   = req.rawBody
             ? req.rawBody.toString('utf8')
             : JSON.stringify(req.body);
 
+        // ─── 1. Cashfree dashboard "Test Webhook" ko allow karo ─────────────
+        // Test webhooks me proper signature nahi hota — sirf endpoint reachability check karta hai
+        // Real webhooks pe signature strict verify hoti hai
+        const isTestPing =
+            !signature ||                                  // signature header nahi hai
+            !rawBody || rawBody.trim() === '' ||           // empty body
+            (req.body?.type && /test/i.test(req.body.type)) ||  // type: TEST
+            req.body?.test === true;                       // test: true flag
+
+        if (isTestPing) {
+            logger.info('[PayoutWebhook] Test ping received — ACK 200');
+            return ack();
+        }
+
+        // ─── 2. Signature verification (real webhooks ke liye) ──────────────
         if (!verifyPayoutWebhookSignature({ signature, timestamp, rawBody })) {
             logger.warn('[PayoutWebhook] Invalid signature — rejected');
             return res.status(401).json({ error: 'Invalid signature' });
         }
 
-        // ─── 2. Parse Cashfree payload ──────────────────────────────────────
+        // ─── 3. Parse Cashfree payload ──────────────────────────────────────
         // Cashfree payload structure:
         // { type: "TRANSFER_SUCCESS" | "TRANSFER_FAILED" | "TRANSFER_REVERSED",
         //   data: { transfer: { transfer_id, cf_transfer_id, status, status_code,

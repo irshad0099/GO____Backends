@@ -26,6 +26,9 @@ import supportRoutes      from '../modules/support/routes/supportRoutes.js';
 import kycRoutes          from '../modules/kyc/routes/kycRoutes.js';
 import notificationRoutes from '../modules/notifications/routes/notification.routes.js';
 
+// ─── Tracking Routes ──────────────────────────────────────────────────────────
+import trackingRoutes     from '../modules/tracking/routes/trackingRoutes.js';
+
 const router = express.Router();
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
@@ -45,6 +48,7 @@ router.use('/coupons',       couponRoutes);
 router.use('/support',       supportRoutes);
 router.use('/kyc',           kycRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/tracking',      trackingRoutes);
 
 router.use('/admin',         adminRoutes);
 router.use('/admin/pricing', pricingAdminRoutes);
@@ -103,6 +107,7 @@ router.get('/', (req, res) => {
     sos:           '/sos',
     coupons:       '/coupons',
     support:       '/support',
+    tracking:      '/tracking',
     admin:         '/admin',
     health:        '/health',
     test:          '/test'

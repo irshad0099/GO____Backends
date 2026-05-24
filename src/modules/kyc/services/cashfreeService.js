@@ -139,3 +139,58 @@ export const verifyVehicleRC = async (rcNumber, dob = null) => {
         throw err;
     }
 };
+
+// ─── Payouts (Driver Withdrawal) ──────────────────────────────────────────────
+export const createPayout = async ({ amount, payoutMethod, upiId, bankAccount, referenceId }) => {
+    try {
+        const CF_PAYOUT_BASE = ENV.CASHFREE_ENV === 'production'
+            ? 'https://api.cashfree.com/payouts'
+            : 'https://sandbox.cashfree.com/payouts';
+
+        const payload = {
+            transfer_id: referenceId,
+            amount: amount.toString(),
+            currency: 'INR',
+        };
+
+        if (payoutMethod === 'upi') {
+            payload.transfers = [{
+                transfer_id: referenceId,
+                recipient: {
+                    contact_type: 'VPA',
+                    vpa: upiId
+                },
+                amount: amount.toString()
+            }];
+        } else if (payoutMethod === 'bank') {
+            payload.transfers = [{
+                transfer_id: referenceId,
+                recipient: {
+                    contact_type: 'BANK_ACCOUNT',
+                    bank_account: {
+                        ifsc: bankAccount.ifsc,
+                        account_number: bankAccount.account_number,
+                        name: bankAccount.name || 'Driver'
+                    }
+                },
+                amount: amount.toString()
+            }];
+        }
+
+        const res = await axios.post(
+            `${CF_PAYOUT_BASE}/transfers`,
+            payload,
+            { headers: cfHeaders() }
+        );
+
+        return {
+            id: res.data.transfer_id || referenceId,
+            status: res.data.status === 'SUCCESS' ? 'processed' : 'processing',
+            amount,
+            payoutMethod
+        };
+    } catch (err) {
+        logCfError('createPayout', err);
+        throw err;
+    }
+};

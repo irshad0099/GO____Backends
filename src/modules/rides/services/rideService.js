@@ -27,6 +27,7 @@ import {
     getCachedSurge,        // ++ ADD
     setCachedSurge,        // ++ ADD
 } from '../../../core/services/redisService.js';
+import TrackingService from '../../tracking/services/trackingService.js';
 import {
     emitRideStatusUpdate,
     emitToPassenger,
@@ -359,6 +360,16 @@ export const requestRide = async (userId, rideData) => {
 
         logger.info(`Ride requested: ${rideNumber} for user ${userId}`);
 
+        // Generate tracking link for this ride
+        let trackingLink = null;
+        try {
+            const trackingService = new TrackingService();
+            const trackingData = await trackingService.generateTrackingLink(ride.id);
+            trackingLink = trackingData.trackingLink;
+        } catch (trackingError) {
+            logger.warn('Failed to generate tracking link:', trackingError.message);
+        }
+
         return {
             rideId: ride.id,
             rideNumber: ride.ride_number,
@@ -372,6 +383,7 @@ export const requestRide = async (userId, rideData) => {
             passengerFareBreakdown: goFare.passenger,
             driverEarningBreakdown: goFare.driver,
             pricingSignals: goFare.signals,
+            trackingLink,
             ...(subscriptionResult?.hasSubscription && {
                 subscription: {
                     planName: subscriptionResult.benefits?.planName,

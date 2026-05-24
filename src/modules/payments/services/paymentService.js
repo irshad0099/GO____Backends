@@ -28,7 +28,7 @@ import {
     updatePayoutRequest,
     findPendingPayoutByDriver,
 } from '../repositories/payment.Repository.js';
-import { createPayout } from '../../../core/services/razorpayService.js';
+import { createPayout } from '../../kyc/services/cashfreeService.js';
 import { debitWallet, creditWallet, findWalletByUserId } from '../../wallet/repositories/wallet.repository.js';
 import * as kycRepo from '../../kyc/repositories/kycDocuments.repository.js';
 
@@ -693,8 +693,8 @@ export const initiateDriverPayout = async (driverUserId, { amount, payoutMethod,
         });
         await client.query('COMMIT');
 
-        // Fire & forget — Razorpay payout async
-        _processRazorpayPayout(payoutRecord, {
+        // Fire & forget — Cashfree payout async
+        _processCashfreePayout(payoutRecord, {
             driverUserId,
             amount,
             payoutMethod,
@@ -713,7 +713,7 @@ export const initiateDriverPayout = async (driverUserId, { amount, payoutMethod,
     }
 };
 
-const _processRazorpayPayout = async (payoutRecord, data) => {
+const _processCashfreePayout = async (payoutRecord, data) => {
     try {
         const payoutPayload = {
             amount: data.amount,
@@ -738,7 +738,7 @@ const _processRazorpayPayout = async (payoutRecord, data) => {
             completedAt: payout.status === 'processed' ? new Date() : null,
         });
     } catch (err) {
-        logger.error(`[Payment] Razorpay payout failed for ${payoutRecord.id}:`, err.message);
+        logger.error(`[Payment] Cashfree payout failed for ${payoutRecord.id}:`, err.message);
         await updatePayoutRequest(payoutRecord.id, { status: 'failed', failureReason: err.message });
         // Refund wallet
         const client = await pool.connect();

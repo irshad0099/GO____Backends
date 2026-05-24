@@ -29,6 +29,7 @@ import { addTrackingPoint, getActualDistance, startRideTracking } from './rideTr
 import { pool } from '../../infrastructure/database/postgres.js';
 import { formatRideResponse } from '../../modules/rides/services/rideService.js';
 import { getDriverLocation } from '../../core/services/redisService.js';
+import TrackingService from '../../modules/tracking/services/trackingService.js';
 
 // Debounce map — driver ke last location ka timer track karo
 const idleLocationDbTimers = new Map();
@@ -369,6 +370,26 @@ socket.on('driver:location_update', async (data) => {
             speed:    speed || 0,
             timestamp: new Date().toISOString()
         });
+
+        // ── Tracking: Save location & broadcast to tracking viewers ─────────
+        try {
+            const trackingService = new TrackingService();
+            await trackingService.recordLocation(rideId, latitude, longitude, accuracy);
+
+            // Broadcast to all tracking viewers (public link)
+            const ride = await findRideById(rideId);
+            if (ride?.tracking_token) {
+                io.to(`tracking:${ride.tracking_token}`).emit('tracking:location-updated', {
+                    rideId,
+                    latitude,
+                    longitude,
+                    accuracy: accuracy || null,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        } catch (trackingError) {
+            logger.warn('Tracking save failed:', trackingError.message);
+        }
 
         // ── Ride fetch — Redis cache (30s) se, warna DB ─────────────────
         let ride = null;

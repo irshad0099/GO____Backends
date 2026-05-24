@@ -146,6 +146,22 @@ CREATE TABLE IF NOT EXISTS incentive_plans (
 CREATE INDEX IF NOT EXISTS idx_incentive_plans_active ON public.incentive_plans USING btree (is_active, valid_until) WHERE (is_active = true);
 
 -- ============================================================
+-- Default Incentive Plan Seed
+-- ============================================================
+INSERT INTO incentive_plans (title, description, type, target_value, bonus_amount, vehicle_type, duration_type, valid_until, is_active)
+VALUES (
+    'Daily Ride Bonus',
+    'Complete 20 rides today and earn ₹50 bonus. Platform fee applies for first 10 rides, free after that!',
+    'ride_count',
+    20,
+    50.00,
+    NULL,
+    'daily',
+    '2027-12-31',
+    TRUE
+) ON CONFLICT DO NOTHING;
+
+-- ============================================================
 -- Table: driver_earnings_monthly
 -- ============================================================
 CREATE TABLE IF NOT EXISTS driver_earnings_monthly (

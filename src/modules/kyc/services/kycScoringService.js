@@ -96,10 +96,15 @@ export const decideDocumentStatus = async ({
     const confidenceScore = extractConfidence(cfResp);
     let total = confidenceScore * 0.4;   // 0–40
 
+    // VEHICLE_RC: owner kisi ka bhi ho — driver maa/biwi/bhai ki gadi chala sakta hai
+    // Isliye RC ke liye NAME_MISMATCH aur CROSS_DOC_MISMATCH flag nahi maarte
+    const skipNameChecks = documentType === 'VEHICLE_RC';
+
     // Name match: driver profile vs extracted doc name
     const nameScore = (extractedName && userFullName) ? nameSimilarity(extractedName, userFullName) : 100;
-    total += nameScore * 0.2;            // 0–20
-    if (extractedName && userFullName && nameScore < ENV.CASHFREE_NAME_MATCH_THRESHOLD) {
+    // RC ke liye name match score ignore karo (full 20 score do, mismatch acceptable hai)
+    total += skipNameChecks ? 20 : nameScore * 0.2;
+    if (!skipNameChecks && extractedName && userFullName && nameScore < ENV.CASHFREE_NAME_MATCH_THRESHOLD) {
         flags.push({ type: 'NAME_MISMATCH', severity: 'MEDIUM', details: { extracted: extractedName, profile: userFullName, score: nameScore } });
     }
 
@@ -113,7 +118,7 @@ export const decideDocumentStatus = async ({
         d.document_type === 'AADHAAR' && ['auto_verified', 'approved', 'manual_review'].includes(d.status)
     );
     let crossScore = 100;
-    if (aadhaar && extractedName) {
+    if (!skipNameChecks && aadhaar && extractedName) {
         const aadhaarName = aadhaar.extracted_data?.name || '';
         if (aadhaarName) {
             crossScore = nameSimilarity(extractedName, aadhaarName);
@@ -122,7 +127,7 @@ export const decideDocumentStatus = async ({
             }
         }
     }
-    total += crossScore * 0.2;          // 0–20
+    total += crossScore * 0.2;          // 0–20 (RC: skip path → full 20)
 
     const finalScore = Math.round(total);
     const AUTO_T   = ENV.KYC_AUTO_THRESHOLD   || 85;

@@ -228,7 +228,7 @@ export const purchaseSubscription = async (userId, {
                 walletId:          wallet.id,
                 amount:            price,
                 type:              'debit',
-                category:          'subscription_purchase',
+                category:          'subscription',
                 paymentMethod:     'wallet',
                 status:            'success',
                 description:       `Subscription: ${plan.name}`,

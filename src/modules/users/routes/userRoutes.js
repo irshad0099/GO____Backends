@@ -74,6 +74,42 @@ router.post('/fcm-token', async (req, res) => {
 
 
 // ═════════════════════════════════════════════════════════════════════════════
+//  LANGUAGE PREFERENCE — App UI language
+// ═════════════════════════════════════════════════════════════════════════════
+
+// POST /api/v1/users/language
+// Frontend jo bhi language code bhejega (e.g. "en", "hi", "mr") save ho jayega
+router.post('/language', async (req, res) => {
+    try {
+        const { language } = req.body;
+
+        if (!language || typeof language !== 'string' || !language.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: 'language is required'
+            });
+        }
+
+        const result = await db.query(
+            'UPDATE users SET language = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING language',
+            [language.trim(), req.user.id]
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: 'Language preference saved successfully',
+            data: { language: result.rows[0]?.language }
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+
+// ═════════════════════════════════════════════════════════════════════════════
 //  SAVED ADDRESSES (Home / Work / Favorites)
 // ═════════════════════════════════════════════════════════════════════════════
 

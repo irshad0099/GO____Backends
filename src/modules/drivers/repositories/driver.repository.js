@@ -230,7 +230,13 @@ export const getDriverEarnings = async (driverId, startDate, endDate) => {
         const { rows } = await db.query(
             `SELECT
                 COUNT(DISTINCT CASE WHEN dl.type = 'ride_earning' THEN dl.ride_id END) FILTER (WHERE dl.status IN ('completed','released')) AS total_rides,
-                COALESCE(SUM(dmd.total_online_hours), 0) AS total_time_online,
+                (
+                    SELECT COALESCE(SUM(total_online_hours), 0)
+                    FROM driver_metrics_daily
+                    WHERE driver_id = $1
+                      AND date >= DATE($2)
+                      AND date <= DATE($3)
+                ) AS total_time_online,
                 COALESCE(SUM(dl.amount) FILTER (WHERE dl.type IN ('ride_earning', 'tip', 'incentive', 'referral') AND dl.status IN ('completed','released')), 0) AS total_earnings,
                 COUNT(DISTINCT dl.ride_id) FILTER (WHERE dl.type = 'ride_earning' AND dl.status IN ('completed','released')) AS rides_completed,
                 COALESCE(SUM(dl.amount) FILTER (WHERE dl.type = 'ride_earning' AND dl.status IN ('completed','released')), 0) AS ride_earnings,
@@ -247,8 +253,6 @@ export const getDriverEarnings = async (driverId, startDate, endDate) => {
                     ) ORDER BY dl.created_at DESC
                 ) FILTER (WHERE dl.status IN ('completed','released')) AS breakdown
              FROM driver_ledger dl
-             LEFT JOIN driver_metrics_daily dmd ON dl.driver_id = dmd.driver_id
-               AND dmd.date >= DATE($2) AND dmd.date <= DATE($3)
              WHERE dl.driver_id = $1
                AND dl.created_at >= $2
                AND dl.created_at <= $3

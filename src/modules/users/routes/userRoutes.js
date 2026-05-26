@@ -59,10 +59,10 @@ router.post('/fcm-token', async (req, res) => {
             [fcm_token, req.user.id]
         );
  
-        return res.status(200).json({
-            success: true,
-            message: 'FCM token saved successfully'
-        });
+            return res.status(200).json({
+                success: true,
+                message: 'FCM token saved successfully'
+            });
     } catch (error) {
         return res.status(500).json({
             success: false,

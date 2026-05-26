@@ -151,7 +151,7 @@ export const updateSubscriptionStatus = async (subscriptionId, status, extra = {
         const result = await db.query(
             `UPDATE user_subscriptions
              SET status       = $1,
-                 cancelled_at = CASE WHEN $1 = 'cancelled' THEN CURRENT_TIMESTAMP ELSE cancelled_at END,
+                 cancelled_at = CASE WHEN $1::text = 'cancelled' THEN CURRENT_TIMESTAMP ELSE cancelled_at END,
                  cancel_reason = $3,
                  updated_at   = CURRENT_TIMESTAMP
              WHERE id = $2

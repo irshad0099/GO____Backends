@@ -722,6 +722,11 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             additionalFields.cancellation_reason = cancellationReason || 'Driver cancelled';
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
 
+            // Driver cancelled → never burn the passenger's free ride.
+            if (ride.is_free_ride) {
+                await subscriptionService.refundFreeRideOnCancel(ride.passenger_id);
+            }
+
             // Driver ne cancel kiya — ab free hai, pending rides push karo
             if (driver.current_latitude && driver.current_longitude && driver.vehicle_type) {
                 pushPendingRidesToDriver(driverUserId, driver.vehicle_type, driver.current_latitude, driver.current_longitude).catch(() => {});

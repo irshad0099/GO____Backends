@@ -6,7 +6,6 @@ import {
     purchaseSubscription,
     verifyAndActivateSubscription,
     cancelSubscription,
-    toggleAutoRenew,
     applyRideBenefits,
     fetchSubscriptionHistory,
     fetchSubscriptionPayments,
@@ -88,18 +87,6 @@ export const verify = async (req, res) => {
 export const cancel = async (req, res) => {
     try {
         const result = await cancelSubscription(req.user.id, req.body);
-        return sendResponse(res, 200, result.message || '', result.data ?? result);
-    } catch (error) {
-        logger.error(`[SubscriptionController] ${error.message}`);
-        return sendError(res, error.statusCode || 500, error.message || 'Internal server error');
-    }
-};
-
-// PATCH /api/v1/subscriptions/auto-renew
-// Enable or disable auto-renewal
-export const autoRenew = async (req, res) => {
-    try {
-        const result = await toggleAutoRenew(req.user.id, req.body);
         return sendResponse(res, 200, result.message || '', result.data ?? result);
     } catch (error) {
         logger.error(`[SubscriptionController] ${error.message}`);

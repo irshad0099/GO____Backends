@@ -8,14 +8,18 @@ import {
     getPlanById,
     getPlanBySlug,
     getActiveSubscription,
+    getActiveSubscriptionForUpdate,
     getSubscriptionById,
     getSubscriptionHistory,
     getSubscriptionHistoryCount,
     createSubscription,
-    updateSubscriptionStatus,
     updateAutoRenew,
     useFreeRide,
+    refundFreeRide,
     resetFreeRides,
+    getWalletAutoRenewCandidates,
+    extendSubscription,
+    disableAutoRenew,
     createSubscriptionPayment,
     updatePaymentStatus,
     getPaymentsBySubscriptionId,
@@ -184,7 +188,6 @@ export const purchaseSubscription = async (userId, {
     payment_method,
     payment_gateway,
     auto_renew,
-    customer_details,
 }) => {
     // Check plan exists
     const plan = await getPlanById(plan_id);
@@ -241,9 +244,11 @@ export const purchaseSubscription = async (userId, {
             const freeRidesResetAt = new Date();
             freeRidesResetAt.setDate(freeRidesResetAt.getDate() + 30);
 
+            // Wallet is the only payment method we can auto-charge against,
+            // so wallet subs default to auto-renew on (user can still opt out).
             const subscription = await createSubscription(client, {
                 userId, planId: plan.id, status: 'active',
-                startedAt, expiresAt, autoRenew: auto_renew ?? false,
+                startedAt, expiresAt, autoRenew: auto_renew ?? true,
                 paymentMethod: 'wallet', freeRidesResetAt,
             });
 
@@ -349,9 +354,12 @@ export const verifyAndActivateSubscription = async (userId, {
         const freeRidesResetAt = new Date();
         freeRidesResetAt.setDate(freeRidesResetAt.getDate() + 30);
 
+        // Razorpay one-shot payments don't give us a recurring mandate — we
+        // have no way to auto-charge later, so force auto_renew = false here
+        // regardless of what the client passed.
         const subscription = await createSubscription(client, {
             userId, planId: plan.id, status: 'active',
-            startedAt, expiresAt, autoRenew: auto_renew ?? false,
+            startedAt, expiresAt, autoRenew: false,
             paymentMethod: payment_method, freeRidesResetAt,
         });
 
@@ -390,6 +398,9 @@ export const verifyAndActivateSubscription = async (userId, {
 //  5. Cancel subscription
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Cancel = stop the next auto-renew. The subscription itself keeps running
+// until its expires_at; the daily expiry cron will mark it 'expired' after.
+// This is now the only way to opt out of auto-renew (toggle endpoint is gone).
 export const cancelSubscription = async (userId, { subscription_id, reason }) => {
     const sub = await getSubscriptionById(subscription_id, userId);
 
@@ -404,65 +415,32 @@ export const cancelSubscription = async (userId, { subscription_id, reason }) =>
         throw err;
     }
 
-    // Cancel Razorpay subscription if exists
-    if (sub.razorpay_subscription_id) {
+    // If a Razorpay recurring mandate exists, tell Razorpay to stop charging.
+    // Local sub stays active till expires_at — benefits continue till then.
+    if (sub?.razorpay_subscription_id) {
         try {
             await cancelRazorpaySubscription(sub.razorpay_subscription_id, false);
-            logger.info(`[Subscription] Razorpay subscription cancelled | Sub: ${sub.razorpay_subscription_id}`);
+            logger.info(`[Subscription] Razorpay mandate cancelled | Sub: ${sub.razorpay_subscription_id}`);
         } catch (error) {
-            logger.error(`[Subscription] Failed to cancel Razorpay subscription:`, error);
-            // Don't fail whole operation if Razorpay cancellation fails
+            logger.error(`[Subscription] Failed to cancel Razorpay mandate:`, error);
+            // Don't fail the whole operation if Razorpay cancellation fails
         }
     }
 
-    const updated = await updateSubscriptionStatus(subscription_id, 'cancelled', {
-        cancelReason: reason || 'Cancelled by user',
-    });
-
-    // Invalidate cache after cancellation
+    await updateAutoRenew(subscription_id, userId, false);
     await invalidateSubscriptionCache(userId);
 
-    logger.info(`[Subscription] Cancelled | User: ${userId} | Sub: ${subscription_id}`);
+    logger.info(`[Subscription] Auto-renew cancelled (sub stays active till expiry) | User: ${userId} | Sub: ${subscription_id} | Reason: ${reason || 'n/a'}`);
 
     return {
         success: true,
-        message: 'Subscription cancelled. Benefits valid till expiry date.',
+        message: 'Auto-renew stopped. Subscription benefits continue till expiry.',
         data: {
-            subscriptionId: updated.id,
-            status:         updated.status,
-            cancelledAt:    updated.cancelled_at,
-            expiresAt:      updated.expires_at,   // still usable till expires_at
+            subscriptionId: sub.id,
+            status:         sub.status,        // still 'active'
+            autoRenew:      false,
+            expiresAt:      sub.expires_at,
         },
-    };
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  6. Toggle auto-renew
-// ─────────────────────────────────────────────────────────────────────────────
-
-export const toggleAutoRenew = async (userId, { subscription_id, auto_renew }) => {
-    const sub = await getSubscriptionById(subscription_id, userId);
-
-    if (!sub) {
-        const err = new Error('Subscription not found');
-        err.statusCode = 404;
-        throw err;
-    }
-    if (sub.status !== 'active') {
-        const err = new Error('Cannot update auto-renew on an inactive subscription');
-        err.statusCode = 400;
-        throw err;
-    }
-
-    const updated = await updateAutoRenew(subscription_id, userId, auto_renew);
-
-    // Invalidate cache after toggling auto-renew
-    await invalidateSubscriptionCache(userId);
-
-    return {
-        success: true,
-        message: `Auto-renew ${auto_renew ? 'enabled' : 'disabled'} successfully`,
-        data: { subscriptionId: updated.id, autoRenew: updated.auto_renew },
     };
 };
 
@@ -476,7 +454,9 @@ export const applyRideBenefits = async (userId, rideAmount) => {
     try {
         await client.query('BEGIN');
 
-        const sub = await getActiveSubscription(userId);
+        // Lock the active subscription row inside the same tx so two concurrent
+        // ride requests cannot both see freeRidesLeft=1 and double-consume.
+        const sub = await getActiveSubscriptionForUpdate(client, userId);
 
         // No active subscription — return original amount
         if (!sub) {
@@ -513,6 +493,13 @@ export const applyRideBenefits = async (userId, rideAmount) => {
 
         await client.query('COMMIT');
 
+        // Free ride consumption changes free_rides_used — drop the 10-min cache
+        // so subsequent reads don't show stale counters and let the user
+        // over-consume.
+        if (isFreeRide) {
+            await invalidateSubscriptionCache(userId);
+        }
+
         logger.info(
             `[Subscription] Ride benefit applied | User: ${userId} | Free: ${isFreeRide} | Discount: ₹${discountAmount}`
         );
@@ -538,6 +525,115 @@ export const applyRideBenefits = async (userId, rideAmount) => {
         throw error;
     } finally {
         client.release();
+    }
+};
+
+// Renew a single wallet-paid subscription. Called by the daily auto-renew
+// cron for each candidate row. If the wallet doesn't have enough balance we
+// disable auto-renew (so we don't retry every day) and let the subscription
+// expire naturally — caller (cron) just logs and moves on.
+export const renewSubscriptionFromWallet = async (sub) => {
+    const client = await db.getClient();
+    try {
+        await client.query('BEGIN');
+
+        const price  = parseFloat(sub.price);
+        const wallet = await findWalletByUserId(sub.user_id);
+
+        if (!wallet || parseFloat(wallet.balance) < price) {
+            await client.query('COMMIT');
+            await disableAutoRenew(sub.id);
+            await invalidateSubscriptionCache(sub.user_id);
+            logger.warn(`[Subscription] Auto-renew aborted (insufficient balance) | User: ${sub.user_id} | Sub: ${sub.id}`);
+            return { renewed: false, reason: 'insufficient_balance' };
+        }
+
+        await debitWallet(client, sub.user_id, price);
+
+        await createTransaction(client, {
+            transactionNumber: generateTxnNumber(),
+            userId:            sub.user_id,
+            walletId:          wallet.id,
+            amount:            price,
+            type:              'debit',
+            category:          'subscription',
+            paymentMethod:     'wallet',
+            status:            'success',
+            description:       `Auto-renew: ${sub.plan_name}`,
+            metadata:          { plan_id: sub.plan_id, plan_slug: sub.slug, subscription_id: sub.id, auto_renew: true },
+        });
+
+        // Push expiry forward from the *current* expires_at so renewing a
+        // sub that's a few hours early doesn't shorten the user's total.
+        const newExpiresAt = new Date(sub.expires_at);
+        newExpiresAt.setDate(newExpiresAt.getDate() + sub.duration_days);
+        const newFreeRidesResetAt = new Date();
+        newFreeRidesResetAt.setDate(newFreeRidesResetAt.getDate() + 30);
+
+        await extendSubscription(client, sub.id, newExpiresAt, newFreeRidesResetAt);
+
+        await createSubscriptionPayment(client, {
+            userId:               sub.user_id,
+            subscriptionId:       sub.id,
+            planId:               sub.plan_id,
+            amount:               price,
+            paymentMethod:        'wallet',
+            paymentGateway:       null,
+            gatewayTransactionId: null,
+            status:               'success',
+            description:          `Auto-renew: ${sub.plan_name}`,
+            metadata:             { plan_slug: sub.slug, auto_renew: true },
+        });
+
+        await client.query('COMMIT');
+        await invalidateSubscriptionCache(sub.user_id);
+
+        logger.info(`[Subscription] Auto-renewed | User: ${sub.user_id} | Sub: ${sub.id} | NewExpires: ${newExpiresAt.toISOString()}`);
+        return { renewed: true, newExpiresAt };
+    } catch (err) {
+        await client.query('ROLLBACK');
+        logger.error(`[Subscription] renewSubscriptionFromWallet error | Sub: ${sub.id}:`, err.message);
+        throw err;
+    } finally {
+        client.release();
+    }
+};
+
+// Wallet auto-renew cron driver — fetches candidates and processes each
+// independently so one failure doesn't poison the rest of the batch.
+export const runWalletAutoRenewBatch = async () => {
+    const candidates = await getWalletAutoRenewCandidates();
+    if (!candidates.length) return { processed: 0, renewed: 0, failed: 0 };
+
+    let renewed = 0;
+    let failed  = 0;
+    for (const sub of candidates) {
+        try {
+            const r = await renewSubscriptionFromWallet(sub);
+            if (r.renewed) renewed++; else failed++;
+        } catch (err) {
+            failed++;
+            logger.error(`[Subscription] Auto-renew failed | Sub: ${sub.id}:`, err.message);
+        }
+    }
+    return { processed: candidates.length, renewed, failed };
+};
+
+// Refund a free ride back to the user's active subscription when a free ride
+// gets cancelled / expires. Safe to call without checking is_free_ride first —
+// returns null if there's no active sub or nothing to refund. Best-effort:
+// never throws into the caller's flow (cancellation must succeed).
+export const refundFreeRideOnCancel = async (userId) => {
+    try {
+        const refunded = await refundFreeRide(userId);
+        if (refunded) {
+            await invalidateSubscriptionCache(userId);
+            logger.info(`[Subscription] Free ride refunded | User: ${userId} | Sub: ${refunded.id} | UsedNow: ${refunded.free_rides_used}`);
+        }
+        return refunded;
+    } catch (err) {
+        logger.error(`[Subscription] refundFreeRideOnCancel failed | User: ${userId}:`, err.message);
+        return null;
     }
 };
 

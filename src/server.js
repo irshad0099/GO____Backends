@@ -5,7 +5,7 @@ import redis from './config/redis.config.js';
 import { initializeSocketIO } from './config/websocketConfig.js';
 import { setupSocketHandlers } from './infrastructure/websocket/socket.server.js';
 import { startWorkers } from './infrastructure/queue/startWorkers.js';
-import { startScheduledRideCron, startApiLogCleanupCron } from './infrastructure/jobs/scheduledRideCron.js';
+import { startScheduledRideCron, startApiLogCleanupCron, startFreeRidesResetCron, startSubscriptionExpiryCron, startWalletAutoRenewCron } from './infrastructure/jobs/scheduledRideCron.js';
 import { initEngagementNotificationCrons } from './infrastructure/jobs/engagementNotificationCron.js';
 import { initPricingConfig } from './modules/pricing/services/pricingConfigLoader.js';
 import './core/services/firebaseService.js';
@@ -100,6 +100,9 @@ const startServer = async () => {
         // Cron jobs start karo
         startScheduledRideCron();
         startApiLogCleanupCron();
+        startFreeRidesResetCron();
+        startWalletAutoRenewCron();
+        startSubscriptionExpiryCron();
         initEngagementNotificationCrons();
         console.log('✅ Engagement notification crons initialized');
 

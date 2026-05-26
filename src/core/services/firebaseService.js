@@ -22,6 +22,15 @@ if (!admin.apps.length && ENV.FIREBASE_PROJECT_ID && ENV.FIREBASE_PRIVATE_KEY &&
     logger.warn('⚠️ Firebase credentials not found in environment variables - FCM notifications disabled');
 }
 
+// Firebase requires ALL data values to be strings
+const stringifyData = (data = {}) => {
+    const result = {};
+    for (const [key, val] of Object.entries(data)) {
+        result[key] = val === null || val === undefined ? '' : String(val);
+    }
+    return result;
+};
+
 export const sendNotification = async (fcmToken, title, body, data = {}) => {
     try {
         if (!fcmToken) return;
@@ -29,16 +38,21 @@ export const sendNotification = async (fcmToken, title, body, data = {}) => {
             logger.warn('FCM not available - Firebase not initialized');
             return;
         }
-        await admin.messaging().send({
+        const message = {
             token:        fcmToken,
-            notification: { title, body },
-            data,
-            android: { priority: 'high' },
-            apns:    { payload: { aps: { sound: 'default' } } },
-        });
-        logger.info(`✅ FCM sent: ${title}`);
+            notification: { title: String(title), body: String(body) },
+            data:         stringifyData(data),
+            android: {
+                priority: 'high',
+                notification: { sound: 'default' },
+            },
+            apns: {
+                payload: { aps: { sound: 'default', contentAvailable: true } },
+            },
+        };
+        const response = await admin.messaging().send(message);
+        logger.info(`✅ FCM sent: ${title} | messageId: ${response}`);
     } catch (error) {
-        console.log(error)
-        logger.error('❌ FCM error:', error.message);
+        logger.error(`❌ FCM error: ${error.message} | title: ${title} | token: ${fcmToken?.slice(-10)}`);
     }
 };

@@ -311,26 +311,37 @@ export const updateDailyMetrics = async (driverId, isOnline) => {
         const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
 
         if (isOnline) {
-            // Driver online ho raha hai — online_from set karo
+            // Driver online ho raha hai — naya session start karo.
+            // Agar pehle se online_from set hai (already online / idempotent call) toh chhedo mat;
+            // warna NOW() pe naya session start karo aur stale online_until clear kar do.
             const { rows } = await db.query(
-                `INSERT INTO driver_metrics_daily (driver_id, date, online_from, updated_at)
-                 VALUES ($1, $2, NOW(), NOW())
+                `INSERT INTO driver_metrics_daily (driver_id, date, online_from, online_until, updated_at)
+                 VALUES ($1, $2, NOW(), NULL, NOW())
                  ON CONFLICT (driver_id, date) DO UPDATE SET
-                    online_from = COALESCE(driver_metrics_daily.online_from, NOW()),
+                    online_from = CASE
+                        WHEN driver_metrics_daily.online_from IS NULL THEN NOW()
+                        ELSE driver_metrics_daily.online_from
+                    END,
+                    online_until = CASE
+                        WHEN driver_metrics_daily.online_from IS NULL THEN NULL
+                        ELSE driver_metrics_daily.online_until
+                    END,
                     updated_at = NOW()
                  RETURNING *`,
                 [driverId, today]
             );
             return rows[0];
         } else {
-            // Driver offline ho raha hai — online_until set karo aur total_online_hours calculate karo
+            // Driver offline ho raha hai — current session duration ko total_online_hours me ADD karo,
+            // online_from ko NULL kar do (session band), online_until = NOW() set karo.
+            // Agar online_from NULL hai (already offline / duplicate call) toh kuch mat karo.
             const { rows } = await db.query(
                 `UPDATE driver_metrics_daily
-                 SET online_until = NOW(),
-                     total_online_hours = COALESCE(
-                        EXTRACT(EPOCH FROM (NOW() - online_from)) / 3600, 0
-                     ),
-                     updated_at = NOW()
+                 SET online_until       = NOW(),
+                     total_online_hours = COALESCE(total_online_hours, 0)
+                                          + EXTRACT(EPOCH FROM (NOW() - online_from)) / 3600,
+                     online_from        = NULL,
+                     updated_at         = NOW()
                  WHERE driver_id = $1 AND date = $2 AND online_from IS NOT NULL
                  RETURNING *`,
                 [driverId, today]

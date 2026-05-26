@@ -7882,3 +7882,7 @@ Error: Connection terminated due to connection timeout
 2026-05-25 20:40:47 [INFO]: PostgreSQL disconnected
 2026-05-25 21:00:52 [INFO]: ✅ PostgreSQL connected successfully
 2026-05-25 21:01:03 [INFO]: PostgreSQL disconnected
+2026-05-25 21:30:05 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-25 21:30:10 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-25 21:30:11 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-25 21:30:11 [INFO]: ✅ Redis Cloud ready

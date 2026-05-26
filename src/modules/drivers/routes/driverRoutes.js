@@ -141,10 +141,7 @@ router.post('/fcm-token', async (req, res) => {
 // ═════════════════════════════════════════════════════════════════════════════
 
 // ─── Incentives (targets & bonuses) ──────────────────────────────────────────
-// GET /api/v1/drivers/incentives — active incentive plans + progress
-router.get('/incentives', authorize('driver'), incentiveCtrl.getActiveIncentives);
-
-// GET /api/v1/drivers/incentives/progress — detailed progress on all plans
+// GET /api/v1/drivers/incentives/progress — current incentive + driver's progress
 router.get('/incentives/progress', authorize('driver'), incentiveCtrl.getIncentiveProgress);
 
 

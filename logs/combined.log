@@ -7886,3 +7886,28 @@ Error: Connection terminated due to connection timeout
 2026-05-25 21:30:10 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
 2026-05-25 21:30:11 [INFO]: ✅ Redis Cloud connected successfully
 2026-05-25 21:30:11 [INFO]: ✅ Redis Cloud ready
+2026-05-26 16:45:41 [INFO]: 🔌 Redis: Using redis-14630.c301.ap-south-1-1.ec2.cloud.redislabs.com:14630
+2026-05-26 16:45:41 [INFO]: 🔥 Firebase initialized successfully
+2026-05-26 16:45:41 [INFO]: 🔌 Initializing MSG91 SMS Provider
+2026-05-26 16:45:41 [INFO]: [Email] SendGrid initialized successfully
+2026-05-26 16:45:43 [INFO]: ✅ Redis Cloud connected successfully
+2026-05-26 16:45:43 [INFO]: ✅ Redis Cloud ready
+2026-05-26 16:45:44 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-26 16:45:46 [WARN]: Slow query:
+2026-05-26 16:45:46 [WARN]: Slow query:
+2026-05-26 16:45:46 [WARN]: Slow query:
+2026-05-26 16:45:47 [WARN]: Slow query:
+2026-05-26 16:45:47 [WARN]: Slow query:
+2026-05-26 16:45:47 [INFO]: Pricing config loaded: 6 vehicles, 4 tiers
+2026-05-26 16:45:47 [INFO]: ✅ Redis adapter initialized for Socket.IO
+2026-05-26 16:45:47 [INFO]: ✅ BullMQ workers started: notification, ride-completion, ride-expiry, payment, post-payment
+2026-05-26 16:45:48 [INFO]: [ScheduledRideCron] Started — checking every 2 minutes
+2026-05-26 16:45:48 [INFO]: [ApiLogCleanup] Started — runs daily at 3 AM
+2026-05-26 16:45:48 [INFO]: [FreeRidesCron] Started — runs daily at 2 AM
+2026-05-26 16:45:48 [INFO]: [WalletAutoRenewCron] Started — runs daily at 1:15 AM
+2026-05-26 16:45:48 [INFO]: [SubscriptionExpiryCron] Started — runs daily at 2:30 AM
+2026-05-26 16:45:48 [INFO]: ⏰ Initializing engagement notification cron jobs...
+2026-05-26 16:45:48 [INFO]: ✅ Engagement notification crons initialized successfully
+2026-05-26 20:14:47 [INFO]: ✅ PostgreSQL connected successfully
+2026-05-26 20:14:49 [WARN]: Slow query:
+2026-05-26 20:15:06 [INFO]: PostgreSQL disconnected

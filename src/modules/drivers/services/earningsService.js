@@ -1,4 +1,4 @@
-import * as earningsRepo from '../repositoriess.repository.js';
+import * as earningsRepo from '../repositories/earnings.repository.js';
 import * as driverRepo from '../repositories/driver.repository.js';
 import * as cashRepo from '../repositories/cashCollection.repository.js';
 import { creditWallet } from '../../wallet/repositories/wallet.repository.js';

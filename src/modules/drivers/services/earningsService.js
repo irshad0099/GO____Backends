@@ -24,6 +24,7 @@ export const getWeeklyEarnings = async (userId, { limit = 10, offset = 0 }) => {
             incentiveEarnings:  parseFloat(w.incentive_earnings),
             referralEarnings:   parseFloat(w.referral_earnings),
             cashCollected:      parseFloat(w.cash_collected),
+            platformFeePaid:    parseFloat(w.platform_fee_paid || 0),
             totalDeductions:    parseFloat(w.total_deductions),
             netEarnings:        parseFloat(w.net_earnings),
             totalOnlineHours:   parseInt(w.total_online_hours || 0),
@@ -51,6 +52,7 @@ export const getMonthlyEarnings = async (userId, { limit = 12, offset = 0 }) => 
             incentiveEarnings:  parseFloat(m.incentive_earnings),
             referralEarnings:   parseFloat(m.referral_earnings),
             cashCollected:      parseFloat(m.cash_collected),
+            platformFeePaid:    parseFloat(m.platform_fee_paid || 0),
             totalDeductions:    parseFloat(m.total_deductions),
             netEarnings:        parseFloat(m.net_earnings),
             totalOnlineHours:   parseInt(m.total_online_hours || 0),
@@ -75,6 +77,7 @@ export const getCurrentWeekEarnings = async (userId) => {
             rideEarnings:       parseFloat(w.ride_earnings),
             tipEarnings:        parseFloat(w.tip_earnings),
             incentiveEarnings:  parseFloat(w.incentive_earnings),
+            platformFeePaid:    parseFloat(w.platform_fee_paid || 0),
             totalDeductions:    parseFloat(w.total_deductions),
             netEarnings:        parseFloat(w.net_earnings),
             totalOnlineHours:   parseInt(w.total_online_hours || 0),
@@ -223,6 +226,19 @@ export const creditDriverEarnings = async ({
             payment_method:  paymentMethod,
             note:            collectionMethodActual ? `Collection: ${collectionMethodActual}` : null,
         });
+
+        // Ledger: platform fee (tracking-only — wallet/balance pe asar nahi,
+        // ride_earning already net amount hai). Positive amount = driver ne kitni fee pay ki.
+        if (platformFee > 0) {
+            await earningsRepo.insertLedgerEntry(client, {
+                driver_id:      driver.id,
+                type:           'platform_fee',
+                amount:         platformFee,
+                ride_id:        rideId,
+                payment_method: paymentMethod,
+                note:           `Platform fee for ride #${rideId}`,
+            });
+        }
 
         // ── Transaction table entry (user-facing) ────────────────────────────────
         const transactionNumber = `RIDE-${rideId}-${Date.now()}`;

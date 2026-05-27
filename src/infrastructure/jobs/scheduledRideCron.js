@@ -4,6 +4,7 @@ import { requestRide } from '../../modules/rides/services/rideService.js';
 import { db } from '../../infrastructure/database/postgres.js';
 import logger from '../../core/logger/logger.js';
 import { resetFreeRides } from '../../modules/subscription/repositories/subscriptionRepository.js';
+import { runWalletAutoRenewBatch } from '../../modules/subscription/services/subscriptionService.js';
 
 // Every 2 minutes: rides check karo jinka pickup_time 15 min ke andar hai
 export const startScheduledRideCron = () => {
@@ -78,6 +79,48 @@ export const startFreeRidesResetCron = () => {
     });
 
     logger.info('[FreeRidesCron] Started — runs daily at 2 AM');
+};
+
+// Daily at 1:15 AM: wallet-paid subscriptions jinki expiry 24h ke andar hai
+// unka auto-renew try karo. Insufficient balance ke case mein auto_renew off
+// ho jata hai (renewSubscriptionFromWallet ke andar).
+export const startWalletAutoRenewCron = () => {
+    cron.schedule('15 1 * * *', async () => {
+        try {
+            const summary = await runWalletAutoRenewBatch();
+            if (summary.processed > 0) {
+                logger.info(`[WalletAutoRenewCron] Processed: ${summary.processed} | Renewed: ${summary.renewed} | Failed: ${summary.failed}`);
+            }
+        } catch (err) {
+            logger.error(`[WalletAutoRenewCron] Error: ${err.message}`);
+        }
+    });
+
+    logger.info('[WalletAutoRenewCron] Started — runs daily at 1:15 AM');
+};
+
+// Daily at 2:30 AM: expired subscriptions ko status='expired' mark karo
+export const startSubscriptionExpiryCron = () => {
+    cron.schedule('30 2 * * *', async () => {
+        try {
+            const result = await db.query(
+                `UPDATE user_subscriptions
+                 SET status     = 'expired',
+                     updated_at = CURRENT_TIMESTAMP
+                 WHERE status     = 'active'
+                   AND expires_at <= CURRENT_TIMESTAMP
+                 RETURNING id, user_id`
+            );
+
+            if (result.rowCount > 0) {
+                logger.info(`[SubscriptionExpiryCron] Marked ${result.rowCount} subscription(s) as expired`);
+            }
+        } catch (err) {
+            logger.error(`[SubscriptionExpiryCron] Error: ${err.message}`);
+        }
+    });
+
+    logger.info('[SubscriptionExpiryCron] Started — runs daily at 2:30 AM');
 };
 
 // Daily at 3 AM: api_logs 30 din se purana data delete karo

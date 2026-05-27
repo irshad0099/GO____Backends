@@ -1,6 +1,7 @@
 import { Worker } from 'bullmq';
 import { getRedisConnectionOptions } from '../queue.config.js';
 import { findRideById, expireRide } from '../../../modules/rides/repositories/ride.repository.js';
+import { refundFreeRideOnCancel } from '../../../modules/subscription/services/subscriptionService.js';
 import { emitToPassenger } from '../../websocket/socket.events.js';
 import { sendNotification } from '../../../core/services/firebaseService.js';
 import logger from '../../../core/logger/logger.js';
@@ -28,6 +29,11 @@ const rideExpiryWorker = new Worker('ride-expiry', async (job) => {
         // Race condition: koi aur process ne already accept/cancel kar diya
         logger.info(`[RideExpiryWorker] Already transitioned before expiry | rideId: ${rideId}`);
         return { skipped: true, reason: 'race_condition' };
+    }
+
+    // No driver was ever found — refund the free ride if one was consumed.
+    if (ride.is_free_ride) {
+        await refundFreeRideOnCancel(ride.passenger_id);
     }
 
     // Socket — passenger app ko turant batao

@@ -1,141 +1,108 @@
 import { db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 
-// ─── Active incentive plans fetch (driver app pe dikhane ke liye) ────────────
-export const findActiveIncentives = async (vehicleType) => {
-    try {
-        let query = `
-            SELECT * FROM incentive_plans
-            WHERE is_active = TRUE
-              AND valid_until > NOW()
-              AND valid_from <= NOW()
-        `;
-        const params = [];
-        let idx = 1;
-
-        if (vehicleType) {
-            query += ` AND (vehicle_type = $${idx++} OR vehicle_type IS NULL)`;
-            params.push(vehicleType);
-        }
-
-        query += ` ORDER BY bonus_amount DESC`;
-
-        const { rows } = await db.query(query, params);
-        return rows;
-    } catch (error) {
-        logger.error('Find active incentives repository error:', error);
-        throw error;
-    }
-};
-
-// ─── Driver ka progress ek specific incentive plan ke liye ──────────────────
-export const findDriverProgress = async (driverId, incentivePlanId, periodStart) => {
+// All active plans applicable to a driver: the default plan (NULL vehicle_type
+// → applies to everyone) plus any plan explicitly targeting this vehicle type.
+// Ordered so the default plan sits first when picking the "primary" plan for
+// the progress endpoint.
+export const findActivePlansForDriver = async (vehicleType) => {
     try {
         const { rows } = await db.query(
-            `SELECT * FROM driver_incentive_progress
-             WHERE driver_id = $1
-               AND incentive_plan_id = $2
-               AND period_start = $3`,
-            [driverId, incentivePlanId, periodStart]
-        );
-        return rows[0];
-    } catch (error) {
-        logger.error('Find driver incentive progress repository error:', error);
-        throw error;
-    }
-};
-
-// ─── Driver ke saare active incentive progress (with plan details) ──────────
-export const findDriverAllProgress = async (driverId) => {
-    try {
-        const { rows } = await db.query(
-            `SELECT dip.*, ip.title, ip.type, ip.target_value, ip.bonus_amount,
-                    ip.duration_type, ip.vehicle_type, ip.valid_until,
-                    ip.peak_start_hour, ip.peak_end_hour
-             FROM driver_incentive_progress dip
-             JOIN incentive_plans ip ON dip.incentive_plan_id = ip.id
-             WHERE dip.driver_id = $1
-               AND ip.is_active = TRUE
-               AND ip.valid_until > NOW()
-             ORDER BY dip.is_completed ASC, dip.created_at DESC`,
-            [driverId]
+            `SELECT *
+             FROM incentive_plans
+             WHERE is_active = TRUE
+               AND valid_from  <= NOW()
+               AND valid_until >  NOW()
+               AND (is_default = TRUE OR vehicle_type = $1)
+             ORDER BY is_default DESC, bonus_amount DESC, id ASC`,
+            [vehicleType]
         );
         return rows;
     } catch (error) {
-        logger.error('Find driver all progress repository error:', error);
+        logger.error('findActivePlansForDriver error:', error);
         throw error;
     }
 };
 
-// ─── Upsert progress (ride complete hone pe increment) ──────────────────────
-// IDEMPOTENT: Same ride+plan won't double-increment due to unique constraint
-export const upsertProgress = async (driverId, incentivePlanId, periodStart, periodEnd, incrementValue, rideId = null) => {
+// The single "primary" plan shown on the driver dashboard — default plan wins,
+// then the most lucrative vehicle-specific one.
+export const findPrimaryPlanForDriver = async (vehicleType) => {
+    const rows = await findActivePlansForDriver(vehicleType);
+    return rows[0] || null;
+};
+
+// Total progress (rides or rupees, depending on plan.type) for a (driver, plan,
+// period). Used by the read API; uses the main pool, not a tx client.
+export const sumProgressInPeriod = async (driverId, planId, periodStart) => {
     try {
         const { rows } = await db.query(
-            `INSERT INTO driver_incentive_progress
-             (driver_id, incentive_plan_id, current_value, period_start, period_end, ride_id)
-             VALUES ($1, $2, $3, $4, $5, $6)
-             ON CONFLICT (driver_id, incentive_plan_id, ride_id, period_start) DO UPDATE SET
-                current_value = driver_incentive_progress.current_value + $3,
-                updated_at = NOW()
-             RETURNING *`,
-            [driverId, incentivePlanId, incrementValue, periodStart, periodEnd, rideId]
+            `SELECT COALESCE(SUM(increment_value), 0) AS total
+             FROM driver_incentive_ride_log
+             WHERE driver_id = $1 AND plan_id = $2 AND period_start = $3`,
+            [driverId, planId, periodStart]
         );
-        return rows[0];
+        return parseFloat(rows[0].total);
     } catch (error) {
-        logger.error('Upsert incentive progress repository error:', error);
+        logger.error('sumProgressInPeriod error:', error);
         throw error;
     }
 };
 
-// ─── Mark completed + bonus credited ────────────────────────────────────────
-export const markCompleted = async (progressId) => {
-    try {
-        const { rows } = await db.query(
-            `UPDATE driver_incentive_progress
-             SET is_completed = TRUE, completed_at = NOW(), updated_at = NOW()
-             WHERE id = $1
-             RETURNING *`,
-            [progressId]
-        );
-        return rows[0];
-    } catch (error) {
-        logger.error('Mark incentive completed repository error:', error);
-        throw error;
-    }
+// Same as above but inside a caller-managed transaction (after we just
+// inserted the ride log row — needed to decide whether to credit reward).
+export const sumProgressInPeriodTx = async (client, driverId, planId, periodStart) => {
+    const { rows } = await client.query(
+        `SELECT COALESCE(SUM(increment_value), 0) AS total
+         FROM driver_incentive_ride_log
+         WHERE driver_id = $1 AND plan_id = $2 AND period_start = $3`,
+        [driverId, planId, periodStart]
+    );
+    return parseFloat(rows[0].total);
 };
 
-export const markBonusCredited = async (progressId) => {
-    try {
-        const { rows } = await db.query(
-            `UPDATE driver_incentive_progress
-             SET is_bonus_credited = TRUE, credited_at = NOW(), updated_at = NOW()
-             WHERE id = $1
-             RETURNING *`,
-            [progressId]
-        );
-        return rows[0];
-    } catch (error) {
-        logger.error('Mark bonus credited repository error:', error);
-        throw error;
-    }
+// Insert a ride-log row. ON CONFLICT DO NOTHING gives us idempotency: the
+// same (driver, plan, ride) can't be counted twice. Returns the inserted row
+// or null on conflict.
+export const insertRideLog = async (client, driverId, planId, rideId, periodStart, incrementValue) => {
+    const { rows } = await client.query(
+        `INSERT INTO driver_incentive_ride_log
+             (driver_id, plan_id, ride_id, period_start, increment_value)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT ON CONSTRAINT driver_incentive_ride_log_unique DO NOTHING
+         RETURNING *`,
+        [driverId, planId, rideId, periodStart, incrementValue]
+    );
+    return rows[0] || null;
 };
 
-// ─── Pending bonus credits (cron job ke liye) ───────────────────────────────
-export const findPendingBonusCredits = async () => {
+// Insert the reward payout row. Unique constraint on (driver, plan,
+// period_start) ensures only one payout per milestone per period, even
+// under concurrent ride completions. Returns null on duplicate.
+export const insertReward = async (client, driverId, planId, periodStart, bonusAmount, ledgerId) => {
+    const { rows } = await client.query(
+        `INSERT INTO driver_incentive_rewards
+             (driver_id, plan_id, period_start, bonus_amount, ledger_id)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT ON CONSTRAINT driver_incentive_rewards_unique DO NOTHING
+         RETURNING *`,
+        [driverId, planId, periodStart, bonusAmount, ledgerId]
+    );
+    return rows[0] || null;
+};
+
+// Used by the read API to figure out if the current period's milestone has
+// already been credited.
+export const findRewardForPeriod = async (driverId, planId, periodStart) => {
     try {
         const { rows } = await db.query(
-            `SELECT dip.*, ip.bonus_amount, ip.title,
-                    d.user_id
-             FROM driver_incentive_progress dip
-             JOIN incentive_plans ip ON dip.incentive_plan_id = ip.id
-             JOIN drivers d ON dip.driver_id = d.id
-             WHERE dip.is_completed = TRUE
-               AND dip.is_bonus_credited = FALSE`
+            `SELECT *
+             FROM driver_incentive_rewards
+             WHERE driver_id = $1 AND plan_id = $2 AND period_start = $3`,
+            [driverId, planId, periodStart]
         );
-        return rows;
+        return rows[0] || null;
     } catch (error) {
-        logger.error('Find pending bonus credits repository error:', error);
+        logger.error('findRewardForPeriod error:', error);
         throw error;
     }
 };

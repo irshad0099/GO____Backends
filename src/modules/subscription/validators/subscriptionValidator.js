@@ -36,21 +36,14 @@ export const cancelSchema = Joi.object({
     reason: Joi.string().trim().max(500).optional(),
 });
 
-// ─── Toggle Auto-Renew ────────────────────────────────────────────────────────
-export const autoRenewSchema = Joi.object({
-    subscription_id: Joi.number().integer().positive().required()
-        .messages({ 'any.required': 'subscription_id is required' }),
-
-    auto_renew: Joi.boolean().required()
-        .messages({ 'any.required': 'auto_renew (true/false) is required' }),
-});
-
 // ─── Apply Ride Benefits ──────────────────────────────────────────────────────
+// ride_amount can legitimately be 0 (e.g. fully-discounted ride or a refund
+// recalc) — using min(0) instead of positive()/min(1) so callers don't 400.
 export const rideBenefitsSchema = Joi.object({
-    ride_amount: Joi.number().positive().min(1).precision(2).required()
+    ride_amount: Joi.number().min(0).precision(2).required()
         .messages({
-            'any.required': 'ride_amount is required',
-            'number.positive': 'ride_amount must be positive',
+            'any.required':  'ride_amount is required',
+            'number.min':    'ride_amount cannot be negative',
         }),
 });
 

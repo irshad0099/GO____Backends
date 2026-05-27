@@ -722,6 +722,11 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             additionalFields.cancellation_reason = cancellationReason || 'Driver cancelled';
             await driverRepo.updateDriver(driver.id, { is_on_duty: false });
 
+            // Driver cancelled → never burn the passenger's free ride.
+            if (ride.is_free_ride) {
+                await subscriptionService.refundFreeRideOnCancel(ride.passenger_id);
+            }
+
             // Driver ne cancel kiya — ab free hai, pending rides push karo
             if (driver.current_latitude && driver.current_longitude && driver.vehicle_type) {
                 pushPendingRidesToDriver(driverUserId, driver.vehicle_type, driver.current_latitude, driver.current_longitude).catch(() => {});
@@ -877,10 +882,12 @@ export const updateRideStatus = async (driverUserId, rideId, statusData) => {
             });
 
             // ── Update incentive progress on ride completion ──────────────────────
-            await incentiveService.updateIncentiveProgressOnRideCompletion(driver.id, driver.vehicle_type, {
-                netEarnings: finalResult.driver.netEarnings,
-                rideData: ride,
-            }).catch(err => logger.warn(`[Incentive Update] Failed for ride ${rideId}:`, err.message));
+            // Fire-and-forget: incentive failure must never block the ride flow.
+            // Service is fully idempotent (UNIQUE on driver+plan+ride).
+            incentiveService.onRideCompletion(driver.id, driver.user_id, driver.vehicle_type, {
+                ...ride,
+                driver_earning: finalResult.driver.netEarnings,
+            }).catch(err => logger.warn(`[Incentive] onRideCompletion failed | ride=${rideId}: ${err.message}`));
 
             // Cash limit check — ride complete ke baad limit exceed hui?
             const cashBalance = await findCashBalance(driver.id).catch(() => null);

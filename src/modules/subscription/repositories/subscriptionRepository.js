@@ -72,6 +72,27 @@ export const getActiveSubscription = async (userId) => {
     }
 };
 
+// Same as getActiveSubscription, but runs on a provided client and locks the
+// user_subscriptions row (FOR UPDATE) so concurrent ride-benefit applications
+// cannot both consume the last free ride. Must be called inside a transaction.
+export const getActiveSubscriptionForUpdate = async (client, userId) => {
+    const result = await client.query(
+        `SELECT us.*, sp.name AS plan_name, sp.slug, sp.ride_discount_percent,
+                sp.free_rides_per_month, sp.priority_booking,
+                sp.cancellation_waiver, sp.surge_protection, sp.price
+         FROM user_subscriptions us
+         JOIN subscription_plans sp ON us.plan_id = sp.id
+         WHERE us.user_id = $1
+           AND us.status = 'active'
+           AND us.expires_at > CURRENT_TIMESTAMP
+         ORDER BY us.created_at DESC
+         LIMIT 1
+         FOR UPDATE OF us`,
+        [userId]
+    );
+    return result.rows[0] || null;
+};
+
 export const getSubscriptionById = async (subscriptionId, userId) => {
     try {
         const result = await db.query(
@@ -193,6 +214,90 @@ export const useFreeRide = async (client, subscriptionId) => {
         [subscriptionId]
     );
     return result.rows[0] || null;
+};
+
+// Subscriptions due for wallet auto-renew (expiring within 24h, still active,
+// auto_renew on, payment_method wallet). Returns plan join so the cron can
+// price the renewal without a second query.
+export const getWalletAutoRenewCandidates = async () => {
+    try {
+        const result = await db.query(
+            `SELECT us.id, us.user_id, us.plan_id, us.expires_at,
+                    sp.price, sp.duration_days, sp.name AS plan_name, sp.slug
+             FROM user_subscriptions us
+             JOIN subscription_plans sp ON us.plan_id = sp.id
+             WHERE us.status         = 'active'
+               AND us.auto_renew     = TRUE
+               AND us.payment_method = 'wallet'
+               AND us.expires_at    <= CURRENT_TIMESTAMP + INTERVAL '24 hours'`
+        );
+        return result.rows;
+    } catch (error) {
+        logger.error('getWalletAutoRenewCandidates error:', error);
+        throw error;
+    }
+};
+
+// Extend an existing subscription in place (used by auto-renew). Pushes
+// expires_at forward, resets free-rides counter, returns the updated row.
+export const extendSubscription = async (client, subscriptionId, newExpiresAt, newFreeRidesResetAt) => {
+    const result = await client.query(
+        `UPDATE user_subscriptions
+         SET expires_at          = $2,
+             free_rides_used     = 0,
+             free_rides_reset_at = $3,
+             updated_at          = CURRENT_TIMESTAMP
+         WHERE id = $1
+         RETURNING *`,
+        [subscriptionId, newExpiresAt, newFreeRidesResetAt]
+    );
+    return result.rows[0] || null;
+};
+
+// Disable auto-renew without going through the user-facing toggle path.
+// Used by the cron when wallet balance is insufficient.
+export const disableAutoRenew = async (subscriptionId) => {
+    try {
+        await db.query(
+            `UPDATE user_subscriptions
+             SET auto_renew = FALSE,
+                 updated_at = CURRENT_TIMESTAMP
+             WHERE id = $1`,
+            [subscriptionId]
+        );
+    } catch (error) {
+        logger.error('disableAutoRenew error:', error);
+        throw error;
+    }
+};
+
+// Refund one free ride back to the user's active subscription (used when a
+// ride that consumed a free ride gets cancelled or expires before completion).
+// Atomic single-row UPDATE — safe under concurrent refunds. Returns the
+// updated row, or null if there was nothing to refund.
+export const refundFreeRide = async (userId) => {
+    try {
+        const result = await db.query(
+            `UPDATE user_subscriptions
+             SET free_rides_used = GREATEST(0, free_rides_used - 1),
+                 updated_at      = CURRENT_TIMESTAMP
+             WHERE id = (
+                 SELECT id FROM user_subscriptions
+                 WHERE user_id   = $1
+                   AND status    = 'active'
+                   AND expires_at > CURRENT_TIMESTAMP
+                   AND free_rides_used > 0
+                 ORDER BY created_at DESC
+                 LIMIT 1
+             )
+             RETURNING id, free_rides_used`,
+            [userId]
+        );
+        return result.rows[0] || null;
+    } catch (error) {
+        logger.error('refundFreeRide error:', error);
+        throw error;
+    }
 };
 
 // Reset free rides counter (called monthly via cron)

@@ -25,8 +25,9 @@ export const findWeeklyEarnings = async (driverId, { limit = 10, offset = 0 }) =
                 COALESCE(SUM(amount) FILTER (WHERE type = 'incentive' AND status IN ('completed','released','held')), 0)     AS incentive_earnings,
                 COALESCE(SUM(amount) FILTER (WHERE type = 'referral' AND status IN ('completed','released','held')), 0)      AS referral_earnings,
                 COALESCE(SUM(amount) FILTER (WHERE type = 'cash_deposit' AND status IN ('completed','released','held')), 0)  AS cash_collected,
+                COALESCE(SUM(amount) FILTER (WHERE type = 'platform_fee' AND status IN ('completed','released','held')), 0)  AS platform_fee_paid,
                 COALESCE(ABS(SUM(amount) FILTER (WHERE amount < 0 AND status IN ('completed','released','held'))), 0)        AS total_deductions,
-                COALESCE(SUM(amount) FILTER (WHERE status IN ('completed','released','held')), 0)                            AS net_earnings,
+                COALESCE(SUM(amount) FILTER (WHERE type <> 'platform_fee' AND status IN ('completed','released','held')), 0) AS net_earnings,
                 COALESCE(SUM(duration_minutes) FILTER (WHERE type = 'ride_earning' AND status IN ('completed','released','held')), 0) / 60 AS total_online_hours
              FROM driver_ledger
              WHERE driver_id = $1
@@ -55,8 +56,9 @@ export const findMonthlyEarnings = async (driverId, { limit = 12, offset = 0 }) 
                 COALESCE(SUM(amount) FILTER (WHERE type = 'incentive' AND status IN ('completed','released','held')), 0)     AS incentive_earnings,
                 COALESCE(SUM(amount) FILTER (WHERE type = 'referral' AND status IN ('completed','released','held')), 0)      AS referral_earnings,
                 COALESCE(SUM(amount) FILTER (WHERE type = 'cash_deposit' AND status IN ('completed','released','held')), 0)  AS cash_collected,
+                COALESCE(SUM(amount) FILTER (WHERE type = 'platform_fee' AND status IN ('completed','released','held')), 0)  AS platform_fee_paid,
                 COALESCE(ABS(SUM(amount) FILTER (WHERE amount < 0 AND status IN ('completed','released','held'))), 0)        AS total_deductions,
-                COALESCE(SUM(amount) FILTER (WHERE status IN ('completed','released','held')), 0)                            AS net_earnings,
+                COALESCE(SUM(amount) FILTER (WHERE type <> 'platform_fee' AND status IN ('completed','released','held')), 0) AS net_earnings,
                 COALESCE(SUM(duration_minutes) FILTER (WHERE type = 'ride_earning' AND status IN ('completed','released','held')), 0) / 60 AS total_online_hours
              FROM driver_ledger
              WHERE driver_id = $1
@@ -83,8 +85,9 @@ export const findCurrentWeekEarnings = async (driverId) => {
                 COALESCE(SUM(amount) FILTER (WHERE type = 'ride_earning' AND status IN ('completed','released')), 0) AS ride_earnings,
                 COALESCE(SUM(amount) FILTER (WHERE type = 'tip' AND status IN ('completed','released')), 0) AS tip_earnings,
                 COALESCE(SUM(amount) FILTER (WHERE type = 'incentive' AND status IN ('completed','released')), 0) AS incentive_earnings,
+                COALESCE(SUM(amount) FILTER (WHERE type = 'platform_fee' AND status IN ('completed','released')), 0) AS platform_fee_paid,
                 COALESCE(SUM(amount) FILTER (WHERE amount < 0 AND status IN ('completed','released')), 0) AS total_deductions,
-                COALESCE(SUM(amount) FILTER (WHERE status IN ('completed','released')), 0) AS net_earnings,
+                COALESCE(SUM(amount) FILTER (WHERE type <> 'platform_fee' AND status IN ('completed','released')), 0) AS net_earnings,
                 COALESCE(SUM(duration_minutes) FILTER (WHERE type = 'ride_earning' AND status IN ('completed','released')), 0) AS total_online_hours
              FROM driver_ledger
              WHERE driver_id = $1
@@ -107,8 +110,9 @@ export const findEarningsByDateRange = async (driverId, fromDate, toDate) => {
                 COALESCE(SUM(amount) FILTER (WHERE type = 'ride_earning' AND status IN ('completed','released')), 0) AS ride_earnings,
                 COALESCE(SUM(amount) FILTER (WHERE type = 'tip' AND status IN ('completed','released')), 0) AS tip_earnings,
                 COALESCE(SUM(amount) FILTER (WHERE type = 'incentive' AND status IN ('completed','released')), 0) AS incentive_earnings,
+                COALESCE(SUM(amount) FILTER (WHERE type = 'platform_fee' AND status IN ('completed','released')), 0) AS platform_fee_paid,
                 COALESCE(ABS(SUM(amount) FILTER (WHERE amount < 0 AND status IN ('completed','released'))), 0) AS total_deductions,
-                COALESCE(SUM(amount) FILTER (WHERE status IN ('completed','released')), 0) AS net_earnings,
+                COALESCE(SUM(amount) FILTER (WHERE type <> 'platform_fee' AND status IN ('completed','released')), 0) AS net_earnings,
                 COALESCE(SUM(duration_minutes) FILTER (WHERE type = 'ride_earning' AND status IN ('completed','released')), 0) AS total_online_hours
              FROM driver_ledger
              WHERE driver_id = $1

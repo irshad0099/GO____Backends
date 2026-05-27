@@ -2,6 +2,7 @@ import * as cancelRepo from '../repositories/rideCancellation.repository.js';
 import * as rideRepo from '../repositories/ride.repository.js';
 import * as driverRepo from '../../drivers/repositories/driver.repository.js';
 import { chargeCancellationFee } from '../../wallet/services/walletService.js';
+import { refundFreeRideOnCancel } from '../../subscription/services/subscriptionService.js';
 import { NotFoundError, ApiError } from '../../../core/errors/ApiError.js';
 import logger from '../../../core/logger/logger.js';
 import { calculateCancellationPenalty } from '../../../core/utils/rideCalculator.js';
@@ -72,6 +73,12 @@ export const cancelRide = async (userId, rideId, data) => {
             await driverRepo.updateDriver(ride.driver_id, { is_on_duty: false });
         }
 
+        // Refund the free ride if this ride was a subscription free ride —
+        // user shouldn't lose a free ride to a cancellation.
+        if (ride.is_free_ride) {
+            await refundFreeRideOnCancel(userId);
+        }
+
         // Penalty actually charge karo wallet se
         if (penaltyApplied && penaltyAmount > 0) {
             try {
@@ -136,6 +143,12 @@ export const driverCancelRide = async (driverUserId, rideId) => {
 
         // FIX: Free up the driver
         await driverRepo.updateDriver(driver.id, { is_on_duty: false });
+
+        // Refund the free ride to the passenger (driver-initiated cancel
+        // should never burn the passenger's free ride).
+        if (ride.is_free_ride) {
+            await refundFreeRideOnCancel(ride.passenger_id);
+        }
 
         logger.info(`[driverCancelRide] driver=${driver.id} emergency cancelled ride=${rideId}`);
         return { rideId, status: 'cancelled', message: 'Ride cancelled successfully' };

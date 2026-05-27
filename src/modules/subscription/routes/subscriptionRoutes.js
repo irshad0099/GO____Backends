@@ -7,7 +7,6 @@ import {
     purchase,
     verify,
     cancel,
-    autoRenew,
     applyBenefits,
     getHistory,
     getPayments,
@@ -19,7 +18,6 @@ import {
     purchaseSchema,
     verifySchema,
     cancelSchema,
-    autoRenewSchema,
     rideBenefitsSchema,
     historyFilterSchema,
     createPlanSchema,
@@ -75,19 +73,12 @@ router.post(
 );
 
 // POST /api/v1/subscriptions/cancel
-// Cancel active subscription
+// Stops auto-renew. Subscription benefits continue till expires_at.
+// (Auto-renew toggle endpoint removed — cancel is the only way to opt out.)
 router.post(
     '/cancel',
     validate(cancelSchema),
     cancel
-);
-
-// PATCH /api/v1/subscriptions/auto-renew
-// Toggle auto-renew on/off
-router.patch(
-    '/auto-renew',
-    validate(autoRenewSchema),
-    autoRenew
 );
 
 // POST /api/v1/subscriptions/apply-benefits

@@ -1,4 +1,4 @@
-// AB — sahi
+﻿// AB — sahi
 import { db } from '../../../infrastructure/database/postgres.js';
 import logger from '../../../core/logger/logger.js';
 
@@ -169,15 +169,16 @@ export const createSubscription = async (client, data) => {
 export const updateSubscriptionStatus = async (subscriptionId, status, extra = {}) => {
     try {
         const { cancelReason } = extra;
+        const cancelledAt = status === 'cancelled' ? new Date() : null;
         const result = await db.query(
             `UPDATE user_subscriptions
-             SET status       = $1::text,
-                 cancelled_at = CASE WHEN $1::text = 'cancelled' THEN CURRENT_TIMESTAMP ELSE cancelled_at END,
+             SET status       = $1,
+                 cancelled_at  = COALESCE($4, cancelled_at),
                  cancel_reason = $3,
                  updated_at   = CURRENT_TIMESTAMP
              WHERE id = $2
              RETURNING *`,
-            [status, subscriptionId, cancelReason || null]
+            [status, subscriptionId, cancelReason || null, cancelledAt]
         );
         return result.rows[0] || null;
     } catch (error) {
